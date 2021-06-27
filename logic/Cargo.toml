@@ -13,7 +13,11 @@ crate-type = ["staticlib"]
 futures = "0.3.15"
 lazy_static = "1.4.0"
 protobuf = "2.24.1"
-tokio = { version="1.7.1", features=["rt-multi-thread", "time"] }
+reqwest = "0.11.4"
+sxd-document = "0.3.2"
+sxd-xpath = "0.4.2"
+thiserror = "1.0.25"
+tokio = { version="1.7.1", features=["rt-multi-thread", "macros", "time"] }
 
 [build-dependencies]
 cbindgen = "0.19.0"

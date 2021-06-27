@@ -1,24 +1,11 @@
 syntax = "proto3";
 
-//
-// sync
+// import "google/protobuf/timestamp.proto";
 
-message SyncRequest {
-  oneof value { GreetingRequest greeting = 1; }
+message Topic {
+  string id = 1;
+  string subject = 2;
+  string author = 3;
+  uint64 post_date = 4;
+  uint64 last_post_date = 5;
 }
-
-message GreetingRequest {
-  string verb = 1;
-  string name = 2;
-}
-message GreetingResponse { string text = 1; }
-
-//
-// async
-
-message AsyncRequest {
-  oneof value { SleepRequest sleep = 1; }
-}
-
-message SleepRequest { uint64 millis = 1; }
-message SleepResponse { string text = 1; }

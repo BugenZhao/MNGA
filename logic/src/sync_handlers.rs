@@ -1,4 +1,4 @@
-use crate::protos::DataModel::*;
+use crate::protos::Service::*;
 use protobuf::Message;
 
 pub fn handle_greeting(req: GreetingRequest) -> Box<dyn Message> {

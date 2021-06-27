@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "DataModel.proto";
+
+//
+// sync
+
+message SyncRequest {
+  oneof value { GreetingRequest greeting = 1; }
+}
+
+message GreetingRequest {
+  string verb = 1;
+  string name = 2;
+}
+message GreetingResponse { string text = 1; }
+
+//
+// async
+
+message AsyncRequest {
+  oneof value {
+    TopicListRequest topic_list = 1;
+    SleepRequest sleep = 1001;
+  }
+}
+
+message SleepRequest { uint64 millis = 1; }
+message SleepResponse { string text = 1; }
+
+message TopicListRequest {
+  string forum_id = 1;
+  int32 page = 2;
+}
+message TopicListResponse { repeated Topic topics = 1; }

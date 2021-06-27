@@ -1,4 +1,5 @@
-use crate::{async_handlers::*, error::any_err_to_string, protos::DataModel::*, ByteBuffer};
+use crate::protos::Service::*;
+use crate::{async_handlers::*, error::any_err_to_string, ByteBuffer};
 use futures::prelude::*;
 use lazy_static::lazy_static;
 use std::{ffi::c_void, mem, panic, thread};
@@ -53,6 +54,7 @@ pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
         use AsyncRequest_oneof_value::*;
         let response = match req.value.expect("no async req") {
             sleep(r) => catch_await!(handle_sleep(r)),
+            topic_list(r) => catch_await!(handle_topic_list(r)),
         };
 
         let result = response

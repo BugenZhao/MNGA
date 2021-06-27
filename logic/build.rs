@@ -18,7 +18,7 @@ fn main() {
     protoc_rust::Codegen::new()
         .out_dir("src/protos")
         .includes(&["../protos"])
-        .inputs(&["../protos/DataModel.proto"])
+        .inputs(&["../protos/Service.proto", "../protos/DataModel.proto"])
         .customize(Customize {
             gen_mod_rs: Some(true),
             ..Default::default()

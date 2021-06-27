@@ -1,5 +1,5 @@
 use crate::error::any_err_to_string;
-use crate::protos::DataModel::*;
+use crate::protos::Service::*;
 use crate::sync_handlers::*;
 use std::{panic, thread};
 

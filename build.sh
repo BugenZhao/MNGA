@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo ">>>>> Swift PB"
-protoc --swift_out=app/Shared/ -I protos/ protos/DataModel.proto
+protoc --swift_out=app/Shared/Protos/ -I protos/ protos/*.proto
 
 echo ">>>>> Rust macOS"
 $HOME/.cargo/bin/cargo build --manifest-path logic/Cargo.toml --release

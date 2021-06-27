@@ -1,3 +1,4 @@
 /target
 Cargo.lock
 /src/protos/*.rs
+/src/config.rs

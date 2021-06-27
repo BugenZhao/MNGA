@@ -1,5 +1,7 @@
+mod config;
 mod error;
 mod protos;
+mod service;
 
 mod async_dispatch;
 mod async_handlers;
@@ -11,7 +13,7 @@ use crate::{
     sync_dispatch::dispatch_request,
 };
 use protobuf::Message;
-use protos::DataModel::*;
+use protos::Service::*;
 use std::{ffi, mem, os::raw::c_char, ptr, slice};
 
 unsafe fn parse_from_raw<T: Message>(data: *const u8, len: usize) -> T {
