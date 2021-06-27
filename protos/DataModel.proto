@@ -9,6 +9,7 @@ message Topic {
   string author_name = 4;
   uint64 post_date = 5;
   uint64 last_post_date = 6;
+  uint32 replies_num = 7;
 }
 
 message User {

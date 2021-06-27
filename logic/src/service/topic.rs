@@ -9,7 +9,7 @@ use crate::{
     service::{
         fetch_package,
         user::UserController,
-        utils::{extract_kv, extract_node, extract_nodeset},
+        utils::{extract_kv, extract_node, extract_nodeset, extract_pages},
     },
 };
 
@@ -22,8 +22,9 @@ fn extract_topic(node: Node) -> Option<Topic> {
         subject: get!(map, "subject"),
         author_id: get!(map, "authorid"),
         author_name: get!(map, "author"),
-        post_date: get!(map, "postdate", u64),
-        last_post_date: get!(map, "lastpost", u64),
+        post_date: get!(map, "postdate", _),
+        last_post_date: get!(map, "lastpost", _),
+        replies_num: get!(map, "replies", _),
         ..Default::default()
     };
 
@@ -76,8 +77,11 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
         ns.into_iter().filter_map(extract_topic).collect()
     })?;
 
+    let pages = extract_pages(&package, "/root/__T__ROWS", "/root/__T__ROWS_PAGE", 35)?;
+
     Ok(TopicListResponse {
         topics: topics.into(),
+        pages,
         ..Default::default()
     })
 }
@@ -110,10 +114,12 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
         return Err(LogicError::MissingField("topic".to_owned()));
     }
 
+    let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
+
     Ok(TopicDetailsResponse {
         topic: topic.into(),
         replies: replies.into(),
-        pages: 1,
+        pages,
         ..Default::default()
     })
 }

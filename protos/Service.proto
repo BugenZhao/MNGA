@@ -6,7 +6,10 @@ import "DataModel.proto";
 // sync
 
 message SyncRequest {
-  oneof value { GreetingRequest greeting = 1; }
+  oneof value {
+    GreetingRequest greeting = 1;
+    LocalUserRequest local_user = 2;
+  }
 }
 
 message GreetingRequest {
@@ -14,6 +17,9 @@ message GreetingRequest {
   string name = 2;
 }
 message GreetingResponse { string text = 1; }
+
+message LocalUserRequest { string user_id = 1; }
+message LocalUserResponse { optional User user = 1; }
 
 //
 // async
@@ -33,7 +39,10 @@ message TopicListRequest {
   string forum_id = 1;
   uint32 page = 2;
 }
-message TopicListResponse { repeated Topic topics = 1; }
+message TopicListResponse {
+  repeated Topic topics = 1;
+  uint32 pages = 2;
+}
 
 message TopicDetailsRequest {
   string topic_id = 1;

@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "RemoteImage",
+        "repositoryURL": "https://github.com/crelies/RemoteImage.git",
+        "state": {
+          "branch": null,
+          "revision": "7de20453a8b9733eb8e28ae762801c60a5a5f59d",
+          "version": "4.0.0"
+        }
+      },
+      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf",
         "state": {

@@ -6,26 +6,59 @@
 //
 
 import SwiftUI
+import RemoteImage
 
 struct ReplyView: View {
   let reply: Reply
+  let user: User?
+
+  init(reply: Reply) {
+    self.reply = reply
+    self.user = try! (logicCall(.localUser(.with { $0.userID = reply.authorID })) as LocalUserResponse).user
+  }
 
   var body: some View {
+    let user = self.user
+
     VStack(alignment: .leading, spacing: 8) {
       HStack {
-        Image(systemName: "person.circle.fill")
-          .resizable()
+        avatar
           .frame(width: 28, height: 28)
+          .clipShape(Circle())
         VStack(alignment: .leading) {
-          Text(reply.authorID)
+          Text(user?.name ?? reply.authorID)
             .font(.subheadline)
           Text("#\(reply.floor)")
             .font(.footnote)
             .foregroundColor(.secondary)
         }
+        Spacer()
+        if reply.score > 0 {
+          HStack {
+            Text("\(reply.score)")
+              .fontWeight(.medium)
+            Image(systemName: "chevron.up")
+          }
+            .font(.callout)
+        }
       }
       Text(reply.content)
         .font(.callout)
+    }
+  }
+
+  var avatar: AnyView {
+    let placeholder = Image(systemName: "person.circle.fill").resizable()
+
+    if let url = URL(string: user?.avatarURL ?? "") {
+      return AnyView(RemoteImage(
+        type: .url(url),
+        errorView: { _ in placeholder },
+        imageView: { $0.resizable() },
+        loadingView: { placeholder }
+        ))
+    } else {
+      return AnyView(placeholder)
     }
   }
 }
@@ -33,17 +66,51 @@ struct ReplyView: View {
 struct TopicDetailsView: View {
   let topicID: String
 
-  @State private var replies = [Reply]()
-  @State private var topic: Topic?
+  @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Reply>
 
-  private var first: Reply? { replies.first }
+  init(topicID: String) {
+    self.topicID = topicID
+
+    let dataSource = PagingDataSource<TopicDetailsResponse, Reply>(
+      buildRequest: { page in
+        return .topicDetails(TopicDetailsRequest.with {
+          $0.topicID = topicID
+          $0.page = UInt32(page)
+        })
+      },
+      onResponse: { response in
+        let items = response.replies
+        let pages = response.pages
+        return (items, Int(pages))
+      },
+      id: \.floor.description
+    )
+    self._dataSource = StateObject(wrappedValue: dataSource)
+  }
+
+  private var first: Reply? { dataSource.items.first }
+
+  private var topic: Topic? { dataSource.latestResponse?.topic }
 
   var body: some View {
-    let inner = VStack {
-      if replies.isEmpty {
+    #if os(iOS)
+      let title = "Topic Details #\(topicID)"
+    #elseif os(macOS)
+      let title = "#\(topicID) " + (topic?.subject ?? "")
+    #endif
+
+    let inner = VStack(alignment: .leading) {
+      if dataSource.items.isEmpty {
         ProgressView()
-          .onAppear { refresh() }
       } else {
+        #if os(iOS)
+          if let subject = topic?.subject {
+            Text(subject)
+              .font(.headline)
+              .padding()
+          }
+        #endif
+
         let list = List {
           if let first = self.first {
             Section(header: Text("Topic")) {
@@ -51,7 +118,11 @@ struct TopicDetailsView: View {
             }
           }
           Section(header: Text("Replies")) {
-            ForEach(replies.dropFirst(), id: \.floor) { ReplyView(reply: $0) }
+            ForEach(dataSource.items.dropFirst(), id: \.floor) { reply in
+              ReplyView(reply: reply)
+                .onAppear { dataSource.loadMoreIfNeeded(currentItem: reply)
+              }
+            }
           }
         }
 
@@ -63,7 +134,7 @@ struct TopicDetailsView: View {
         #endif
       }
     }
-      .navigationTitle("Topic Details")
+      .navigationTitle(title)
 
     #if os(iOS)
       inner
@@ -71,17 +142,6 @@ struct TopicDetailsView: View {
     #elseif os(macOS)
       inner
     #endif
-  }
-
-  func refresh() {
-    let request = TopicDetailsRequest.with {
-      $0.topicID = topicID
-      $0.page = 1
-    }
-    logicCallAsync(.topicDetails(request)) { (response: TopicDetailsResponse) in
-      topic = response.topic
-      replies = response.replies
-    }
   }
 }
 
@@ -95,21 +155,80 @@ struct TopicView: View {
     let dateString = dateFormatter.localizedString(for: date, relativeTo: Date())
 
     return VStack(alignment: .leading, spacing: 8) {
-      Text(topic.subject)
-        .font(.callout)
-        .lineLimit(2)
+      HStack {
+        Text(topic.subject)
+          .font(.callout)
+          .lineLimit(2)
+        Spacer()
+        Text("\(topic.repliesNum)")
+          .fontWeight(.medium)
+      }
 
       HStack {
         HStack(alignment: .center) {
           Image(systemName: "person")
           Text(topic.authorName)
         }
-          .font(.footnote)
-          .foregroundColor(.secondary)
         Spacer()
         Text(dateString)
-          .font(.caption)
-          .foregroundColor(.secondary)
+      }
+        .foregroundColor(.secondary)
+        .font(.footnote)
+    }
+  }
+}
+
+struct TopicListView: View {
+  @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
+
+  init() {
+    let dataSource = PagingDataSource<TopicListResponse, Topic>(
+      buildRequest: { page in
+        return .topicList(TopicListRequest.with {
+          $0.forumID = "-7"
+          $0.page = UInt32(page)
+        })
+      },
+      onResponse: { response in
+        let items = response.topics
+        let pages = response.pages
+        return (items, Int(pages))
+      },
+      id: \.id
+    )
+    self._dataSource = StateObject(wrappedValue: dataSource)
+  }
+
+  var body: some View {
+    VStack {
+      if dataSource.items.isEmpty {
+        ProgressView()
+      } else {
+        let list = List {
+          ForEach(dataSource.items, id: \.id) { topic in
+            let destination = NavigationLazyView(TopicDetailsView(topicID: topic.id))
+
+            NavigationLink(destination: destination) {
+              TopicView(topic: topic)
+                .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+            }
+          }
+        }
+
+        #if os(iOS)
+          list
+            .listStyle(GroupedListStyle())
+        #elseif os(macOS)
+          list
+        #endif
+      }
+    }
+      .navigationTitle("Topics")
+      .toolbar {
+      ToolbarItem {
+        Button(action: { dataSource.refresh() }) {
+          Image(systemName: "arrow.clockwise.circle")
+        }
       }
     }
   }
@@ -120,22 +239,7 @@ struct ContentView: View {
 
   var body: some View {
     NavigationView {
-      List {
-        ForEach(topics, id: \.id) { topic in
-          NavigationLink(destination: TopicDetailsView(topicID: topic.id)) {
-            TopicView(topic: topic)
-          }
-        }
-      }
-        .onAppear { if topics.isEmpty { refresh() } }
-        .navigationTitle("Topics")
-        .toolbar {
-        ToolbarItem {
-          Button(action: refresh) {
-            Image(systemName: "arrow.clockwise.circle")
-          }
-        }
-      }
+      TopicListView()
     }
   }
 

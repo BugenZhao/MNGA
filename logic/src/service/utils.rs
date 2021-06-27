@@ -39,3 +39,26 @@ where
     };
     Ok(extracted)
 }
+
+pub fn extract_pages(
+    package: &Package,
+    rows_xpath: &str,
+    rows_per_page_xpath: &str,
+    default_per_page: u32,
+) -> LogicResult<u32> {
+    let rows = extract_node(&package, rows_xpath, |n| {
+        n.string_value().parse::<u32>().ok()
+    })?
+    .flatten()
+    .unwrap_or(1);
+
+    let rows_per_page = extract_node(&package, rows_per_page_xpath, |n| {
+        n.string_value().parse::<u32>().ok()
+    })?
+    .flatten()
+    .unwrap_or(default_per_page);
+
+    let pages = rows / rows_per_page + u32::from(rows % rows_per_page != 0);
+
+    Ok(pages)
+}

@@ -17,6 +17,7 @@ pub fn dispatch_request(req: SyncRequest) -> Result<Vec<u8>, String> {
     use SyncRequest_oneof_value::*;
     let response = panic::catch_unwind(|| match req.value.expect("no sync req") {
         greeting(r) => r!(handle_greeting(r)),
+        local_user(r) => r!(handle_local_user(r)),
     });
 
     response

@@ -23,6 +23,12 @@
 		B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */; };
 		B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43926885DD700EC78A4 /* Service.pb.swift */; };
 		B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43926885DD700EC78A4 /* Service.pb.swift */; };
+		B4DCF4442688C4ED00EC78A4 /* RemoteImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4DCF4432688C4ED00EC78A4 /* RemoteImage */; };
+		B4DCF4462688C4FB00EC78A4 /* RemoteImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4DCF4452688C4FB00EC78A4 /* RemoteImage */; };
+		B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */; };
+		B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */; };
+		B4DCF44B2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */; };
+		B4DCF44C2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +45,8 @@
 		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
 		B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModel.pb.swift; sourceTree = "<group>"; };
 		B4DCF43926885DD700EC78A4 /* Service.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.pb.swift; sourceTree = "<group>"; };
+		B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingDataSource.swift; sourceTree = "<group>"; };
+		B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationLazyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +56,7 @@
 			files = (
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
+				B4DCF4442688C4ED00EC78A4 /* RemoteImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +66,7 @@
 			files = (
 				B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */,
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
+				B4DCF4462688C4FB00EC78A4 /* RemoteImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,11 +87,13 @@
 		B4C024C026884FD600E53554 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				B4DCF43E2688C38800EC78A4 /* Views */,
 				B4DCF43726885DD700EC78A4 /* Protos */,
 				B4C024E2268850AA00E53554 /* LogicCall.swift */,
 				B4C024C126884FD600E53554 /* NGAApp.swift */,
 				B4C024C226884FD600E53554 /* ContentView.swift */,
 				B4C024C326884FD700E53554 /* Assets.xcassets */,
+				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -130,6 +142,14 @@
 			path = Protos;
 			sourceTree = "<group>";
 		};
+		B4DCF43E2688C38800EC78A4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -148,6 +168,7 @@
 			name = "NGA (iOS)";
 			packageProductDependencies = (
 				B4C024EC268850E800E53554 /* SwiftProtobuf */,
+				B4DCF4432688C4ED00EC78A4 /* RemoteImage */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -168,6 +189,7 @@
 			name = "NGA (macOS)";
 			packageProductDependencies = (
 				B4C024EF268850F300E53554 /* SwiftProtobuf */,
+				B4DCF4452688C4FB00EC78A4 /* RemoteImage */,
 			);
 			productName = "NGA (macOS)";
 			productReference = B4C024D026884FD700E53554 /* NGA.app */;
@@ -201,6 +223,7 @@
 			mainGroup = B4C024BB26884FD600E53554;
 			packageReferences = (
 				B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -239,7 +262,9 @@
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
+				B4DCF44B2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */,
 				B4C024D626884FD700E53554 /* ContentView.swift in Sources */,
+				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4C024D426884FD700E53554 /* NGAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,7 +276,9 @@
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
+				B4DCF44C2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */,
 				B4C024D726884FD700E53554 /* ContentView.swift in Sources */,
+				B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4C024D526884FD700E53554 /* NGAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -508,6 +535,14 @@
 				minimumVersion = 1.17.0;
 			};
 		};
+		B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crelies/RemoteImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -520,6 +555,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		B4DCF4432688C4ED00EC78A4 /* RemoteImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */;
+			productName = RemoteImage;
+		};
+		B4DCF4452688C4FB00EC78A4 /* RemoteImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */;
+			productName = RemoteImage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
