@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+//
+// sync
+
+message SyncRequest {
+  oneof value { GreetingRequest greeting = 1; }
+}
+
+message GreetingRequest {
+  string verb = 1;
+  string name = 2;
+}
+message GreetingResponse { string text = 1; }
+
+//
+// async
+
+message AsyncRequest {
+  oneof value { SleepRequest sleep = 1; }
+}
+
+message SleepRequest { uint64 millis = 1; }
+message SleepResponse { string text = 1; }
