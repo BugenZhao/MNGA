@@ -6,8 +6,12 @@ pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
         .map_or("<unknown>".into(), |e| e.to_string())
 }
 
+#[allow(dead_code)]
 #[derive(Error, Debug)]
 pub enum LogicError {
+    #[error("missing field: {0}")]
+    MissingField(String),
+
     #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
     #[error(transparent)]

@@ -6,7 +6,9 @@ use crate::{
     error::LogicResult,
 };
 
+mod macros;
 pub mod topic;
+pub mod user;
 mod utils;
 
 fn build_client() -> Client {

@@ -5,7 +5,24 @@ syntax = "proto3";
 message Topic {
   string id = 1;
   string subject = 2;
-  string author = 3;
+  string author_id = 3;
+  string author_name = 4;
+  uint64 post_date = 5;
+  uint64 last_post_date = 6;
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string avatar_url = 3;
+  uint64 reg_date = 4;
+  uint32 post_num = 5;
+}
+
+message Reply {
+  uint32 floor = 1;
+  string author_id = 2;
+  string content = 3;
   uint64 post_date = 4;
-  uint64 last_post_date = 5;
+  uint32 score = 5;
 }
