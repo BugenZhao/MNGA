@@ -8,14 +8,39 @@
 import Foundation
 import SwiftUI
 
+struct SubforumFilterToggleView: View {
+  let subforum: Subforum
+  let action: (_ newSelected: Bool) -> Void
+
+  @State var selected: Bool
+
+  init(subforum: Subforum, action: @escaping (_ newSelected: Bool) -> Void) {
+    self.subforum = subforum
+    self._selected = State(wrappedValue: subforum.selected)
+    self.action = action
+  }
+
+  var body: some View {
+    Toggle(isOn: $selected) {
+      Text(subforum.name)
+    } .onChange(of: selected, perform: { value in
+      self.action(value)
+    })
+  }
+}
+
 struct TopicListView: View {
+  let forumID: String
+
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
 
-  init() {
+  init(forumID: String = "-7") {
+    self.forumID = forumID
+
     let dataSource = PagingDataSource<TopicListResponse, Topic>(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
-          $0.forumID = "-7"
+          $0.forumID = forumID
           $0.page = UInt32(page)
         })
       },
@@ -34,7 +59,7 @@ struct TopicListView: View {
       if dataSource.items.isEmpty {
         ProgressView()
       } else {
-        List {
+        let list = List {
           ForEach(dataSource.items, id: \.id) { topic in
             let destination = NavigationLazyView(TopicDetailsView(topic: topic))
 
@@ -44,15 +69,61 @@ struct TopicListView: View {
             }
           }
         }
+        #if os(iOS)
+          list.listStyle(InsetGroupedListStyle())
+        #else
+          list
+        #endif
       }
     }
-      .navigationTitle("Topics")
+      .navigationTitle(title)
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
-      ToolbarItem {
-        Button(action: { dataSource.refresh() }) {
-          Image(systemName: "arrow.clockwise.circle")
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Menu {
+          if let subforums = dataSource.latestResponse?.subforums {
+            Menu {
+              ForEach(subforums.filter { $0.filterable }, id: \.id) { subforum in
+                SubforumFilterToggleView(subforum: subforum) { v in
+                  setSubforumFilter(show: v, subforum: subforum)
+                }
+              }
+            } label: {
+              Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
+            }
+          }
+          Section {
+            Button(action: { dataSource.refresh(clear: true) }) {
+              Label("Refresh", systemImage: "arrow.clockwise")
+            }
+            Text("#\(forumID) " + (dataSource.latestResponse?.forum.name ?? ""))
+          }
+        } label: {
+          Label("Menu", systemImage: "ellipsis.circle")
         }
       }
+    }
+  }
+
+  var title: String {
+    dataSource.latestResponse?.forum.name ?? "Forum #\(forumID)"
+  }
+
+  func setSubforumFilter(show: Bool, subforum: Subforum) {
+    logicCallAsync(.subforumFilter(.with {
+      $0.operation = show ? .show : .block
+      $0.forumID = forumID
+      $0.subforumFilterID = subforum.filterID
+    })) { (response: SubforumFilterResponse) in
+      dataSource.refresh(clear: true)
+    }
+  }
+}
+
+struct TopicListView_Previews: PreviewProvider {
+  static var previews: some View {
+    NavigationView {
+      TopicListView()
     }
   }
 }

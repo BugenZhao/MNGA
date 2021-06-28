@@ -41,12 +41,13 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func refresh() {
+  func refresh(clear: Bool = false) {
     self.dataFlowId = UUID()
 
     self.isLoading = true
     self.loadedPage = 0
     self.totalPages = 1
+    if clear { self.items = [] }
 
     let request = buildRequest(1)
     logicCallAsync(request) { (response: Res) in

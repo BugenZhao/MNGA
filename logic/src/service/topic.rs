@@ -45,6 +45,7 @@ fn extract_subforum(node: Node) -> Option<Subforum> {
         id: pget!(pairs, 0),
         name: pget!(pairs, 1),
         description: pget!(pairs, 2),
+        filter_id: pget!(pairs, 3), // for filter, subforum id ??
         attributes,
         filterable: attributes > 4096,
         ..Default::default()
@@ -92,6 +93,7 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
             ("fid", &request.forum_id),
             ("page", &request.page.to_string()),
         ],
+        vec![],
     )
     .await?;
 
@@ -144,6 +146,7 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
             ("tid", &request.topic_id),
             ("page", &request.page.to_string()),
         ],
+        vec![],
     )
     .await?;
 

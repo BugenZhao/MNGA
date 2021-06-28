@@ -6,6 +6,7 @@ use crate::{
     error::LogicResult,
 };
 
+pub mod forum;
 mod macros;
 pub mod topic;
 pub mod user;
@@ -22,11 +23,16 @@ lazy_static! {
 async fn fetch_package(
     api: &str,
     mut query: Vec<(&str, &str)>,
+    mut form: Vec<(&str, &str)>,
 ) -> LogicResult<sxd_document::Package> {
     const URL_BASE: &str = "https://ngabbs.com";
 
     let url = Url::parse(&format!("{}/{}", URL_BASE, api)).unwrap();
-    let params = [("access_token", TOKEN), ("access_uid", UID)];
+    let form = {
+        form.push(("access_token", TOKEN));
+        form.push(("access_uid", UID));
+        form
+    };
     let query = {
         query.push(("lite", "xml"));
         query
@@ -34,12 +40,15 @@ async fn fetch_package(
 
     let response = CLIENT
         .post(url)
-        .form(&params)
+        .form(&form)
         .query(&query)
         .send()
         .await?
         .text_with_charset("gb18030")
         .await?;
+
+    #[cfg(test)]
+    println!("{:?}", response);
 
     let package = sxd_document::parser::parse(&response)?;
     Ok(package)

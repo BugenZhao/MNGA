@@ -12,7 +12,7 @@ struct TopicView: View {
   let topic: Topic
 
   var body: some View {
-    return VStack(alignment: .leading, spacing: 8) {
+    VStack(alignment: .leading, spacing: 8) {
       HStack {
         Text(topic.subject)
           .font(.callout)
@@ -29,9 +29,8 @@ struct TopicView: View {
         }
         Spacer()
         Text(timeago(topic.lastPostDate))
-      }
-        .foregroundColor(.secondary)
+      } .foregroundColor(.secondary)
         .font(.footnote)
-    }
+    } .padding(.vertical, 4)
   }
 }

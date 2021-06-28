@@ -21,8 +21,8 @@ struct ContentView_Previews: PreviewProvider {
       ContentView()
       TopicDetailsView(topic: Topic.with {
         $0.id = "27351344"
-        $0.subject = "Subject" }
-      )
+        $0.subject = "Subject"
+      })
     }
   }
 }

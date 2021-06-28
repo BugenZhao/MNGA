@@ -28,6 +28,7 @@ message AsyncRequest {
   oneof value {
     TopicListRequest topic_list = 1;
     TopicDetailsRequest topic_details = 2;
+    SubforumFilterRequest subforum_filter = 3;
     SleepRequest sleep = 1001;
   }
 }
@@ -55,3 +56,14 @@ message TopicDetailsResponse {
   repeated Reply replies = 2;
   uint32 pages = 3;
 }
+
+message SubforumFilterRequest {
+  enum Operation {
+    SHOW = 0;
+    BLOCK = 1;
+  }
+  Operation operation = 1;
+  string forum_id = 2;
+  string subforum_filter_id = 3;
+}
+message SubforumFilterResponse {}

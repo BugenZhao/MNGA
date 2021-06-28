@@ -31,8 +31,7 @@ struct ReplyView: View {
             .font(.subheadline)
           HStack {
             Text("#\(reply.floor) · " + timeago(reply.postDate))
-          }
-            .font(.footnote)
+          } .font(.footnote)
             .foregroundColor(.secondary)
         }
         Spacer()
@@ -41,14 +40,16 @@ struct ReplyView: View {
             Text("\(reply.score)")
               .fontWeight(.medium)
             Image(systemName: "chevron.up")
-          }
-            .font(.callout)
+          } .font(.callout)
         }
       }
+
       Text(reply.content)
         .font(.callout)
+    } .padding(.vertical, 4)
+      .contextMenu {
+      Button(action: copyContent) { Label("Copy Content", systemImage: "doc.on.doc") }
     }
-      .padding(.vertical, 4)
   }
 
   var avatar: AnyView {
@@ -64,5 +65,15 @@ struct ReplyView: View {
     } else {
       return AnyView(placeholder)
     }
+  }
+
+  func copyContent() {
+    #if os(iOS)
+      UIPasteboard.general.string = reply.content
+    #elseif os(macOS)
+      let pb = NSPasteboard.general
+      pb.clearContents()
+      pb.writeObjects([reply.content as NSString])
+    #endif
   }
 }

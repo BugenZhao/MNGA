@@ -40,7 +40,7 @@ struct TopicDetailsView: View {
     let id = "#\(topic.id)"
     let subject = topic.subject
 
-    switch UIDevice.current.userInterfaceIdiom {
+    switch uiIdiom() {
     case .pad, .mac:
       return [id, subject].joined(separator: " ")
     default:
@@ -50,21 +50,26 @@ struct TopicDetailsView: View {
 
   var body: some View {
     let inner = VStack(alignment: .leading) {
-      if dataSource.items.isEmpty {
-        ProgressView()
-      } else {
-        let list = List {
-          if let first = self.first {
-            Section(header: Text("Topic")) {
-              if UIDevice.current.userInterfaceIdiom == .phone {
-                Text(topic.subject)
-                  .font(.headline)
-                  .onAppear { showFullTitle = false }
-                  .onDisappear { showFullTitle = true }
-              }
-              ReplyView(reply: first)
-            }
+      let list = List {
+        Section(header: Text("Topic")) {
+          if uiIdiom() == .phone {
+            Text(topic.subject)
+              .font(.headline)
+              .onAppear { showFullTitle = false }
+              .onDisappear { showFullTitle = true }
           }
+          if let first = self.first {
+            ReplyView(reply: first)
+          } else {
+            HStack {
+              Spacer()
+              ProgressView()
+              Spacer()
+            } .frame(height: 80)
+          }
+        }
+
+        if dataSource.items.count > 1 {
           Section(header: Text("Replies")) {
             ForEach(dataSource.items.dropFirst(), id: \.floor) { reply in
               ReplyView(reply: reply)
@@ -73,14 +78,14 @@ struct TopicDetailsView: View {
             }
           }
         }
-
-        #if os(iOS)
-          list
-            .listStyle(InsetGroupedListStyle())
-        #elseif os(macOS)
-          list
-        #endif
       }
+
+      #if os(iOS)
+        list
+          .listStyle(InsetGroupedListStyle())
+      #elseif os(macOS)
+        list
+      #endif
     }
       .navigationTitle(title)
 
@@ -90,5 +95,15 @@ struct TopicDetailsView: View {
     #elseif os(macOS)
       inner
     #endif
+  }
+}
+
+
+struct TopicDetailsView_Preview: PreviewProvider {
+  static var previews: some View {
+    TopicDetailsView(topic: Topic.with {
+      $0.id = "27351344"
+      $0.subject = "Subject"
+    })
   }
 }
