@@ -43,11 +43,11 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   func refresh() {
     self.dataFlowId = UUID()
-    
+
     self.isLoading = true
     self.loadedPage = 0
     self.totalPages = 1
-    
+
     let request = buildRequest(1)
     logicCallAsync(request) { (response: Res) in
       self.latestResponse = response
@@ -67,6 +67,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
     let request = buildRequest(loadedPage + 1)
     let currentId = dataFlowId
+
     logicCallAsync(request) { (response: Res) in
       guard currentId == self.dataFlowId else { return }
 
