@@ -40,8 +40,10 @@ message TopicListRequest {
   uint32 page = 2;
 }
 message TopicListResponse {
+  Forum forum = 4;
   repeated Topic topics = 1;
   uint32 pages = 2;
+  repeated Subforum subforums = 3;
 }
 
 message TopicDetailsRequest {

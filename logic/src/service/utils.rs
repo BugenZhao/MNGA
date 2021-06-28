@@ -12,6 +12,13 @@ pub fn extract_kv(node: Node) -> HashMap<&str, String> {
         .collect::<HashMap<_, _>>()
 }
 
+pub fn extract_kv_pairs(node: Node) -> Vec<(&str, String)> {
+    node.children()
+        .into_iter()
+        .map(|n| (n.expanded_name().unwrap().local_part(), n.string_value()))
+        .collect::<Vec<_>>()
+}
+
 pub fn extract_nodeset<T, F>(package: &Package, xpath: &str, f: F) -> LogicResult<Vec<T>>
 where
     F: Fn(Nodeset) -> Vec<T>,
@@ -40,23 +47,27 @@ where
     Ok(extracted)
 }
 
+pub fn extract_string(package: &Package, xpath: &str) -> LogicResult<String> {
+    let document = package.as_document();
+    let item = sxd_xpath::evaluate_xpath(&document, xpath)?;
+    Ok(item.into_string())
+}
+
 pub fn extract_pages(
     package: &Package,
     rows_xpath: &str,
     rows_per_page_xpath: &str,
     default_per_page: u32,
 ) -> LogicResult<u32> {
-    let rows = extract_node(&package, rows_xpath, |n| {
-        n.string_value().parse::<u32>().ok()
-    })?
-    .flatten()
-    .unwrap_or(1);
+    let rows = extract_string(&package, rows_xpath)?
+        .parse::<u32>()
+        .ok()
+        .unwrap_or(1);
 
-    let rows_per_page = extract_node(&package, rows_per_page_xpath, |n| {
-        n.string_value().parse::<u32>().ok()
-    })?
-    .flatten()
-    .unwrap_or(default_per_page);
+    let rows_per_page = extract_string(&package, rows_per_page_xpath)?
+        .parse::<u32>()
+        .ok()
+        .unwrap_or(default_per_page);
 
     let pages = rows / rows_per_page + u32::from(rows % rows_per_page != 0);
 

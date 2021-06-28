@@ -1,15 +1,20 @@
+use std::collections::HashSet;
+
 use sxd_xpath::nodeset::Node;
 
 use crate::{
     error::{LogicError, LogicResult},
     protos::{
-        DataModel::{Reply, Topic, User},
+        DataModel::{Forum, Reply, Subforum, Topic, User},
         Service::*,
     },
     service::{
         fetch_package,
         user::UserController,
-        utils::{extract_kv, extract_node, extract_nodeset, extract_pages},
+        utils::{
+            extract_kv, extract_kv_pairs, extract_node, extract_nodeset, extract_pages,
+            extract_string,
+        },
     },
 };
 
@@ -29,6 +34,23 @@ fn extract_topic(node: Node) -> Option<Topic> {
     };
 
     Some(topic)
+}
+
+fn extract_subforum(node: Node) -> Option<Subforum> {
+    use super::macros::pget;
+    let pairs = extract_kv_pairs(node);
+    let attributes = pget!(pairs, 4, u64);
+
+    let forum = Subforum {
+        id: pget!(pairs, 0),
+        name: pget!(pairs, 1),
+        description: pget!(pairs, 2),
+        attributes,
+        filterable: attributes > 4096,
+        ..Default::default()
+    };
+
+    Some(forum)
 }
 
 fn extract_user(node: Node) -> Option<User> {
@@ -77,11 +99,40 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
         ns.into_iter().filter_map(extract_topic).collect()
     })?;
 
-    let pages = extract_pages(&package, "/root/__T__ROWS", "/root/__T__ROWS_PAGE", 35)?;
+    let pages = extract_pages(&package, "/root/__ROWS", "/root/__T__ROWS_PAGE", 35)?;
+
+    let selected_subforum_ids = extract_string(&package, "/root/__F/__SELECTED_FORUM")?
+        .split(',')
+        .map(|s| s.to_owned())
+        .collect::<HashSet<_>>();
+
+    let subforums = {
+        let mut subforums = extract_nodeset(&package, "/root/__F/sub_forums/item", |ns| {
+            ns.into_iter().filter_map(extract_subforum).collect()
+        })?;
+        subforums
+            .iter_mut()
+            .for_each(|s| s.selected = selected_subforum_ids.contains(s.get_id()));
+        subforums.sort_by(|a, b| {
+            a.get_selected()
+                .cmp(&b.get_selected())
+                .reverse()
+                .then(a.get_name().cmp(b.get_name()))
+        });
+        subforums
+    };
+
+    let forum = Forum {
+        id: extract_string(&package, "/root/__F/fid")?,
+        name: extract_string(&package, "/root/__F/name")?,
+        ..Default::default()
+    };
 
     Ok(TopicListResponse {
+        forum: Some(forum).into(),
         topics: topics.into(),
         pages,
+        subforums: subforums.into(),
         ..Default::default()
     })
 }

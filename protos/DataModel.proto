@@ -27,3 +27,17 @@ message Reply {
   uint64 post_date = 4;
   uint32 score = 5;
 }
+
+message Subforum {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  uint64 attributes = 4;
+  bool filterable = 5;
+  bool selected = 6;
+}
+
+message Forum {
+  string id = 1;
+  string name = 2;
+}
