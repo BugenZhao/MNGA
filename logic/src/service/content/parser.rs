@@ -29,8 +29,6 @@ peg::parser! {
         rule _() = ws()*
         rule br_tag() = "<br/>"
 
-        rule plain_text() -> &'input str
-            = $( (!(left_bracket() / left_close_bracket() / br_tag()) any_char())+ )
         rule token() -> &'input str
             = $( aldig()+ )
         rule sticker_name() -> &'input str
@@ -43,6 +41,9 @@ peg::parser! {
             }
         rule close_tag() -> &'input str
             = left_close_bracket() t:token() right_bracket() { t }
+
+        rule plain_text() -> &'input str
+            = $( (!(start_tag() / close_tag() / br_tag()) any_char())+ )
 
         rule tagged() -> Span
             = st:start_tag() s:(span()*) ct:close_tag() {?
@@ -139,6 +140,31 @@ Hello world
 <br/>
 Hello world
 <br/>
+        "#;
+        let r = parse_to_spans(text).unwrap();
+        println!("{:#?}", r);
+
+        let contains_br = r
+            .into_iter()
+            .filter(|span| span.has_plain())
+            .any(|span| span.get_plain().get_text().contains("<br/>"));
+        assert!(!contains_br);
+    }
+
+    #[test]
+    fn test_bad_bracket() {
+        let text = r#"
+[quote]
+[pid=528051563,27386376,1]Reply[/pid] [b]Post by [uid=63303812]拔刀斋主人[/uid] (2021-06-28 22:05):[/b]
+<br/><br/>
+你非要挑一个国家最烂的地方拍的话<br/>我去内陆8线小县城分分钟拍出个更破的
+[/quote]
+<br/><br/>
+费城街道上的[人]与电视剧行尸走肉里面一模一样
+<br/><br/>
+狗眼睁大一点。
+<br/><br/>
+还有，我现在就坐在成都贫民窟，这里收破烂的精气神都比你的狗爹强。
         "#;
         let r = parse_to_spans(text).unwrap();
         println!("{:#?}", r);

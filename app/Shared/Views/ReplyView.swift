@@ -45,7 +45,6 @@ struct ReplyView: View {
       }
 
       ReplyContentView(spans: reply.content.spans)
-        .font(.callout)
     } .padding(.vertical, 4)
       .contextMenu {
       Button(action: { copyContent(reply.content.raw) }) {
