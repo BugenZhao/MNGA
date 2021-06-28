@@ -78,7 +78,7 @@ fn extract_reply(node: Node) -> Option<Reply> {
     let spans = content::parse(&raw_content).unwrap_or_else(|_| {
         vec![Span {
             value: Some(Span_oneof_value::plain(Span_Plain {
-                text: raw_content,
+                text: raw_content.clone(),
                 ..Default::default()
             })),
             ..Default::default()
@@ -86,6 +86,7 @@ fn extract_reply(node: Node) -> Option<Reply> {
     });
     let content = ReplyContent {
         spans: spans.into(),
+        raw: raw_content,
         ..Default::default()
     };
 

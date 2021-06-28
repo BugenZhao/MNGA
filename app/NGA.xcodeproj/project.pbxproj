@@ -31,8 +31,8 @@
 		B4DBF61626897A170027233F /* TopicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61426897A170027233F /* TopicView.swift */; };
 		B4DBF61826897C520027233F /* Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61726897C520027233F /* Misc.swift */; };
 		B4DBF61926897C520027233F /* Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61726897C520027233F /* Misc.swift */; };
-		B4DBF61B268A20A90027233F /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* RichTextView.swift */; };
-		B4DBF61C268A20A90027233F /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* RichTextView.swift */; };
+		B4DBF61B268A20A90027233F /* ReplyContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* ReplyContentView.swift */; };
+		B4DBF61C268A20A90027233F /* ReplyContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* ReplyContentView.swift */; };
 		B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */; };
 		B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */; };
 		B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43926885DD700EC78A4 /* Service.pb.swift */; };
@@ -65,7 +65,7 @@
 		B4DBF611268979F70027233F /* TopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListView.swift; sourceTree = "<group>"; };
 		B4DBF61426897A170027233F /* TopicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicView.swift; sourceTree = "<group>"; };
 		B4DBF61726897C520027233F /* Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Misc.swift; sourceTree = "<group>"; };
-		B4DBF61A268A20A90027233F /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
+		B4DBF61A268A20A90027233F /* ReplyContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyContentView.swift; sourceTree = "<group>"; };
 		B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModel.pb.swift; sourceTree = "<group>"; };
 		B4DCF43926885DD700EC78A4 /* Service.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.pb.swift; sourceTree = "<group>"; };
 		B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingDataSource.swift; sourceTree = "<group>"; };
@@ -185,7 +185,7 @@
 				B4DBF60E268979C20027233F /* TopicDetailsView.swift */,
 				B4DBF611268979F70027233F /* TopicListView.swift */,
 				B4DBF61426897A170027233F /* TopicView.swift */,
-				B4DBF61A268A20A90027233F /* RichTextView.swift */,
+				B4DBF61A268A20A90027233F /* ReplyContentView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -315,7 +315,7 @@
 				B4DBF60C2689799F0027233F /* ReplyView.swift in Sources */,
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
-				B4DBF61B268A20A90027233F /* RichTextView.swift in Sources */,
+				B4DBF61B268A20A90027233F /* ReplyContentView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4DCF44B2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */,
@@ -336,7 +336,7 @@
 				B4DBF60D2689799F0027233F /* ReplyView.swift in Sources */,
 				B4DBF613268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
-				B4DBF61C268A20A90027233F /* RichTextView.swift in Sources */,
+				B4DBF61C268A20A90027233F /* ReplyContentView.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4DCF44C2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */,

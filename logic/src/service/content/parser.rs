@@ -86,7 +86,7 @@ peg::parser! {
     }
 }
 
-pub fn parse(text: &str) -> LogicResult<Vec<Span>> {
+pub fn parse_to_spans(text: &str) -> LogicResult<Vec<Span>> {
     content_parser::content(text).map_err(|e| LogicError::ContentParse(e.to_string()))
 }
 
@@ -106,7 +106,7 @@ mod test {
 <br/><br/>
 公务员只要脑子聪明会做题会面试，就可以了，说不定人家进来就打算放飞自我了
         "#;
-        let r = parse(text).unwrap();
+        let r = parse_to_spans(text).unwrap();
         println!("{:#?}", r);
     }
 
@@ -117,7 +117,7 @@ mod test {
 [img]http://img.nga.178.com/attachments/mon_201209/14/-47218_5052bc587c6f9.png[/img]
 虽说没有明确规定，但是理由是领导觉得影响不好，说到底还是一个形象问题吧
         "#;
-        let r = parse(text).unwrap();
+        let r = parse_to_spans(text).unwrap();
         println!("{:#?}", r);
     }
 
@@ -126,7 +126,7 @@ mod test {
         let text = r#"
 2K给nga多少钱[s:a2:不明觉厉]
         "#;
-        let r = parse(text).unwrap();
+        let r = parse_to_spans(text).unwrap();
         println!("{:#?}", r);
     }
 
@@ -140,7 +140,7 @@ Hello world
 Hello world
 <br/>
         "#;
-        let r = parse(text).unwrap();
+        let r = parse_to_spans(text).unwrap();
         println!("{:#?}", r);
 
         let contains_br = r

@@ -44,11 +44,13 @@ struct ReplyView: View {
         }
       }
 
-      RichTextView(spans: reply.content.spans)
+      ReplyContentView(spans: reply.content.spans)
         .font(.callout)
     } .padding(.vertical, 4)
       .contextMenu {
-      Button(action: copyContent) { Label("Copy Content", systemImage: "doc.on.doc") }
+      Button(action: { copyContent(reply.content.raw) }) {
+        Label("Copy Raw Content", systemImage: "doc.on.doc")
+      }
     }
   }
 
@@ -67,13 +69,13 @@ struct ReplyView: View {
     }
   }
 
-  func copyContent() {
-//    #if os(iOS)
-//      UIPasteboard.general.string = reply.content
-//    #elseif os(macOS)
-//      let pb = NSPasteboard.general
-//      pb.clearContents()
-//      pb.writeObjects([reply.content as NSString])
-//    #endif
+  func copyContent(_ content: String) {
+    #if os(iOS)
+      UIPasteboard.general.string = content
+    #elseif os(macOS)
+      let pb = NSPasteboard.general
+      pb.clearContents()
+      pb.writeObjects([content as NSString])
+    #endif
   }
 }

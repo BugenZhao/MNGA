@@ -59,4 +59,7 @@ message Span {
   }
 }
 
-message ReplyContent { repeated Span spans = 1; }
+message ReplyContent {
+  repeated Span spans = 1;
+  string raw = 2;
+}
