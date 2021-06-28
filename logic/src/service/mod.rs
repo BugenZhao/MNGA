@@ -6,6 +6,7 @@ use crate::{
     error::LogicResult,
 };
 
+pub mod content;
 pub mod forum;
 mod macros;
 pub mod topic;

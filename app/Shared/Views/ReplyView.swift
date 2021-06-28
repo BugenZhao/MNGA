@@ -44,7 +44,7 @@ struct ReplyView: View {
         }
       }
 
-      Text(reply.content)
+      RichTextView(spans: reply.content.spans)
         .font(.callout)
     } .padding(.vertical, 4)
       .contextMenu {
@@ -68,12 +68,12 @@ struct ReplyView: View {
   }
 
   func copyContent() {
-    #if os(iOS)
-      UIPasteboard.general.string = reply.content
-    #elseif os(macOS)
-      let pb = NSPasteboard.general
-      pb.clearContents()
-      pb.writeObjects([reply.content as NSString])
-    #endif
+//    #if os(iOS)
+//      UIPasteboard.general.string = reply.content
+//    #elseif os(macOS)
+//      let pb = NSPasteboard.general
+//      pb.clearContents()
+//      pb.writeObjects([reply.content as NSString])
+//    #endif
   }
 }

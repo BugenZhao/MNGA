@@ -1,15 +1,13 @@
-use std::collections::HashSet;
-
-use sxd_xpath::nodeset::Node;
-
 use crate::{
     error::{LogicError, LogicResult},
     protos::{
-        DataModel::{Forum, Reply, Subforum, Topic, User},
+        DataModel::{
+            Forum, Reply, ReplyContent, Span, Span_Plain, Span_oneof_value, Subforum, Topic, User,
+        },
         Service::*,
     },
     service::{
-        fetch_package,
+        content, fetch_package,
         user::UserController,
         utils::{
             extract_kv, extract_kv_pairs, extract_node, extract_nodeset, extract_pages,
@@ -17,6 +15,8 @@ use crate::{
         },
     },
 };
+use std::collections::HashSet;
+use sxd_xpath::nodeset::Node;
 
 fn extract_topic(node: Node) -> Option<Topic> {
     use super::macros::get;
@@ -74,10 +74,25 @@ fn extract_reply(node: Node) -> Option<Reply> {
     use super::macros::get;
     let map = extract_kv(node);
 
+    let raw_content = get!(map, "content");
+    let spans = content::parse(&raw_content).unwrap_or_else(|_| {
+        vec![Span {
+            value: Some(Span_oneof_value::plain(Span_Plain {
+                text: raw_content,
+                ..Default::default()
+            })),
+            ..Default::default()
+        }]
+    });
+    let content = ReplyContent {
+        spans: spans.into(),
+        ..Default::default()
+    };
+
     let reply = Reply {
         floor: get!(map, "lou", u32),
         author_id: get!(map, "authorid"),
-        content: get!(map, "content"),
+        content: Some(content).into(),
         post_date: get!(map, "postdatetimestamp", _),
         score: get!(map, "score", _),
         ..Default::default()

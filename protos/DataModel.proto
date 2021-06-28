@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-// import "google/protobuf/timestamp.proto";
-
 message Topic {
   string id = 1;
   string subject = 2;
@@ -23,7 +21,7 @@ message User {
 message Reply {
   uint32 floor = 1;
   string author_id = 2;
-  string content = 3;
+  ReplyContent content = 3;
   uint64 post_date = 4;
   uint32 score = 5;
 }
@@ -42,3 +40,23 @@ message Forum {
   string id = 1;
   string name = 2;
 }
+
+message Span {
+  message Plain { string text = 1; }
+  message BreakLine {}
+  message Sticker { string name = 1; }
+  message Tagged {
+    string tag = 1;
+    repeated string attributes = 2;
+    repeated Span spans = 3;
+  }
+
+  oneof value {
+    Plain plain = 1;
+    BreakLine break_line = 2;
+    Sticker sticker = 3;
+    Tagged tagged = 4;
+  }
+}
+
+message ReplyContent { repeated Span spans = 1; }

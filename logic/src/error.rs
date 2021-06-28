@@ -11,11 +11,13 @@ pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
 pub enum LogicError {
     #[error("missing field: {0}")]
     MissingField(String),
+    #[error("error while paring content: {0}")]
+    ContentParse(String),
 
     #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
     #[error(transparent)]
-    Parse(#[from] sxd_document::parser::Error),
+    XmlParse(#[from] sxd_document::parser::Error),
     #[error(transparent)]
     XPath(#[from] sxd_xpath::Error),
 }
