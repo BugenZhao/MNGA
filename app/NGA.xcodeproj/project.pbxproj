@@ -43,8 +43,8 @@
 		B4DCF4462688C4FB00EC78A4 /* RemoteImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4DCF4452688C4FB00EC78A4 /* RemoteImage */; };
 		B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */; };
 		B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */; };
-		B4DCF44B2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */; };
-		B4DCF44C2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */; };
+		B4DCF44B2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */; };
+		B4DCF44C2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */; };
 		B4DCF4502688F68400EC78A4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4DCF4532688F68400EC78A4 /* Localizable.strings */; };
 		B4DCF4512688F68400EC78A4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4DCF4532688F68400EC78A4 /* Localizable.strings */; };
 /* End PBXBuildFile section */
@@ -72,7 +72,7 @@
 		B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModel.pb.swift; sourceTree = "<group>"; };
 		B4DCF43926885DD700EC78A4 /* Service.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.pb.swift; sourceTree = "<group>"; };
 		B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingDataSource.swift; sourceTree = "<group>"; };
-		B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationLazyView.swift; sourceTree = "<group>"; };
+		B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+FirstAppear.swift"; sourceTree = "<group>"; };
 		B4DCF4522688F68400EC78A4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -183,7 +183,7 @@
 		B4DCF43E2688C38800EC78A4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B4DCF44A2688E5CA00EC78A4 /* NavigationLazyView.swift */,
+				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
 				B4DBF60B2689799F0027233F /* ReplyView.swift */,
 				B4DBF60E268979C20027233F /* TopicDetailsView.swift */,
 				B4DBF611268979F70027233F /* TopicListView.swift */,
@@ -323,7 +323,7 @@
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4DBF61E268B8CD80027233F /* ForumListView.swift in Sources */,
-				B4DCF44B2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */,
+				B4DCF44B2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */,
 				B4C024D626884FD700E53554 /* ContentView.swift in Sources */,
 				B4DBF61526897A170027233F /* TopicView.swift in Sources */,
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
@@ -345,7 +345,7 @@
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4DBF61F268B8CD80027233F /* ForumListView.swift in Sources */,
-				B4DCF44C2688E5CA00EC78A4 /* NavigationLazyView.swift in Sources */,
+				B4DCF44C2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */,
 				B4C024D726884FD700E53554 /* ContentView.swift in Sources */,
 				B4DBF61626897A170027233F /* TopicView.swift in Sources */,
 				B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */,

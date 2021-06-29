@@ -61,9 +61,7 @@ struct TopicListView: View {
       } else {
         let list = List {
           ForEach(dataSource.items, id: \.id) { topic in
-            let destination = NavigationLazyView(TopicDetailsView(topic: topic))
-
-            NavigationLink(destination: destination) {
+            NavigationLink(destination: TopicDetailsView(topic: topic)) {
               TopicView(topic: topic)
                 .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
             }
@@ -101,8 +99,8 @@ struct TopicListView: View {
           Label("Menu", systemImage: "ellipsis.circle")
         }
       }
-    }
-    
+    } .onFirstAppear { dataSource.loadMore() }
+
     #if os(iOS)
       inner
         .navigationBarTitleDisplayMode(.inline)

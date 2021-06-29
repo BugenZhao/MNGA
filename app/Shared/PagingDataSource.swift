@@ -30,8 +30,6 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.buildRequest = buildRequest
     self.onResponse = onResponse
     self.id = id
-
-    loadMore()
   }
 
   func loadMoreIfNeeded(currentItem: Item) {
@@ -62,7 +60,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  private func loadMore() {
+  func loadMore() {
     if isLoading || loadedPage >= totalPages { return }
     isLoading = true;
 

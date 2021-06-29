@@ -33,8 +33,7 @@ struct ForumListView: View {
   }
 
   func buildLink(_ forum: Forum) -> some View {
-    let destination = NavigationLazyView(TopicListView(forum: forum))
-    return NavigationLink(destination: destination) {
+    return NavigationLink(destination: TopicListView(forum: forum)) {
       ForumView(forum: forum)
     }
   }

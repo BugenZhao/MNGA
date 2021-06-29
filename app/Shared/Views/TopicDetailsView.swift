@@ -29,7 +29,7 @@ struct TopicDetailsView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.pid
+      id: \.floor.description
     )
     self._dataSource = StateObject(wrappedValue: dataSource)
   }
@@ -88,6 +88,7 @@ struct TopicDetailsView: View {
       #endif
     }
       .navigationTitle(title)
+      .onFirstAppear { dataSource.loadMore() }
 
     #if os(iOS)
       inner
