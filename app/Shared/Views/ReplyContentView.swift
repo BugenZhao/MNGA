@@ -12,13 +12,10 @@ import RemoteImage
 struct ReplyImageView: View {
   let url: URL
 
-//  @StateObject var service = DefaultRemoteImageServiceFactory.makeDefaultRemoteImageService()
-
   var body: some View {
 
     RemoteImage(
       type: .url(url),
-//        service: service,
       errorView: { e in Text("\(e.localizedDescription): \(url)") },
       imageView: { image in
         image.resizable().aspectRatio(contentMode: .fit)
@@ -32,52 +29,52 @@ struct ReplyImageView: View {
   }
 }
 
-class ViewsCombiner {
-  class PropertyGuard<P> {
-    let combiner: ViewsCombiner
-    let property: ReferenceWritableKeyPath<ViewsCombiner, [P]>
-
-    init(
-      _ combiner: ViewsCombiner,
-      _ property: ReferenceWritableKeyPath<ViewsCombiner, [P]>
-    ) {
-      self.combiner = combiner
-      self.property = property
-    }
-
-    deinit {
-      let _ = combiner[keyPath: property].popLast()
-    }
-  }
+fileprivate class ViewsCombiner {
+  var target: ReferenceWritableKeyPath<ViewsCombiner, [AnyView]> = \.views
 
   var views = [AnyView]()
   var textBuffer: Text? = nil
 
   var colors = [Color.primary]
+  var fonts = [Font.callout]
+
+  var quoteViews = [AnyView]()
+  var pid: String? = nil
 
   func append<V: View>(_ view: V) {
     if view is Text {
+      let view = (view as! Text)
+        .font(fonts.last)
+        .foregroundColor(colors.last)
+
       if textBuffer == nil {
-        textBuffer = view as? Text
+        textBuffer = view
       } else {
-        textBuffer = textBuffer! + (view as! Text)
+        textBuffer = textBuffer! + view
       }
     } else {
       if let textBuffer = textBuffer {
-        views.append(AnyView(textBuffer))
+        self[keyPath: target].append(AnyView(textBuffer))
         self.textBuffer = nil
       }
-      views.append(AnyView(view))
+      self[keyPath: target].append(AnyView(view))
     }
   }
 
   func appendBreakLine() {
     if let textBuffer = textBuffer {
-      views.append(AnyView(textBuffer))
+      self[keyPath: target].append(AnyView(textBuffer))
       self.textBuffer = nil
     } else {
-      views.append(AnyView(Text("")))
+      self[keyPath: target].append(AnyView(Text("")))
     }
+  }
+  
+  func appendPID(_ pid: String) {
+    guard target == \.quoteViews else { return }
+    self.pid = pid
+    self.append(Text("Reply"))
+    self.append(Text(" #\(pid) "))
   }
 
   func build() -> [AnyView] {
@@ -86,6 +83,48 @@ class ViewsCombiner {
       self.textBuffer = nil
     }
     return views
+  }
+
+  func withColor(_ color: Color?, _ action: @escaping () -> Void) {
+    if let color = color {
+      colors.append(color)
+      action()
+      let _ = colors.popLast()
+    } else {
+      action()
+    }
+  }
+
+  func withFont(_ font: Font?, _ action: @escaping () -> Void) {
+    if let font = font {
+      fonts.append(font)
+      action()
+      let _ = fonts.popLast()
+    } else {
+      action()
+    }
+  }
+
+//  func withQuote(_ action: @escaping () -> Void) {
+//    let oldTarget = target
+//    target = \.quoteViews
+//
+//    self.withFont(.subheadline) {
+//      self.withColor(.secondary) {
+//        action()
+//      }
+//    }
+//
+//    if let pid = self.pid {
+//
+//    }
+//
+//    target = oldTarget
+//    pid = nil
+//  }
+
+  var lastFont: Font? {
+    fonts.last
   }
 }
 
@@ -104,8 +143,6 @@ struct ReplyContentView: View {
 
   func buildViews() -> [AnyView] {
     let combiner = ViewsCombiner()
-    var fonts = [Font.callout]
-    var colors = [Color.primary]
 
     func visitSpans(_ spans: [Span]) {
       spans.forEach(visit)
@@ -141,11 +178,7 @@ struct ReplyContentView: View {
       }
 
       if let text = text {
-        combiner.append(
-          text
-            .font(fonts.last)
-            .foregroundColor(colors.last)
-        )
+        combiner.append(text)
       }
     }
 
@@ -164,36 +197,40 @@ struct ReplyContentView: View {
     }
 
     func visitQuote(_ tagged: Span.Tagged) {
-      fonts.append(.subheadline)
-      colors.append(.secondary)
-
-      visitSpans(tagged.spans)
-
-      let _ = fonts.popLast()
-      let _ = colors.popLast()
+      combiner.withFont(.subheadline) {
+        combiner.withColor(.secondary) {
+          visitSpans(tagged.spans)
+        }
+      }
     }
 
     func visitBold(_ tagged: Span.Tagged) {
-      fonts.append(fonts.last!.bold())
-
-      visitSpans(tagged.spans)
-
-      let _ = fonts.popLast()
+      combiner.withFont(combiner.lastFont?.bold()) {
+        if tagged.spans.first?.plain.text.starts(with: "Reply to") == true {
+          visitQuote(Span.Tagged.with { $0.spans = Array(tagged.spans.dropFirst()) })
+        } else {
+          visitSpans(tagged.spans)
+        }
+      }
     }
 
     func visitUID(_ tagged: Span.Tagged) {
-      colors.append(.accentColor)
-
-      visitSpans(tagged.spans)
-
-      let _ = colors.popLast()
+      combiner.withColor(.accentColor) {
+        visitSpans(tagged.spans)
+      }
     }
 
     func visitPID(_ tagged: Span.Tagged) {
       if let pid = tagged.attributes.first {
-        combiner.append(
-          Text(" #\(pid) ")
-        )
+        combiner.withFont(combiner.lastFont?.bold()) {
+          combiner.append(
+            Text("Reply")
+          )
+          combiner.append(
+            Text(" #\(pid) ")
+          )
+        }
+
       }
     }
 

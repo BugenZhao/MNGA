@@ -43,7 +43,7 @@ peg::parser! {
             = left_close_bracket() t:token() right_bracket() { t }
 
         rule plain_text() -> &'input str
-            = $( (!(start_tag() / close_tag() / br_tag()) any_char())+ )
+            = $( (!(start_tag() / close_tag() / br_tag() / left_sticker_bracket()) any_char())+ )
 
         rule tagged() -> Span
             = st:start_tag() s:(span()*) ct:close_tag() {?

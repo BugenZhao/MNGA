@@ -91,6 +91,7 @@ fn extract_reply(node: Node) -> Option<Reply> {
     };
 
     let reply = Reply {
+        pid: get!(map, "pid"),
         floor: get!(map, "lou", u32),
         author_id: get!(map, "authorid"),
         content: Some(content).into(),
