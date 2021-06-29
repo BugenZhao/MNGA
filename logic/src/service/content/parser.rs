@@ -33,7 +33,9 @@ peg::parser! {
             = $( aldig()+ )
         rule sticker_name() -> &'input str
             = $( (!right_bracket() any_char())+ )
-        rule attributes() -> Vec<&'input str> = equal() ts:(token() ** comma()) { ts }
+        rule attribute() -> &'input str
+            = $( (!(right_bracket() / comma()) any_char())* )
+        rule attributes() -> Vec<&'input str> = equal() ts:(attribute() ** comma()) { ts }
 
         rule start_tag() -> (&'input str, Vec<&'input str>) =
             left_bracket() t:token() a:attributes()? right_bracket() {
@@ -168,11 +170,17 @@ Hello world
         "#;
         let r = parse_to_spans(text).unwrap();
         println!("{:#?}", r);
+    }
 
-        let contains_br = r
-            .into_iter()
-            .filter(|span| span.has_plain())
-            .any(|span| span.get_plain().get_text().contains("<br/>"));
-        assert!(!contains_br);
+    #[test]
+    fn test_url_attribute() {
+        let text = r#"
+[quote]近期水区流量较大，为保证社区的稳定，我们选择的将冲水时间由3天调整为12小时，恢复时间未知<br/>
+为了保证尽可能减少的冲水带来的负面用户体验，同时为了社区子版面更好的发挥应有作用以及更好的发展，
+我在此恳请各位在发帖时请根据发帖主题内容选择对应板块发帖<br/><br/>
+游记、摄影作品内容请发至[url=https://bbs.nga.cn/thread.php?fid=-8725919][b]小窗视界[/b][/url]<br/>宠物饲养心得及求助、晒照等内容请发至[url=https://bbs.nga.cn/thread.php?fid=-353371][b]萌萌宠物[/b][/url]<br/>烹饪心得及咨询、美食探店等内容请发至[url=https://bbs.nga.cn/thread.php?fid=-608808][b]恩基爱厨艺美食交流[/b][/url]<br/>主机、电脑游戏相关内容请发至[url=https://bbs.nga.cn/thread.php?fid=414][b]游戏综合讨论[/b][/url]<br/>手游相关内容请发至[url=https://bbs.nga.cn/thread.php?fid=428][b]手机 网页游戏综合讨论[/b][/url]<br/>电影、电视剧歌曲及翻唱等内容请发至[url=https://bbs.nga.cn/thread.php?fid=-576177][b]影音讨论区[/b][/url]<br/>小说、网文类内容请发至[url=https://bbs.nga.cn/thread.php?fid=524][b]漩涡书院[/b][/url]<br/>工作、职场人际关系相关内容请发至[url=https://bbs.nga.cn/thread.php?fid=-1459709][b]职场人生[/b][/url]<br/><br/>除此之外，我们也会对部分现有话题类型进行梳理，以更合理的形式对各个子话题版面进行展示，并且开设部分新话题版面，目前股票版、历史版、综合体育版目前在规划中，家装版也打算进行重新装修，对以上版面管理感兴趣的朋友可以私信我进行报名，我们也会对版务团队人选进行审核及筛选。<br/><br/>然后再聊聊水区，近些年来不少用户对于水区质量下降的情况表示不满，鉴于此，我们将考虑重新启用水区博物馆的计划，在不修改水区现有声望体系的情况下对于有质量的科普贴等内容进行威望奖励并不进行冲水，提升水区内容质量。<br/><br/>银色近期会开放 话题、游戏版面or合集新建的申请方式，还请有此方面意向者关注。<br/><br/>感谢各位长久以来的支持和配合！<br/>[img]./mon_202002/11/-7Q5-1fz0XjZ5cT1kS5g-2y.gif.medium.jpg[/img][/quote]
+        "#;
+        let r = parse_to_spans(text).unwrap();
+        println!("{:#?}", r);
     }
 }
