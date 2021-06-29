@@ -10,7 +10,7 @@ use crate::{
         content, fetch_package,
         user::UserController,
         utils::{
-            extract_kv, extract_kv_pairs, extract_node, extract_nodeset, extract_pages,
+            extract_kv, extract_kv_pairs, extract_node, extract_nodes, extract_pages,
             extract_string,
         },
     },
@@ -114,7 +114,7 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
     )
     .await?;
 
-    let topics = extract_nodeset(&package, "/root/__T/item", |ns| {
+    let topics = extract_nodes(&package, "/root/__T/item", |ns| {
         ns.into_iter().filter_map(extract_topic).collect()
     })?;
 
@@ -126,7 +126,7 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
         .collect::<HashSet<_>>();
 
     let subforums = {
-        let mut subforums = extract_nodeset(&package, "/root/__F/sub_forums/item", |ns| {
+        let mut subforums = extract_nodes(&package, "/root/__F/sub_forums/item", |ns| {
             ns.into_iter().filter_map(extract_subforum).collect()
         })?;
         subforums
@@ -167,18 +167,14 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
     )
     .await?;
 
-    let users = extract_nodeset(&package, "/root/__U/item", |ns| {
+    let users = extract_nodes(&package, "/root/__U/item", |ns| {
         ns.into_iter().filter_map(extract_user).collect()
     })?;
     UserController::get().update_users(users);
 
-    let replies = {
-        let mut replies = extract_nodeset(&package, "/root/__R/item", |ns| {
-            ns.into_iter().filter_map(extract_reply).collect()
-        })?;
-        replies.sort_by_key(|r| r.floor);
-        replies
-    };
+    let replies = extract_nodes(&package, "/root/__R/item", |ns| {
+        ns.into_iter().filter_map(extract_reply).collect()
+    })?;
 
     let topic = extract_node(&package, "/root/__T", extract_topic)?.flatten();
     if topic.is_none() {

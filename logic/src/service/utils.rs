@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use sxd_document::Package;
-use sxd_xpath::nodeset::{Node, Nodeset};
+use sxd_xpath::nodeset::Node;
 
 use crate::error::LogicResult;
 
@@ -19,14 +19,14 @@ pub fn extract_kv_pairs(node: Node) -> Vec<(&str, String)> {
         .collect::<Vec<_>>()
 }
 
-pub fn extract_nodeset<T, F>(package: &Package, xpath: &str, f: F) -> LogicResult<Vec<T>>
+pub fn extract_nodes<T, F>(package: &Package, xpath: &str, f: F) -> LogicResult<Vec<T>>
 where
-    F: Fn(Nodeset) -> Vec<T>,
+    F: Fn(Vec<Node>) -> Vec<T>,
 {
     let document = package.as_document();
     let items = sxd_xpath::evaluate_xpath(&document, xpath)?;
     let extracted = if let sxd_xpath::Value::Nodeset(nodeset) = items {
-        f(nodeset)
+        f(nodeset.document_order())
     } else {
         vec![]
     };

@@ -8,7 +8,7 @@ use crate::{
             SubforumFilterRequest_Operation, SubforumFilterResponse,
         },
     },
-    service::utils::{extract_kv, extract_nodeset},
+    service::utils::{extract_kv, extract_nodes},
 };
 use sxd_xpath::nodeset::Node;
 
@@ -34,7 +34,7 @@ pub async fn get_forum_list(_request: ForumListRequest) -> LogicResult<ForumList
     )
     .await?;
 
-    let forums = extract_nodeset(
+    let forums = extract_nodes(
         &package,
         "/root/data/item/groups/item/forums/item",
         |ns| ns.into_iter().filter_map(extract_forum).collect(),
