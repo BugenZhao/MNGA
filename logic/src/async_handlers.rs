@@ -1,7 +1,7 @@
 use crate::{
     protos::Service::*,
     service::{
-        forum::set_subforum_filter,
+        forum::{get_forum_list, set_subforum_filter},
         topic::{get_topic_details, get_topic_list},
     },
 };
@@ -35,5 +35,10 @@ pub async fn handle_topic_details(request: TopicDetailsRequest) -> TopicDetailsR
 
 pub async fn handle_subforum_filter(request: SubforumFilterRequest) -> SubforumFilterResponse {
     let res = set_subforum_filter(request).await;
+    or_default!(res)
+}
+
+pub async fn handle_forum_list(request: ForumListRequest) -> ForumListResponse {
+    let res = get_forum_list(request).await;
     or_default!(res)
 }

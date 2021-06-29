@@ -1,13 +1,50 @@
+use super::fetch_package;
 use crate::{
     error::LogicResult,
-    protos::Service::{
-        SubforumFilterRequest, SubforumFilterRequest_Operation, SubforumFilterResponse,
+    protos::{
+        DataModel::Forum,
+        Service::{
+            ForumListRequest, ForumListResponse, SubforumFilterRequest,
+            SubforumFilterRequest_Operation, SubforumFilterResponse,
+        },
     },
+    service::utils::{extract_kv, extract_nodeset},
 };
+use sxd_xpath::nodeset::Node;
 
-use super::fetch_package;
+fn extract_forum(node: Node) -> Option<Forum> {
+    use super::macros::get;
+    let map = extract_kv(node);
 
+    let forum = Forum {
+        id: get!(map, "fid"),
+        name: get!(map, "name"),
+        info: get!(map, "info"),
+        ..Default::default()
+    };
 
+    Some(forum)
+}
+
+pub async fn get_forum_list(_request: ForumListRequest) -> LogicResult<ForumListResponse> {
+    let package = fetch_package(
+        "app_api.php",
+        vec![("__lib", "home"), ("__act", "category")],
+        vec![],
+    )
+    .await?;
+
+    let forums = extract_nodeset(
+        &package,
+        "/root/data/item/groups/item/forums/item",
+        |ns| ns.into_iter().filter_map(extract_forum).collect(),
+    )?;
+
+    Ok(ForumListResponse {
+        forums: forums.into(),
+        ..Default::default()
+    })
+}
 
 pub async fn set_subforum_filter(
     request: SubforumFilterRequest,
@@ -48,6 +85,15 @@ mod test {
             ..Default::default()
         })
         .await?;
+
+        println!("response: {:?}", response);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_get_forum_list() -> LogicResult<()> {
+        let response = get_forum_list(ForumListRequest::new()).await?;
 
         println!("response: {:?}", response);
 

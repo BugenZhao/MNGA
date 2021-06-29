@@ -30,17 +30,17 @@ struct SubforumFilterToggleView: View {
 }
 
 struct TopicListView: View {
-  let forumID: String
+  let forum: Forum
 
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
 
-  init(forumID: String = "-7") {
-    self.forumID = forumID
+  init(forum: Forum) {
+    self.forum = forum
 
     let dataSource = PagingDataSource<TopicListResponse, Topic>(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
-          $0.forumID = forumID
+          $0.forumID = forum.id
           $0.page = UInt32(page)
         })
       },
@@ -55,7 +55,7 @@ struct TopicListView: View {
   }
 
   var body: some View {
-    VStack {
+    let inner = VStack {
       if dataSource.items.isEmpty {
         ProgressView()
       } else {
@@ -77,9 +77,8 @@ struct TopicListView: View {
       }
     }
       .navigationTitle(title)
-      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
+      ToolbarItem() {
         Menu {
           if let subforums = dataSource.latestResponse?.subforums {
             Menu {
@@ -96,23 +95,30 @@ struct TopicListView: View {
             Button(action: { dataSource.refresh(clear: true) }) {
               Label("Refresh", systemImage: "arrow.clockwise")
             }
-            Text("#\(forumID) " + (dataSource.latestResponse?.forum.name ?? ""))
+            Text("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""))
           }
         } label: {
           Label("Menu", systemImage: "ellipsis.circle")
         }
       }
     }
+    
+    #if os(iOS)
+      inner
+        .navigationBarTitleDisplayMode(.inline)
+    #elseif os(macOS)
+      inner
+    #endif
   }
 
   var title: String {
-    dataSource.latestResponse?.forum.name ?? "Forum #\(forumID)"
+    dataSource.latestResponse?.forum.name ?? forum.name
   }
 
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
       $0.operation = show ? .show : .block
-      $0.forumID = forumID
+      $0.forumID = forum.id
       $0.subforumFilterID = subforum.filterID
     })) { (response: SubforumFilterResponse) in
       dataSource.refresh(clear: true)
@@ -122,8 +128,13 @@ struct TopicListView: View {
 
 struct TopicListView_Previews: PreviewProvider {
   static var previews: some View {
+    let defaultForum = Forum.with {
+      $0.id = "-7"
+      $0.name = "大漩涡"
+    }
+
     NavigationView {
-      TopicListView()
+      TopicListView(forum: defaultForum)
     }
   }
 }

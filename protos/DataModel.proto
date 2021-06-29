@@ -19,6 +19,7 @@ message User {
 }
 
 message Reply {
+  string pid = 6;
   uint32 floor = 1;
   string author_id = 2;
   ReplyContent content = 3;
@@ -39,6 +40,7 @@ message Subforum {
 message Forum {
   string id = 1;
   string name = 2;
+  string info = 3;
 }
 
 message Span {

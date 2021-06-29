@@ -29,6 +29,7 @@ message AsyncRequest {
     TopicListRequest topic_list = 1;
     TopicDetailsRequest topic_details = 2;
     SubforumFilterRequest subforum_filter = 3;
+    ForumListRequest forum_list = 4;
     SleepRequest sleep = 1001;
   }
 }
@@ -67,3 +68,6 @@ message SubforumFilterRequest {
   string subforum_filter_id = 3;
 }
 message SubforumFilterResponse {}
+
+message ForumListRequest {}
+message ForumListResponse { repeated Forum forums = 1; }

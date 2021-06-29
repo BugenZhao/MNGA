@@ -29,7 +29,7 @@ struct TopicDetailsView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.floor.description
+      id: \.pid
     )
     self._dataSource = StateObject(wrappedValue: dataSource)
   }
