@@ -20,6 +20,7 @@ fn main() {
         .includes(&["../protos"])
         .inputs(&["../protos/Service.proto", "../protos/DataModel.proto"])
         .customize(Customize {
+            serde_derive: Some(true),
             gen_mod_rs: Some(true),
             ..Default::default()
         })

@@ -2,10 +2,11 @@ use lazy_static::lazy_static;
 use reqwest::{Client, Url};
 
 use crate::{
-    config::{TOKEN, UID},
+    auth::{TOKEN, UID},
     error::LogicResult,
 };
 
+mod constants;
 pub mod content;
 pub mod forum;
 mod macros;

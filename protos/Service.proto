@@ -7,16 +7,13 @@ import "DataModel.proto";
 
 message SyncRequest {
   oneof value {
-    GreetingRequest greeting = 1;
+    ConfigureRequest configure = 1;
     LocalUserRequest local_user = 2;
   }
 }
 
-message GreetingRequest {
-  string verb = 1;
-  string name = 2;
-}
-message GreetingResponse { string text = 1; }
+message ConfigureRequest { Configuration config = 1; }
+message ConfigureResponse { optional string error = 1; }
 
 message LocalUserRequest { string user_id = 1; }
 message LocalUserResponse { optional User user = 1; }

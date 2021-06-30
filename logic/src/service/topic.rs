@@ -23,13 +23,13 @@ fn extract_topic(node: Node) -> Option<Topic> {
     let map = extract_kv(node);
 
     let topic = Topic {
-        id: get!(map, "tid"),
-        subject: get!(map, "subject"),
-        author_id: get!(map, "authorid"),
-        author_name: get!(map, "author"),
-        post_date: get!(map, "postdate", _),
-        last_post_date: get!(map, "lastpost", _),
-        replies_num: get!(map, "replies", _),
+        id: get!(map, "tid")?,
+        subject: get!(map, "subject")?,
+        author_id: get!(map, "authorid")?,
+        author_name: get!(map, "author")?,
+        post_date: get!(map, "postdate", _)?,
+        last_post_date: get!(map, "lastpost", _)?,
+        replies_num: get!(map, "replies", _)?,
         ..Default::default()
     };
 
@@ -39,13 +39,13 @@ fn extract_topic(node: Node) -> Option<Topic> {
 fn extract_subforum(node: Node) -> Option<Subforum> {
     use super::macros::pget;
     let pairs = extract_kv_pairs(node);
-    let attributes = pget!(pairs, 4, u64);
+    let attributes = pget!(pairs, 4, u64)?;
 
     let forum = Subforum {
-        id: pget!(pairs, 0),
-        name: pget!(pairs, 1),
-        description: pget!(pairs, 2),
-        filter_id: pget!(pairs, 3), // for filter, subforum id ??
+        id: pget!(pairs, 0)?,
+        name: pget!(pairs, 1)?,
+        description: pget!(pairs, 2)?,
+        filter_id: pget!(pairs, 3)?, // for filter, subforum id ??
         attributes,
         filterable: attributes > 4096,
         ..Default::default()
@@ -59,11 +59,11 @@ fn extract_user(node: Node) -> Option<User> {
     let map = extract_kv(node);
 
     let user = User {
-        id: get!(map, "uid"),
-        name: get!(map, "username"),
-        avatar_url: get!(map, "avatar"),
-        reg_date: get!(map, "regdate", _),
-        post_num: get!(map, "postnum", _),
+        id: get!(map, "uid")?,
+        name: get!(map, "username")?,
+        avatar_url: get!(map, "avatar")?,
+        reg_date: get!(map, "regdate", _)?,
+        post_num: get!(map, "postnum", _)?,
         ..Default::default()
     };
 
@@ -74,7 +74,7 @@ fn extract_reply(node: Node) -> Option<Reply> {
     use super::macros::get;
     let map = extract_kv(node);
 
-    let raw_content = get!(map, "content");
+    let raw_content = get!(map, "content")?;
     let spans = content::parse(&raw_content).unwrap_or_else(|_| {
         vec![Span {
             value: Some(Span_oneof_value::plain(Span_Plain {
@@ -91,12 +91,12 @@ fn extract_reply(node: Node) -> Option<Reply> {
     };
 
     let reply = Reply {
-        pid: get!(map, "pid"),
-        floor: get!(map, "lou", u32),
-        author_id: get!(map, "authorid"),
+        pid: get!(map, "pid")?,
+        floor: get!(map, "lou", u32)?,
+        author_id: get!(map, "authorid")?,
         content: Some(content).into(),
-        post_date: get!(map, "postdatetimestamp", _),
-        score: get!(map, "score", _),
+        post_date: get!(map, "postdatetimestamp", _)?,
+        score: get!(map, "score", _)?,
         ..Default::default()
     };
 

@@ -8,7 +8,10 @@ use crate::{
             SubforumFilterRequest_Operation, SubforumFilterResponse,
         },
     },
-    service::utils::{extract_kv, extract_nodes},
+    service::{
+        constants::FORUM_ICON_PATH,
+        utils::{extract_kv, extract_nodes},
+    },
 };
 use sxd_xpath::nodeset::Node;
 
@@ -16,10 +19,14 @@ fn extract_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
 
+    let id = get!(map, "fid")?;
+    let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, id);
+
     let forum = Forum {
-        id: get!(map, "fid"),
-        name: get!(map, "name"),
-        info: get!(map, "info"),
+        id,
+        name: get!(map, "name")?,
+        info: get!(map, "info").unwrap_or_default(),
+        icon_url,
         ..Default::default()
     };
 
@@ -34,11 +41,9 @@ pub async fn get_forum_list(_request: ForumListRequest) -> LogicResult<ForumList
     )
     .await?;
 
-    let forums = extract_nodes(
-        &package,
-        "/root/data/item/groups/item/forums/item",
-        |ns| ns.into_iter().filter_map(extract_forum).collect(),
-    )?;
+    let forums = extract_nodes(&package, "/root/data/item/groups/item/forums/item", |ns| {
+        ns.into_iter().filter_map(extract_forum).collect()
+    })?;
 
     Ok(ForumListResponse {
         forums: forums.into(),

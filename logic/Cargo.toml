@@ -13,11 +13,13 @@ crate-type = ["staticlib"]
 dashmap = "4.0.2"
 enum-as-inner = "0.3.3"
 futures = "0.3.15"
+futures-cache = "0.10.0"
 html-escape = "0.2.9"
 lazy_static = "1.4.0"
 peg = "0.7.0"
 protobuf = "2.24.1"
 reqwest = "0.11.4"
+serde = { version = "1.0.126", features = ["derive"] }
 sxd-document = "0.3.2"
 sxd-xpath = "0.4.2"
 thiserror = "1.0.25"
@@ -26,6 +28,10 @@ tokio = { version="1.7.1", features=["rt-multi-thread", "macros", "time"] }
 [build-dependencies]
 cbindgen = "0.19.0"
 protoc-rust = "2.24.1"
+
+[features]
+default = ["with-serde"]
+with-serde = ["protobuf/with-serde"]
 
 [profile.release]
 debug = true

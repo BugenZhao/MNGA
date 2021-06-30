@@ -14,8 +14,10 @@ struct ForumView: View {
 
   var body: some View {
     HStack {
-      let defaultIcon = Image(systemName: "bubble.left.and.bubble.right")
-        .foregroundColor(.accentColor)
+//      let defaultIcon = Image(systemName: "bubble.left.and.bubble.right")
+//        .foregroundColor(.accentColor)
+      
+      let defaultIcon = Image("default_forum_icon").resizable()
 
       if let url = URL(string: forum.iconURL) {
         RemoteImage(
@@ -66,7 +68,7 @@ struct ForumListView: View {
             Spacer(); ProgressView(); Spacer()
           } .onAppear { loadData() }
         } else {
-          buildLink(defaultForum)
+//          buildLink(defaultForum)
           ForEach(forums, id: \.id) { forum in
             buildLink(forum)
           }

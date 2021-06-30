@@ -1,10 +1,8 @@
-use crate::{protos::Service::*, service::user::UserController};
+use crate::{config, protos::Service::*, service::user::UserController};
 
-pub fn handle_greeting(request: GreetingRequest) -> GreetingResponse {
-    GreetingResponse {
-        text: format!("{}, {}!", request.get_verb(), request.get_name()),
-        ..Default::default()
-    }
+pub fn handle_configure(mut request: ConfigureRequest) -> ConfigureResponse {
+    config::set_config(request.take_config());
+    ConfigureResponse::new()
 }
 
 pub fn handle_local_user(request: LocalUserRequest) -> LocalUserResponse {

@@ -68,5 +68,5 @@ message ReplyContent {
 }
 
 message Configuration {
-  optional string document_dir_path = 1;
+  string document_dir_path = 1;
 }
