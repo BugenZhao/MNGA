@@ -41,6 +41,7 @@ message Forum {
   string id = 1;
   string name = 2;
   string info = 3;
+  string icon_url = 4;
 }
 
 message Span {
@@ -64,4 +65,8 @@ message Span {
 message ReplyContent {
   repeated Span spans = 1;
   string raw = 2;
+}
+
+message Configuration {
+  optional string document_dir_path = 1;
 }

@@ -7,14 +7,29 @@
 
 import Foundation
 import SwiftUI
+import RemoteImage
 
 struct ForumView: View {
   let forum: Forum
 
   var body: some View {
     HStack {
-      Image(systemName: "bubble.left.and.bubble.right")
+      let defaultIcon = Image(systemName: "bubble.left.and.bubble.right")
         .foregroundColor(.accentColor)
+
+      if let url = URL(string: forum.iconURL) {
+        RemoteImage(
+          type: .url(url),
+          errorView: { _ in defaultIcon },
+          imageView: { image in
+            image.resizable()
+          },
+          loadingView: { defaultIcon }
+        ) .frame(width: 28, height: 28)
+      } else {
+        defaultIcon
+      }
+
       VStack(alignment: .leading) {
         Text(forum.name)
         if !forum.info.isEmpty {
