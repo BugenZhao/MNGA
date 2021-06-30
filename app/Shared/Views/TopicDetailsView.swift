@@ -82,7 +82,7 @@ struct TopicDetailsView: View {
 
       #if os(iOS)
         list
-          .listStyle(InsetGroupedListStyle())
+          .listStyle(GroupedListStyle())
       #elseif os(macOS)
         list
       #endif

@@ -60,15 +60,17 @@ struct TopicListView: View {
         ProgressView()
       } else {
         let list = List {
-          ForEach(dataSource.items, id: \.id) { topic in
-            NavigationLink(destination: TopicDetailsView(topic: topic)) {
-              TopicView(topic: topic)
-                .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+          Section(header: Text("Latest Topics")) {
+            ForEach(dataSource.items, id: \.id) { topic in
+              NavigationLink(destination: TopicDetailsView(topic: topic)) {
+                TopicView(topic: topic)
+                  .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+              }
             }
           }
         }
         #if os(iOS)
-          list.listStyle(InsetGroupedListStyle())
+          list.listStyle(GroupedListStyle())
         #else
           list
         #endif
@@ -96,14 +98,14 @@ struct TopicListView: View {
             Text("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""))
           }
         } label: {
-          Label("Menu", systemImage: "ellipsis.circle")
+          Label("Menu", systemImage: "ellipsis")
         }
       }
     } .onFirstAppear { dataSource.loadMore() }
 
     #if os(iOS)
       inner
-        .navigationBarTitleDisplayMode(.inline)
+//        .navigationBarTitleDisplayMode(.inline)
     #elseif os(macOS)
       inner
     #endif

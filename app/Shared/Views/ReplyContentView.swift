@@ -159,7 +159,7 @@ struct ReplyContentView: View {
       case .plain(let plain):
         text = Text(plain.text)
       case .sticker(let sticker):
-        text = Text(sticker.name)
+        text = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
       case .tagged(let tagged):
         switch tagged.tag {
         case "img":

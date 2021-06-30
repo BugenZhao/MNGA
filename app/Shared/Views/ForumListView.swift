@@ -12,14 +12,19 @@ struct ForumView: View {
   let forum: Forum
 
   var body: some View {
-    VStack(alignment: .leading) {
-      Text(forum.name)
-      if !forum.info.isEmpty {
-        Text(forum.info)
-          .font(.footnote)
-          .foregroundColor(.secondary)
+    HStack {
+      Image(systemName: "bubble.left.and.bubble.right")
+        .foregroundColor(.accentColor)
+      VStack(alignment: .leading) {
+        Text(forum.name)
+        if !forum.info.isEmpty {
+          Text(forum.info)
+            .font(.footnote)
+            .foregroundColor(.secondary)
+        }
       }
     }
+
   }
 }
 
@@ -53,7 +58,7 @@ struct ForumListView: View {
         }
       }
       #if os(iOS)
-        list.listStyle(InsetGroupedListStyle())
+        list
       #else
         list
       #endif
