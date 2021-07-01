@@ -9,7 +9,31 @@ import Foundation
 import SwiftUI
 
 class FavoriteForumsStorage: ObservableObject {
+  enum FilterMode: String, CaseIterable {
+    case favoritesOnly = "Favorites Only"
+    case all = "All Forums"
+
+    var icon: String {
+      switch self {
+      case .favoritesOnly:
+        return "star.fill"
+      case .all:
+        return "star.lefthalf.fill"
+      }
+    }
+
+    var filterIcon: String {
+      switch self {
+      case .all:
+        return "line.horizontal.3.decrease.circle"
+      default:
+        return "line.horizontal.3.decrease.circle.fill"
+      }
+    }
+  }
+
   @AppStorage("favoriteForums") var favoriteForums = [Forum]()
+  @AppStorage("showAll") var filterMode = FilterMode.all
 
   func isFavorite(id: String) -> Bool {
     favoriteForums.firstIndex { $0.id == id } != nil
