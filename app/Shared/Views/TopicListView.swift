@@ -112,7 +112,7 @@ struct TopicListView: View {
   }
 
   var title: String {
-    dataSource.latestResponse?.forum.name ?? forum.name
+    forum.name
   }
 
   func setSubforumFilter(show: Bool, subforum: Subforum) {

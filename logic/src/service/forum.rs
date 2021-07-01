@@ -2,7 +2,7 @@ use super::fetch_package;
 use crate::{
     error::LogicResult,
     protos::{
-        DataModel::Forum,
+        DataModel::{Category, Forum},
         Service::{
             ForumListRequest, ForumListResponse, SubforumFilterRequest,
             SubforumFilterRequest_Operation, SubforumFilterResponse,
@@ -10,16 +10,18 @@ use crate::{
     },
     service::{
         constants::FORUM_ICON_PATH,
-        utils::{extract_kv, extract_nodes},
+        utils::{extract_kv, extract_nodes, extract_nodes_rel},
     },
 };
 use sxd_xpath::nodeset::Node;
 
 fn extract_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
+    use crate::protos::DataModel::Forum_oneof__stid;
     let map = extract_kv(node);
 
-    let id = get!(map, "fid")?;
+    let id = get!(map, "id")?;
+    let stid = get!(map, "stid").map(Forum_oneof__stid::stid);
     let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, id);
 
     let forum = Forum {
@@ -27,10 +29,31 @@ fn extract_forum(node: Node) -> Option<Forum> {
         name: get!(map, "name")?,
         info: get!(map, "info").unwrap_or_default(),
         icon_url,
+        fid: get!(map, "fid")?,
+        _stid: stid,
         ..Default::default()
     };
 
     Some(forum)
+}
+
+fn extract_category(node: Node) -> Option<Category> {
+    use super::macros::get;
+    let map = extract_kv(node.clone());
+
+    let forums = extract_nodes_rel(node, "./groups/item/forums/item", |ns| {
+        ns.into_iter().filter_map(extract_forum).collect()
+    })
+    .ok()?;
+
+    let category = Category {
+        id: get!(map, "_id")?,
+        name: get!(map, "name")?,
+        forums: forums.into(),
+        ..Default::default()
+    };
+
+    Some(category)
 }
 
 pub async fn get_forum_list(_request: ForumListRequest) -> LogicResult<ForumListResponse> {
@@ -41,12 +64,12 @@ pub async fn get_forum_list(_request: ForumListRequest) -> LogicResult<ForumList
     )
     .await?;
 
-    let forums = extract_nodes(&package, "/root/data/item/groups/item/forums/item", |ns| {
-        ns.into_iter().filter_map(extract_forum).collect()
+    let categories = extract_nodes(&package, "/root/data/item", |ns| {
+        ns.into_iter().filter_map(extract_category).collect()
     })?;
 
     Ok(ForumListResponse {
-        forums: forums.into(),
+        categories: categories.into(),
         ..Default::default()
     })
 }
@@ -101,6 +124,14 @@ mod test {
         let response = get_forum_list(ForumListRequest::new()).await?;
 
         println!("response: {:?}", response);
+
+        let forum_exists = response
+            .get_categories()
+            .first()
+            .map(|c| c.get_forums().first())
+            .flatten()
+            .is_some();
+        assert!(forum_exists);
 
         Ok(())
     }

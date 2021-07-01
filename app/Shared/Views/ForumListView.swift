@@ -14,9 +14,6 @@ struct ForumView: View {
 
   var body: some View {
     HStack {
-//      let defaultIcon = Image(systemName: "bubble.left.and.bubble.right")
-//        .foregroundColor(.accentColor)
-      
       let defaultIcon = Image("default_forum_icon").resizable()
 
       if let url = URL(string: forum.iconURL) {
@@ -32,8 +29,9 @@ struct ForumView: View {
         defaultIcon
       }
 
-      VStack(alignment: .leading) {
+      HStack {
         Text(forum.name)
+        Spacer()
         if !forum.info.isEmpty {
           Text(forum.info)
             .font(.footnote)
@@ -46,7 +44,7 @@ struct ForumView: View {
 }
 
 struct ForumListView: View {
-  @State var forums = [Forum]()
+  @State var categories = [Category]()
 
   public let defaultForum = Forum.with {
     $0.id = "-7"
@@ -63,14 +61,17 @@ struct ForumListView: View {
   var body: some View {
     VStack {
       let list = List {
-        if forums.isEmpty {
+        if categories.isEmpty {
           HStack {
             Spacer(); ProgressView(); Spacer()
           } .onAppear { loadData() }
         } else {
-//          buildLink(defaultForum)
-          ForEach(forums, id: \.id) { forum in
-            buildLink(forum)
+          ForEach(categories, id: \.id) { category in
+            Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
+              ForEach(category.forums, id: \.id) { forum in
+                buildLink(forum)
+              }
+            }
           }
         }
       }
@@ -83,11 +84,11 @@ struct ForumListView: View {
   }
 
   func loadData() {
-    guard forums.isEmpty else { return }
+    guard categories.isEmpty else { return }
 
     logicCallAsync(.forumList(.with { _ in }))
     { (response: ForumListResponse) in
-      forums = response.forums
+      categories = response.categories
     }
   }
 }

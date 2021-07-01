@@ -37,11 +37,19 @@ message Subforum {
   bool selected = 6;
 }
 
+message Category {
+  string id = 1;
+  string name = 2;
+  repeated Forum forums = 3;
+}
+
 message Forum {
   string id = 1;
   string name = 2;
   string info = 3;
   string icon_url = 4;
+  string fid = 5;
+  optional string stid = 6;
 }
 
 message Span {

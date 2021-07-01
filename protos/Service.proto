@@ -67,4 +67,4 @@ message SubforumFilterRequest {
 message SubforumFilterResponse {}
 
 message ForumListRequest {}
-message ForumListResponse { repeated Forum forums = 1; }
+message ForumListResponse { repeated Category categories = 1; }
