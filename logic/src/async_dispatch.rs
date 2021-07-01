@@ -8,7 +8,7 @@ use tokio::runtime::Runtime;
 
 lazy_static! {
     static ref RUNTIME: Runtime = {
-        println!("rust: creating tokio runtime");
+        log::debug!("creating tokio runtime");
         Runtime::new().expect("failed to create tokio runtime")
     };
 }
@@ -38,7 +38,7 @@ impl RustCallback {
 
 impl Drop for RustCallback {
     fn drop(&mut self) {
-        println!("rust: {:?} at {:?} dropped!", self, &self as *const _)
+        log::trace!("{:?} at {:?} dropped!", self, &self as *const _)
     }
 }
 
@@ -52,7 +52,7 @@ macro_rules! r {
 
 pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
     RUNTIME.spawn(async move {
-        println!("rust: serving async request on {:?}", thread::current());
+        log::debug!("serving async request on {:?}", thread::current());
 
         use AsyncRequest_oneof_value::*;
         let response = match req.value.expect("no async req") {

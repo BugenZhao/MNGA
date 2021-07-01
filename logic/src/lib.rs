@@ -14,7 +14,7 @@ use crate::{
 };
 use protobuf::Message;
 use protos::Service::*;
-use std::{ffi, mem, os::raw::c_char, ptr, slice};
+use std::{ffi, mem, os::raw::c_char, ptr, slice, sync::Once};
 
 unsafe fn parse_from_raw<T: Message>(data: *const u8, len: usize) -> T {
     let bytes = slice::from_raw_parts(data, len);
@@ -38,7 +38,7 @@ impl From<Vec<u8>> for ByteBuffer {
             cap: v.capacity(),
             err: ptr::null(),
         };
-        println!("rust: new buffer {:?}", ret);
+        log::trace!("new buffer {:?}", ret);
         mem::forget(v);
         ret
     }
@@ -65,12 +65,23 @@ impl<E: ToString> From<Result<Vec<u8>, E>> for ByteBuffer {
     }
 }
 
+static INIT: Once = Once::new();
+
+fn may_init() {
+    INIT.call_once(|| {
+        env_logger::builder()
+            .filter_level(log::LevelFilter::Info)
+            .init();
+    })
+}
+
 /// # Safety
 /// totally unsafe
 #[no_mangle]
 pub unsafe extern "C" fn rust_call(data: *const u8, len: usize) -> ByteBuffer {
+    may_init();
     let request = parse_from_raw::<SyncRequest>(data, len);
-    println!("rust: request {:?}", request);
+    log::info!("request {:?}", request);
     let response_buf = dispatch_request(request);
     ByteBuffer::from(response_buf)
 }
@@ -79,9 +90,10 @@ pub unsafe extern "C" fn rust_call(data: *const u8, len: usize) -> ByteBuffer {
 /// totally unsafe
 #[no_mangle]
 pub unsafe extern "C" fn rust_call_async(data: *const u8, len: usize, callback: RustCallback) {
-    println!("rust: get {:?} at {:?}", callback, &callback as *const _);
+    may_init();
+    log::trace!("get {:?} at {:?}", callback, &callback as *const _);
     let request = parse_from_raw::<AsyncRequest>(data, len);
-    println!("rust: async request {:?}", request);
+    log::info!("async request {:?}", request);
     dispatch_request_async(request, callback);
 }
 
@@ -89,7 +101,8 @@ pub unsafe extern "C" fn rust_call_async(data: *const u8, len: usize, callback: 
 /// totally unsafe
 #[no_mangle]
 pub unsafe extern "C" fn rust_free(byte_buffer: ByteBuffer) {
-    println!("rust: free buffer {:?}", byte_buffer);
+    may_init();
+    log::trace!("free buffer {:?}", byte_buffer);
     let ByteBuffer { ptr, len, cap, err } = byte_buffer;
 
     let buf = Vec::from_raw_parts(ptr as *mut u8, len, cap);

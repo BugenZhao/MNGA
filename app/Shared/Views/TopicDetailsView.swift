@@ -89,7 +89,7 @@ struct TopicDetailsView: View {
       #endif
     }
       .navigationTitle(title)
-      .onFirstAppear { dataSource.loadMore() }
+    .onFirstAppear { dataSource.initialLoad() }
 
     #if os(iOS)
       inner

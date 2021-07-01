@@ -12,7 +12,7 @@ macro_rules! r {
 }
 
 pub fn dispatch_request(req: SyncRequest) -> Result<Vec<u8>, String> {
-    println!("rust: serving sync request on {:?}", thread::current());
+    log::debug!("serving sync request on {:?}", thread::current());
 
     use SyncRequest_oneof_value::*;
     let response = panic::catch_unwind(|| match req.value.expect("no sync req") {

@@ -51,7 +51,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     logicCallAsync(request) { (response: Res) in
       self.latestResponse = response
       let (newItems, newTotalPages) = self.onResponse(response)
-      print("page \(self.loadedPage + 1), newItems \(newItems.count)")
+      logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
       self.items = newItems
       self.totalPages = newTotalPages ?? self.totalPages
@@ -60,7 +60,13 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func loadMore() {
+  func initialLoad() {
+    if self.loadedPage == 0 {
+      loadMore()
+    }
+  }
+
+  private func loadMore() {
     if isLoading || loadedPage >= totalPages { return }
     isLoading = true;
 
@@ -72,7 +78,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
       self.latestResponse = response
       let (newItems, newTotalPages) = self.onResponse(response)
-      print("page \(self.loadedPage + 1), newItems \(newItems.count)")
+      logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
       self.items += newItems
       self.totalPages = newTotalPages ?? self.totalPages

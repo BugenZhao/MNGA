@@ -89,7 +89,7 @@ struct UserMenu: View {
       Label("Me", systemImage: icon)
     }
       .imageScale(.large)
-      .onAppear { loadData() }
+      .onChange(of: uid) { _ in loadData() }
   }
 
   func loadData() {

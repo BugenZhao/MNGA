@@ -12,7 +12,7 @@ struct NGAApp: App {
   @StateObject var authStorage = AuthStorage()
 
   init() {
-    print("swift: init")
+    logger.info("init")
   }
 
   var body: some Scene {

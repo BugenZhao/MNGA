@@ -10,7 +10,7 @@ use crate::{
 macro_rules! or_default {
     ($e:expr) => {
         $e.unwrap_or_else(|e| {
-            println!("rust error: {:?}", e);
+            log::error!("{:?}", e);
             Default::default()
         })
     };

@@ -7,3 +7,10 @@
 
 import Foundation
 import SwiftUI
+import Logging
+
+let logger: Logger = {
+  var logger = Logger(label: "App")
+  logger.logLevel = .info
+  return logger
+}();

@@ -66,7 +66,7 @@ private class WrappedDataCallback {
 
   func run(_ data: Data?, _ error: LogicError?) {
     let block = {
-      print("swift: running callback on thread `\(Thread.current)`")
+      logger.debug("running callback on thread `\(Thread.current)`")
       if let error = error {
         self.errorCallback(error)
       } else {
@@ -86,7 +86,7 @@ private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: B
   defer { rust_free(resByteBuffer) }
   let dataCallback: WrappedDataCallback = Unmanaged.fromOpaque(callbackPtr!).takeRetainedValue()
 
-  print("swift: before running callback on thread `\(Thread.current)`")
+  logger.debug("before running callback on thread `\(Thread.current)`")
   dataCallback.run(resData, resError)
 }
 
@@ -101,7 +101,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
       let res = try! Response(serializedData: resData)
       closure(res)
     },
-    errorCallback: { e in print("rustCallAsync error: \(e)") },
+    errorCallback: { e in logger.error("rustCallAsync error: \(e)") },
     onMainThread: onMainThread
   )
   let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()

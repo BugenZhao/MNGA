@@ -102,7 +102,7 @@ struct TopicListView: View {
             .imageScale(.large)
         }
       }
-    } .onFirstAppear { dataSource.loadMore() }
+    } .onFirstAppear { dataSource.initialLoad() }
 
     #if os(iOS)
       inner
