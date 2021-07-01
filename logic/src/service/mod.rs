@@ -3,7 +3,6 @@ use reqwest::{Client, Url};
 
 use crate::error::LogicResult;
 
-pub mod auth;
 mod constants;
 pub mod content;
 pub mod forum;
@@ -11,6 +10,12 @@ mod macros;
 pub mod topic;
 pub mod user;
 mod utils;
+
+#[cfg(test)]
+#[path = "auth_debug.rs"]
+pub mod auth;
+#[cfg(not(test))]
+pub mod auth;
 
 fn build_client() -> Client {
     Client::builder().https_only(true).build().unwrap()
