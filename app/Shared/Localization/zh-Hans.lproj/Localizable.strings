@@ -25,5 +25,5 @@
 "Sign In" = "登录";
 "Sign Out" = "退出登录";
 "Me" = "我";
-"%@ Posts" = "%@个帖子";
+"%u Posts" = "%u 个帖子";
 "Sign in to NGA" = "登录到 NGA";

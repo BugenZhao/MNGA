@@ -95,10 +95,10 @@ struct TopicListView: View {
             Button(action: { dataSource.refresh(clear: true) }) {
               Label("Refresh", systemImage: "arrow.clockwise")
             }
-            Text("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""))
+            Label("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
           }
         } label: {
-          Label("Menu", systemImage: "ellipsis")
+          Label("Menu", systemImage: "ellipsis.circle.fill")
             .imageScale(.large)
         }
       }

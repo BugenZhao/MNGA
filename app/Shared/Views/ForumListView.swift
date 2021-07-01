@@ -62,9 +62,9 @@ struct UserMenu: View {
 
           if let user = self.user {
             Menu {
-              Text(user.name)
-              Text(user.id)
-              Text("\(user.postNum) Posts")
+              Label(user.name, systemImage: "person.fill")
+              Label(user.id, systemImage: "number")
+              Label("\(user.postNum) Posts", systemImage: "text.bubble")
             } label: {
               label
             }

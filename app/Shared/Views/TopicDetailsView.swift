@@ -38,7 +38,7 @@ struct TopicDetailsView: View {
   private var first: Reply? { dataSource.items.first }
 
   var title: String {
-    let id = "#\(topic.id)"
+    let id = NSLocalizedString("Topic", comment: "") + " #\(topic.id)"
     let subject = topic.subject
 
     switch UserInterfaceIdiom.current {
@@ -104,10 +104,12 @@ struct TopicDetailsView: View {
 struct TopicDetailsView_Preview: PreviewProvider {
   static var previews: some View {
     AuthedPreview {
-      TopicDetailsView(topic: Topic.with {
-        $0.id = "27388005"
-        $0.subject = "Subject"
-      })
+      NavigationView {
+        TopicDetailsView(topic: Topic.with {
+          $0.id = "27388005"
+          $0.subject = "Subject Title"
+        })
+      }
     }
   }
 }
