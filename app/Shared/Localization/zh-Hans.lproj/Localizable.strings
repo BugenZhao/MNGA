@@ -15,3 +15,7 @@
 "Reply" = "回复";
 "Forums" = "版块";
 "Latest Topics" = "最新话题";
+"Favorites" = "收藏";
+"No Favorites" = "没有收藏";
+"Remove from Favorites" = "取消收藏";
+"Mark as Favorite" = "设为收藏";

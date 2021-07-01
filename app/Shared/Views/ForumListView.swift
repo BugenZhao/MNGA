@@ -44,27 +44,53 @@ struct ForumView: View {
 }
 
 struct ForumListView: View {
+  @StateObject var favorites = FavoriteForumsStorage()
+
   @State var categories = [Category]()
 
   public let defaultForum = Forum.with {
     $0.id = "-7"
+    $0.fid = "-7"
     $0.name = "网事杂谈"
-    $0.info = "大漩涡"
   }
 
   func buildLink(_ forum: Forum) -> some View {
     return NavigationLink(destination: TopicListView(forum: forum)) {
       ForumView(forum: forum)
+        .contextMenu(ContextMenu(menuItems: {
+        Button(action: {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation { favorites.toggleFavorite(forum: forum) }
+          }
+        }) {
+          let isFavorite = favorites.isFavorite(id: forum.id)
+          let text: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
+          let image = isFavorite ? "star.slash.fill" : "star"
+          Label(text, systemImage: image)
+        }
+      }))
     }
   }
 
   var body: some View {
     VStack {
       let list = List {
+        Section(header: Text("Favorites").font(.subheadline).fontWeight(.medium)) {
+          if favorites.favoriteForums.isEmpty {
+            HStack {
+              Spacer(); Text("No Favorites").font(.footnote).foregroundColor(.secondary); Spacer()
+            }
+          } else {
+            ForEach(favorites.favoriteForums, id: \.id) { forum in
+              buildLink(forum)
+            }
+          }
+        } .onAppear { loadData() }
+
         if categories.isEmpty {
           HStack {
             Spacer(); ProgressView(); Spacer()
-          } .onAppear { loadData() }
+          }
         } else {
           ForEach(categories, id: \.id) { category in
             Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
