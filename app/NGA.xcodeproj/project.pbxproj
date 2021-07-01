@@ -11,6 +11,8 @@
 		B45819BD268D7D7200999830 /* Array+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Array+RawRepresentable.swift */; };
 		B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
 		B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
+		B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C6268D9B5600999830 /* SDWebImageSwiftUI */; };
+		B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C8268D9B6300999830 /* SDWebImageSwiftUI */; };
 		B4C024D426884FD700E53554 /* NGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C126884FD600E53554 /* NGAApp.swift */; };
 		B4C024D526884FD700E53554 /* NGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C126884FD600E53554 /* NGAApp.swift */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
@@ -43,8 +45,6 @@
 		B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */; };
 		B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43926885DD700EC78A4 /* Service.pb.swift */; };
 		B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43926885DD700EC78A4 /* Service.pb.swift */; };
-		B4DCF4442688C4ED00EC78A4 /* RemoteImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4DCF4432688C4ED00EC78A4 /* RemoteImage */; };
-		B4DCF4462688C4FB00EC78A4 /* RemoteImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4DCF4452688C4FB00EC78A4 /* RemoteImage */; };
 		B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */; };
 		B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */; };
 		B4DCF44B2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */; };
@@ -87,9 +87,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
-				B4DCF4442688C4ED00EC78A4 /* RemoteImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,9 +97,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */,
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
-				B4DCF4462688C4FB00EC78A4 /* RemoteImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,7 +236,7 @@
 			name = "NGA (iOS)";
 			packageProductDependencies = (
 				B4C024EC268850E800E53554 /* SwiftProtobuf */,
-				B4DCF4432688C4ED00EC78A4 /* RemoteImage */,
+				B45819C6268D9B5600999830 /* SDWebImageSwiftUI */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -257,7 +257,7 @@
 			name = "NGA (macOS)";
 			packageProductDependencies = (
 				B4C024EF268850F300E53554 /* SwiftProtobuf */,
-				B4DCF4452688C4FB00EC78A4 /* RemoteImage */,
+				B45819C8268D9B6300999830 /* SDWebImageSwiftUI */,
 			);
 			productName = "NGA (macOS)";
 			productReference = B4C024D026884FD700E53554 /* NGA.app */;
@@ -292,7 +292,7 @@
 			mainGroup = B4C024BB26884FD600E53554;
 			packageReferences = (
 				B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
-				B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */,
+				B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -629,6 +629,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.2;
+			};
+		};
 		B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf";
@@ -637,17 +645,19 @@
 				minimumVersion = 1.17.0;
 			};
 		};
-		B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/crelies/RemoteImage.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B45819C6268D9B5600999830 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+		B45819C8268D9B6300999830 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
 		B4C024EC268850E800E53554 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
@@ -657,16 +667,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
-		};
-		B4DCF4432688C4ED00EC78A4 /* RemoteImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */;
-			productName = RemoteImage;
-		};
-		B4DCF4452688C4FB00EC78A4 /* RemoteImage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4DCF4422688C4ED00EC78A4 /* XCRemoteSwiftPackageReference "RemoteImage" */;
-			productName = RemoteImage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

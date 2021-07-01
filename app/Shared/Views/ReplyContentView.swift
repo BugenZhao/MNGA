@@ -7,25 +7,16 @@
 
 import Foundation
 import SwiftUI
-import RemoteImage
+import SDWebImageSwiftUI
 
 struct ReplyImageView: View {
   let url: URL
 
   var body: some View {
-
-    RemoteImage(
-      type: .url(url),
-      errorView: { e in Text("\(e.localizedDescription): \(url)") },
-      imageView: { image in
-        image.resizable().aspectRatio(contentMode: .fit)
-      },
-      loadingView: { HStack {
-        Spacer()
-        ProgressView()
-        Spacer()
-      } }
-    )
+    WebImage(url: url)
+      .resizable()
+      .indicator(.activity)
+      .scaledToFit()
   }
 }
 
@@ -69,7 +60,7 @@ fileprivate class ViewsCombiner {
       self[keyPath: target].append(AnyView(Text("")))
     }
   }
-  
+
   func appendPID(_ pid: String) {
     guard target == \.quoteViews else { return }
     self.pid = pid

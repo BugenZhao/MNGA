@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import RemoteImage
+import SDWebImageSwiftUI
 
 struct ReplyView: View {
   let reply: Reply
@@ -24,6 +24,7 @@ struct ReplyView: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         avatar
+          .foregroundColor(.accentColor)
           .frame(width: 32, height: 32)
           .clipShape(Circle())
         VStack(alignment: .leading) {
@@ -53,18 +54,18 @@ struct ReplyView: View {
     }
   }
 
-  var avatar: AnyView {
-    let placeholder = Image(systemName: "person.circle.fill").resizable()
+  var avatar: some View {
+    let placeholder = Image(systemName: "person.circle.fill")
+      .resizable()
 
-    if let url = URL(string: user?.avatarURL ?? "") {
-      return AnyView(RemoteImage(
-        type: .url(url),
-        errorView: { _ in placeholder },
-        imageView: { $0.resizable() },
-        loadingView: { placeholder }
-        ))
-    } else {
-      return AnyView(placeholder)
+    return Group {
+      if let url = URL(string: user?.avatarURL ?? "") {
+        WebImage(url: url)
+          .resizable()
+          .placeholder(placeholder)
+      } else {
+        placeholder
+      }
     }
   }
 

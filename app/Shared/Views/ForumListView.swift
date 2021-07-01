@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import RemoteImage
+import SDWebImageSwiftUI
 
 struct ForumView: View {
   let forum: Forum
@@ -15,17 +15,13 @@ struct ForumView: View {
 
   var body: some View {
     HStack {
-      let defaultIcon = Image("default_forum_icon").resizable()
+      let defaultIcon = Image("default_forum_icon")
 
       if let url = URL(string: forum.iconURL) {
-        RemoteImage(
-          type: .url(url),
-          errorView: { _ in defaultIcon },
-          imageView: { image in
-            image.resizable()
-          },
-          loadingView: { defaultIcon }
-        ) .frame(width: 28, height: 28)
+        WebImage(url: url)
+          .resizable()
+          .placeholder(defaultIcon)
+          .frame(width: 28, height: 28)
       } else {
         defaultIcon
       }
