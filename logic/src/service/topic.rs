@@ -2,13 +2,13 @@ use crate::{
     error::{LogicError, LogicResult},
     protos::{
         DataModel::{
-            Forum, Reply, ReplyContent, Span, Span_Plain, Span_oneof_value, Subforum, Topic, User,
+            Forum, Reply, ReplyContent, Span, Span_Plain, Span_oneof_value, Subforum, Topic,
         },
         Service::*,
     },
     service::{
         content, fetch_package,
-        user::UserController,
+        user::extract_user_and_cache,
         utils::{
             extract_kv, extract_kv_pairs, extract_node, extract_nodes, extract_pages,
             extract_string,
@@ -52,22 +52,6 @@ fn extract_subforum(node: Node) -> Option<Subforum> {
     };
 
     Some(forum)
-}
-
-fn extract_user(node: Node) -> Option<User> {
-    use super::macros::get;
-    let map = extract_kv(node);
-
-    let user = User {
-        id: get!(map, "uid")?,
-        name: get!(map, "username")?,
-        avatar_url: get!(map, "avatar")?,
-        reg_date: get!(map, "regdate", _)?,
-        post_num: get!(map, "postnum", _)?,
-        ..Default::default()
-    };
-
-    Some(user)
 }
 
 fn extract_reply(node: Node) -> Option<Reply> {
@@ -167,10 +151,9 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
     )
     .await?;
 
-    let users = extract_nodes(&package, "/root/__U/item", |ns| {
-        ns.into_iter().filter_map(extract_user).collect()
+    let _users = extract_nodes(&package, "/root/__U/item", |ns| {
+        ns.into_iter().filter_map(extract_user_and_cache).collect()
     })?;
-    UserController::get().update_users(users);
 
     let replies = extract_nodes(&package, "/root/__R/item", |ns| {
         ns.into_iter().filter_map(extract_reply).collect()
@@ -193,7 +176,7 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{super::user::UserController, *};
 
     #[tokio::test]
     async fn test_topic_list() -> LogicResult<()> {

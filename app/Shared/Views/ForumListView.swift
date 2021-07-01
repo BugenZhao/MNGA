@@ -49,6 +49,8 @@ struct ForumView: View {
 struct UserMenu: View {
   @EnvironmentObject var authStorage: AuthStorage
 
+  @State var user: User? = nil
+
   var body: some View {
     let uid = authStorage.authInfo.inner.uid
     let shouldLogin = authStorage.shouldLogin
@@ -56,7 +58,19 @@ struct UserMenu: View {
     Menu {
       Section {
         if !shouldLogin {
-          Label("\(uid)", systemImage: "person.fill")
+          let label = Label(user?.name ?? uid, systemImage: "person.fill")
+
+          if let user = self.user {
+            Menu {
+              Text(user.name)
+              Text(user.id)
+              Text("\(user.postNum) Posts")
+            } label: {
+              label
+            }
+          } else {
+            label
+          }
         }
       }
       Section {
@@ -75,6 +89,16 @@ struct UserMenu: View {
       Label("Me", systemImage: icon)
     }
       .imageScale(.large)
+      .onAppear { loadData() }
+  }
+
+  func loadData() {
+    let uid = authStorage.authInfo.inner.uid
+    logicCallAsync(.remoteUser(.with { $0.userID = uid })) { (response: RemoteUserResponse) in
+      if response.hasUser {
+        self.user = response.user
+      }
+    }
   }
 }
 

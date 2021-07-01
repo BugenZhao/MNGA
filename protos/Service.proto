@@ -31,6 +31,7 @@ message AsyncRequest {
     TopicDetailsRequest topic_details = 2;
     SubforumFilterRequest subforum_filter = 3;
     ForumListRequest forum_list = 4;
+    RemoteUserRequest remote_user = 5;
     SleepRequest sleep = 1001;
   }
 }
@@ -72,3 +73,6 @@ message SubforumFilterResponse {}
 
 message ForumListRequest {}
 message ForumListResponse { repeated Category categories = 1; }
+
+message RemoteUserRequest { string user_id = 1; }
+message RemoteUserResponse { optional User user = 1; }

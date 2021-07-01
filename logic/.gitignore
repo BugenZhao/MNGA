@@ -2,3 +2,4 @@
 Cargo.lock
 /src/protos/*.rs
 /src/auth.rs
+**/*_debug.rs

@@ -3,6 +3,7 @@ use crate::{
     service::{
         forum::{get_forum_list, set_subforum_filter},
         topic::{get_topic_details, get_topic_list},
+        user::{get_remote_user},
     },
 };
 
@@ -40,5 +41,10 @@ pub async fn handle_subforum_filter(request: SubforumFilterRequest) -> SubforumF
 
 pub async fn handle_forum_list(request: ForumListRequest) -> ForumListResponse {
     let res = get_forum_list(request).await;
+    or_default!(res)
+}
+
+pub async fn handle_remote_user(request: RemoteUserRequest) -> RemoteUserResponse {
+    let res = get_remote_user(request).await;
     or_default!(res)
 }
