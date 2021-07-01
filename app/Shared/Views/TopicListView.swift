@@ -99,6 +99,7 @@ struct TopicListView: View {
           }
         } label: {
           Label("Menu", systemImage: "ellipsis")
+            .imageScale(.large)
         }
       }
     } .onFirstAppear { dataSource.loadMore() }

@@ -46,18 +46,44 @@ struct ForumView: View {
   }
 }
 
+struct UserMenu: View {
+  @EnvironmentObject var authStorage: AuthStorage
+
+  var body: some View {
+    let uid = authStorage.authInfo.inner.uid
+    let shouldLogin = authStorage.shouldLogin
+
+    Menu {
+      Section {
+        if !shouldLogin {
+          Label("\(uid)", systemImage: "person.fill")
+        }
+      }
+      Section {
+        if shouldLogin {
+          Button(action: { authStorage.clearAuth() }) {
+            Label("Sign In", systemImage: "person.crop.circle.badge.plus")
+          }
+        } else {
+          Button(action: { authStorage.clearAuth() }) {
+            Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
+          }
+        }
+      }
+    } label: {
+      let icon = shouldLogin ? "person.crop.circle" : "person.crop.circle.fill"
+      Label("Me", systemImage: icon)
+    }
+      .imageScale(.large)
+  }
+}
+
 struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage()
 
   @State var categories = [Category]()
   @State var searchText: String = ""
   @State var isSearching: Bool = false
-
-  public let defaultForum = Forum.with {
-    $0.id = "-7"
-    $0.fid = "-7"
-    $0.name = "网事杂谈"
-  }
 
   @ViewBuilder
   func buildLink(_ forum: Forum, showFavorite: Bool = true) -> some View {
@@ -94,7 +120,7 @@ struct ForumListView: View {
           buildLink(forum, showFavorite: false)
         }
       }
-    } .onAppear { loadData() }
+    }
   }
 
   var allForumsSection: some View {
@@ -122,7 +148,7 @@ struct ForumListView: View {
     }
   }
 
-  var toolBarMenu: some View {
+  var filterMenu: some View {
     Menu {
       Section {
         Picker(selection: $favorites.filterMode.animation(), label: Text("Filter Mode")) {
@@ -150,7 +176,8 @@ struct ForumListView: View {
           allForumsSection
         }
       }
-    } .navigationTitle("Forums")
+    } .onAppear { loadData() }
+      .navigationTitle("Forums")
       .navigationSearchBar {
       SearchBar(
         NSLocalizedString("Search Forums", comment: ""),
@@ -158,7 +185,14 @@ struct ForumListView: View {
         isEditing: $isSearching.animation()
       )
     }
-      .toolbar { ToolbarItem { toolBarMenu } }
+      .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        UserMenu()
+      }
+      ToolbarItem(placement: .navigationBarTrailing) {
+        filterMenu.imageScale(.large)
+      }
+    }
   }
 
   func loadData() {

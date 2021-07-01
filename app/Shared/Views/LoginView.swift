@@ -30,17 +30,16 @@ struct LoginView: View {
   var body: some View {
     NavigationView {
       WebView(webView: webViewStore.webView)
+        .navigationBarTitle("Sign in to NGA", displayMode: .inline)
         .navigationBarItems(trailing: Group {
         Button(action: close) {
           if authing {
             ProgressView()
-          } else {
-            Text("Cancel")
           }
-        }.disabled(authing)
+        }
       })
         .onAppear {
-        self.webViewStore.webView.load(URLRequest(url: URL(string: "https://ngabbs.com/")!))
+        self.webViewStore.webView.load(URLRequest(url: URL(string: "https://ngabbs.com/nuke.php?__lib=login&__act=account&login")!))
       }.onReceive(timer) { _ in
         self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
       }
@@ -66,7 +65,7 @@ struct LoginView: View {
 
 fileprivate struct LoginPreviewView: View {
   @EnvironmentObject var authStorage: AuthStorage
-  
+
   var body: some View {
     NavigationView {
       VStack {
@@ -75,8 +74,8 @@ fileprivate struct LoginPreviewView: View {
           Text("Show")
         }
       } .sheet(isPresented: .constant(authStorage.shouldLogin), content: {
-        LoginView()
-      })
+          LoginView()
+        })
     }
   }
 }

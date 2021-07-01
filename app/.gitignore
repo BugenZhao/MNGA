@@ -1,2 +1,2 @@
 **/*.pb.swift
-**/AuthInfoDebug.swift
+**/*Debug.swift

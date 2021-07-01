@@ -11,14 +11,15 @@ import SwiftUI
 
 struct AuthedPreview<Content: View>: View {
   #if DEBUG
-  @StateObject var authStorage = AuthStorage(defaultAuthInfo: AUTH_INFO_DEBUG)
+    @StateObject var authStorage = AuthStorage(defaultAuthInfo: AUTH_INFO_DEBUG)
   #else
-  @StateObject var authStorage = AuthStorage()
+    @StateObject var authStorage = AuthStorage()
   #endif
-  
+
   let build: () -> Content
-  
+
   var body: some View {
     build()
+      .environmentObject(authStorage)
   }
 }

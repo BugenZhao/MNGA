@@ -20,8 +20,7 @@ struct NGAApp: App {
       ContentView()
         .sheet(isPresented: .constant(authStorage.shouldLogin)) {
         LoginView()
-          .environmentObject(authStorage)
-      }
+      } .environmentObject(authStorage)
     }
   }
 }
