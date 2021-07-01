@@ -54,18 +54,17 @@ struct ReplyView: View {
     }
   }
 
+  @ViewBuilder
   var avatar: some View {
     let placeholder = Image(systemName: "person.circle.fill")
       .resizable()
 
-    return Group {
-      if let url = URL(string: user?.avatarURL ?? "") {
-        WebImage(url: url)
-          .resizable()
-          .placeholder(placeholder)
-      } else {
-        placeholder
-      }
+    if let url = URL(string: user?.avatarURL ?? "") {
+      WebImage(url: url)
+        .resizable()
+        .placeholder(placeholder)
+    } else {
+      placeholder
     }
   }
 

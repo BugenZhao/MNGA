@@ -9,14 +9,19 @@ import SwiftUI
 
 @main
 struct NGAApp: App {
+  @StateObject var authStorage = AuthStorage()
+
   init() {
     print("swift: init")
-    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
   }
 
   var body: some Scene {
     WindowGroup {
       ContentView()
+        .sheet(isPresented: .constant(authStorage.shouldLogin)) {
+        LoginView()
+          .environmentObject(authStorage)
+      }
     }
   }
 }

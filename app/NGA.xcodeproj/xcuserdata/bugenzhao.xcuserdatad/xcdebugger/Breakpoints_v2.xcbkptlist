@@ -126,10 +126,106 @@
             filePath = "Shared/Views/ForumListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "168"
-            endingLineNumber = "168"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
             landmarkName = "loadData()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E4483F7B-A5CF-4F68-A407-F4000B0EA7B4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Storage/AuthStorage.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
+            landmarkName = "init()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E4483F7B-A5CF-4F68-A407-F4000B0EA7B4 - 8b32003f1926b059"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NGA.AuthStorage.__allocating_init() -&gt; NGA.AuthStorage"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Storage/AuthStorage.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "17">
+               </Location>
+               <Location
+                  uuid = "E4483F7B-A5CF-4F68-A407-F4000B0EA7B4 - f7106b73e9600615"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NGA.AuthStorage.init() -&gt; NGA.AuthStorage"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Storage/AuthStorage.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "12"
+                  endingLineNumber = "12"
+                  offsetFromSymbolStart = "126">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0B30520D-F46C-4F66-9A75-79C265B38BAD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/LogicCall.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
+            landmarkName = "logicCall(_:)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "0B30520D-F46C-4F66-9A75-79C265B38BAD - 96fc09df05f7100d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NGA.logicCall&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftProtobuf.Message&gt;(NGA.SyncRequest.OneOf_Value) throws -&gt; &#x3c4;_0_0"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/LogicCall.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "631">
+               </Location>
+               <Location
+                  uuid = "0B30520D-F46C-4F66-9A75-79C265B38BAD - 96fc09df05f710ec"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NGA.logicCall&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftProtobuf.Message&gt;(NGA.SyncRequest.OneOf_Value) throws -&gt; &#x3c4;_0_0"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/LogicCall.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "30"
+                  endingLineNumber = "30"
+                  offsetFromSymbolStart = "3556">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -9,6 +9,7 @@ message SyncRequest {
   oneof value {
     ConfigureRequest configure = 1;
     LocalUserRequest local_user = 2;
+    AuthRequest auth = 3;
   }
 }
 
@@ -17,6 +18,9 @@ message ConfigureResponse { optional string error = 1; }
 
 message LocalUserRequest { string user_id = 1; }
 message LocalUserResponse { optional User user = 1; }
+
+message AuthRequest { AuthInfo info = 1; }
+message AuthResponse {}
 
 //
 // async

@@ -33,3 +33,30 @@ extension Array: RawRepresentable where Element: SwiftProtobuf.Message {
     return result
   }
 }
+
+public struct WrappedMessage<M> where M: SwiftProtobuf.Message {
+  public var inner: M
+}
+
+extension WrappedMessage: RawRepresentable {
+  public init?(rawValue: String) {
+    guard let result = try? M.init(jsonString: rawValue)
+      else {
+      return nil
+    }
+    self.inner = result
+  }
+
+  public var rawValue: String {
+    guard let result = try? self.inner.jsonString()
+      else {
+      return "{}"
+    }
+    return result
+  }
+}
+
+extension WrappedMessage: Equatable {
+  
+}
+

@@ -133,8 +133,10 @@ struct TopicListView_Previews: PreviewProvider {
       $0.name = "大漩涡"
     }
 
-    NavigationView {
-      TopicListView(forum: defaultForum)
+    AuthedPreview {
+      NavigationView {
+        TopicListView(forum: defaultForum)
+      }
     }
   }
 }

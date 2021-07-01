@@ -1,4 +1,8 @@
-use crate::{config, protos::Service::*, service::user::UserController};
+use crate::{
+    config,
+    protos::Service::*,
+    service::{self, user::UserController},
+};
 
 pub fn handle_configure(mut request: ConfigureRequest) -> ConfigureResponse {
     config::set_config(request.take_config());
@@ -15,4 +19,9 @@ pub fn handle_local_user(request: LocalUserRequest) -> LocalUserResponse {
         response.set_user(user)
     }
     response
+}
+
+pub fn handle_auth(request: AuthRequest) -> AuthResponse {
+    service::auth::set_auth(request.info.unwrap());
+    AuthResponse::new()
 }

@@ -75,6 +75,9 @@ message ReplyContent {
   string raw = 2;
 }
 
-message Configuration {
-  string document_dir_path = 1;
+message Configuration { string document_dir_path = 1; }
+
+message AuthInfo {
+  string uid = 1;
+  string token = 2;
 }

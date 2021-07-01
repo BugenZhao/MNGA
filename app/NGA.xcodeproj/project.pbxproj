@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B45819BC268D7D7200999830 /* Array+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Array+RawRepresentable.swift */; };
-		B45819BD268D7D7200999830 /* Array+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Array+RawRepresentable.swift */; };
+		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
+		B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
 		B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
 		B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C6268D9B5600999830 /* SDWebImageSwiftUI */; };
@@ -53,10 +53,20 @@
 		B4DCF44C2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */; };
 		B4DCF4502688F68400EC78A4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4DCF4532688F68400EC78A4 /* Localizable.strings */; };
 		B4DCF4512688F68400EC78A4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4DCF4532688F68400EC78A4 /* Localizable.strings */; };
+		B4E10716268DADEE006C1742 /* WebView in Frameworks */ = {isa = PBXBuildFile; productRef = B4E10715268DADEE006C1742 /* WebView */; };
+		B4E10718268DADF5006C1742 /* WebView in Frameworks */ = {isa = PBXBuildFile; productRef = B4E10717268DADF5006C1742 /* WebView */; };
+		B4E1071A268DADFF006C1742 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10719268DADFF006C1742 /* LoginView.swift */; };
+		B4E1071B268DADFF006C1742 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10719268DADFF006C1742 /* LoginView.swift */; };
+		B4E1071D268DC4D1006C1742 /* AuthStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E1071C268DC4D1006C1742 /* AuthStorage.swift */; };
+		B4E1071E268DC4D1006C1742 /* AuthStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E1071C268DC4D1006C1742 /* AuthStorage.swift */; };
+		B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E1071F268DD215006C1742 /* AuthedPreview.swift */; };
+		B4E10721268DD215006C1742 /* AuthedPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E1071F268DD215006C1742 /* AuthedPreview.swift */; };
+		B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */; };
+		B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B45819BB268D7D7200999830 /* Array+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+RawRepresentable.swift"; sourceTree = "<group>"; };
+		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B4C024C126884FD600E53554 /* NGAApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NGAApp.swift; sourceTree = "<group>"; };
 		B4C024C226884FD600E53554 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -82,6 +92,10 @@
 		B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingDataSource.swift; sourceTree = "<group>"; };
 		B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+FirstAppear.swift"; sourceTree = "<group>"; };
 		B4DCF4522688F68400EC78A4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		B4E10719268DADFF006C1742 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		B4E1071C268DC4D1006C1742 /* AuthStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStorage.swift; sourceTree = "<group>"; };
+		B4E1071F268DD215006C1742 /* AuthedPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthedPreview.swift; sourceTree = "<group>"; };
+		B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthInfoDebug.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +106,7 @@
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
+				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
 				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +118,7 @@
 				B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */,
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
+				B4E10718268DADF5006C1742 /* WebView in Frameworks */,
 				B45819CE268DA18600999830 /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				B45819C2268D822800999830 /* FavoriteForumsStorage.swift */,
+				B4E1071C268DC4D1006C1742 /* AuthStorage.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -186,7 +203,9 @@
 			children = (
 				B4DBF607268976470027233F /* TimeAgo.swift */,
 				B4DBF61726897C520027233F /* Misc.swift */,
-				B45819BB268D7D7200999830 /* Array+RawRepresentable.swift */,
+				B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */,
+				B4E1071F268DD215006C1742 /* AuthedPreview.swift */,
+				B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -210,6 +229,7 @@
 				B4DBF61426897A170027233F /* TopicView.swift */,
 				B4DBF61A268A20A90027233F /* ReplyContentView.swift */,
 				B4DBF61D268B8CD80027233F /* ForumListView.swift */,
+				B4E10719268DADFF006C1742 /* LoginView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -242,6 +262,7 @@
 				B4C024EC268850E800E53554 /* SwiftProtobuf */,
 				B45819C6268D9B5600999830 /* SDWebImageSwiftUI */,
 				B45819CB268DA17D00999830 /* SwiftUIX */,
+				B4E10715268DADEE006C1742 /* WebView */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -264,6 +285,7 @@
 				B4C024EF268850F300E53554 /* SwiftProtobuf */,
 				B45819C8268D9B6300999830 /* SDWebImageSwiftUI */,
 				B45819CD268DA18600999830 /* SwiftUIX */,
+				B4E10717268DADF5006C1742 /* WebView */,
 			);
 			productName = "NGA (macOS)";
 			productReference = B4C024D026884FD700E53554 /* NGA.app */;
@@ -300,6 +322,7 @@
 				B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
+				B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -344,12 +367,16 @@
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4DBF61B268A20A90027233F /* ReplyContentView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
-				B45819BC268D7D7200999830 /* Array+RawRepresentable.swift in Sources */,
+				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
+				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
+				B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
 				B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
 				B4DBF61E268B8CD80027233F /* ForumListView.swift in Sources */,
 				B4DCF44B2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */,
+				B4E1071A268DADFF006C1742 /* LoginView.swift in Sources */,
 				B4C024D626884FD700E53554 /* ContentView.swift in Sources */,
+				B4E1071D268DC4D1006C1742 /* AuthStorage.swift in Sources */,
 				B4DBF61526897A170027233F /* TopicView.swift in Sources */,
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF608268976470027233F /* TimeAgo.swift in Sources */,
@@ -368,12 +395,16 @@
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4DBF61C268A20A90027233F /* ReplyContentView.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
-				B45819BD268D7D7200999830 /* Array+RawRepresentable.swift in Sources */,
+				B4E10721268DD215006C1742 /* AuthedPreview.swift in Sources */,
+				B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
+				B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
 				B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
 				B4DBF61F268B8CD80027233F /* ForumListView.swift in Sources */,
 				B4DCF44C2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */,
+				B4E1071B268DADFF006C1742 /* LoginView.swift in Sources */,
 				B4C024D726884FD700E53554 /* ContentView.swift in Sources */,
+				B4E1071E268DC4D1006C1742 /* AuthStorage.swift in Sources */,
 				B4DBF61626897A170027233F /* TopicView.swift in Sources */,
 				B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF609268976470027233F /* TimeAgo.swift in Sources */,
@@ -517,6 +548,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AHDHW7HK24;
+				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -539,6 +571,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AHDHW7HK24;
+				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -660,6 +693,14 @@
 				minimumVersion = 1.17.0;
 			};
 		};
+		B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kylehickinson/SwiftUI-WebView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -692,6 +733,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		B4E10715268DADEE006C1742 /* WebView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */;
+			productName = WebView;
+		};
+		B4E10717268DADF5006C1742 /* WebView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */;
+			productName = WebView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

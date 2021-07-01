@@ -18,6 +18,7 @@ pub fn dispatch_request(req: SyncRequest) -> Result<Vec<u8>, String> {
     let response = panic::catch_unwind(|| match req.value.expect("no sync req") {
         configure(r) => r!(handle_configure(r)),
         local_user(r) => r!(handle_local_user(r)),
+        auth(r) => r!(handle_auth(r)),
     });
 
     response

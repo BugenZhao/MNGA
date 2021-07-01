@@ -59,10 +59,11 @@ struct ForumListView: View {
     $0.name = "网事杂谈"
   }
 
+  @ViewBuilder
   func buildLink(_ forum: Forum, showFavorite: Bool = true) -> some View {
     let isFavorite = favorites.isFavorite(id: forum.id)
 
-    return NavigationLink(destination: TopicListView(forum: forum)) {
+    NavigationLink(destination: TopicListView(forum: forum)) {
       ForumView(forum: forum, isFavorite: showFavorite && isFavorite)
         .contextMenu(ContextMenu(menuItems: {
         Button(action: {
@@ -172,8 +173,10 @@ struct ForumListView: View {
 
 struct ForumListView_Previews: PreviewProvider {
   static var previews: some View {
-    NavigationView {
-      ForumListView()
+    AuthedPreview {
+      NavigationView {
+        ForumListView()
+      }
     }
   }
 }

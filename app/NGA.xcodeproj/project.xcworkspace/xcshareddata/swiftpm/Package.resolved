@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "WebView",
+        "repositoryURL": "https://github.com/kylehickinson/SwiftUI-WebView",
+        "state": {
+          "branch": null,
+          "revision": "a67dcaff2377573a51f75761bb6e768b78931909",
+          "version": "0.3.0"
+        }
+      },
+      {
         "package": "SwiftUIX",
         "repositoryURL": "https://github.com/SwiftUIX/SwiftUIX",
         "state": {

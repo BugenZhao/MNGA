@@ -11,7 +11,7 @@ pub fn set_config(config: Configuration) {
         DOCUMENT_DIR_PATH = Some(PathBuf::from(config.document_dir_path));
     }
 
-    let cache_path = {
+    let _cache_path = {
         let mut path = unsafe { DOCUMENT_DIR_PATH.clone().unwrap() };
         path.push("cache");
         path

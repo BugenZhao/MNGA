@@ -1,11 +1,9 @@
 use lazy_static::lazy_static;
 use reqwest::{Client, Url};
 
-use crate::{
-    auth::{TOKEN, UID},
-    error::LogicResult,
-};
+use crate::error::LogicResult;
 
+pub mod auth;
 mod constants;
 pub mod content;
 pub mod forum;
@@ -30,11 +28,14 @@ async fn fetch_package(
     const URL_BASE: &str = "https://ngabbs.com";
 
     let url = Url::parse(&format!("{}/{}", URL_BASE, api)).unwrap();
+
+    let auth_info = auth::AUTH_INFO.lock().unwrap().clone();
     let form = {
-        form.push(("access_token", TOKEN));
-        form.push(("access_uid", UID));
+        form.push(("access_token", auth_info.get_token()));
+        form.push(("access_uid", auth_info.get_uid()));
         form
     };
+
     let query = {
         query.push(("lite", "xml"));
         query

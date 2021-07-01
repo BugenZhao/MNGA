@@ -103,9 +103,11 @@ struct TopicDetailsView: View {
 
 struct TopicDetailsView_Preview: PreviewProvider {
   static var previews: some View {
-    TopicDetailsView(topic: Topic.with {
-      $0.id = "27388005"
-      $0.subject = "Subject"
-    })
+    AuthedPreview {
+      TopicDetailsView(topic: Topic.with {
+        $0.id = "27388005"
+        $0.subject = "Subject"
+      })
+    }
   }
 }
