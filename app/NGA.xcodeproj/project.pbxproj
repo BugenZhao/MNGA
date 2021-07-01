@@ -13,6 +13,8 @@
 		B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
 		B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C6268D9B5600999830 /* SDWebImageSwiftUI */; };
 		B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C8268D9B6300999830 /* SDWebImageSwiftUI */; };
+		B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CB268DA17D00999830 /* SwiftUIX */; };
+		B45819CE268DA18600999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CD268DA18600999830 /* SwiftUIX */; };
 		B4C024D426884FD700E53554 /* NGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C126884FD600E53554 /* NGAApp.swift */; };
 		B4C024D526884FD700E53554 /* NGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C126884FD600E53554 /* NGAApp.swift */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
@@ -90,6 +92,7 @@
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
+				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +103,7 @@
 				B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */,
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
+				B45819CE268DA18600999830 /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,6 +241,7 @@
 			packageProductDependencies = (
 				B4C024EC268850E800E53554 /* SwiftProtobuf */,
 				B45819C6268D9B5600999830 /* SDWebImageSwiftUI */,
+				B45819CB268DA17D00999830 /* SwiftUIX */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -258,6 +263,7 @@
 			packageProductDependencies = (
 				B4C024EF268850F300E53554 /* SwiftProtobuf */,
 				B45819C8268D9B6300999830 /* SDWebImageSwiftUI */,
+				B45819CD268DA18600999830 /* SwiftUIX */,
 			);
 			productName = "NGA (macOS)";
 			productReference = B4C024D026884FD700E53554 /* NGA.app */;
@@ -293,6 +299,7 @@
 			packageReferences = (
 				B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -637,6 +644,14 @@
 				minimumVersion = 2.0.2;
 			};
 		};
+		B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.7;
+			};
+		};
 		B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf";
@@ -657,6 +672,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		B45819CB268DA17D00999830 /* SwiftUIX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
+		};
+		B45819CD268DA18600999830 /* SwiftUIX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
 		};
 		B4C024EC268850E800E53554 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;

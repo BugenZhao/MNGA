@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 struct TopicDetailsView: View {
   let topic: Topic
@@ -40,7 +41,7 @@ struct TopicDetailsView: View {
     let id = "#\(topic.id)"
     let subject = topic.subject
 
-    switch uiIdiom() {
+    switch UserInterfaceIdiom.current {
     case .pad, .mac:
       return [id, subject].joined(separator: " ")
     default:
@@ -52,7 +53,7 @@ struct TopicDetailsView: View {
     let inner = VStack(alignment: .leading) {
       let list = List {
         Section(header: Text("Topic")) {
-          if uiIdiom() == .phone {
+          if UserInterfaceIdiom.current == .phone {
             Text(topic.subject)
               .font(.headline)
               .onAppear { showFullTitle = false }

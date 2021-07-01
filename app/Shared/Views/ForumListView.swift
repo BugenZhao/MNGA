@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUIX
 
 struct ForumView: View {
   let forum: Forum
@@ -49,6 +50,8 @@ struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage()
 
   @State var categories = [Category]()
+  @State var searchText: String = ""
+  @State var isSearching: Bool = false
 
   public let defaultForum = Forum.with {
     $0.id = "-7"
@@ -75,64 +78,86 @@ struct ForumListView: View {
     }
   }
 
-  var body: some View {
-    VStack {
-      let list = List {
-
-        Section(header: Text("Favorites").font(.subheadline).fontWeight(.medium)) {
-          if favorites.favoriteForums.isEmpty {
-            HStack {
-              Spacer(); Text("No Favorites").font(.footnote).foregroundColor(.secondary); Spacer()
-            }
-          } else {
-            ForEach(favorites.favoriteForums, id: \.id) { forum in
-              buildLink(forum, showFavorite: false)
-            }
-          }
-        } .onAppear { loadData() }
-
-        if favorites.filterMode == .all {
-          if categories.isEmpty {
-            HStack {
-              Spacer(); ProgressView(); Spacer()
-            }
-          } else {
-            ForEach(categories, id: \.id) { category in
-              Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
-                ForEach(category.forums, id: \.id) { forum in
-                  buildLink(forum)
-                }
-              }
-            }
-          }
+  var favoritesSection: some View {
+    Section(header: Text("Favorites").font(.subheadline).fontWeight(.medium)) {
+      if favorites.favoriteForums.isEmpty {
+        HStack {
+          Spacer()
+          Text("No Favorites")
+            .font(.footnote)
+            .foregroundColor(.secondary)
+          Spacer()
         }
-
+      } else {
+        ForEach(favorites.favoriteForums, id: \.id) { forum in
+          buildLink(forum, showFavorite: false)
+        }
       }
-      #if os(iOS)
-        list
-      #else
-        list
-      #endif
-    } .navigationTitle("Forums")
-      .toolbar {
-      ToolbarItem() {
-        Menu {
-          Section {
-            Picker(selection: $favorites.filterMode.animation(), label: Text("Filter Mode")) {
-              ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-                HStack {
-                  Text(LocalizedStringKey(mode.rawValue))
-                  Spacer()
-                  Image(systemName: mode.icon)
-                } .tag(mode)
+    } .onAppear { loadData() }
+  }
+
+  var allForumsSection: some View {
+    Group {
+      if categories.isEmpty {
+        HStack {
+          Spacer()
+          ProgressView()
+          Spacer()
+        }
+      } else {
+        ForEach(categories, id: \.id) { category in
+          let forums = category.forums.filter {
+            searchText.isEmpty || $0.name.contains(searchText)
+          }
+          if !forums.isEmpty {
+            Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
+              ForEach(forums, id: \.id) { forum in
+                buildLink(forum)
               }
             }
           }
-        } label: {
-          Label("Filters", systemImage: favorites.filterMode.filterIcon)
         }
       }
     }
+  }
+
+  var toolBarMenu: some View {
+    Menu {
+      Section {
+        Picker(selection: $favorites.filterMode.animation(), label: Text("Filter Mode")) {
+          ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
+            HStack {
+              Text(LocalizedStringKey(mode.rawValue))
+              Spacer()
+              Image(systemName: mode.icon)
+            } .tag(mode)
+          }
+        }
+      }
+    } label: {
+      Label("Filters", systemImage: favorites.filterMode.filterIcon)
+    }
+  }
+
+  var body: some View {
+    VStack {
+      List {
+        if searchText.isEmpty && !isSearching {
+          favoritesSection
+        }
+        if favorites.filterMode == .all || isSearching {
+          allForumsSection
+        }
+      }
+    } .navigationTitle("Forums")
+      .navigationSearchBar {
+      SearchBar(
+        NSLocalizedString("Search Forums", comment: ""),
+        text: $searchText,
+        isEditing: $isSearching.animation()
+      )
+    }
+      .toolbar { ToolbarItem { toolBarMenu } }
   }
 
   func loadData() {
