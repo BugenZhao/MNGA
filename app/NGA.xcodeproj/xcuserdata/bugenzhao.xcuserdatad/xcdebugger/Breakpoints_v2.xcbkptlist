@@ -126,8 +126,8 @@
             filePath = "Shared/Views/ForumListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "228"
-            endingLineNumber = "228"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
             landmarkName = "loadData()"
             landmarkType = "7">
          </BreakpointContent>

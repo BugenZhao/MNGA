@@ -3,7 +3,7 @@ use crate::{
     service::{
         forum::{get_forum_list, set_subforum_filter},
         topic::{get_topic_details, get_topic_list},
-        user::{get_remote_user},
+        user::get_remote_user,
     },
 };
 
@@ -14,14 +14,6 @@ macro_rules! or_default {
             Default::default()
         })
     };
-}
-
-pub async fn handle_sleep(req: SleepRequest) -> SleepResponse {
-    tokio::time::sleep(tokio::time::Duration::from_millis(req.millis)).await;
-    SleepResponse {
-        text: format!("awake after {} milliseconds", req.millis),
-        ..Default::default()
-    }
 }
 
 pub async fn handle_topic_list(request: TopicListRequest) -> TopicListResponse {

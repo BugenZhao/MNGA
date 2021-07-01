@@ -29,6 +29,11 @@ struct ForumView: View {
 
       HStack {
         Text(forum.name)
+        if forum.hasStid {
+          Image(systemName: "arrow.uturn.right")
+            .font(.footnote)
+            .foregroundColor(.secondary)
+        }
         Spacer()
 
         HStack {
@@ -89,7 +94,8 @@ struct UserMenu: View {
       Label("Me", systemImage: icon)
     }
       .imageScale(.large)
-      .onChange(of: uid) { _ in loadData() }
+      .onAppear { loadData() }
+      .onChange(of: authStorage.authInfo) { _ in loadData() }
   }
 
   func loadData() {
@@ -110,11 +116,11 @@ struct ForumListView: View {
   @State var isSearching: Bool = false
 
   @ViewBuilder
-  func buildLink(_ forum: Forum, showFavorite: Bool = true) -> some View {
+  func buildLink(_ forum: Forum, inFavoritesSection: Bool = true) -> some View {
     let isFavorite = favorites.isFavorite(id: forum.id)
 
     NavigationLink(destination: TopicListView(forum: forum)) {
-      ForumView(forum: forum, isFavorite: showFavorite && isFavorite)
+      ForumView(forum: forum, isFavorite: inFavoritesSection && isFavorite)
         .contextMenu(ContextMenu(menuItems: {
         Button(action: {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -141,7 +147,9 @@ struct ForumListView: View {
         }
       } else {
         ForEach(favorites.favoriteForums, id: \.id) { forum in
-          buildLink(forum, showFavorite: false)
+          buildLink(forum, inFavoritesSection: false)
+        } .onDelete { offsets in
+          favorites.favoriteForums.remove(atOffsets: offsets)
         }
       }
     }

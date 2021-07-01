@@ -91,7 +91,11 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
     let package = fetch_package(
         "thread.php",
         vec![
-            ("fid", &request.forum_id),
+            if request.has_stid() {
+                ("stid", request.get_stid())
+            } else {
+                ("fid", request.get_forum_id())
+            },
             ("page", &request.page.to_string()),
         ],
         vec![],

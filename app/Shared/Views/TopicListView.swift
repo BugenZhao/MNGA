@@ -41,6 +41,9 @@ struct TopicListView: View {
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
           $0.forumID = forum.id
+          if forum.hasStid {
+            $0.stid = forum.stid
+          }
           $0.page = UInt32(page)
         })
       },
@@ -98,7 +101,7 @@ struct TopicListView: View {
             Label("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
           }
         } label: {
-          Label("Menu", systemImage: "ellipsis.circle.fill")
+          Label("Menu", systemImage: "ellipsis.circle")
             .imageScale(.large)
         }
       }

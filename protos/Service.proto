@@ -4,6 +4,7 @@ import "DataModel.proto";
 
 //
 // sync
+//
 
 message SyncRequest {
   oneof value {
@@ -24,6 +25,7 @@ message AuthResponse {}
 
 //
 // async
+//
 
 message AsyncRequest {
   oneof value {
@@ -32,15 +34,12 @@ message AsyncRequest {
     SubforumFilterRequest subforum_filter = 3;
     ForumListRequest forum_list = 4;
     RemoteUserRequest remote_user = 5;
-    SleepRequest sleep = 1001;
   }
 }
 
-message SleepRequest { uint64 millis = 1; }
-message SleepResponse { string text = 1; }
-
 message TopicListRequest {
   string forum_id = 1;
+  optional string stid = 3;
   uint32 page = 2;
 }
 message TopicListResponse {

@@ -56,7 +56,6 @@ pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
 
         use AsyncRequest_oneof_value::*;
         let response = match req.value.expect("no async req") {
-            sleep(r) => r!(handle_sleep(r)),
             topic_list(r) => r!(handle_topic_list(r)),
             topic_details(r) => r!(handle_topic_details(r)),
             subforum_filter(r) => r!(handle_subforum_filter(r)),
