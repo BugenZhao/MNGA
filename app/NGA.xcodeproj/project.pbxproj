@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		375E616A4BCE12A43666F04C /* macOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */; };
+		375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */; };
 		B412F707268DFC4600EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F706268DFC4600EB0614 /* Logging */; };
 		B412F709268DFC4F00EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F708268DFC4F00EB0614 /* Logging */; };
 		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
@@ -17,8 +19,6 @@
 		B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C8268D9B6300999830 /* SDWebImageSwiftUI */; };
 		B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CB268DA17D00999830 /* SwiftUIX */; };
 		B45819CE268DA18600999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CD268DA18600999830 /* SwiftUIX */; };
-		B4C024D426884FD700E53554 /* NGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C126884FD600E53554 /* NGAApp.swift */; };
-		B4C024D526884FD700E53554 /* NGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C126884FD600E53554 /* NGAApp.swift */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D726884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D826884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
@@ -68,9 +68,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSNGAApp.swift; sourceTree = "<group>"; };
+		375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = macOSNGAApp.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
-		B4C024C126884FD600E53554 /* NGAApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NGAApp.swift; sourceTree = "<group>"; };
 		B4C024C226884FD600E53554 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B4C024C326884FD700E53554 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B4C024C826884FD700E53554 /* NGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,7 +160,6 @@
 				B4DCF43E2688C38800EC78A4 /* Views */,
 				B4DCF43726885DD700EC78A4 /* Protos */,
 				B4C024E2268850AA00E53554 /* LogicCall.swift */,
-				B4C024C126884FD600E53554 /* NGAApp.swift */,
 				B4C024C226884FD600E53554 /* ContentView.swift */,
 				B4C024C326884FD700E53554 /* Assets.xcassets */,
 				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
@@ -180,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				B4C024CB26884FD700E53554 /* Info.plist */,
+				375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -189,6 +190,7 @@
 			children = (
 				B4C024D226884FD700E53554 /* Info.plist */,
 				B4C024D326884FD700E53554 /* macOS.entitlements */,
+				375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -387,7 +389,7 @@
 				B4DBF61526897A170027233F /* TopicView.swift in Sources */,
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF608268976470027233F /* TimeAgo.swift in Sources */,
-				B4C024D426884FD700E53554 /* NGAApp.swift in Sources */,
+				375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,7 +417,7 @@
 				B4DBF61626897A170027233F /* TopicView.swift in Sources */,
 				B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF609268976470027233F /* TimeAgo.swift in Sources */,
-				B4C024D526884FD700E53554 /* NGAApp.swift in Sources */,
+				375E616A4BCE12A43666F04C /* macOSNGAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

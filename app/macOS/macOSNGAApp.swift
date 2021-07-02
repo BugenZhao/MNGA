@@ -1,26 +1,23 @@
 //
-//  NGAApp.swift
-//  Shared
-//
-//  Created by Bugen Zhao on 6/27/21.
+// Created by Bugen Zhao on 7/2/21.
 //
 
 import SwiftUI
 
 @main
-struct NGAApp: App {
+struct macOSNGAApp: App {
   @StateObject var authStorage = AuthStorage()
 
   init() {
-    logger.info("init")
+    logger.info("macOS init")
   }
 
   var body: some Scene {
     WindowGroup {
       ContentView()
         .sheet(isPresented: .constant(authStorage.shouldLogin)) {
-        LoginView()
-      } .environmentObject(authStorage)
+          LoginView()
+        }.environmentObject(authStorage)
     }
   }
 }
