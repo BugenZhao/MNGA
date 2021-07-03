@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUIX
 
 struct ReplyImageView: View {
   let url: URL
@@ -66,6 +67,24 @@ fileprivate class ViewsCombiner {
     self.pid = pid
     self.append(Text("Reply"))
     self.append(Text(" #\(pid) "))
+  }
+
+  func appendSticker(_ sticker: Span.Sticker) {
+    let name = sticker.name.replacingOccurrences(of: ":", with: "|")
+
+    let view: Text?
+    if let image = AppKitOrUIKitImage(named: name) {
+      let renderingMode: Image.TemplateRenderingMode =
+        name.starts(with: "ac") || name.starts(with: "a2") ? .template : .original
+      view = Text(
+        Image(image: image)
+          .renderingMode(renderingMode)
+      )
+    } else {
+      view = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
+    }
+
+    self.append(view)
   }
 
   func build() -> [AnyView] {
@@ -142,15 +161,13 @@ struct ReplyContentView: View {
     func visit(_ span: Span) {
       guard let value = span.value else { return }
 
-      var text: Text? = nil
-
       switch value {
       case .breakLine(_):
         combiner.appendBreakLine()
       case .plain(let plain):
-        text = Text(plain.text)
+        combiner.append(Text(plain.text))
       case .sticker(let sticker):
-        text = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
+        combiner.appendSticker(sticker)
       case .tagged(let tagged):
         switch tagged.tag {
         case "img":
@@ -166,10 +183,6 @@ struct ReplyContentView: View {
         default:
           visitDefault(tagged)
         }
-      }
-
-      if let text = text {
-        combiner.append(text)
       }
     }
 
@@ -232,5 +245,25 @@ struct ReplyContentView: View {
     spans.forEach(visit)
 
     return combiner.build()
+  }
+}
+
+
+struct ReplyContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    let sticker = Span.with { $0.sticker = .with { s in s.name = "a2:你看看你" } }
+    let sticker2 = Span.with { $0.sticker = .with { s in s.name = "a2:doge" } }
+    let sticker3 = Span.with { $0.sticker = .with { s in s.name = "pg:战斗力" } }
+    let plain = Span.with { $0.plain = .with { p in p.text = "你看看他，再看看你自己。" } }
+    let bold = Span.with {
+      $0.tagged = .with { t in
+        t.tag = "b"
+        t.spans = [plain]
+      }
+    }
+
+    ReplyContentView(spans: [
+      plain, sticker, plain, bold, sticker2, plain, sticker3
+      ])
   }
 }
