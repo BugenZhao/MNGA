@@ -27,3 +27,5 @@
 "Me" = "我";
 "%u Posts" = "%u 个帖子";
 "Sign in to NGA" = "登录到 NGA";
+"Subforums of %@" = "%@ - 子版块";
+"Press and hold a subforum to mark it as favorite." = "长按子版块以收藏。";

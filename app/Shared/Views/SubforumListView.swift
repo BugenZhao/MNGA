@@ -11,7 +11,24 @@ import SwiftUI
 struct SubforumListView: View {
   @StateObject var favorites = FavoriteForumsStorage()
 
+  let forum: Forum
   let subforums: [Subforum]
+  let refresh: () -> Void
+
+//  init(forum: Forum, subforums: [Subforum]) {
+//    self.forum = forum
+//    self._subforums = .init(initialValue: subforums)
+//  }
+
+  func setSubforumFilter(show: Bool, subforum: Subforum) {
+    logicCallAsync(.subforumFilter(.with {
+      $0.operation = show ? .show : .block
+      $0.forumID = forum.fid
+      $0.subforumFilterID = subforum.filterID
+    })) { (response: SubforumFilterResponse) in
+      refresh()
+    }
+  }
 
   @ViewBuilder
   func buildLink(_ subforum: Subforum) -> some View {
@@ -19,7 +36,17 @@ struct SubforumListView: View {
     let isFavorite = favorites.isFavorite(id: forum.id!)
 
     NavigationLink(destination: TopicListView(forum: forum)) {
-      ForumView(forum: forum, isFavorite: isFavorite)
+      HStack {
+        Image(systemName: subforum.selected || !subforum.filterable ? "checkmark.circle.fill" : "circle")
+          .onTapGesture {
+          if subforum.filterable {
+            setSubforumFilter(show: !subforum.selected, subforum: subforum)
+          }
+        }
+          .foregroundColor(subforum.filterable ? .accentColor : .secondary)
+
+        ForumView(forum: forum, isFavorite: isFavorite)
+      }
         .contextMenu(ContextMenu(menuItems: {
         Button(action: {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -36,11 +63,12 @@ struct SubforumListView: View {
 
   var body: some View {
     List {
-      ForEach(subforums, id: \.hashIdentifiable) { subforum in
-        buildLink(subforum)
+      Section(footer: Text("Press and hold a subforum to mark it as favorite.")) {
+        ForEach(subforums, id: \.hashIdentifiable) { subforum in
+          buildLink(subforum)
+        }
       }
-    } .navigationTitle("Subforums")
-      .navigationBarTitleDisplayMode(.inline)
+    } .navigationBarTitle("Subforums of \(forum.name)", displayMode: .inline)
       .listStyle(InsetGroupedListStyle())
   }
 }

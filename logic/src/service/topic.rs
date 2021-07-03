@@ -17,7 +17,6 @@ use crate::{
         },
     },
 };
-use std::collections::HashSet;
 use sxd_xpath::nodeset::Node;
 
 fn extract_topic(node: Node) -> Option<Topic> {
@@ -67,7 +66,7 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
         forum: Some(forum).into(),
         filter_id: pget!(pairs, 3).unwrap_or_default(), // for filter, subforum id ??
         attributes,
-        filterable: attributes > 4096,
+        filterable: attributes > 40,
         ..Default::default()
     };
 
@@ -128,10 +127,12 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__T__ROWS_PAGE", 35)?;
 
-    let selected_subforum_ids = extract_string(&package, "/root/__F/__SELECTED_FORUM")?
-        .split(',')
-        .map(|s| s.to_owned())
-        .collect::<HashSet<_>>();
+    // NONSENSE fields
+    //
+    // let _selected_subforum_ids = extract_string(&package, "/root/__F/__SELECTED_FORUM")?
+    //     .split(',')
+    //     .map(|s| s.to_owned())
+    //     .collect::<HashSet<_>>();
 
     let subforums = {
         let mut subforums = extract_nodes(&package, "/root/__F/sub_forums/*", |ns| {
@@ -143,15 +144,21 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
                 .collect()
         })?;
         subforums.iter_mut().for_each(|s| {
-            s.selected = selected_subforum_ids.contains(s.get_forum().get_fid())
-                || selected_subforum_ids.contains(s.get_forum().get_stid())
+            // how can I fucking know this ??
+            s.selected = [7, 558, 542, 2606, 2590, 4654].contains(&s.get_attributes())
         });
-        subforums.sort_by(|a, b| {
-            a.get_selected()
-                .cmp(&b.get_selected())
-                .reverse()
-                .then(a.get_forum().get_name().cmp(b.get_forum().get_name()))
-        });
+
+        if request.sort_subforums {
+            subforums.sort_by(|a, b| {
+                a.get_filterable().cmp(&b.get_filterable()).then(
+                    a.get_selected()
+                        .cmp(&b.get_selected())
+                        .reverse()
+                        .then(a.get_forum().get_name().cmp(b.get_forum().get_name())),
+                )
+            });
+        }
+
         subforums
     };
 

@@ -35,6 +35,7 @@ struct TopicListView: View {
   let forum: Forum
 
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
+  @State var showingSheet = false
 
   init(forum: Forum) {
     self.forum = forum
@@ -59,6 +60,17 @@ struct TopicListView: View {
       id: \.id
     )
     self._dataSource = StateObject(wrappedValue: dataSource)
+  }
+
+  @ViewBuilder
+  var sheet: some View {
+    if let subforums = dataSource.latestResponse?.subforums, !subforums.isEmpty {
+      NavigationView {
+        SubforumListView(forum: forum, subforums: subforums) {
+          dataSource.refresh()
+        }
+      }
+    }
   }
 
   var body: some View {
@@ -87,44 +99,32 @@ struct TopicListView: View {
         #endif
       }
     }
-      .navigationTitle(title)
+      .sheet(isPresented: $showingSheet, content: { sheet })
+      .navigationTitle(forum.name)
       .toolbar {
 
-//      ToolbarItem {
-//        Menu {
-//          if let subforums = dataSource.latestResponse?.subforums,
-//            !subforums.isEmpty {
-//            Menu {
-//              ForEach(subforums.filter { $0.filterable }, id: \.id) { subforum in
-//                SubforumFilterToggleView(subforum: subforum) { v in
-//                  setSubforumFilter(show: v, subforum: subforum)
-//                }
-//              }
-//            } label: {
-//              Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
-//            }
-//          }
-//          Section {
-//            #if os(macOS)
-//              Button(action: { dataSource.refresh(clear: true) }) {
-//                Label("Refresh", systemImage: "arrow.clockwise")
-//              }
-//            #endif
-//            Label("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
-//          }
-//        } label: {
-//          Label("Menu", systemImage: "ellipsis.circle")
-//            .imageScale(.large)
-//        }
-//      }
       ToolbarItem {
-        if let subforums = dataSource.latestResponse?.subforums,
-          !subforums.isEmpty {
-          NavigationLink(destination: SubforumListView(subforums: subforums)) {
-            Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
+        Menu {
+          if let subforums = dataSource.latestResponse?.subforums,
+            !subforums.isEmpty {
+            Button(action: { showingSheet = true }) {
+              Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
+            }
           }
+          Section {
+            #if os(macOS)
+              Button(action: { dataSource.refresh(clear: true) }) {
+                Label("Refresh", systemImage: "arrow.clockwise")
+              }
+            #endif
+            Label(forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
+          }
+        } label: {
+          Label("Menu", systemImage: "ellipsis.circle")
+            .imageScale(.large)
         }
       }
+
     } .onFirstAppear { dataSource.initialLoad() }
 
     #if os(iOS)
@@ -133,20 +133,6 @@ struct TopicListView: View {
     #elseif os(macOS)
       inner
     #endif
-  }
-
-  var title: String {
-    forum.name
-  }
-
-  func setSubforumFilter(show: Bool, subforum: Subforum) {
-    logicCallAsync(.subforumFilter(.with {
-      $0.operation = show ? .show : .block
-      $0.forumID = forum.fid
-      $0.subforumFilterID = subforum.filterID
-    })) { (response: SubforumFilterResponse) in
-      dataSource.refresh(clear: true)
-    }
   }
 }
 

@@ -12,3 +12,12 @@ extension Topic {
     self.tags.map { t in "[\(t)] " }.joined() + self.subjectContent
   }
 }
+
+extension Forum {
+  var idDescription: String {
+    switch self.id! {
+    case .fid(let fid): return "#\(fid)"
+    case .stid(let stid): return "##\(stid)"
+    }
+  }
+}
