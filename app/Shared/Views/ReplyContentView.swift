@@ -12,12 +12,26 @@ import SwiftUIX
 
 struct ReplyImageView: View {
   let url: URL
+  let isOpenSourceStickers: Bool
+
+  init(url: URL) {
+    self.url = url
+    self.isOpenSourceStickers = openSourceStickersNames.contains(url.lastPathComponent)
+  }
 
   var body: some View {
-    WebImage(url: url)
+    let image = WebImage(url: url)
       .resizable()
       .indicator(.activity)
       .scaledToFit()
+
+    if isOpenSourceStickers {
+      image
+        .frame(width: 50)
+        .background(Color.white)
+    } else {
+      image
+    }
   }
 }
 
@@ -255,15 +269,33 @@ struct ReplyContentView_Previews: PreviewProvider {
     let sticker2 = Span.with { $0.sticker = .with { s in s.name = "a2:doge" } }
     let sticker3 = Span.with { $0.sticker = .with { s in s.name = "pg:战斗力" } }
     let plain = Span.with { $0.plain = .with { p in p.text = "你看看他，再看看你自己。" } }
+    let imageStickerUrl = Span.with { $0.plain = .with { p in p.text = "http://img.nga.178.com/attachments/mon_201209/14/-47218_5052c104b8e27.png" } }
+    let imageUrl = Span.with { $0.plain = .with { p in p.text = "./mon_202107/03/-7Q2o-aumgK2eT1kShs-120.jpg.medium.jpg" } }
     let bold = Span.with {
       $0.tagged = .with { t in
         t.tag = "b"
         t.spans = [plain]
       }
     }
+    let imageSticker = Span.with {
+      $0.tagged = .with { t in
+        t.tag = "img"
+        t.spans = [imageStickerUrl]
+      }
+    }
+    let image = Span.with {
+      $0.tagged = .with { t in
+        t.tag = "img"
+        t.spans = [imageUrl]
+      }
+    }
 
-    ReplyContentView(spans: [
-      plain, sticker, plain, bold, sticker2, plain, sticker3
-      ])
+    ScrollView {
+      ReplyContentView(spans: [
+        plain, sticker, plain, bold, sticker2, plain, sticker3,
+        plain, plain, imageSticker, plain,
+        image
+        ])
+    }
   }
 }
