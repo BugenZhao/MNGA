@@ -1,4 +1,3 @@
-// use super::ast::Span;
 use crate::error::{LogicError, LogicResult};
 use crate::protos::DataModel::*;
 
@@ -89,7 +88,7 @@ peg::parser! {
     }
 }
 
-pub fn parse_to_spans(text: &str) -> LogicResult<Vec<Span>> {
+pub fn do_parse_content(text: &str) -> LogicResult<Vec<Span>> {
     content_parser::content(text).map_err(|e| LogicError::ContentParse(e.to_string()))
 }
 
@@ -109,7 +108,7 @@ mod test {
 <br/><br/>
 公务员只要脑子聪明会做题会面试，就可以了，说不定人家进来就打算放飞自我了
         "#;
-        let r = parse_to_spans(text).unwrap();
+        let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }
 
@@ -120,7 +119,7 @@ mod test {
 [img]http://img.nga.178.com/attachments/mon_201209/14/-47218_5052bc587c6f9.png[/img]
 虽说没有明确规定，但是理由是领导觉得影响不好，说到底还是一个形象问题吧
         "#;
-        let r = parse_to_spans(text).unwrap();
+        let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }
 
@@ -129,7 +128,7 @@ mod test {
         let text = r#"
 2K给nga多少钱[s:a2:不明觉厉]
         "#;
-        let r = parse_to_spans(text).unwrap();
+        let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }
 
@@ -143,7 +142,7 @@ Hello world
 Hello world
 <br/>
         "#;
-        let r = parse_to_spans(text).unwrap();
+        let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
 
         let contains_br = r
@@ -168,7 +167,7 @@ Hello world
 <br/><br/>
 还有，我现在就坐在成都贫民窟，这里收破烂的精气神都比你的狗爹强。
         "#;
-        let r = parse_to_spans(text).unwrap();
+        let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }
 
@@ -180,7 +179,7 @@ Hello world
 我在此恳请各位在发帖时请根据发帖主题内容选择对应板块发帖<br/><br/>
 游记、摄影作品内容请发至[url=https://bbs.nga.cn/thread.php?fid=-8725919][b]小窗视界[/b][/url]<br/>宠物饲养心得及求助、晒照等内容请发至[url=https://bbs.nga.cn/thread.php?fid=-353371][b]萌萌宠物[/b][/url]<br/>烹饪心得及咨询、美食探店等内容请发至[url=https://bbs.nga.cn/thread.php?fid=-608808][b]恩基爱厨艺美食交流[/b][/url]<br/>主机、电脑游戏相关内容请发至[url=https://bbs.nga.cn/thread.php?fid=414][b]游戏综合讨论[/b][/url]<br/>手游相关内容请发至[url=https://bbs.nga.cn/thread.php?fid=428][b]手机 网页游戏综合讨论[/b][/url]<br/>电影、电视剧歌曲及翻唱等内容请发至[url=https://bbs.nga.cn/thread.php?fid=-576177][b]影音讨论区[/b][/url]<br/>小说、网文类内容请发至[url=https://bbs.nga.cn/thread.php?fid=524][b]漩涡书院[/b][/url]<br/>工作、职场人际关系相关内容请发至[url=https://bbs.nga.cn/thread.php?fid=-1459709][b]职场人生[/b][/url]<br/><br/>除此之外，我们也会对部分现有话题类型进行梳理，以更合理的形式对各个子话题版面进行展示，并且开设部分新话题版面，目前股票版、历史版、综合体育版目前在规划中，家装版也打算进行重新装修，对以上版面管理感兴趣的朋友可以私信我进行报名，我们也会对版务团队人选进行审核及筛选。<br/><br/>然后再聊聊水区，近些年来不少用户对于水区质量下降的情况表示不满，鉴于此，我们将考虑重新启用水区博物馆的计划，在不修改水区现有声望体系的情况下对于有质量的科普贴等内容进行威望奖励并不进行冲水，提升水区内容质量。<br/><br/>银色近期会开放 话题、游戏版面or合集新建的申请方式，还请有此方面意向者关注。<br/><br/>感谢各位长久以来的支持和配合！<br/>[img]./mon_202002/11/-7Q5-1fz0XjZ5cT1kS5g-2y.gif.medium.jpg[/img][/quote]
         "#;
-        let r = parse_to_spans(text).unwrap();
+        let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }
 }

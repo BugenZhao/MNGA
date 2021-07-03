@@ -2,7 +2,8 @@ syntax = "proto3";
 
 message Topic {
   string id = 1;
-  string subject = 2;
+  repeated string tags = 8;
+  string subject_content = 9;
   string author_id = 3;
   string author_name = 4;
   uint64 post_date = 5;

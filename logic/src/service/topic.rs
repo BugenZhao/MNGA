@@ -7,7 +7,7 @@ use crate::{
         Service::*,
     },
     service::{
-        content, fetch_package,
+        fetch_package, text,
         user::extract_user_and_cache,
         utils::{
             extract_kv, extract_kv_pairs, extract_node, extract_nodes, extract_pages,
@@ -22,9 +22,13 @@ fn extract_topic(node: Node) -> Option<Topic> {
     use super::macros::get;
     let map = extract_kv(node);
 
+    let subject_full = get!(map, "subject").map(|s| text::unescape(&s).into_owned())?;
+    let (tags, subject_content) = text::parse_subject(&subject_full).ok()?;
+
     let topic = Topic {
         id: get!(map, "tid")?,
-        subject: get!(map, "subject")?,
+        tags: tags.into(),
+        subject_content,
         author_id: get!(map, "authorid")?,
         author_name: get!(map, "author")?,
         post_date: get!(map, "postdate", _)?,
@@ -59,7 +63,7 @@ fn extract_reply(node: Node) -> Option<Reply> {
     let map = extract_kv(node);
 
     let raw_content = get!(map, "content")?;
-    let spans = content::parse(&raw_content).unwrap_or_else(|_| {
+    let spans = text::parse_content(&raw_content).unwrap_or_else(|_| {
         vec![Span {
             value: Some(Span_oneof_value::plain(Span_Plain {
                 text: raw_content.clone(),

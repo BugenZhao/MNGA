@@ -19,10 +19,6 @@ struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       ContentView()
-      TopicDetailsView(topic: Topic.with {
-        $0.id = "27351344"
-        $0.subject = "Subject"
-      })
     }
   }
 }

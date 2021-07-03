@@ -39,7 +39,7 @@ struct TopicDetailsView: View {
 
   var title: String {
     let id = NSLocalizedString("Topic", comment: "") + " #\(topic.id)"
-    let subject = topic.subject
+    let subject = topic.subjectFull
 
     switch UserInterfaceIdiom.current {
     case .pad, .mac:
@@ -60,8 +60,7 @@ struct TopicDetailsView: View {
           }
         }) {
           if UserInterfaceIdiom.current == .phone {
-            Text(topic.subject)
-              .font(.headline)
+            TopicSubjectView(topic: topic)
               .onAppear { showFullTitle = false }
               .onDisappear { showFullTitle = true }
           }
@@ -107,8 +106,8 @@ struct TopicDetailsView_Preview: PreviewProvider {
     AuthedPreview {
       NavigationView {
         TopicDetailsView(topic: Topic.with {
-          $0.id = "27447557"
-          $0.subject = "Topic Title"
+          $0.id = "27452921"
+          $0.subjectContent = "Topic Title"
         })
       }
     }

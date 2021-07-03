@@ -13,6 +13,8 @@ pub enum LogicError {
     MissingField(String),
     #[error("error while paring content: {0}")]
     ContentParse(String),
+    #[error("error while paring subject: {0}")]
+    SubjectParse(String),
 
     #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
