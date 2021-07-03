@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import SwiftProtobuf
+import SwiftUI
 
 class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let buildRequest: (_ page: Int) -> AsyncRequest.OneOf_Value
@@ -34,7 +35,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   func loadMoreIfNeeded(currentItem: Item) {
     if let index = items.firstIndex(where: { $0[keyPath: id] == currentItem[keyPath: id] }) {
-      let threshold = items.index(items.endIndex, offsetBy: -5)
+      let threshold = items.index(items.endIndex, offsetBy: -3)
       if index >= threshold { loadMore() }
     }
   }
@@ -45,7 +46,9 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.isLoading = true
     self.loadedPage = 0
     self.totalPages = 1
-    if clear { self.items = [] }
+    if clear {
+      self.items = []
+    }
 
     let request = buildRequest(1)
     logicCallAsync(request) { (response: Res) in
@@ -54,9 +57,9 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
       self.items = newItems
+      self.isLoading = false
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
-      self.isLoading = false
     }
   }
 
@@ -80,10 +83,12 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
-      self.items += newItems
+      withAnimation {
+        self.items += newItems
+        self.isLoading = false
+      }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
-      self.isLoading = false
     }
   }
 }

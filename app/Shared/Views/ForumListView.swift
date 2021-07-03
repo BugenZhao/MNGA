@@ -63,18 +63,20 @@ struct UserMenu: View {
     Menu {
       Section {
         if !shouldLogin {
-          let label = Label(user?.name ?? uid, systemImage: "person.fill")
-
           if let user = self.user {
             Menu {
-              Label(user.name, systemImage: "person.fill")
               Label(user.id, systemImage: "number")
+              Label {
+                Text(Date(timeIntervalSince1970: TimeInterval(user.regDate)), style: .date)
+              } icon: {
+                Image(systemName: "calendar")
+              }
               Label("\(user.postNum) Posts", systemImage: "text.bubble")
             } label: {
-              label
+              Label(user.name, systemImage: "person.fill")
             }
           } else {
-            label
+            Label(uid, systemImage: "person.fill")
           }
         }
       }
@@ -232,7 +234,9 @@ struct ForumListView: View {
 
     logicCallAsync(.forumList(.with { _ in }))
     { (response: ForumListResponse) in
-      categories = response.categories
+      withAnimation {
+        categories = response.categories
+      }
     }
   }
 }

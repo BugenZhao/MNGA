@@ -29,7 +29,7 @@
         }
       },
       {
-        "package": "SwiftProtobuf",
+        "package": "swift-protobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf",
         "state": {
           "branch": null,
@@ -38,12 +38,30 @@
         }
       },
       {
-        "package": "WebView",
+        "package": "SwiftUI-Introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect.git",
+        "state": {
+          "branch": null,
+          "revision": "2e09be8af614401bc9f87d40093ec19ce56ccaf2",
+          "version": "0.1.3"
+        }
+      },
+      {
+        "package": "SwiftUI-WebView",
         "repositoryURL": "https://github.com/kylehickinson/SwiftUI-WebView",
         "state": {
           "branch": null,
           "revision": "a67dcaff2377573a51f75761bb6e768b78931909",
           "version": "0.3.0"
+        }
+      },
+      {
+        "package": "SwiftUIRefresh",
+        "repositoryURL": "https://github.com/siteline/SwiftUIRefresh",
+        "state": {
+          "branch": null,
+          "revision": "fa8fac7b5eb5c729983a8bef65f094b5e0d12014",
+          "version": "0.0.3"
         }
       },
       {

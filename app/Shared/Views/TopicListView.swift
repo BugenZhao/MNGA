@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIRefresh
+import SDWebImageSwiftUI
 
 struct SubforumFilterToggleView: View {
   let subforum: Subforum
@@ -73,7 +75,11 @@ struct TopicListView: View {
           }
         }
         #if os(iOS)
-          list.listStyle(GroupedListStyle())
+          list
+            .listStyle(GroupedListStyle())
+            .pullToRefresh(isShowing: $dataSource.isLoading) {
+            dataSource.refresh(clear: false)
+          }
         #else
           list
         #endif
@@ -95,9 +101,11 @@ struct TopicListView: View {
             }
           }
           Section {
-            Button(action: { dataSource.refresh(clear: true) }) {
-              Label("Refresh", systemImage: "arrow.clockwise")
-            }
+            #if os(macOS)
+              Button(action: { dataSource.refresh(clear: true) }) {
+                Label("Refresh", systemImage: "arrow.clockwise")
+              }
+            #endif
             Label("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
           }
         } label: {
@@ -135,6 +143,7 @@ struct TopicListView_Previews: PreviewProvider {
     let defaultForum = Forum.with {
       $0.id = "-7"
       $0.name = "大漩涡"
+      $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/-7.png"
     }
 
     AuthedPreview {

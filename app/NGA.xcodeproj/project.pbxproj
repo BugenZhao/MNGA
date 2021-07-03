@@ -19,6 +19,7 @@
 		B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C8268D9B6300999830 /* SDWebImageSwiftUI */; };
 		B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CB268DA17D00999830 /* SwiftUIX */; };
 		B45819CE268DA18600999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CD268DA18600999830 /* SwiftUIX */; };
+		B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B4920CD32690224F00762FC9 /* SwiftUIRefresh */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D726884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D826884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
@@ -107,6 +108,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F707268DFC4600EB0614 /* Logging in Frameworks */,
+				B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
@@ -270,6 +272,7 @@
 				B45819CB268DA17D00999830 /* SwiftUIX */,
 				B4E10715268DADEE006C1742 /* WebView */,
 				B412F706268DFC4600EB0614 /* Logging */,
+				B4920CD32690224F00762FC9 /* SwiftUIRefresh */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -306,7 +309,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1300;
 				TargetAttributes = {
 					B4C024C726884FD700E53554 = {
 						CreatedOnToolsVersion = 12.5;
@@ -332,6 +335,7 @@
 				B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 				B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */,
 				B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */,
+				B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -439,6 +443,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -500,6 +505,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -603,6 +609,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = AHDHW7HK24;
@@ -627,6 +634,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = AHDHW7HK24;
@@ -702,6 +710,14 @@
 				minimumVersion = 0.0.7;
 			};
 		};
+		B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUIRefresh";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.3;
+			};
+		};
 		B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf";
@@ -750,6 +766,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
 			productName = SwiftUIX;
+		};
+		B4920CD32690224F00762FC9 /* SwiftUIRefresh */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
+			productName = SwiftUIRefresh;
 		};
 		B4C024EC268850E800E53554 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;

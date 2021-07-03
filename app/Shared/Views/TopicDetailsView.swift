@@ -52,7 +52,13 @@ struct TopicDetailsView: View {
   var body: some View {
     let inner = VStack(alignment: .leading) {
       let list = List {
-        Section(header: Text("Topic")) {
+        Section(header: HStack {
+          Text("Topic")
+          if dataSource.isLoading {
+            Spacer()
+            ProgressView()
+          }
+        }) {
           if UserInterfaceIdiom.current == .phone {
             Text(topic.subject)
               .font(.headline)
@@ -61,13 +67,8 @@ struct TopicDetailsView: View {
           }
           if let first = self.first {
             ReplyView(reply: first)
-          } else {
-            HStack {
-              Spacer()
-              ProgressView()
-              Spacer()
-            } .frame(height: 80)
           }
+
         }
 
         if dataSource.items.count > 1 {
@@ -89,7 +90,7 @@ struct TopicDetailsView: View {
       #endif
     }
       .navigationTitle(title)
-    .onFirstAppear { dataSource.initialLoad() }
+      .onFirstAppear { dataSource.initialLoad() }
 
     #if os(iOS)
       inner
@@ -106,8 +107,8 @@ struct TopicDetailsView_Preview: PreviewProvider {
     AuthedPreview {
       NavigationView {
         TopicDetailsView(topic: Topic.with {
-          $0.id = "27388005"
-          $0.subject = "Subject Title"
+          $0.id = "27447557"
+          $0.subject = "Topic Title"
         })
       }
     }
