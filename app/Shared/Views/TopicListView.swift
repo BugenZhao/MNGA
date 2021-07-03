@@ -24,7 +24,7 @@ struct SubforumFilterToggleView: View {
 
   var body: some View {
     Toggle(isOn: $selected) {
-      Text(subforum.name)
+      Text(subforum.forum.name)
     } .onChange(of: selected, perform: { value in
       self.action(value)
     })
@@ -42,9 +42,11 @@ struct TopicListView: View {
     let dataSource = PagingDataSource<TopicListResponse, Topic>(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
-          $0.forumID = forum.id
-          if forum.hasStid {
-            $0.stid = forum.stid
+          switch forum.id! {
+          case .fid(let fid):
+            $0.fid = fid
+          case .stid(let stid):
+            $0.stid = stid
           }
           $0.page = UInt32(page)
         })
@@ -87,30 +89,40 @@ struct TopicListView: View {
     }
       .navigationTitle(title)
       .toolbar {
-      ToolbarItem() {
-        Menu {
-          if let subforums = dataSource.latestResponse?.subforums {
-            Menu {
-              ForEach(subforums.filter { $0.filterable }, id: \.id) { subforum in
-                SubforumFilterToggleView(subforum: subforum) { v in
-                  setSubforumFilter(show: v, subforum: subforum)
-                }
-              }
-            } label: {
-              Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
-            }
+
+//      ToolbarItem {
+//        Menu {
+//          if let subforums = dataSource.latestResponse?.subforums,
+//            !subforums.isEmpty {
+//            Menu {
+//              ForEach(subforums.filter { $0.filterable }, id: \.id) { subforum in
+//                SubforumFilterToggleView(subforum: subforum) { v in
+//                  setSubforumFilter(show: v, subforum: subforum)
+//                }
+//              }
+//            } label: {
+//              Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
+//            }
+//          }
+//          Section {
+//            #if os(macOS)
+//              Button(action: { dataSource.refresh(clear: true) }) {
+//                Label("Refresh", systemImage: "arrow.clockwise")
+//              }
+//            #endif
+//            Label("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
+//          }
+//        } label: {
+//          Label("Menu", systemImage: "ellipsis.circle")
+//            .imageScale(.large)
+//        }
+//      }
+      ToolbarItem {
+        if let subforums = dataSource.latestResponse?.subforums,
+          !subforums.isEmpty {
+          NavigationLink(destination: SubforumListView(subforums: subforums)) {
+            Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
           }
-          Section {
-            #if os(macOS)
-              Button(action: { dataSource.refresh(clear: true) }) {
-                Label("Refresh", systemImage: "arrow.clockwise")
-              }
-            #endif
-            Label("#\(forum.id) " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
-          }
-        } label: {
-          Label("Menu", systemImage: "ellipsis.circle")
-            .imageScale(.large)
         }
       }
     } .onFirstAppear { dataSource.initialLoad() }
@@ -130,7 +142,7 @@ struct TopicListView: View {
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
       $0.operation = show ? .show : .block
-      $0.forumID = forum.id
+      $0.forumID = forum.fid
       $0.subforumFilterID = subforum.filterID
     })) { (response: SubforumFilterResponse) in
       dataSource.refresh(clear: true)
@@ -141,14 +153,20 @@ struct TopicListView: View {
 struct TopicListView_Previews: PreviewProvider {
   static var previews: some View {
     let defaultForum = Forum.with {
-      $0.id = "-7"
+      $0.fid = "-7"
       $0.name = "大漩涡"
       $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/-7.png"
     }
 
+    let genshinForum = Forum.with {
+      $0.fid = "650"
+      $0.name = "原神"
+      $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/650.png"
+    }
+
     AuthedPreview {
       NavigationView {
-        TopicListView(forum: defaultForum)
+        TopicListView(forum: genshinForum)
       }
     }
   }

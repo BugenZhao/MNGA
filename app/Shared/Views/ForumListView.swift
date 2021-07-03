@@ -25,11 +25,13 @@ struct ForumView: View {
           .frame(width: 28, height: 28)
       } else {
         defaultIcon
+          .resizable()
+          .frame(width: 28, height: 28)
       }
 
       HStack {
         Text(forum.name)
-        if forum.hasStid {
+        if case .stid(_) = forum.id! {
           Image(systemName: "arrow.uturn.right")
             .font(.footnote)
             .foregroundColor(.secondary)
@@ -119,7 +121,7 @@ struct ForumListView: View {
 
   @ViewBuilder
   func buildLink(_ forum: Forum, inFavoritesSection: Bool = true) -> some View {
-    let isFavorite = favorites.isFavorite(id: forum.id)
+    let isFavorite = favorites.isFavorite(id: forum.id!)
 
     NavigationLink(destination: TopicListView(forum: forum)) {
       ForumView(forum: forum, isFavorite: inFavoritesSection && isFavorite)
@@ -148,7 +150,7 @@ struct ForumListView: View {
           Spacer()
         }
       } else {
-        ForEach(favorites.favoriteForums, id: \.id) { forum in
+        ForEach(favorites.favoriteForums, id: \.hashIdentifiable) { forum in
           buildLink(forum, inFavoritesSection: false)
         } .onDelete { offsets in
           favorites.favoriteForums.remove(atOffsets: offsets)
@@ -172,7 +174,7 @@ struct ForumListView: View {
           }
           if !forums.isEmpty {
             Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
-              ForEach(forums, id: \.id) { forum in
+              ForEach(forums, id: \.hashIdentifiable) { forum in
                 buildLink(forum)
               }
             }

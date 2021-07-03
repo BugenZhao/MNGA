@@ -2,7 +2,7 @@ use super::fetch_package;
 use crate::{
     error::LogicResult,
     protos::{
-        DataModel::{Category, Forum},
+        DataModel::{Category, Forum, Forum_oneof_id},
         Service::{
             ForumListRequest, ForumListResponse, SubforumFilterRequest,
             SubforumFilterRequest_Operation, SubforumFilterResponse,
@@ -17,20 +17,19 @@ use sxd_xpath::nodeset::Node;
 
 fn extract_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
-    use crate::protos::DataModel::Forum_oneof__stid;
     let map = extract_kv(node);
 
-    let id = get!(map, "id")?;
-    let stid = get!(map, "stid").map(Forum_oneof__stid::stid);
-    let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, id);
+    let icon_id = get!(map, "id")?;
+    let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, icon_id);
+
+    let fid = get!(map, "fid").map(Forum_oneof_id::fid);
+    let stid = get!(map, "stid").map(Forum_oneof_id::stid);
 
     let forum = Forum {
-        id,
+        id: stid.or(fid), // stid first
         name: get!(map, "name")?,
         info: get!(map, "info").unwrap_or_default(),
         icon_url,
-        fid: get!(map, "fid")?,
-        _stid: stid,
         ..Default::default()
     };
 

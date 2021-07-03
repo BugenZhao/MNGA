@@ -29,9 +29,7 @@ message Reply {
 }
 
 message Subforum {
-  string id = 1;
-  string name = 2;
-  string description = 3;
+  Forum forum = 8;
   string filter_id = 7;
   uint64 attributes = 4;
   bool filterable = 5;
@@ -45,12 +43,13 @@ message Category {
 }
 
 message Forum {
-  string id = 1;
+  oneof id {
+    string fid = 1;
+    string stid = 5;
+  }
   string name = 2;
   string info = 3;
   string icon_url = 4;
-  string fid = 5;
-  optional string stid = 6;
 }
 
 message Span {

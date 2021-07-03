@@ -35,16 +35,16 @@ class FavoriteForumsStorage: ObservableObject {
   @AppStorage("favoriteForums") var favoriteForums = [Forum]()
   @AppStorage("showAll") var filterMode = FilterMode.all
 
-  func isFavorite(id: String) -> Bool {
+  func isFavorite(id: Forum.OneOf_ID) -> Bool {
     favoriteForums.firstIndex { $0.id == id } != nil
   }
 
   func addToFavorites(forum: Forum) {
-    if isFavorite(id: forum.id) { return }
+    if isFavorite(id: forum.id!) { return }
     favoriteForums.append(forum)
   }
 
-  func removeFromFavorites(id: String) {
+  func removeFromFavorites(id: Forum.OneOf_ID) {
     if let index = favoriteForums.firstIndex(where: { $0.id == id }) {
       favoriteForums.remove(at: index)
     }

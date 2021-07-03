@@ -38,8 +38,10 @@ message AsyncRequest {
 }
 
 message TopicListRequest {
-  string forum_id = 1;
-  optional string stid = 3;
+  oneof id {
+    string fid = 1;
+    string stid = 3;
+  }
   uint32 page = 2;
 }
 message TopicListResponse {

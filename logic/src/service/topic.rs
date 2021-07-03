@@ -2,11 +2,13 @@ use crate::{
     error::{LogicError, LogicResult},
     protos::{
         DataModel::{
-            Forum, Reply, ReplyContent, Span, Span_Plain, Span_oneof_value, Subforum, Topic,
+            Forum, Forum_oneof_id, Reply, ReplyContent, Span, Span_Plain, Span_oneof_value,
+            Subforum, Topic,
         },
         Service::*,
     },
     service::{
+        constants::FORUM_ICON_PATH,
         fetch_package, text,
         user::extract_user_and_cache,
         utils::{
@@ -40,22 +42,36 @@ fn extract_topic(node: Node) -> Option<Topic> {
     Some(topic)
 }
 
-fn extract_subforum(node: Node) -> Option<Subforum> {
+fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     use super::macros::pget;
     let pairs = extract_kv_pairs(node);
+
+    let id = pget!(pairs, 0)?;
+    let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, id);
+
+    let forum = Forum {
+        name: pget!(pairs, 1)?,
+        info: pget!(pairs, 2).unwrap_or_default(),
+        icon_url,
+        id: Some(if use_fid {
+            Forum_oneof_id::fid(id)
+        } else {
+            Forum_oneof_id::stid(id)
+        }),
+        ..Default::default()
+    };
+
     let attributes = pget!(pairs, 4, u64).unwrap_or(0);
 
-    let forum = Subforum {
-        id: pget!(pairs, 0)?,
-        name: pget!(pairs, 1)?,
-        description: pget!(pairs, 2).unwrap_or_default(),
+    let subforum = Subforum {
+        forum: Some(forum).into(),
         filter_id: pget!(pairs, 3).unwrap_or_default(), // for filter, subforum id ??
         attributes,
         filterable: attributes > 4096,
         ..Default::default()
     };
 
-    Some(forum)
+    Some(subforum)
 }
 
 fn extract_reply(node: Node) -> Option<Reply> {
@@ -98,7 +114,7 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
             if request.has_stid() {
                 ("stid", request.get_stid())
             } else {
-                ("fid", request.get_forum_id())
+                ("fid", request.get_fid())
             },
             ("page", &request.page.to_string()),
         ],
@@ -118,23 +134,31 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
         .collect::<HashSet<_>>();
 
     let subforums = {
-        let mut subforums = extract_nodes(&package, "/root/__F/sub_forums/item", |ns| {
-            ns.into_iter().filter_map(extract_subforum).collect()
+        let mut subforums = extract_nodes(&package, "/root/__F/sub_forums/*", |ns| {
+            ns.into_iter()
+                .filter_map(|node| {
+                    let use_fid = node.expanded_name()?.local_part() == "item";
+                    extract_subforum(node, use_fid)
+                })
+                .collect()
         })?;
-        subforums
-            .iter_mut()
-            .for_each(|s| s.selected = selected_subforum_ids.contains(s.get_id()));
+        subforums.iter_mut().for_each(|s| {
+            s.selected = selected_subforum_ids.contains(s.get_forum().get_fid())
+                || selected_subforum_ids.contains(s.get_forum().get_stid())
+        });
         subforums.sort_by(|a, b| {
             a.get_selected()
                 .cmp(&b.get_selected())
                 .reverse()
-                .then(a.get_name().cmp(b.get_name()))
+                .then(a.get_forum().get_name().cmp(b.get_forum().get_name()))
         });
         subforums
     };
 
+    let fid = extract_string(&package, "/root/__F/fid")?;
+
     let forum = Forum {
-        id: extract_string(&package, "/root/__F/fid")?,
+        id: Some(Forum_oneof_id::fid(fid)),
         name: extract_string(&package, "/root/__F/name")?,
         ..Default::default()
     };
@@ -189,7 +213,7 @@ mod test {
     #[tokio::test]
     async fn test_topic_list() -> LogicResult<()> {
         let response = get_topic_list(TopicListRequest {
-            forum_id: "335".to_owned(),
+            id: Some(TopicListRequest_oneof_id::fid("335".to_owned())),
             page: 1,
             ..Default::default()
         })

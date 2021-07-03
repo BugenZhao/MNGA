@@ -26,6 +26,8 @@
 		B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD826904CE700762FC9 /* Extensions.swift */; };
 		B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */; };
 		B4920CDD269083BD00762FC9 /* OpenSourceStickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */; };
+		B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDE2690A98200762FC9 /* SubforumListView.swift */; };
+		B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDE2690A98200762FC9 /* SubforumListView.swift */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D726884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D826884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
@@ -82,6 +84,7 @@
 		B4920CD52690465100762FC9 /* TopicSubjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSubjectView.swift; sourceTree = "<group>"; };
 		B4920CD826904CE700762FC9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSourceStickers.swift; sourceTree = "<group>"; };
+		B4920CDE2690A98200762FC9 /* SubforumListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubforumListView.swift; sourceTree = "<group>"; };
 		B4C024C226884FD600E53554 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B4C024C326884FD700E53554 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B4C024C826884FD700E53554 /* NGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -250,6 +253,7 @@
 				B4DBF61D268B8CD80027233F /* ForumListView.swift */,
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
+				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -395,6 +399,7 @@
 				B4DBF61B268A20A90027233F /* ReplyContentView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
+				B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */,
 				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
@@ -426,6 +431,7 @@
 				B4DBF61C268A20A90027233F /* ReplyContentView.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
 				B4E10721268DD215006C1742 /* AuthedPreview.swift in Sources */,
+				B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */,
 				B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
