@@ -83,9 +83,14 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
-      withAnimation {
+      let action = {
         self.items += newItems
         self.isLoading = false
+      }
+      if self.items.isEmpty {
+        withAnimation { action() }
+      } else {
+        action()
       }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1

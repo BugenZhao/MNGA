@@ -14,8 +14,8 @@
             filePath = "Shared/Views/ReplyContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "withFont(_:_:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -20,17 +20,21 @@ struct ReplyImageView: View {
   }
 
   var body: some View {
-    let image = WebImage(url: url)
-      .resizable()
-      .indicator(.activity)
-      .scaledToFit()
-
     if isOpenSourceStickers {
-      image
-        .frame(width: 50)
+      WebImage(url: url)
+        .resizable()
+        .placeholder {
+          ProgressView()
+            .frame(height: 50)
+        }
+        .aspectRatio(contentMode: .fit)
+        .frame(width: 50, height: 50)
         .background(Color.white)
     } else {
-      image
+      WebImage(url: url)
+        .resizable()
+        .indicator(.activity)
+        .scaledToFit()
     }
   }
 }
@@ -264,13 +268,12 @@ struct ReplyContentView: View {
 
 
 struct ReplyContentView_Previews: PreviewProvider {
-  static var previews: some View {
+  static var spans: [Span] {
     let sticker = Span.with { $0.sticker = .with { s in s.name = "a2:你看看你" } }
     let sticker2 = Span.with { $0.sticker = .with { s in s.name = "a2:doge" } }
     let sticker3 = Span.with { $0.sticker = .with { s in s.name = "pg:战斗力" } }
     let plain = Span.with { $0.plain = .with { p in p.text = "你看看他，再看看你自己。" } }
     let imageStickerUrl = Span.with { $0.plain = .with { p in p.text = "http://img.nga.178.com/attachments/mon_201209/14/-47218_5052c104b8e27.png" } }
-    let imageUrl = Span.with { $0.plain = .with { p in p.text = "./mon_202107/03/-7Q2o-aumgK2eT1kShs-120.jpg.medium.jpg" } }
     let bold = Span.with {
       $0.tagged = .with { t in
         t.tag = "b"
@@ -283,6 +286,15 @@ struct ReplyContentView_Previews: PreviewProvider {
         t.spans = [imageStickerUrl]
       }
     }
+
+    return [
+      plain, sticker, plain, bold, sticker2, plain, sticker3,
+      plain, plain, imageSticker, plain,
+    ]
+  }
+
+  static var previews: some View {
+    let imageUrl = Span.with { $0.plain = .with { p in p.text = "./mon_202107/03/-7Q2o-aumgK2eT1kShs-120.jpg.medium.jpg" } }
     let image = Span.with {
       $0.tagged = .with { t in
         t.tag = "img"
@@ -291,11 +303,7 @@ struct ReplyContentView_Previews: PreviewProvider {
     }
 
     ScrollView {
-      ReplyContentView(spans: [
-        plain, sticker, plain, bold, sticker2, plain, sticker3,
-        plain, plain, imageSticker, plain,
-        image
-        ])
+      ReplyContentView(spans: spans + [image])
     }
   }
 }

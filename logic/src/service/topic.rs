@@ -43,13 +43,13 @@ fn extract_topic(node: Node) -> Option<Topic> {
 fn extract_subforum(node: Node) -> Option<Subforum> {
     use super::macros::pget;
     let pairs = extract_kv_pairs(node);
-    let attributes = pget!(pairs, 4, u64)?;
+    let attributes = pget!(pairs, 4, u64).unwrap_or(0);
 
     let forum = Subforum {
         id: pget!(pairs, 0)?,
         name: pget!(pairs, 1)?,
-        description: pget!(pairs, 2)?,
-        filter_id: pget!(pairs, 3)?, // for filter, subforum id ??
+        description: pget!(pairs, 2).unwrap_or_default(),
+        filter_id: pget!(pairs, 3).unwrap_or_default(), // for filter, subforum id ??
         attributes,
         filterable: attributes > 4096,
         ..Default::default()
@@ -189,7 +189,7 @@ mod test {
     #[tokio::test]
     async fn test_topic_list() -> LogicResult<()> {
         let response = get_topic_list(TopicListRequest {
-            forum_id: "-7".to_owned(),
+            forum_id: "335".to_owned(),
             page: 1,
             ..Default::default()
         })

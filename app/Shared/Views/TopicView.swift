@@ -21,8 +21,10 @@ struct RepliesNumView: View {
       return (.callout.weight(.semibold), .accentColor.opacity(0.9))
     case 100..<200:
       return (.body.weight(.semibold), .accentColor)
-    case 200...:
+    case 200..<500:
       return (.body.weight(.bold), .accentColor)
+    case 500...:
+      return (.body.weight(.heavy), .accentColor)
     default:
       return (nil, nil)
     }
@@ -74,7 +76,7 @@ struct TopicView_Previews: PreviewProvider {
 
     AuthedPreview {
       List {
-        item(0); item(20); item(50); item(150); item(250);
+        item(0); item(20); item(50); item(150); item(250); item(550);
       } .listStyle(GroupedListStyle())
     }
   }

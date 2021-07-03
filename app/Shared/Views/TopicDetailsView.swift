@@ -106,10 +106,11 @@ struct TopicDetailsView_Preview: PreviewProvider {
     AuthedPreview {
       NavigationView {
         TopicDetailsView(topic: Topic.with {
-          $0.id = "27452921"
+          $0.id = "27458657"
           $0.subjectContent = "Topic Title"
         })
       }
     }
+//    .preferredColorScheme(.dark)
   }
 }
