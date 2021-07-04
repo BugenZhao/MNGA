@@ -10,6 +10,7 @@ struct macOSNGAApp: App {
 
   init() {
     logger.info("macOS init")
+    initConf()
   }
 
   var body: some Scene {

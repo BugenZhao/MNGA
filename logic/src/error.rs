@@ -1,3 +1,4 @@
+use crate::cache::CacheError;
 use std::any;
 use thiserror::Error;
 
@@ -22,6 +23,8 @@ pub enum LogicError {
     XmlParse(#[from] sxd_document::parser::Error),
     #[error(transparent)]
     XPath(#[from] sxd_xpath::Error),
+    #[error(transparent)]
+    Cache(#[from] CacheError),
 }
 
 pub type LogicResult<T> = Result<T, LogicError>;

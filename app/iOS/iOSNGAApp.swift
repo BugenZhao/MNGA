@@ -19,6 +19,7 @@ struct iOSNGAApp: App {
 
   init() {
     logger.info("iOS init")
+    initConf()
   }
 
   var body: some Scene {

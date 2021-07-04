@@ -1,19 +1,27 @@
-use crate::protos::DataModel::Configuration;
-use lazy_static::lazy_static;
+use crate::protos::DataModel;
+use once_cell::sync::OnceCell;
 use std::path::PathBuf;
 
-static mut DOCUMENT_DIR_PATH: Option<PathBuf> = None;
+#[derive(Debug)]
+pub struct Conf {
+    pub document_dir_path: PathBuf,
+    pub cache_path: PathBuf,
+}
 
-lazy_static! {}
+pub static CONF: OnceCell<Conf> = OnceCell::new();
 
-pub fn set_config(config: Configuration) {
-    unsafe {
-        DOCUMENT_DIR_PATH = Some(PathBuf::from(config.document_dir_path));
-    }
-
-    let _cache_path = {
-        let mut path = unsafe { DOCUMENT_DIR_PATH.clone().unwrap() };
+pub fn set_config(config: DataModel::Configuration) {
+    let document_dir_path = PathBuf::from(config.document_dir_path);
+    let cache_path = {
+        let mut path = document_dir_path.clone();
         path.push("cache");
         path
     };
+
+    let conf = Conf {
+        document_dir_path,
+        cache_path,
+    };
+    log::info!("{:#?}", conf);
+    CONF.set(conf).expect("failed to set configuration");
 }

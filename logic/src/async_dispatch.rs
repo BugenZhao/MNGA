@@ -51,7 +51,9 @@ macro_rules! r {
 }
 
 pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
-    RUNTIME.spawn(async move {
+    let _guard = RUNTIME.enter();
+
+    tokio::spawn(async move {
         log::debug!("serving async request on {:?}", thread::current());
 
         use AsyncRequest_oneof_value::*;
