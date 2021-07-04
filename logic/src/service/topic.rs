@@ -2,8 +2,8 @@ use crate::{
     error::{LogicError, LogicResult},
     protos::{
         DataModel::{
-            Forum, Forum_oneof_id, Post, PostContent, Span, Span_Plain, Span_oneof_value, Subforum,
-            Topic,
+            Forum, Forum_oneof_id, Post, PostContent, PostId, Span, Span_Plain, Span_oneof_value,
+            Subforum, Topic,
         },
         Service::*,
     },
@@ -93,8 +93,14 @@ fn extract_post(node: Node) -> Option<Post> {
         ..Default::default()
     };
 
-    let post = Post {
+    let post_id = PostId {
         pid: get!(map, "pid")?,
+        tid: get!(map, "tid")?,
+        ..Default::default()
+    };
+
+    let post = Post {
+        id: Some(post_id).into(),
         floor: get!(map, "lou", u32)?,
         author_id: get!(map, "authorid")?,
         content: Some(content).into(),

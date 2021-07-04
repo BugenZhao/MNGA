@@ -9,11 +9,56 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
+struct PostVoteView: View {
+  enum VoteState {
+    case up, none, down
+  }
+
+  let post: Post
+
+  @State var delta: Int32 = 0
+  @State var state = VoteState.none
+
+  var body: some View {
+    HStack(spacing: 4) {
+      Image(systemName: state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
+        .foregroundColor(state == .up ? .accentColor : .secondary)
+        .frame(height: 24)
+        .onTapGesture { vote(.upvote) }
+
+      Text("\(max(Int32(post.score) + delta, 0))")
+        .foregroundColor(state != .none ? .accentColor : .secondary)
+        .font(.subheadline.monospacedDigit())
+
+      Image(systemName: state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+        .foregroundColor(state == .down ? .accentColor : .secondary)
+        .frame(height: 24)
+        .onTapGesture { vote(.downvote) }
+    }
+  }
+
+  func vote(_ operation: PostVoteRequest.Operation) {
+    logicCallAsync(.postVote(.with {
+      $0.postID = post.id
+      $0.operation = operation
+    })) { (response: PostVoteResponse) in
+      withAnimation {
+        if operation == .upvote {
+          self.state = response.delta > 0 ? .up : .none
+        } else {
+          self.state = response.delta < 0 ? .down : .none
+        }
+        self.delta += response.delta
+      }
+    }
+  }
+}
+
 struct PostView: View {
   let post: Post
   let user: User?
 
-  @State var liked = false
+  @State var liked: Int32 = 0
 
   init(post: Post) {
     self.post = post
@@ -38,7 +83,7 @@ struct PostView: View {
             Text("\(user.postNum)")
 
             Spacer().frame(width: 4)
-            
+
             Image(systemName: "calendar")
             Text(Date(timeIntervalSince1970: TimeInterval(user.regDate)), style: .date)
           } .font(.footnote)
@@ -56,20 +101,11 @@ struct PostView: View {
 
   @ViewBuilder
   var footer: some View {
-    HStack(spacing: 4) {
-      Group {
-        Image(systemName: liked ? "hand.thumbsup.fill" : "hand.thumbsup")
-          .foregroundColor(liked ? .accentColor : .secondary)
-          .frame(height: 24)
+    HStack {
+      PostVoteView(post: post)
 
-
-        Text("\(post.score + (liked ? 1 : 0))")
-          .foregroundColor(liked ? .accentColor : .secondary)
-          .font(.subheadline)
-      } .onTapGesture { withAnimation { self.liked.toggle() } }
-      
       Spacer()
-      
+
       Text(timeago(post.postDate))
         .foregroundColor(.secondary)
         .font(.footnote)

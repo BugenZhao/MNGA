@@ -19,8 +19,13 @@ message User {
   uint32 post_num = 5;
 }
 
+message PostId {
+  string pid = 1;
+  string tid = 2;
+}
+
 message Post {
-  string pid = 6;
+  PostId id = 6;
   uint32 floor = 1;
   string author_id = 2;
   PostContent content = 3;

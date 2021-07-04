@@ -2,6 +2,7 @@ use crate::{
     protos::Service::*,
     service::{
         forum::{get_forum_list, set_subforum_filter},
+        post::post_vote,
         topic::{get_topic_details, get_topic_list},
         user::get_remote_user,
     },
@@ -38,5 +39,10 @@ pub async fn handle_forum_list(request: ForumListRequest) -> ForumListResponse {
 
 pub async fn handle_remote_user(request: RemoteUserRequest) -> RemoteUserResponse {
     let res = get_remote_user(request).await;
+    or_default!(res)
+}
+
+pub async fn handle_post_vote(request: PostVoteRequest) -> PostVoteResponse {
+    let res = post_vote(request).await;
     or_default!(res)
 }

@@ -34,7 +34,7 @@ message AsyncRequest {
     SubforumFilterRequest subforum_filter = 3;
     ForumListRequest forum_list = 4;
     RemoteUserRequest remote_user = 5;
-    // PostVoteRequest Post_vote = 6;
+    PostVoteRequest post_vote = 6;
   }
 }
 
@@ -86,6 +86,9 @@ message PostVoteRequest {
     DOWNVOTE = 1;
   }
   Operation operation = 1;
-  string post_id = 2;
+  PostId post_id = 2;
 }
-message PostVoteResponse {}
+message PostVoteResponse {
+  sint32 delta = 1;
+  optional string error = 2;
+}
