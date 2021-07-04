@@ -5,6 +5,7 @@ use crate::error::LogicResult;
 
 mod constants;
 pub mod forum;
+pub mod history;
 mod macros;
 pub mod post;
 pub mod text;

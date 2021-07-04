@@ -15,11 +15,6 @@ struct SubforumListView: View {
   let subforums: [Subforum]
   let refresh: () -> Void
 
-//  init(forum: Forum, subforums: [Subforum]) {
-//    self.forum = forum
-//    self._subforums = .init(initialValue: subforums)
-//  }
-
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
       $0.operation = show ? .show : .block

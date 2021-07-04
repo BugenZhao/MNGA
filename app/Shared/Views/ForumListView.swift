@@ -58,11 +58,18 @@ struct UserMenu: View {
 
   @State var user: User? = nil
 
+  let showHistory: Binding<Bool>
+
   var body: some View {
     let uid = authStorage.authInfo.inner.uid
     let shouldLogin = authStorage.shouldLogin
 
     Menu {
+      Section {
+        Button(action: { showHistory.wrappedValue = true }) {
+          Label("History", systemImage: "clock")
+        }
+      }
       Section {
         if !shouldLogin {
           if let user = self.user {
@@ -81,8 +88,7 @@ struct UserMenu: View {
             Label(uid, systemImage: "person.fill")
           }
         }
-      }
-      Section {
+
         if shouldLogin {
           Button(action: { authStorage.clearAuth() }) {
             Label("Sign In", systemImage: "person.crop.circle.badge.plus")
@@ -118,6 +124,7 @@ struct ForumListView: View {
   @State var categories = [Category]()
   @State var searchText: String = ""
   @State var isSearching: Bool = false
+  @State var showHistory: Bool = false
 
   @ViewBuilder
   func buildLink(_ forum: Forum, inFavoritesSection: Bool = true) -> some View {
@@ -199,7 +206,7 @@ struct ForumListView: View {
       }
     } label: {
       Label("Filters", systemImage: favorites.filterMode.filterIcon)
-    }
+    } .imageScale(.large)
   }
 
   var body: some View {
@@ -223,11 +230,14 @@ struct ForumListView: View {
     }
       .toolbar {
       ToolbarItem(placement: .navigationBarLeading) {
-        UserMenu()
+        UserMenu(showHistory: $showHistory)
       }
       ToolbarItem(placement: .navigationBarTrailing) {
-        filterMenu.imageScale(.large)
+        filterMenu
       }
+    }
+      .background {
+      NavigationLink(destination: TopicHistoryListView(), isActive: $showHistory) { }
     }
   }
 

@@ -4,6 +4,7 @@ use crate::{
     service::{
         constants::FORUM_ICON_PATH,
         fetch_package,
+        history::insert_topic_history,
         post::extract_post,
         text,
         user::extract_user_and_cache,
@@ -161,15 +162,18 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
         ns.into_iter().filter_map(extract_post).collect()
     })?;
 
-    let topic = extract_node(&package, "/root/__T", extract_topic)?.flatten();
-    if topic.is_none() {
-        return Err(LogicError::MissingField("topic".to_owned()));
-    }
+    let topic = extract_node(&package, "/root/__T", extract_topic)?
+        .flatten()
+        .ok_or(LogicError::MissingField("topic".to_owned()))?;
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 
+    if request.page == 1 {
+        insert_topic_history(topic.clone());
+    }
+
     Ok(TopicDetailsResponse {
-        topic: topic.into(),
+        topic: Some(topic).into(),
         replies: replies.into(),
         pages,
         ..Default::default()

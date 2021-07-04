@@ -11,7 +11,7 @@ use crate::{
 use sxd_xpath::nodeset::Node;
 
 fn vote_response_key(id: &PostId) -> String {
-    format!("/topic/{}/post/{}/vote_response", id.tid, id.pid)
+    format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)
 }
 
 pub fn extract_post(node: Node) -> Option<Post> {

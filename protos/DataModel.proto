@@ -93,3 +93,8 @@ enum VoteState {
   UP = 1;
   DOWN = 2;
 }
+
+message TopicSnapshot {
+  Topic topic_snapshot = 1;
+  uint64 timestamp = 2;
+}

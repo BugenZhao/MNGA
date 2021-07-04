@@ -35,6 +35,7 @@ message AsyncRequest {
     ForumListRequest forum_list = 4;
     RemoteUserRequest remote_user = 5;
     PostVoteRequest post_vote = 6;
+    TopicHistoryRequest topic_history = 7;
   }
 }
 
@@ -93,3 +94,6 @@ message PostVoteResponse {
   optional string error = 2;
   VoteState state = 3;
 }
+
+message TopicHistoryRequest { uint64 limit = 1; }
+message TopicHistoryResponse { repeated TopicSnapshot topics = 1; }

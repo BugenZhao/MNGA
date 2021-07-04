@@ -77,6 +77,8 @@
 		B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */; };
 		B4E2BDCF2691B0030080C790 /* InitConf.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDCE2691B0030080C790 /* InitConf.swift */; };
 		B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDCE2691B0030080C790 /* InitConf.swift */; };
+		B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
+		B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -116,6 +118,7 @@
 		B4E1071F268DD215006C1742 /* AuthedPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthedPreview.swift; sourceTree = "<group>"; };
 		B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthInfoDebug.swift; sourceTree = "<group>"; };
 		B4E2BDCE2691B0030080C790 /* InitConf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitConf.swift; sourceTree = "<group>"; };
+		B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicHistoryListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -260,6 +263,7 @@
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
+				B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -401,6 +405,7 @@
 				B4E2BDCF2691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
+				B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
 				B4DBF60C2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
@@ -434,6 +439,7 @@
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
+				B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
 				B4DBF60D2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF613268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
