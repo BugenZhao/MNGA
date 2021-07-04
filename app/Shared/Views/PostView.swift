@@ -9,61 +9,17 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct PostVoteView: View {
-  let post: Post
-
-  @State var delta: Int32 = 0
-  @State var state: VoteState
-
-  init(post: Post) {
-    self.post = post
-    self._state = .init(initialValue: post.voteState)
-  }
-
-  var body: some View {
-    HStack(spacing: 4) {
-      Image(systemName: state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
-        .foregroundColor(state == .up ? .accentColor : .secondary)
-        .frame(height: 24)
-        .onTapGesture { vote(.upvote) }
-
-      Text("\(max(Int32(post.score) + delta, 0))")
-        .foregroundColor(state != .none ? .accentColor : .secondary)
-        .font(.subheadline.monospacedDigit())
-
-      Image(systemName: state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
-        .foregroundColor(state == .down ? .accentColor : .secondary)
-        .frame(height: 24)
-        .onTapGesture { vote(.downvote) }
-    }
-  }
-
-  func vote(_ operation: PostVoteRequest.Operation) {
-    logicCallAsync(.postVote(.with {
-      $0.postID = post.id
-      $0.operation = operation
-    })) { (response: PostVoteResponse) in
-      if !response.hasError {
-        withAnimation {
-          self.state = response.state
-          self.delta += response.delta
-        }
-      } else {
-        // error
-      }
-    }
-  }
-}
-
 struct PostView: View {
   let post: Post
   let user: User?
 
-  @State var liked: Int32 = 0
+  @State var delta: Int32 = 0
+  @State var voteState: VoteState
 
   init(post: Post) {
     self.post = post
     self.user = try! (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
+    self._voteState = .init(wrappedValue: post.voteState)
   }
 
   @ViewBuilder
@@ -103,26 +59,30 @@ struct PostView: View {
   @ViewBuilder
   var footer: some View {
     HStack {
-      PostVoteView(post: post)
-
+      voter
       Spacer()
-
       Text(timeago(post.postDate))
         .foregroundColor(.secondary)
         .font(.footnote)
     }
   }
 
-  var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      header
-      PostContentView(spans: post.content.spans)
-      footer
-    } .padding(.vertical, 4)
-      .contextMenu {
-      Button(action: { copyContent(post.content.raw) }) {
-        Label("Copy Raw Content", systemImage: "doc.on.doc")
-      }
+  @ViewBuilder
+  var voter: some View {
+    HStack(spacing: 4) {
+      Image(systemName: voteState == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
+        .foregroundColor(voteState == .up ? .accentColor : .secondary)
+        .frame(height: 24)
+        .onTapGesture { vote(.upvote) }
+
+      Text("\(max(Int32(post.score) + delta, 0))")
+        .foregroundColor(voteState != .none ? .accentColor : .secondary)
+        .font(.subheadline.monospacedDigit())
+
+      Image(systemName: voteState == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+        .foregroundColor(voteState == .down ? .accentColor : .secondary)
+        .frame(height: 24)
+        .onTapGesture { vote(.downvote) }
     }
   }
 
@@ -140,6 +100,19 @@ struct PostView: View {
     }
   }
 
+  var body: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      header
+      PostContentView(spans: post.content.spans)
+      footer
+    } .padding(.vertical, 4)
+      .contextMenu {
+      Button(action: { copyContent(post.content.raw) }) {
+        Label("Copy Raw Content", systemImage: "doc.on.doc")
+      }
+    }
+  }
+
   func copyContent(_ content: String) {
     #if os(iOS)
       UIPasteboard.general.string = content
@@ -148,5 +121,21 @@ struct PostView: View {
       pb.clearContents()
       pb.writeObjects([content as NSString])
     #endif
+  }
+
+  func vote(_ operation: PostVoteRequest.Operation) {
+    logicCallAsync(.postVote(.with {
+      $0.postID = post.id
+      $0.operation = operation
+    })) { (response: PostVoteResponse) in
+      if !response.hasError {
+        withAnimation {
+          self.voteState = response.state
+          self.delta += response.delta
+        }
+      } else {
+        // error
+      }
+    }
   }
 }
