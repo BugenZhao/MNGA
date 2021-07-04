@@ -9,7 +9,14 @@ pub use error::{CacheError, CacheResult};
 lazy_static! {
     pub static ref CACHE: Cache = {
         let path = &config::CONF.get().expect("no configuration").cache_path;
-        let db = sled::open(path).expect("cannot open or create cache db");
+        let db = sled::Config::new()
+            .path(path)
+            .flush_every_ms(Some(1000))
+            .cache_capacity(50 * 1024 * 1024)
+            .open()
+            .expect("cannot open or create cache db");
+        log::info!("open db at {:?}, is_empty: {}", path, db.is_empty());
+
         Cache::new(db)
     };
 }
