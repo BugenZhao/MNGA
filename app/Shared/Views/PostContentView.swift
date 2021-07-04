@@ -76,7 +76,7 @@ fileprivate class ViewsCombiner {
       self[keyPath: target].append(AnyView(textBuffer))
       self.textBuffer = nil
     } else {
-      self[keyPath: target].append(AnyView(Text("")))
+      self[keyPath: target].append(AnyView(Spacer().frame(height: 4)))
     }
   }
 

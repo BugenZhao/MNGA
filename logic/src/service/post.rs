@@ -1,15 +1,65 @@
 use super::fetch_package;
 use crate::{
+    cache::CACHE,
     error::LogicResult,
-    protos::{
-        DataModel::VoteState,
-        Service::{
-            PostVoteRequest, PostVoteRequest_Operation, PostVoteResponse,
-            PostVoteResponse_oneof__error,
-        },
+    protos::{DataModel::*, Service::*},
+    service::{
+        text,
+        utils::{extract_kv, extract_string},
     },
-    service::utils::extract_string,
 };
+use sxd_xpath::nodeset::Node;
+
+fn vote_response_key(id: &PostId) -> String {
+    format!("/topic/{}/post/{}/vote_response", id.tid, id.pid)
+}
+
+pub fn extract_post(node: Node) -> Option<Post> {
+    use super::macros::get;
+    let map = extract_kv(node);
+
+    let raw_content = get!(map, "content")?;
+    let spans = text::parse_content(&raw_content).unwrap_or_else(|_| {
+        vec![Span {
+            value: Some(Span_oneof_value::plain(Span_Plain {
+                text: raw_content.clone(),
+                ..Default::default()
+            })),
+            ..Default::default()
+        }]
+    });
+    let content = PostContent {
+        spans: spans.into(),
+        raw: raw_content,
+        ..Default::default()
+    };
+
+    let post_id = PostId {
+        pid: get!(map, "pid")?,
+        tid: get!(map, "tid")?,
+        ..Default::default()
+    };
+
+    let vote_state = CACHE
+        .get_msg_async::<PostVoteResponse>(&vote_response_key(&post_id))
+        .ok()
+        .flatten()
+        .map(|r| r.state)
+        .unwrap_or(VoteState::NONE);
+
+    let post = Post {
+        id: Some(post_id).into(),
+        floor: get!(map, "lou", u32)?,
+        author_id: get!(map, "authorid")?,
+        content: Some(content).into(),
+        post_date: get!(map, "postdatetimestamp", _)?,
+        score: get!(map, "score", _)?,
+        vote_state,
+        ..Default::default()
+    };
+
+    Some(post)
+}
 
 pub async fn post_vote(request: PostVoteRequest) -> LogicResult<PostVoteResponse> {
     use std::cmp::Ordering::*;
@@ -40,11 +90,13 @@ pub async fn post_vote(request: PostVoteRequest) -> LogicResult<PostVoteResponse
             (DOWNVOTE, Less) => VoteState::DOWN,
             (_, _) => VoteState::NONE,
         };
-        Ok(PostVoteResponse {
+        let response = PostVoteResponse {
             delta,
             state,
             ..Default::default()
-        })
+        };
+        let _ = CACHE.insert_msg_async(&vote_response_key(request.get_post_id()), response.clone());
+        Ok(response)
     } else {
         let error = extract_string(&package, "/root/error/item[1]").unwrap_or_default();
         Ok(PostVoteResponse {

@@ -1,15 +1,11 @@
 use crate::{
     error::{LogicError, LogicResult},
-    protos::{
-        DataModel::{
-            Forum, Forum_oneof_id, Post, PostContent, PostId, Span, Span_Plain, Span_oneof_value,
-            Subforum, Topic, VoteState,
-        },
-        Service::*,
-    },
+    protos::{DataModel::*, Service::*},
     service::{
         constants::FORUM_ICON_PATH,
-        fetch_package, text,
+        fetch_package,
+        post::extract_post,
+        text,
         user::extract_user_and_cache,
         utils::{
             extract_kv, extract_kv_pairs, extract_node, extract_nodes, extract_pages,
@@ -71,46 +67,6 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     };
 
     Some(subforum)
-}
-
-fn extract_post(node: Node) -> Option<Post> {
-    use super::macros::get;
-    let map = extract_kv(node);
-
-    let raw_content = get!(map, "content")?;
-    let spans = text::parse_content(&raw_content).unwrap_or_else(|_| {
-        vec![Span {
-            value: Some(Span_oneof_value::plain(Span_Plain {
-                text: raw_content.clone(),
-                ..Default::default()
-            })),
-            ..Default::default()
-        }]
-    });
-    let content = PostContent {
-        spans: spans.into(),
-        raw: raw_content,
-        ..Default::default()
-    };
-
-    let post_id = PostId {
-        pid: get!(map, "pid")?,
-        tid: get!(map, "tid")?,
-        ..Default::default()
-    };
-
-    let post = Post {
-        id: Some(post_id).into(),
-        floor: get!(map, "lou", u32)?,
-        author_id: get!(map, "authorid")?,
-        content: Some(content).into(),
-        post_date: get!(map, "postdatetimestamp", _)?,
-        score: get!(map, "score", _)?,
-        vote_state: VoteState::NONE, // todo: read from cache
-        ..Default::default()
-    };
-
-    Some(post)
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListResponse> {
