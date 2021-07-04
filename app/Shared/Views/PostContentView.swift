@@ -1,5 +1,5 @@
 //
-//  ReplyContentView.swift
+//  PostContentView.swift
 //  NGA
 //
 //  Created by Bugen Zhao on 6/28/21.
@@ -10,7 +10,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 import SwiftUIX
 
-struct ReplyImageView: View {
+struct PostImageView: View {
   let url: URL
   let isOpenSourceStickers: Bool
 
@@ -156,7 +156,7 @@ fileprivate class ViewsCombiner {
   }
 }
 
-struct ReplyContentView: View {
+struct PostContentView: View {
   let spans: [Span]
 
   var body: some View {
@@ -213,7 +213,7 @@ struct ReplyContentView: View {
       }
       guard let url = URL(string: urlText) else { return }
 
-      let image = ReplyImageView(url: url)
+      let image = PostImageView(url: url)
 
       combiner.append(image)
     }
@@ -228,7 +228,7 @@ struct ReplyContentView: View {
 
     func visitBold(_ tagged: Span.Tagged) {
       combiner.withFont(combiner.lastFont?.bold()) {
-        if tagged.spans.first?.plain.text.starts(with: "Reply to") == true {
+        if tagged.spans.first?.plain.text.starts(with: "Post to") == true {
           visitQuote(Span.Tagged.with { $0.spans = Array(tagged.spans.dropFirst()) })
         } else {
           visitSpans(tagged.spans)
@@ -246,7 +246,7 @@ struct ReplyContentView: View {
       if let pid = tagged.attributes.first {
         combiner.withFont(combiner.lastFont?.bold()) {
           combiner.append(
-            Text("Reply")
+            Text("Post")
           )
           combiner.append(
             Text(" #\(pid) ")
@@ -267,7 +267,7 @@ struct ReplyContentView: View {
 }
 
 
-struct ReplyContentView_Previews: PreviewProvider {
+struct PostContentView_Previews: PreviewProvider {
   static var spans: [Span] {
     let sticker = Span.with { $0.sticker = .with { s in s.name = "a2:你看看你" } }
     let sticker2 = Span.with { $0.sticker = .with { s in s.name = "a2:doge" } }
@@ -303,7 +303,7 @@ struct ReplyContentView_Previews: PreviewProvider {
     }
 
     ScrollView {
-      ReplyContentView(spans: spans + [image])
+      PostContentView(spans: spans + [image])
     }
   }
 }

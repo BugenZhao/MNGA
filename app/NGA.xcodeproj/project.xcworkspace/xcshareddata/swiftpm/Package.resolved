@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "HalfASheet",
+        "repositoryURL": "https://github.com/franklynw/HalfASheet",
+        "state": {
+          "branch": null,
+          "revision": "4f43296b3722082dd5735521ee0fbf25e61cd21c",
+          "version": "1.0.2"
+        }
+      },
+      {
         "package": "SDWebImage",
         "repositoryURL": "https://github.com/SDWebImage/SDWebImage.git",
         "state": {

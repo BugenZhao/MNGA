@@ -12,13 +12,13 @@ import SwiftUIX
 struct TopicDetailsView: View {
   let topic: Topic
 
-  @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Reply>
+  @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @State var showFullTitle = false
 
   init(topic: Topic) {
     self.topic = topic
 
-    let dataSource = PagingDataSource<TopicDetailsResponse, Reply>(
+    let dataSource = PagingDataSource<TopicDetailsResponse, Post>(
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
@@ -35,7 +35,7 @@ struct TopicDetailsView: View {
     self._dataSource = StateObject(wrappedValue: dataSource)
   }
 
-  private var first: Reply? { dataSource.items.first }
+  private var first: Post? { dataSource.items.first }
 
   var title: String {
     let id = NSLocalizedString("Topic", comment: "") + " #\(topic.id)"
@@ -65,16 +65,16 @@ struct TopicDetailsView: View {
               .onDisappear { showFullTitle = true }
           }
           if let first = self.first {
-            ReplyView(reply: first)
+            PostView(post: first)
           }
 
         }
 
         if dataSource.items.count > 1 {
           Section(header: Text("Replies")) {
-            ForEach(dataSource.items.dropFirst(), id: \.floor) { reply in
-              ReplyView(reply: reply)
-                .onAppear { dataSource.loadMoreIfNeeded(currentItem: reply)
+            ForEach(dataSource.items.dropFirst(), id: \.floor) { post in
+              PostView(post: post)
+                .onAppear { dataSource.loadMoreIfNeeded(currentItem: post)
               }
             }
           }

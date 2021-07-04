@@ -2,8 +2,8 @@ use crate::{
     error::{LogicError, LogicResult},
     protos::{
         DataModel::{
-            Forum, Forum_oneof_id, Reply, ReplyContent, Span, Span_Plain, Span_oneof_value,
-            Subforum, Topic,
+            Forum, Forum_oneof_id, Post, PostContent, Span, Span_Plain, Span_oneof_value, Subforum,
+            Topic,
         },
         Service::*,
     },
@@ -73,7 +73,7 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     Some(subforum)
 }
 
-fn extract_reply(node: Node) -> Option<Reply> {
+fn extract_post(node: Node) -> Option<Post> {
     use super::macros::get;
     let map = extract_kv(node);
 
@@ -87,13 +87,13 @@ fn extract_reply(node: Node) -> Option<Reply> {
             ..Default::default()
         }]
     });
-    let content = ReplyContent {
+    let content = PostContent {
         spans: spans.into(),
         raw: raw_content,
         ..Default::default()
     };
 
-    let reply = Reply {
+    let post = Post {
         pid: get!(map, "pid")?,
         floor: get!(map, "lou", u32)?,
         author_id: get!(map, "authorid")?,
@@ -103,7 +103,7 @@ fn extract_reply(node: Node) -> Option<Reply> {
         ..Default::default()
     };
 
-    Some(reply)
+    Some(post)
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListResponse> {
@@ -195,7 +195,7 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
     })?;
 
     let replies = extract_nodes(&package, "/root/__R/item", |ns| {
-        ns.into_iter().filter_map(extract_reply).collect()
+        ns.into_iter().filter_map(extract_post).collect()
     })?;
 
     let topic = extract_node(&package, "/root/__T", extract_topic)?.flatten();

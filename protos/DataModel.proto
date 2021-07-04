@@ -19,11 +19,11 @@ message User {
   uint32 post_num = 5;
 }
 
-message Reply {
+message Post {
   string pid = 6;
   uint32 floor = 1;
   string author_id = 2;
-  ReplyContent content = 3;
+  PostContent content = 3;
   uint64 post_date = 4;
   uint32 score = 5;
 }
@@ -70,7 +70,7 @@ message Span {
   }
 }
 
-message ReplyContent {
+message PostContent {
   repeated Span spans = 1;
   string raw = 2;
 }

@@ -28,6 +28,7 @@
 		B4920CDD269083BD00762FC9 /* OpenSourceStickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */; };
 		B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDE2690A98200762FC9 /* SubforumListView.swift */; };
 		B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDE2690A98200762FC9 /* SubforumListView.swift */; };
+		B4920CE32690E65600762FC9 /* HalfASheet in Frameworks */ = {isa = PBXBuildFile; productRef = B4920CE22690E65600762FC9 /* HalfASheet */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D726884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D826884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
@@ -40,8 +41,8 @@
 		B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F32688511E00E53554 /* liblogicmacos.a */; };
 		B4DBF608268976470027233F /* TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* TimeAgo.swift */; };
 		B4DBF609268976470027233F /* TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* TimeAgo.swift */; };
-		B4DBF60C2689799F0027233F /* ReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* ReplyView.swift */; };
-		B4DBF60D2689799F0027233F /* ReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* ReplyView.swift */; };
+		B4DBF60C2689799F0027233F /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* PostView.swift */; };
+		B4DBF60D2689799F0027233F /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* PostView.swift */; };
 		B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60E268979C20027233F /* TopicDetailsView.swift */; };
 		B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60E268979C20027233F /* TopicDetailsView.swift */; };
 		B4DBF612268979F70027233F /* TopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF611268979F70027233F /* TopicListView.swift */; };
@@ -50,8 +51,8 @@
 		B4DBF61626897A170027233F /* TopicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61426897A170027233F /* TopicView.swift */; };
 		B4DBF61826897C520027233F /* Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61726897C520027233F /* Misc.swift */; };
 		B4DBF61926897C520027233F /* Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61726897C520027233F /* Misc.swift */; };
-		B4DBF61B268A20A90027233F /* ReplyContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* ReplyContentView.swift */; };
-		B4DBF61C268A20A90027233F /* ReplyContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* ReplyContentView.swift */; };
+		B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* PostContentView.swift */; };
+		B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61A268A20A90027233F /* PostContentView.swift */; };
 		B4DBF61E268B8CD80027233F /* ForumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61D268B8CD80027233F /* ForumListView.swift */; };
 		B4DBF61F268B8CD80027233F /* ForumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF61D268B8CD80027233F /* ForumListView.swift */; };
 		B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */; };
@@ -96,12 +97,12 @@
 		B4C024F12688510C00E53554 /* liblogicios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicios.a; path = ../out/libs/liblogicios.a; sourceTree = "<group>"; };
 		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
 		B4DBF607268976470027233F /* TimeAgo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeAgo.swift; sourceTree = "<group>"; };
-		B4DBF60B2689799F0027233F /* ReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyView.swift; sourceTree = "<group>"; };
+		B4DBF60B2689799F0027233F /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		B4DBF60E268979C20027233F /* TopicDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailsView.swift; sourceTree = "<group>"; };
 		B4DBF611268979F70027233F /* TopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListView.swift; sourceTree = "<group>"; };
 		B4DBF61426897A170027233F /* TopicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicView.swift; sourceTree = "<group>"; };
 		B4DBF61726897C520027233F /* Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Misc.swift; sourceTree = "<group>"; };
-		B4DBF61A268A20A90027233F /* ReplyContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyContentView.swift; sourceTree = "<group>"; };
+		B4DBF61A268A20A90027233F /* PostContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentView.swift; sourceTree = "<group>"; };
 		B4DBF61D268B8CD80027233F /* ForumListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumListView.swift; sourceTree = "<group>"; };
 		B4DCF43826885DD700EC78A4 /* DataModel.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataModel.pb.swift; sourceTree = "<group>"; };
 		B4DCF43926885DD700EC78A4 /* Service.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Service.pb.swift; sourceTree = "<group>"; };
@@ -126,6 +127,7 @@
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
 				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
 				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
+				B4920CE32690E65600762FC9 /* HalfASheet in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,11 +247,11 @@
 			isa = PBXGroup;
 			children = (
 				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
-				B4DBF60B2689799F0027233F /* ReplyView.swift */,
+				B4DBF60B2689799F0027233F /* PostView.swift */,
 				B4DBF60E268979C20027233F /* TopicDetailsView.swift */,
 				B4DBF611268979F70027233F /* TopicListView.swift */,
 				B4DBF61426897A170027233F /* TopicView.swift */,
-				B4DBF61A268A20A90027233F /* ReplyContentView.swift */,
+				B4DBF61A268A20A90027233F /* PostContentView.swift */,
 				B4DBF61D268B8CD80027233F /* ForumListView.swift */,
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
@@ -289,6 +291,7 @@
 				B4E10715268DADEE006C1742 /* WebView */,
 				B412F706268DFC4600EB0614 /* Logging */,
 				B4920CD32690224F00762FC9 /* SwiftUIRefresh */,
+				B4920CE22690E65600762FC9 /* HalfASheet */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -352,6 +355,7 @@
 				B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */,
 				B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */,
 				B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
+				B4920CE12690E65600762FC9 /* XCRemoteSwiftPackageReference "HalfASheet" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -392,11 +396,11 @@
 				B4920CD926904CE700762FC9 /* Extensions.swift in Sources */,
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
-				B4DBF60C2689799F0027233F /* ReplyView.swift in Sources */,
+				B4DBF60C2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
-				B4DBF61B268A20A90027233F /* ReplyContentView.swift in Sources */,
+				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
 				B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */,
@@ -424,11 +428,11 @@
 				B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
-				B4DBF60D2689799F0027233F /* ReplyView.swift in Sources */,
+				B4DBF60D2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF613268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4920CDD269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
-				B4DBF61C268A20A90027233F /* ReplyContentView.swift in Sources */,
+				B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
 				B4E10721268DD215006C1742 /* AuthedPreview.swift in Sources */,
 				B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */,
@@ -742,6 +746,14 @@
 				minimumVersion = 0.0.3;
 			};
 		};
+		B4920CE12690E65600762FC9 /* XCRemoteSwiftPackageReference "HalfASheet" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/franklynw/HalfASheet";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf";
@@ -795,6 +807,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
 			productName = SwiftUIRefresh;
+		};
+		B4920CE22690E65600762FC9 /* HalfASheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4920CE12690E65600762FC9 /* XCRemoteSwiftPackageReference "HalfASheet" */;
+			productName = HalfASheet;
 		};
 		B4C024EC268850E800E53554 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;

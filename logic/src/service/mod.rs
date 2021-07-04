@@ -4,9 +4,10 @@ use reqwest::{Client, Url};
 use crate::error::LogicResult;
 
 mod constants;
-pub mod text;
 pub mod forum;
 mod macros;
+pub mod post;
+pub mod text;
 pub mod topic;
 pub mod user;
 mod utils;

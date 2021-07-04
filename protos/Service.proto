@@ -34,6 +34,7 @@ message AsyncRequest {
     SubforumFilterRequest subforum_filter = 3;
     ForumListRequest forum_list = 4;
     RemoteUserRequest remote_user = 5;
+    // PostVoteRequest Post_vote = 6;
   }
 }
 
@@ -58,7 +59,7 @@ message TopicDetailsRequest {
 }
 message TopicDetailsResponse {
   Topic topic = 1;
-  repeated Reply replies = 2;
+  repeated Post replies = 2;
   uint32 pages = 3;
 }
 
@@ -78,3 +79,13 @@ message ForumListResponse { repeated Category categories = 1; }
 
 message RemoteUserRequest { string user_id = 1; }
 message RemoteUserResponse { optional User user = 1; }
+
+message PostVoteRequest {
+  enum Operation {
+    UPVOTE = 0;
+    DOWNVOTE = 1;
+  }
+  Operation operation = 1;
+  string post_id = 2;
+}
+message PostVoteResponse {}

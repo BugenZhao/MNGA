@@ -1,5 +1,5 @@
 //
-//  ReplyView.swift
+//  PostView.swift
 //  NGA
 //
 //  Created by Bugen Zhao on 6/28/21.
@@ -9,15 +9,15 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct ReplyView: View {
-  let reply: Reply
+struct PostView: View {
+  let post: Post
   let user: User?
 
   @State var liked = false
 
-  init(reply: Reply) {
-    self.reply = reply
-    self.user = try! (logicCall(.localUser(.with { $0.userID = reply.authorID })) as LocalUserResponse).user
+  init(post: Post) {
+    self.post = post
+    self.user = try! (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
   }
 
   @ViewBuilder
@@ -29,7 +29,7 @@ struct ReplyView: View {
         .clipShape(Circle())
 
       VStack(alignment: .leading, spacing: 2) {
-        Text(user?.name ?? reply.authorID)
+        Text(user?.name ?? post.authorID)
           .font(.subheadline)
 
         if let user = self.user {
@@ -48,7 +48,7 @@ struct ReplyView: View {
 
       Spacer()
 
-      (Text("#").font(.footnote) + Text("\(reply.floor)").font(.callout))
+      (Text("#").font(.footnote) + Text("\(post.floor)").font(.callout))
         .fontWeight(.medium)
         .foregroundColor(.accentColor)
     }
@@ -63,14 +63,14 @@ struct ReplyView: View {
           .frame(height: 24)
 
 
-        Text("\(reply.score + (liked ? 1 : 0))")
+        Text("\(post.score + (liked ? 1 : 0))")
           .foregroundColor(liked ? .accentColor : .secondary)
           .font(.subheadline)
       } .onTapGesture { withAnimation { self.liked.toggle() } }
       
       Spacer()
       
-      Text(timeago(reply.postDate))
+      Text(timeago(post.postDate))
         .foregroundColor(.secondary)
         .font(.footnote)
     }
@@ -79,11 +79,11 @@ struct ReplyView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
       header
-      ReplyContentView(spans: reply.content.spans)
+      PostContentView(spans: post.content.spans)
       footer
     } .padding(.vertical, 4)
       .contextMenu {
-      Button(action: { copyContent(reply.content.raw) }) {
+      Button(action: { copyContent(post.content.raw) }) {
         Label("Copy Raw Content", systemImage: "doc.on.doc")
       }
     }
