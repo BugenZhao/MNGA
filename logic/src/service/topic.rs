@@ -3,7 +3,7 @@ use crate::{
     protos::{
         DataModel::{
             Forum, Forum_oneof_id, Post, PostContent, PostId, Span, Span_Plain, Span_oneof_value,
-            Subforum, Topic,
+            Subforum, Topic, VoteState,
         },
         Service::*,
     },
@@ -106,6 +106,7 @@ fn extract_post(node: Node) -> Option<Post> {
         content: Some(content).into(),
         post_date: get!(map, "postdatetimestamp", _)?,
         score: get!(map, "score", _)?,
+        vote_state: VoteState::NONE, // todo: read from cache
         ..Default::default()
     };
 

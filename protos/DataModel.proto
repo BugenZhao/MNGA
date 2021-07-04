@@ -31,6 +31,7 @@ message Post {
   PostContent content = 3;
   uint64 post_date = 4;
   uint32 score = 5;
+  VoteState vote_state = 7;
 }
 
 message Subforum {
@@ -85,4 +86,10 @@ message Configuration { string document_dir_path = 1; }
 message AuthInfo {
   string uid = 1;
   string token = 2;
+}
+
+enum VoteState {
+  NONE = 0;
+  UP = 1;
+  DOWN = 2;
 }

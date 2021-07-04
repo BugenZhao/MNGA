@@ -91,4 +91,5 @@ message PostVoteRequest {
 message PostVoteResponse {
   sint32 delta = 1;
   optional string error = 2;
+  VoteState state = 3;
 }

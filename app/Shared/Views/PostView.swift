@@ -10,14 +10,15 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct PostVoteView: View {
-  enum VoteState {
-    case up, none, down
-  }
-
   let post: Post
 
   @State var delta: Int32 = 0
-  @State var state = VoteState.none
+  @State var state: VoteState
+
+  init(post: Post) {
+    self.post = post
+    self._state = .init(initialValue: post.voteState)
+  }
 
   var body: some View {
     HStack(spacing: 4) {
@@ -42,13 +43,13 @@ struct PostVoteView: View {
       $0.postID = post.id
       $0.operation = operation
     })) { (response: PostVoteResponse) in
-      withAnimation {
-        if operation == .upvote {
-          self.state = response.delta > 0 ? .up : .none
-        } else {
-          self.state = response.delta < 0 ? .down : .none
+      if !response.hasError {
+        withAnimation {
+          self.state = response.state
+          self.delta += response.delta
         }
-        self.delta += response.delta
+      } else {
+        // error
       }
     }
   }

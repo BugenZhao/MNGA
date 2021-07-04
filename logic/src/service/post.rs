@@ -1,17 +1,23 @@
+use super::fetch_package;
 use crate::{
     error::LogicResult,
-    protos::Service::{
-        PostVoteRequest, PostVoteRequest_Operation, PostVoteResponse, PostVoteResponse_oneof__error,
+    protos::{
+        DataModel::VoteState,
+        Service::{
+            PostVoteRequest, PostVoteRequest_Operation, PostVoteResponse,
+            PostVoteResponse_oneof__error,
+        },
     },
     service::utils::extract_string,
 };
 
-use super::fetch_package;
-
 pub async fn post_vote(request: PostVoteRequest) -> LogicResult<PostVoteResponse> {
+    use std::cmp::Ordering::*;
+    use PostVoteRequest_Operation::*;
+
     let value = match request.get_operation() {
-        PostVoteRequest_Operation::UPVOTE => "1",
-        PostVoteRequest_Operation::DOWNVOTE => "-1",
+        UPVOTE => "1",
+        DOWNVOTE => "-1",
     };
 
     let package = fetch_package(
@@ -29,8 +35,14 @@ pub async fn post_vote(request: PostVoteRequest) -> LogicResult<PostVoteResponse
 
     if let Ok(delta) = extract_string(&package, "/root/data/item[2]") {
         let delta = delta.parse::<i32>().unwrap_or_default();
+        let state = match (request.get_operation(), delta.cmp(&0)) {
+            (UPVOTE, Greater) => VoteState::UP,
+            (DOWNVOTE, Less) => VoteState::DOWN,
+            (_, _) => VoteState::NONE,
+        };
         Ok(PostVoteResponse {
             delta,
+            state,
             ..Default::default()
         })
     } else {
