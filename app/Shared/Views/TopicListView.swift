@@ -14,7 +14,8 @@ struct TopicListView: View {
   let forum: Forum
 
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
-  @State var showingSubforumsSheet = false
+
+  @State var showingSubforums = false
   @State var showingHotTopics = false
 
   init(forum: Forum) {
@@ -38,17 +39,6 @@ struct TopicListView: View {
   }
 
   @ViewBuilder
-  var sheet: some View {
-    if let subforums = dataSource.latestResponse?.subforums, !subforums.isEmpty {
-      NavigationView {
-        SubforumListView(forum: forum, subforums: subforums) {
-          dataSource.refresh()
-        }
-      }
-    }
-  }
-
-  @ViewBuilder
   var moreMenu: some View {
     Menu {
       Section {
@@ -57,12 +47,12 @@ struct TopicListView: View {
         }
         if let subforums = dataSource.latestResponse?.subforums,
           !subforums.isEmpty {
-          Button(action: { showingSubforumsSheet = true }) {
+          Button(action: { showingSubforums = true }) {
             Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
           }
         }
       }
-      
+
       Section {
         #if os(macOS)
           Button(action: { dataSource.refresh(clear: true) }) {
@@ -74,6 +64,18 @@ struct TopicListView: View {
     } label: {
       Label("More", systemImage: "ellipsis.circle")
         .imageScale(.large)
+    }
+  }
+
+  @ViewBuilder
+  var subforums: some View {
+    if let subforums = dataSource.latestResponse?.subforums, !subforums.isEmpty {
+      let destination = SubforumListView(
+        forum: forum,
+        subforums: subforums,
+        refresh: { dataSource.refresh() }
+      )
+      NavigationLink(destination: destination, isActive: $showingSubforums) { }
     }
   }
 
@@ -109,10 +111,12 @@ struct TopicListView: View {
         #endif
       }
     }
-      .sheet(isPresented: $showingSubforumsSheet, content: { sheet })
-      .background { hotTopics }
+      .background { Group { subforums; hotTopics } }
       .navigationTitle(forum.name)
-      .toolbar { ToolbarItem { moreMenu } }
+      .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug
+      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+    }
       .onFirstAppear { dataSource.initialLoad() }
   }
 }

@@ -42,17 +42,10 @@ struct SubforumListView: View {
 
         ForumView(forum: forum, isFavorite: isFavorite)
       }
-        .contextMenu(ContextMenu(menuItems: {
-        Button(action: {
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            withAnimation { favorites.toggleFavorite(forum: forum) }
-          }
-        }) {
-          let text: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
-          let image = isFavorite ? "star.slash.fill" : "star"
-          Label(text, systemImage: image)
-        }
-      }))
+        .modifier(FavoriteModifier(
+        isFavorite: favorites.isFavorite(id: forum.id),
+        toggleFavorite: { favorites.toggleFavorite(forum: forum) }
+        ))
     }
   }
 

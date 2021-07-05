@@ -88,7 +88,10 @@ struct HotTopicListView: View {
         #endif
       }
     } .navigationTitle("Hot Topics")
-      .toolbar { ToolbarItem(placement: .navigationBarLeading) { rangeMenu } }
+      .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug
+      ToolbarItem(placement: .navigationBarTrailing) { rangeMenu }
+    }
       .onFirstAppear { dataSource.initialLoad() }
   }
 }
