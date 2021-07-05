@@ -22,7 +22,7 @@ pub fn insert_topic_history(topic: Topic) {
         timestamp: Utc::now().timestamp_millis() as u64,
         ..Default::default()
     };
-    let _ = CACHE.insert_msg_async(&key, snapshot);
+    let _ = CACHE.insert_msg(&key, snapshot);
 }
 
 pub async fn get_topic_history(request: TopicHistoryRequest) -> LogicResult<TopicHistoryResponse> {

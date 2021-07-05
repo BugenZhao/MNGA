@@ -38,8 +38,7 @@ impl Cache {
         Self { db }
     }
 
-    #[allow(unused_results)]
-    pub fn insert_msg<M: protobuf::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
+    fn do_insert_msg<M: protobuf::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
         log::info!("insert: key={}, msg={:?}", key, msg);
         let key_bytes = key.as_bytes();
         let value = msg.write_to_bytes()?;
@@ -48,7 +47,7 @@ impl Cache {
         Ok(last_msg)
     }
 
-    pub fn get_msg<M: protobuf::Message>(&self, key: &str) -> CacheResult<Option<M>> {
+    fn do_get_msg<M: protobuf::Message>(&self, key: &str) -> CacheResult<Option<M>> {
         let key_bytes = key.as_bytes();
         let value = self.db.get(key_bytes)?;
         let value_msg = value.and_then(|ivec| M::parse_from_bytes(&ivec).ok());
@@ -57,15 +56,11 @@ impl Cache {
     }
 
     #[allow(unused_results)]
-    pub fn insert_msg_async<M: protobuf::Message>(
-        &self,
-        key: &str,
-        msg: M,
-    ) -> CacheResult<Option<M>> {
-        tokio::task::block_in_place(move || self.insert_msg(key, msg))
+    pub fn insert_msg<M: protobuf::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
+        tokio::task::block_in_place(move || self.do_insert_msg(key, msg))
     }
 
-    pub fn get_msg_async<M: protobuf::Message>(&self, key: &str) -> CacheResult<Option<M>> {
-        tokio::task::block_in_place(move || self.get_msg(key))
+    pub fn get_msg<M: protobuf::Message>(&self, key: &str) -> CacheResult<Option<M>> {
+        tokio::task::block_in_place(move || self.do_get_msg(key))
     }
 }

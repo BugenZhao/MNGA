@@ -41,7 +41,7 @@ pub fn extract_post(node: Node) -> Option<Post> {
     };
 
     let vote_state = CACHE
-        .get_msg_async::<PostVoteResponse>(&vote_response_key(&post_id))
+        .get_msg::<PostVoteResponse>(&vote_response_key(&post_id))
         .ok()
         .flatten()
         .map(|r| r.state)
@@ -95,7 +95,7 @@ pub async fn post_vote(request: PostVoteRequest) -> LogicResult<PostVoteResponse
             state,
             ..Default::default()
         };
-        let _ = CACHE.insert_msg_async(&vote_response_key(request.get_post_id()), response.clone());
+        let _ = CACHE.insert_msg(&vote_response_key(request.get_post_id()), response.clone());
         Ok(response)
     } else {
         let error = extract_string(&package, "/root/error/item[1]").unwrap_or_default();
