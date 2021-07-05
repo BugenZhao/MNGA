@@ -10,32 +10,12 @@ import SwiftUI
 import SwiftUIRefresh
 import SDWebImageSwiftUI
 
-struct SubforumFilterToggleView: View {
-  let subforum: Subforum
-  let action: (_ newSelected: Bool) -> Void
-
-  @State var selected: Bool
-
-  init(subforum: Subforum, action: @escaping (_ newSelected: Bool) -> Void) {
-    self.subforum = subforum
-    self._selected = State(wrappedValue: subforum.selected)
-    self.action = action
-  }
-
-  var body: some View {
-    Toggle(isOn: $selected) {
-      Text(subforum.forum.name)
-    } .onChange(of: selected, perform: { value in
-      self.action(value)
-    })
-  }
-}
-
 struct TopicListView: View {
   let forum: Forum
 
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
-  @State var showingSheet = false
+  @State var showingSubforumsSheet = false
+  @State var showingHotTopics = false
 
   init(forum: Forum) {
     self.forum = forum
@@ -68,8 +48,43 @@ struct TopicListView: View {
     }
   }
 
+  @ViewBuilder
+  var moreMenu: some View {
+    Menu {
+      Section {
+        Button(action: { showingHotTopics = true }) {
+          Label("Hot Topics", systemImage: "flame")
+        }
+        if let subforums = dataSource.latestResponse?.subforums,
+          !subforums.isEmpty {
+          Button(action: { showingSubforumsSheet = true }) {
+            Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
+          }
+        }
+      }
+      
+      Section {
+        #if os(macOS)
+          Button(action: { dataSource.refresh(clear: true) }) {
+            Label("Refresh", systemImage: "arrow.clockwise")
+          }
+        #endif
+        Label(forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
+      }
+    } label: {
+      Label("More", systemImage: "ellipsis.circle")
+        .imageScale(.large)
+    }
+  }
+
+  @ViewBuilder
+  var hotTopics: some View {
+    let destination = HotTopicListView(forum: forum)
+    NavigationLink(destination: destination, isActive: $showingHotTopics) { }
+  }
+
   var body: some View {
-    let inner = VStack {
+    Group {
       if dataSource.items.isEmpty {
         ProgressView()
       } else {
@@ -87,47 +102,18 @@ struct TopicListView: View {
           list
             .listStyle(GroupedListStyle())
             .pullToRefresh(isShowing: $dataSource.isLoading) {
-            dataSource.refresh(clear: false)
+            dataSource.refresh()
           }
         #else
           list
         #endif
       }
     }
-      .sheet(isPresented: $showingSheet, content: { sheet })
+      .sheet(isPresented: $showingSubforumsSheet, content: { sheet })
+      .background { hotTopics }
       .navigationTitle(forum.name)
-      .toolbar {
-
-      ToolbarItem {
-        Menu {
-          if let subforums = dataSource.latestResponse?.subforums,
-            !subforums.isEmpty {
-            Button(action: { showingSheet = true }) {
-              Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
-            }
-          }
-          Section {
-            #if os(macOS)
-              Button(action: { dataSource.refresh(clear: true) }) {
-                Label("Refresh", systemImage: "arrow.clockwise")
-              }
-            #endif
-            Label(forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
-          }
-        } label: {
-          Label("Menu", systemImage: "ellipsis.circle")
-            .imageScale(.large)
-        }
-      }
-
-    } .onFirstAppear { dataSource.initialLoad() }
-
-    #if os(iOS)
-      inner
-//        .navigationBarTitleDisplayMode(.inline)
-    #elseif os(macOS)
-      inner
-    #endif
+      .toolbar { ToolbarItem { moreMenu } }
+      .onFirstAppear { dataSource.initialLoad() }
   }
 }
 

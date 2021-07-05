@@ -191,6 +191,7 @@ struct ForumListView: View {
     }
   }
 
+  @ViewBuilder
   var filterMenu: some View {
     Menu {
       Section {

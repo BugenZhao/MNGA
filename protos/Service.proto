@@ -36,6 +36,7 @@ message AsyncRequest {
     RemoteUserRequest remote_user = 5;
     PostVoteRequest post_vote = 6;
     TopicHistoryRequest topic_history = 7;
+    HotTopicListRequest hot_topic_list = 8;
   }
 }
 
@@ -94,3 +95,18 @@ message PostVoteResponse {
 
 message TopicHistoryRequest { uint64 limit = 1; }
 message TopicHistoryResponse { repeated TopicSnapshot topics = 1; }
+
+message HotTopicListRequest {
+  enum DateRange {
+    DAY = 0;
+    WEEK = 1;
+    MONTH = 2;
+  }
+  ForumId id = 1;
+  DateRange range = 2;
+  optional uint32 fetch_page_limit = 3;
+  optional uint64 limit = 4;
+}
+message HotTopicListResponse {
+  repeated Topic topics = 1;
+}

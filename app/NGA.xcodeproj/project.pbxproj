@@ -19,6 +19,8 @@
 		B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B45819C8268D9B6300999830 /* SDWebImageSwiftUI */; };
 		B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CB268DA17D00999830 /* SwiftUIX */; };
 		B45819CE268DA18600999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CD268DA18600999830 /* SwiftUIX */; };
+		B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */; };
+		B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */; };
 		B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B4920CD32690224F00762FC9 /* SwiftUIRefresh */; };
 		B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
 		B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
@@ -86,6 +88,7 @@
 		375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = macOSNGAApp.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
+		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
 		B4920CD52690465100762FC9 /* TopicSubjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSubjectView.swift; sourceTree = "<group>"; };
 		B4920CD826904CE700762FC9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSourceStickers.swift; sourceTree = "<group>"; };
@@ -264,6 +267,7 @@
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
 				B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */,
+				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -410,6 +414,7 @@
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
+				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
@@ -444,6 +449,7 @@
 				B4DBF613268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4920CDD269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
+				B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
 				B4E10721268DD215006C1742 /* AuthedPreview.swift in Sources */,

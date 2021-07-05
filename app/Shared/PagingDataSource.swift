@@ -11,7 +11,7 @@ import SwiftProtobuf
 import SwiftUI
 
 class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
-  private let buildRequest: (_ page: Int) -> AsyncRequest.OneOf_Value
+  var buildRequest: ((_ page: Int) -> AsyncRequest.OneOf_Value)?
   private let onResponse: (_ response: Res) -> ([Item], Int?)
   private let id: KeyPath<Item, String>
 
@@ -24,7 +24,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private var dataFlowId = UUID()
 
   init(
-    buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
+    buildRequest: ((_ page: Int) -> AsyncRequest.OneOf_Value)?,
     onResponse: @escaping (_ response: Res) -> ([Item], Int?),
     id: KeyPath<Item, String>
   ) {
@@ -40,24 +40,28 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func refresh(clear: Bool = false) {
+  func refresh(animated: Bool = false) {
     self.dataFlowId = UUID()
 
     self.isLoading = true
     self.loadedPage = 0
     self.totalPages = 1
-    if clear {
-      self.items = []
-    }
 
-    let request = buildRequest(1)
+    let request = buildRequest!(1)
     logicCallAsync(request) { (response: Res) in
       self.latestResponse = response
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
-      self.items = newItems
-      self.isLoading = false
+      let action = {
+        self.items = newItems
+        self.isLoading = false
+      }
+      if animated {
+        withAnimation { action() }
+      } else {
+        action()
+      }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
     }
@@ -73,7 +77,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     if isLoading || loadedPage >= totalPages { return }
     isLoading = true;
 
-    let request = buildRequest(loadedPage + 1)
+    let request = buildRequest!(loadedPage + 1)
     let currentId = dataFlowId
 
     logicCallAsync(request) { (response: Res) in

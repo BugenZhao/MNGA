@@ -1,3 +1,5 @@
+use std::cmp::Reverse;
+
 use crate::{
     error::{LogicError, LogicResult},
     protos::{DataModel::*, Service::*},
@@ -15,6 +17,8 @@ use crate::{
         },
     },
 };
+use chrono::{Duration, Utc};
+use futures::TryFutureExt;
 use sxd_xpath::nodeset::Node;
 
 fn extract_topic(node: Node) -> Option<Topic> {
@@ -144,6 +148,45 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
     })
 }
 
+pub async fn get_hot_topic_list(request: HotTopicListRequest) -> LogicResult<HotTopicListResponse> {
+    let fetch_page_limit = request.get_fetch_page_limit().max(10);
+    let start_timestamp = (Utc::now()
+        - match request.get_range() {
+            HotTopicListRequest_DateRange::DAY => Duration::days(1),
+            HotTopicListRequest_DateRange::WEEK => Duration::days(7),
+            HotTopicListRequest_DateRange::MONTH => Duration::days(30),
+        })
+    .timestamp() as u64;
+    let limit = request.get_limit().max(30) as usize;
+
+    let futures = (1..=fetch_page_limit)
+        .map(|page| {
+            let request = TopicListRequest {
+                id: request.id.clone(),
+                page,
+                ..Default::default()
+            };
+            get_topic_list(request).map_ok(|r| r.topics.into_vec())
+        })
+        .collect::<Vec<_>>();
+    let responses = futures::future::join_all(futures).await;
+
+    let mut topics = responses
+        .into_iter()
+        .filter_map(|ts| ts.ok())
+        .flatten()
+        .filter(|t| t.get_post_date() > start_timestamp)
+        .collect::<Vec<_>>();
+
+    topics.sort_by_key(|t| Reverse(t.get_replies_num()));
+    let _ = topics.split_off(limit.min(topics.len()));
+
+    Ok(HotTopicListResponse {
+        topics: topics.into(),
+        ..Default::default()
+    })
+}
+
 pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<TopicDetailsResponse> {
     let package = fetch_package(
         "read.php",
@@ -216,6 +259,23 @@ mod test {
         assert!(!response.get_topic().get_id().is_empty());
         assert!(!response.get_replies().is_empty());
         assert!(!UserController::get().is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_hot_topic_list() -> LogicResult<()> {
+        let id = make_fid("-7".to_owned());
+        let response = get_hot_topic_list(HotTopicListRequest {
+            id: Some(id).into(),
+            range: HotTopicListRequest_DateRange::DAY,
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        assert!(!response.get_topics().is_empty());
 
         Ok(())
     }

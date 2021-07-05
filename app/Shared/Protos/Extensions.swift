@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension Topic {
   var subjectFull: String {
@@ -18,6 +19,34 @@ extension Forum {
     switch self.id.id! {
     case .fid(let fid): return "#\(fid)"
     case .stid(let stid): return "##\(stid)"
+    }
+  }
+}
+
+extension HotTopicListRequest.DateRange {
+  var description: LocalizedStringKey {
+    switch self {
+    case .day:
+      return "Last 24 hours"
+    case .week:
+      return "Last week"
+    case .month:
+      return "Last month"
+    default:
+      return ""
+    }
+  }
+  
+  var icon: String {
+    switch self {
+    case .day:
+      return "1.circle"
+    case .week:
+      return "7.circle"
+    case .month:
+      return "30.circle"
+    default:
+      return ""
     }
   }
 }

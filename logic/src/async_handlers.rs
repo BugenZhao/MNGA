@@ -4,7 +4,7 @@ use crate::{
         forum::{get_forum_list, set_subforum_filter},
         history::get_topic_history,
         post::post_vote,
-        topic::{get_topic_details, get_topic_list},
+        topic::{get_hot_topic_list, get_topic_details, get_topic_list},
         user::get_remote_user,
     },
 };
@@ -50,5 +50,10 @@ pub async fn handle_post_vote(request: PostVoteRequest) -> PostVoteResponse {
 
 pub async fn handle_topic_history(request: TopicHistoryRequest) -> TopicHistoryResponse {
     let res = get_topic_history(request).await;
+    or_default!(res)
+}
+
+pub async fn handle_hot_topic_list(request: HotTopicListRequest) -> HotTopicListResponse {
+    let res = get_hot_topic_list(request).await;
     or_default!(res)
 }
