@@ -8,14 +8,22 @@ pub use error::{CacheError, CacheResult};
 
 lazy_static! {
     pub static ref CACHE: Cache = {
-        let path = &config::CONF.get().expect("no configuration").cache_path;
-        let db = sled::Config::new()
-            .path(path)
-            .flush_every_ms(Some(1000))
-            .cache_capacity(50 * 1024 * 1024)
-            .open()
-            .expect("cannot open or create cache db");
-        log::info!("open db at {:?}, is_empty: {}", path, db.is_empty());
+        let db = if cfg!(test) {
+            sled::Config::new()
+                .temporary(true)
+                .open()
+                .expect("cannot open or create temporary cache db")
+        } else {
+            let path = &config::CONF.get().expect("no configuration").cache_path;
+            let db = sled::Config::new()
+                .path(path)
+                .flush_every_ms(Some(1000))
+                .cache_capacity(50 * 1024 * 1024)
+                .open()
+                .expect("cannot open or create cache db");
+            log::info!("open db at {:?}, is_empty: {}", path, db.is_empty());
+            db
+        };
 
         Cache::new(db)
     };
@@ -57,10 +65,20 @@ impl Cache {
 
     #[allow(unused_results)]
     pub fn insert_msg<M: protobuf::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
-        tokio::task::block_in_place(move || self.do_insert_msg(key, msg))
+        if cfg!(test) {
+            // using single threaded runtime
+            self.do_insert_msg(key, msg)
+        } else {
+            tokio::task::block_in_place(move || self.do_insert_msg(key, msg))
+        }
     }
 
     pub fn get_msg<M: protobuf::Message>(&self, key: &str) -> CacheResult<Option<M>> {
-        tokio::task::block_in_place(move || self.do_get_msg(key))
+        if cfg!(test) {
+            // using single threaded runtime
+            self.do_get_msg(key)
+        } else {
+            tokio::task::block_in_place(move || self.do_get_msg(key))
+        }
     }
 }
