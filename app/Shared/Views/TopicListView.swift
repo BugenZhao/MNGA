@@ -15,7 +15,8 @@ struct TopicListView: View {
 
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
 
-  @State var showingSubforums = false
+  @State var currentShowingSubforum: Forum? = nil
+  @State var showingSubforumsModal = false
   @State var showingHotTopics = false
 
   init(forum: Forum) {
@@ -47,7 +48,7 @@ struct TopicListView: View {
         }
         if let subforums = dataSource.latestResponse?.subforums,
           !subforums.isEmpty {
-          Button(action: { showingSubforums = true }) {
+          Button(action: { showingSubforumsModal = true }) {
             Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
           }
         }
@@ -68,14 +69,27 @@ struct TopicListView: View {
   }
 
   @ViewBuilder
-  var subforums: some View {
+  var subforumsModal: some View {
     if let subforums = dataSource.latestResponse?.subforums, !subforums.isEmpty {
-      let destination = SubforumListView(
-        forum: forum,
-        subforums: subforums,
-        refresh: { dataSource.refresh() }
-      )
-      NavigationLink(destination: destination, isActive: $showingSubforums) { }
+      NavigationView {
+        SubforumListView(
+          forum: forum,
+          subforums: subforums,
+          refresh: { dataSource.refresh() },
+          onNavigateToForum: {
+            self.showingSubforumsModal = false
+            self.currentShowingSubforum = $0
+          }
+        )
+      }
+    }
+  }
+
+  @ViewBuilder
+  var subforum: some View {
+    if let forum = self.currentShowingSubforum {
+      let destination = TopicListView(forum: forum)
+      NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
     }
   }
 
@@ -111,7 +125,8 @@ struct TopicListView: View {
         #endif
       }
     }
-      .background { Group { subforums; hotTopics } }
+      .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
+      .background { subforum; hotTopics }
       .navigationTitle(forum.name)
       .toolbar {
       ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug

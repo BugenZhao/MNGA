@@ -14,6 +14,7 @@ struct SubforumListView: View {
   let forum: Forum
   let subforums: [Subforum]
   let refresh: () -> Void
+  let onNavigateToForum: (Forum) -> Void
 
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
@@ -30,23 +31,25 @@ struct SubforumListView: View {
     let forum = subforum.forum
     let isFavorite = favorites.isFavorite(id: forum.id)
 
-    NavigationLink(destination: TopicListView(forum: forum)) {
-      HStack {
-        Image(systemName: subforum.selected || !subforum.filterable ? "checkmark.circle.fill" : "circle")
-          .onTapGesture {
-          if subforum.filterable {
-            setSubforumFilter(show: !subforum.selected, subforum: subforum)
+//    NavigationLink(destination: EmptyView(), isActive: .constant(false)) {
+      Button(action: { onNavigateToForum(forum) }) {
+        HStack {
+          Image(systemName: subforum.selected || !subforum.filterable ? "checkmark.circle.fill" : "circle")
+            .onTapGesture {
+            if subforum.filterable {
+              setSubforumFilter(show: !subforum.selected, subforum: subforum)
+            }
           }
-        }
-          .foregroundColor(subforum.filterable ? .accentColor : .secondary)
+            .foregroundColor(subforum.filterable ? .accentColor : .secondary)
 
-        ForumView(forum: forum, isFavorite: isFavorite)
+          ForumView(forum: forum, isFavorite: isFavorite)
+        }
+          .modifier(FavoriteModifier(
+          isFavorite: favorites.isFavorite(id: forum.id),
+          toggleFavorite: { favorites.toggleFavorite(forum: forum) }
+          ))
       }
-        .modifier(FavoriteModifier(
-        isFavorite: favorites.isFavorite(id: forum.id),
-        toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-        ))
-    }
+//    }
   }
 
   var body: some View {

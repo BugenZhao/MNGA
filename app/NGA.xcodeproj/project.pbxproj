@@ -21,6 +21,8 @@
 		B45819CE268DA18600999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CD268DA18600999830 /* SwiftUIX */; };
 		B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */; };
 		B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */; };
+		B48B0C4626932CC70067794F /* ForumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumView.swift */; };
+		B48B0C4726932CC70067794F /* ForumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumView.swift */; };
 		B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B4920CD32690224F00762FC9 /* SwiftUIRefresh */; };
 		B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
 		B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
@@ -89,6 +91,7 @@
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
+		B48B0C4526932CC70067794F /* ForumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumView.swift; sourceTree = "<group>"; };
 		B4920CD52690465100762FC9 /* TopicSubjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSubjectView.swift; sourceTree = "<group>"; };
 		B4920CD826904CE700762FC9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSourceStickers.swift; sourceTree = "<group>"; };
@@ -268,6 +271,7 @@
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
 				B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */,
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
+				B48B0C4526932CC70067794F /* ForumView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -424,6 +428,7 @@
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
 				B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
+				B48B0C4626932CC70067794F /* ForumView.swift in Sources */,
 				B4DBF61E268B8CD80027233F /* ForumListView.swift in Sources */,
 				B4DCF44B2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */,
 				B4E1071A268DADFF006C1742 /* LoginView.swift in Sources */,
@@ -459,6 +464,7 @@
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
 				B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
+				B48B0C4726932CC70067794F /* ForumView.swift in Sources */,
 				B4DBF61F268B8CD80027233F /* ForumListView.swift in Sources */,
 				B4DCF44C2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */,
 				B4E1071B268DADFF006C1742 /* LoginView.swift in Sources */,
