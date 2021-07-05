@@ -18,7 +18,7 @@ struct SubforumListView: View {
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
       $0.operation = show ? .show : .block
-      $0.forumID = forum.fid
+      $0.forumID = forum.id.fid
       $0.subforumFilterID = subforum.filterID
     })) { (response: SubforumFilterResponse) in
       refresh()
@@ -28,7 +28,7 @@ struct SubforumListView: View {
   @ViewBuilder
   func buildLink(_ subforum: Subforum) -> some View {
     let forum = subforum.forum
-    let isFavorite = favorites.isFavorite(id: forum.id!)
+    let isFavorite = favorites.isFavorite(id: forum.id)
 
     NavigationLink(destination: TopicListView(forum: forum)) {
       HStack {

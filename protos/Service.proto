@@ -40,10 +40,7 @@ message AsyncRequest {
 }
 
 message TopicListRequest {
-  oneof id {
-    string fid = 1;
-    string stid = 3;
-  }
+  ForumId id = 1;
   uint32 page = 2;
   bool sort_subforums = 4;
 }

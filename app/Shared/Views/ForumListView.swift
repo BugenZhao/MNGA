@@ -31,7 +31,7 @@ struct ForumView: View {
 
       HStack {
         Text(forum.name)
-        if case .stid(_) = forum.id! {
+        if case .stid(_) = forum.id.id {
           Image(systemName: "arrow.uturn.right")
             .font(.footnote)
             .foregroundColor(.secondary)
@@ -128,7 +128,7 @@ struct ForumListView: View {
 
   @ViewBuilder
   func buildLink(_ forum: Forum, inFavoritesSection: Bool = true) -> some View {
-    let isFavorite = favorites.isFavorite(id: forum.id!)
+    let isFavorite = favorites.isFavorite(id: forum.id)
 
     NavigationLink(destination: TopicListView(forum: forum)) {
       ForumView(forum: forum, isFavorite: inFavoritesSection && isFavorite)

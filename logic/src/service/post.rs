@@ -117,7 +117,7 @@ mod test {
         let vote = |op| {
             post_vote(PostVoteRequest {
                 post_id: Some(PostId {
-                    tid: "27375475".to_owned(),
+                    tid: "27477718".to_owned(),
                     pid: "0".to_owned(),
                     ..Default::default()
                 })

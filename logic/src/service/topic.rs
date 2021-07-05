@@ -4,6 +4,7 @@ use crate::{
     service::{
         constants::FORUM_ICON_PATH,
         fetch_package,
+        forum::{make_fid, make_stid},
         history::insert_topic_history,
         post::extract_post,
         text,
@@ -45,15 +46,13 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     let id = pget!(pairs, 0)?;
     let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, id);
 
+    let id = if use_fid { make_fid(id) } else { make_stid(id) };
+
     let forum = Forum {
         name: pget!(pairs, 1)?,
         info: pget!(pairs, 2).unwrap_or_default(),
         icon_url,
-        id: Some(if use_fid {
-            Forum_oneof_id::fid(id)
-        } else {
-            Forum_oneof_id::stid(id)
-        }),
+        id: Some(id).into(),
         ..Default::default()
     };
 
@@ -71,13 +70,14 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListResponse> {
+    let id = request.id.unwrap();
     let package = fetch_package(
         "thread.php",
         vec![
-            if request.has_stid() {
-                ("stid", request.get_stid())
+            if id.has_stid() {
+                ("stid", id.get_stid())
             } else {
-                ("fid", request.get_fid())
+                ("fid", id.get_fid())
             },
             ("page", &request.page.to_string()),
         ],
@@ -127,9 +127,10 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
     };
 
     let fid = extract_string(&package, "/root/__F/fid")?;
+    let id = make_fid(fid);
 
     let forum = Forum {
-        id: Some(Forum_oneof_id::fid(fid)),
+        id: Some(id).into(),
         name: extract_string(&package, "/root/__F/name")?,
         ..Default::default()
     };
@@ -186,8 +187,9 @@ mod test {
 
     #[tokio::test]
     async fn test_topic_list() -> LogicResult<()> {
+        let id = make_fid("315".to_owned());
         let response = get_topic_list(TopicListRequest {
-            id: Some(TopicListRequest_oneof_id::fid("335".to_owned())),
+            id: Some(id).into(),
             page: 1,
             ..Default::default()
         })
@@ -203,7 +205,7 @@ mod test {
     #[tokio::test]
     async fn test_topic_details() -> LogicResult<()> {
         let response = get_topic_details(TopicDetailsRequest {
-            topic_id: "27351344".to_owned(),
+            topic_id: "27477718".to_owned(),
             page: 1,
             ..Default::default()
         })

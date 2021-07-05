@@ -43,12 +43,7 @@ struct TopicListView: View {
     let dataSource = PagingDataSource<TopicListResponse, Topic>(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
-          switch forum.id! {
-          case .fid(let fid):
-            $0.fid = fid
-          case .stid(let stid):
-            $0.stid = stid
-          }
+          $0.id = forum.id
           $0.page = UInt32(page)
         })
       },
@@ -139,13 +134,13 @@ struct TopicListView: View {
 struct TopicListView_Previews: PreviewProvider {
   static var previews: some View {
     let defaultForum = Forum.with {
-      $0.fid = "-7"
+      $0.id = .with { i in i.fid = "-7" }
       $0.name = "大漩涡"
       $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/-7.png"
     }
 
     let genshinForum = Forum.with {
-      $0.fid = "650"
+      $0.id = .with { i in i.fid = "650" }
       $0.name = "原神"
       $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/650.png"
     }

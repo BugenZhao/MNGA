@@ -15,7 +15,7 @@ extension Topic {
 
 extension Forum {
   var idDescription: String {
-    switch self.id! {
+    switch self.id.id! {
     case .fid(let fid): return "#\(fid)"
     case .stid(let stid): return "##\(stid)"
     }

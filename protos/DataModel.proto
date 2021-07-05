@@ -48,11 +48,15 @@ message Category {
   repeated Forum forums = 3;
 }
 
-message Forum {
+message ForumId {
   oneof id {
     string fid = 1;
-    string stid = 5;
+    string stid = 2;
   }
+}
+
+message Forum {
+  ForumId id = 1;
   string name = 2;
   string info = 3;
   string icon_url = 4;

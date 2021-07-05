@@ -2,7 +2,7 @@ use super::fetch_package;
 use crate::{
     error::LogicResult,
     protos::{
-        DataModel::{Category, Forum, Forum_oneof_id},
+        DataModel::{Category, Forum, ForumId, ForumId_oneof_id},
         Service::{
             ForumListRequest, ForumListResponse, SubforumFilterRequest,
             SubforumFilterRequest_Operation, SubforumFilterResponse,
@@ -15,6 +15,20 @@ use crate::{
 };
 use sxd_xpath::nodeset::Node;
 
+pub fn make_fid(id: String) -> ForumId {
+    ForumId {
+        id: Some(ForumId_oneof_id::fid(id)).into(),
+        ..Default::default()
+    }
+}
+
+pub fn make_stid(id: String) -> ForumId {
+    ForumId {
+        id: Some(ForumId_oneof_id::stid(id)).into(),
+        ..Default::default()
+    }
+}
+
 fn extract_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
@@ -22,11 +36,11 @@ fn extract_forum(node: Node) -> Option<Forum> {
     let icon_id = get!(map, "id")?;
     let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, icon_id);
 
-    let fid = get!(map, "fid").map(Forum_oneof_id::fid);
-    let stid = get!(map, "stid").map(Forum_oneof_id::stid);
+    let fid = get!(map, "fid").map(make_fid);
+    let stid = get!(map, "stid").map(make_stid);
 
     let forum = Forum {
-        id: stid.or(fid), // stid first
+        id: stid.or(fid).into(), // stid first
         name: get!(map, "name")?,
         info: get!(map, "info").unwrap_or_default(),
         icon_url,
