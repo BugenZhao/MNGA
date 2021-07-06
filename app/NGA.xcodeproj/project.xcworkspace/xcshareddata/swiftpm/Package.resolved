@@ -47,6 +47,15 @@
         }
       },
       {
+        "package": "swiftui-image-viewer",
+        "repositoryURL": "https://github.com/Jake-Short/swiftui-image-viewer.git",
+        "state": {
+          "branch": null,
+          "revision": "f61f298c0100c81dfb0c7908091e68aad12a892c",
+          "version": "2.3.1"
+        }
+      },
+      {
         "package": "SwiftUI-Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect.git",
         "state": {
@@ -80,6 +89,15 @@
           "branch": null,
           "revision": "5837e88eca8e05fa70c82c6aaecfc59bf7e81bfd",
           "version": "0.0.7"
+        }
+      },
+      {
+        "package": "url-image",
+        "repositoryURL": "https://github.com/dmytro-anokhin/url-image.git",
+        "state": {
+          "branch": null,
+          "revision": "ccab89ad1cedb04f25dd4df1776dd8c8583b914a",
+          "version": "2.2.5"
         }
       }
     ]

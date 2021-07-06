@@ -23,6 +23,9 @@
 		B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */; };
 		B48B0C4626932CC70067794F /* ForumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumView.swift */; };
 		B48B0C4726932CC70067794F /* ForumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumView.swift */; };
+		B48B0C4A2694CE660067794F /* ImageViewer in Frameworks */ = {isa = PBXBuildFile; productRef = B48B0C492694CE660067794F /* ImageViewer */; };
+		B48B0C4D2694D4FF0067794F /* ViewingImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */; };
+		B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */; };
 		B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B4920CD32690224F00762FC9 /* SwiftUIRefresh */; };
 		B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
 		B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
@@ -92,6 +95,7 @@
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
 		B48B0C4526932CC70067794F /* ForumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumView.swift; sourceTree = "<group>"; };
+		B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingImageModel.swift; sourceTree = "<group>"; };
 		B4920CD52690465100762FC9 /* TopicSubjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSubjectView.swift; sourceTree = "<group>"; };
 		B4920CD826904CE700762FC9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSourceStickers.swift; sourceTree = "<group>"; };
@@ -136,6 +140,7 @@
 				B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
+				B48B0C4A2694CE660067794F /* ImageViewer in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
 				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
 				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
@@ -168,6 +173,15 @@
 			path = Storage;
 			sourceTree = "<group>";
 		};
+		B48B0C4B2694D4E50067794F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
+				B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		B4C024BB26884FD600E53554 = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +196,7 @@
 		B4C024C026884FD600E53554 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				B48B0C4B2694D4E50067794F /* Models */,
 				B45819C1268D820400999830 /* Storage */,
 				B4DBF6062689762E0027233F /* Utilities */,
 				B4DCF4552688F88400EC78A4 /* Localization */,
@@ -190,7 +205,6 @@
 				B4C024E2268850AA00E53554 /* LogicCall.swift */,
 				B4C024C226884FD600E53554 /* ContentView.swift */,
 				B4C024C326884FD700E53554 /* Assets.xcassets */,
-				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -308,6 +322,7 @@
 				B412F706268DFC4600EB0614 /* Logging */,
 				B4920CD32690224F00762FC9 /* SwiftUIRefresh */,
 				B4920CE22690E65600762FC9 /* HalfASheet */,
+				B48B0C492694CE660067794F /* ImageViewer */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -372,6 +387,7 @@
 				B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */,
 				B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
 				B4920CE12690E65600762FC9 /* XCRemoteSwiftPackageReference "HalfASheet" */,
+				B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -410,6 +426,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4920CD926904CE700762FC9 /* Extensions.swift in Sources */,
+				B48B0C4D2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B4E2BDCF2691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
@@ -446,6 +463,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */,
+				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
@@ -762,6 +780,14 @@
 				minimumVersion = 0.0.7;
 			};
 		};
+		B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Jake-Short/swiftui-image-viewer.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUIRefresh";
@@ -826,6 +852,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
 			productName = SwiftUIX;
+		};
+		B48B0C492694CE660067794F /* ImageViewer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */;
+			productName = ImageViewer;
 		};
 		B4920CD32690224F00762FC9 /* SwiftUIRefresh */ = {
 			isa = XCSwiftPackageProductDependency;

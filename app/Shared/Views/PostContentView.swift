@@ -14,6 +14,9 @@ struct PostImageView: View {
   let url: URL
   let isOpenSourceStickers: Bool
 
+  @EnvironmentObject var viewingImage: ViewingImageModel
+  @State var overlayImage: Image?
+
   init(url: URL) {
     self.url = url
     self.isOpenSourceStickers = openSourceStickersNames.contains(url.lastPathComponent)
@@ -24,17 +27,23 @@ struct PostImageView: View {
       WebImage(url: url)
         .resizable()
         .placeholder {
-          ProgressView()
-            .frame(height: 50)
-        }
+        ProgressView()
+          .frame(height: 50)
+      }
         .aspectRatio(contentMode: .fit)
         .frame(width: 50, height: 50)
         .background(Color.white)
     } else {
       WebImage(url: url)
+        .onSuccess { image, _, _ in
+          DispatchQueue.main.async {
+            self.overlayImage = Image(uiImage: image)
+          }
+        }
         .resizable()
         .indicator(.activity)
         .scaledToFit()
+        .onTapGesture { self.viewingImage.overlayImage = self.overlayImage }
     }
   }
 }

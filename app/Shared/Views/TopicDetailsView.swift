@@ -8,12 +8,16 @@
 import Foundation
 import SwiftUI
 import SwiftUIX
+import Combine
+import ImageViewer
 
 struct TopicDetailsView: View {
   let topic: Topic
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @State var showFullTitle = false
+
+  @StateObject var viewingImage = ViewingImageModel()
 
   init(topic: Topic) {
     self.topic = topic
