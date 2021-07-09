@@ -70,7 +70,7 @@ struct HotTopicListView: View {
       if dataSource.items.isEmpty {
         ProgressView()
       } else {
-        let list = List {
+        List {
           Section(header: Text(dataSource.range.description)) {
             ForEach(dataSource.items, id: \.id) { topic in
               NavigationLink(destination: TopicDetailsView(topic: topic)) {
@@ -79,12 +79,8 @@ struct HotTopicListView: View {
             }
           }
         }
-
         #if os(iOS)
-          list
-            .listStyle(GroupedListStyle())
-        #else
-          list
+          .listStyle(GroupedListStyle())
         #endif
       }
     } .navigationTitle("Hot Topics")

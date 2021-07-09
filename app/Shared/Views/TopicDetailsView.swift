@@ -54,8 +54,8 @@ struct TopicDetailsView: View {
   }
 
   var body: some View {
-    let inner = VStack(alignment: .leading) {
-      let list = List {
+    VStack(alignment: .leading) {
+      List {
         Section(header: HStack {
           Text("Topic")
           if dataSource.isLoading {
@@ -84,22 +84,14 @@ struct TopicDetailsView: View {
           }
         }
       }
-
       #if os(iOS)
-        list
-          .listStyle(GroupedListStyle())
-      #elseif os(macOS)
-        list
+        .listStyle(GroupedListStyle())
       #endif
     }
       .navigationTitle(title)
       .onFirstAppear { dataSource.initialLoad() }
-
     #if os(iOS)
-      inner
-        .navigationBarTitleDisplayMode(.inline)
-    #elseif os(macOS)
-      inner
+      .navigationBarTitleDisplayMode(.inline)
     #endif
   }
 }

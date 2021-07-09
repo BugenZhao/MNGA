@@ -104,7 +104,7 @@ struct TopicListView: View {
       if dataSource.items.isEmpty {
         ProgressView()
       } else {
-        let list = List {
+        List {
           Section(header: Text("Latest Topics")) {
             ForEach(dataSource.items, id: \.id) { topic in
               NavigationLink(destination: TopicDetailsView(topic: topic)) {
@@ -115,13 +115,8 @@ struct TopicListView: View {
           }
         }
         #if os(iOS)
-          list
-            .listStyle(GroupedListStyle())
-            .pullToRefresh(isShowing: $dataSource.isLoading) {
-            dataSource.refresh()
-          }
-        #else
-          list
+          .listStyle(GroupedListStyle())
+          .pullToRefresh(isShowing: $dataSource.isLoading) { dataSource.refresh() }
         #endif
       }
     }

@@ -11,20 +11,12 @@ import ImageViewer
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
 
-  @ViewBuilder
-  var imageOverlay: some View {
-    ImageViewer(
-      image: $viewingImage.overlayImage,
-      viewerShown: $viewingImage.overlayImage.isNotNil()
-    )
-  }
-
   var body: some View {
     NavigationView {
       ForumListView()
     }
+      .overlay { ImageOverlay() }
       .environmentObject(viewingImage)
-      .overlay { imageOverlay }
   }
 }
 

@@ -15,7 +15,7 @@ struct PostImageView: View {
   let isOpenSourceStickers: Bool
 
   @EnvironmentObject var viewingImage: ViewingImageModel
-  @State var overlayImage: Image?
+  @State var overlayImage: PlatformImage?
 
   init(url: URL) {
     self.url = url
@@ -37,13 +37,13 @@ struct PostImageView: View {
       WebImage(url: url)
         .onSuccess { image, _, _ in
           DispatchQueue.main.async {
-            self.overlayImage = Image(uiImage: image)
+            self.overlayImage = image
           }
         }
         .resizable()
         .indicator(.activity)
         .scaledToFit()
-        .onTapGesture { self.viewingImage.overlayImage = self.overlayImage }
+        .onTapGesture { self.viewingImage.show(image: self.overlayImage) }
     }
   }
 }
