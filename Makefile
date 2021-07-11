@@ -20,7 +20,7 @@ logic-release-macos:
 
 logic-release-ios:
 	@echo ">>>>> Logic iOS"
-	${ARGO} lipo --manifest-path logic/Cargo.toml --release
+	${CARGO} lipo --manifest-path logic/Cargo.toml --release
 	cp logic/target/universal/release/liblogic.a ${OUT_LIBS}/liblogicios.a
 
 logic-release-catalyst:
@@ -51,3 +51,6 @@ logic-bindings:
 
 nightly:
 	rustup override set nightly
+
+nightly-unset:
+	rustup override unset
