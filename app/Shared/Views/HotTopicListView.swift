@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import SwiftUIRefresh
 import Combine
 
 class HotTopicDataSource: PagingDataSource<HotTopicListResponse, Topic> {
@@ -84,10 +83,7 @@ struct HotTopicListView: View {
         #endif
       }
     } .navigationTitle("Hot Topics")
-      .toolbar {
-      ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug
-      ToolbarItem(placement: .navigationBarTrailing) { rangeMenu }
-    }
+      .modifier(SingleItemToolbarModifier { rangeMenu })
       .onAppear { dataSource.initialLoad() }
   }
 }

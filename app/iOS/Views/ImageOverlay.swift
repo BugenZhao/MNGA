@@ -1,8 +1,8 @@
 //
 //  ImageOverlay.swift
-//  NGA
+//  NGA (iOS)
 //
-//  Created by Bugen Zhao on 7/8/21.
+//  Created by Bugen Zhao on 7/11/21.
 //
 
 import Foundation

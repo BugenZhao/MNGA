@@ -31,25 +31,23 @@ struct SubforumListView: View {
     let forum = subforum.forum
     let isFavorite = favorites.isFavorite(id: forum.id)
 
-//    NavigationLink(destination: EmptyView(), isActive: .constant(false)) {
-      Button(action: { onNavigateToForum(forum) }) {
-        HStack {
-          Image(systemName: subforum.selected || !subforum.filterable ? "checkmark.circle.fill" : "circle")
-            .onTapGesture {
-            if subforum.filterable {
-              setSubforumFilter(show: !subforum.selected, subforum: subforum)
-            }
+    Button(action: { onNavigateToForum(forum) }) {
+      HStack {
+        Image(systemName: subforum.selected || !subforum.filterable ? "checkmark.circle.fill" : "circle")
+          .onTapGesture {
+          if subforum.filterable {
+            setSubforumFilter(show: !subforum.selected, subforum: subforum)
           }
-            .foregroundColor(subforum.filterable ? .accentColor : .secondary)
-
-          ForumView(forum: forum, isFavorite: isFavorite)
         }
-          .modifier(FavoriteModifier(
-          isFavorite: favorites.isFavorite(id: forum.id),
-          toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-          ))
+          .foregroundColor(subforum.filterable ? .accentColor : .secondary)
+
+        ForumView(forum: forum, isFavorite: isFavorite)
       }
-//    }
+        .modifier(FavoriteModifier(
+        isFavorite: favorites.isFavorite(id: forum.id),
+        toggleFavorite: { favorites.toggleFavorite(forum: forum) }
+        ))
+    }
   }
 
   var body: some View {
@@ -59,7 +57,11 @@ struct SubforumListView: View {
           buildLink(subforum)
         }
       }
-    } .navigationBarTitle("Subforums of \(forum.name)", displayMode: .inline)
-      .listStyle(InsetGroupedListStyle())
+    }
+      .navigationTitle("Subforums of \(forum.name)")
+    #if os(iOS)
+      .navigationBarTitleDisplayMode(.inline)
+        .listStyle(InsetGroupedListStyle())
+    #endif
   }
 }

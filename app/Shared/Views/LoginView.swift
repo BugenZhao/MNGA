@@ -28,22 +28,31 @@ struct LoginView: View {
   }
 
   var body: some View {
-    NavigationView {
+    let inner =
       WebView(webView: webViewStore.webView)
-        .navigationBarTitle("Sign in to NGA", displayMode: .inline)
-        .navigationBarItems(trailing: Group {
-        Button(action: close) {
-          if authing {
-            ProgressView()
-          }
-        }
-      })
-        .onAppear {
-        self.webViewStore.webView.load(URLRequest(url: URL(string: "https://ngabbs.com/nuke.php?__lib=login&__act=account&login")!))
-      }.onReceive(timer) { _ in
-        self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
-      }
+      .onAppear {
+      self.webViewStore.webView.load(URLRequest(url: URL(string: "https://ngabbs.com/nuke.php?__lib=login&__act=account&login")!))
+    }.onReceive(timer) { _ in
+      self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
     }
+
+    #if os(iOS)
+      NavigationView {
+        inner
+          .navigationTitle("Sign in to NGA")
+          .navigationBarTitleDisplayMode(.inline)
+          .navigationBarItems(trailing: Group {
+          Button(action: close) {
+            if authing {
+              ProgressView()
+            }
+          }
+        })
+      }
+    #elseif os(macOS)
+      inner
+        .frame(width: 300, height: 400)
+    #endif
   }
 
   func authWithCookies(_ cookies: [HTTPCookie]) {

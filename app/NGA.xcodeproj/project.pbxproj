@@ -11,6 +11,8 @@
 		375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */; };
 		B412F707268DFC4600EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F706268DFC4600EB0614 /* Logging */; };
 		B412F709268DFC4F00EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F708268DFC4F00EB0614 /* Logging */; };
+		B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B437B278269B09DC0092FF9E /* SwiftUIRefresh */; };
+		B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
 		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
@@ -21,8 +23,6 @@
 		B45819CE268DA18600999830 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = B45819CD268DA18600999830 /* SwiftUIX */; };
 		B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */; };
 		B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */; };
-		B46D1B4E26970B6100B70186 /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46D1B4D26970B6100B70186 /* ImageOverlay.swift */; };
-		B46D1B4F26970B6100B70186 /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46D1B4D26970B6100B70186 /* ImageOverlay.swift */; };
 		B48709C5269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */; };
 		B48709C6269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */; };
 		B48B0C4626932CC70067794F /* ForumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumView.swift */; };
@@ -30,7 +30,6 @@
 		B48B0C4A2694CE660067794F /* ImageViewer in Frameworks */ = {isa = PBXBuildFile; productRef = B48B0C492694CE660067794F /* ImageViewer */; };
 		B48B0C4D2694D4FF0067794F /* ViewingImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */; };
 		B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */; };
-		B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B4920CD32690224F00762FC9 /* SwiftUIRefresh */; };
 		B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
 		B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
 		B4920CD926904CE700762FC9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD826904CE700762FC9 /* Extensions.swift */; };
@@ -48,7 +47,7 @@
 		B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024E2268850AA00E53554 /* LogicCall.swift */; };
 		B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EC268850E800E53554 /* SwiftProtobuf */; };
 		B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EF268850F300E53554 /* SwiftProtobuf */; };
-		B4C024F22688511400E53554 /* liblogicios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F12688510C00E53554 /* liblogicios.a */; };
+		B4C024F22688511400E53554 /* liblogicios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F12688510C00E53554 /* liblogicios.a */; platformFilter = ios; };
 		B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F32688511E00E53554 /* liblogicmacos.a */; };
 		B4DBF608268976470027233F /* TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* TimeAgo.swift */; };
 		B4DBF609268976470027233F /* TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* TimeAgo.swift */; };
@@ -90,15 +89,18 @@
 		B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDCE2691B0030080C790 /* InitConf.swift */; };
 		B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
 		B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
+		B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
+		B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E5269B13830014DDFA /* ImageOverlay.swift */; };
+		B4EB80EA269B13B90014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSNGAApp.swift; sourceTree = "<group>"; };
 		375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = macOSNGAApp.swift; sourceTree = "<group>"; };
+		B437B27B269B0E190092FF9E /* ToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModifier.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
-		B46D1B4D26970B6100B70186 /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
 		B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListPlaceholderView.swift; sourceTree = "<group>"; };
 		B48B0C4526932CC70067794F /* ForumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumView.swift; sourceTree = "<group>"; };
 		B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingImageModel.swift; sourceTree = "<group>"; };
@@ -135,6 +137,8 @@
 		B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthInfoDebug.swift; sourceTree = "<group>"; };
 		B4E2BDCE2691B0030080C790 /* InitConf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitConf.swift; sourceTree = "<group>"; };
 		B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicHistoryListView.swift; sourceTree = "<group>"; };
+		B4EB80E5269B13830014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
+		B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,12 +147,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F707268DFC4600EB0614 /* Logging in Frameworks */,
-				B4920CD42690224F00762FC9 /* SwiftUIRefresh in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B48B0C4A2694CE660067794F /* ImageViewer in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
 				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
+				B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */,
 				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
 				B4920CE32690E65600762FC9 /* HalfASheet in Frameworks */,
 			);
@@ -170,6 +174,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B437B27A269B0DE10092FF9E /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				B437B27B269B0E190092FF9E /* ToolbarModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
 		B45819C1268D820400999830 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +214,7 @@
 		B4C024C026884FD600E53554 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				B437B27A269B0DE10092FF9E /* Modifiers */,
 				B48B0C4B2694D4E50067794F /* Models */,
 				B45819C1268D820400999830 /* Storage */,
 				B4DBF6062689762E0027233F /* Utilities */,
@@ -227,6 +240,7 @@
 		B4C024CA26884FD700E53554 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				B4EB80E4269B13780014DDFA /* Views */,
 				B4C024CB26884FD700E53554 /* Info.plist */,
 				375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */,
 			);
@@ -236,6 +250,7 @@
 		B4C024D126884FD700E53554 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				B4EB80E7269B13A80014DDFA /* Views */,
 				B4C024D226884FD700E53554 /* Info.plist */,
 				B4C024D326884FD700E53554 /* macOS.entitlements */,
 				375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */,
@@ -292,7 +307,6 @@
 				B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */,
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
 				B48B0C4526932CC70067794F /* ForumView.swift */,
-				B46D1B4D26970B6100B70186 /* ImageOverlay.swift */,
 				B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */,
 			);
 			path = Views;
@@ -304,6 +318,22 @@
 				B4DCF4532688F68400EC78A4 /* Localizable.strings */,
 			);
 			path = Localization;
+			sourceTree = "<group>";
+		};
+		B4EB80E4269B13780014DDFA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B4EB80E5269B13830014DDFA /* ImageOverlay.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B4EB80E7269B13A80014DDFA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -328,9 +358,9 @@
 				B45819CB268DA17D00999830 /* SwiftUIX */,
 				B4E10715268DADEE006C1742 /* WebView */,
 				B412F706268DFC4600EB0614 /* Logging */,
-				B4920CD32690224F00762FC9 /* SwiftUIRefresh */,
 				B4920CE22690E65600762FC9 /* HalfASheet */,
 				B48B0C492694CE660067794F /* ImageViewer */,
+				B437B278269B09DC0092FF9E /* SwiftUIRefresh */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -434,6 +464,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4920CD926904CE700762FC9 /* Extensions.swift in Sources */,
+				B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */,
 				B48B0C4D2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B4E2BDCF2691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
@@ -450,7 +481,6 @@
 				B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */,
 				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */,
-				B46D1B4E26970B6100B70186 /* ImageOverlay.swift in Sources */,
 				B48709C5269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
@@ -462,6 +492,7 @@
 				B4C024D626884FD700E53554 /* ContentView.swift in Sources */,
 				B4E1071D268DC4D1006C1742 /* AuthStorage.swift in Sources */,
 				B4DBF61526897A170027233F /* TopicView.swift in Sources */,
+				B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */,
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF608268976470027233F /* TimeAgo.swift in Sources */,
 				375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */,
@@ -473,6 +504,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */,
+				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
 				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
@@ -489,7 +521,6 @@
 				B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */,
 				B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */,
-				B46D1B4F26970B6100B70186 /* ImageOverlay.swift in Sources */,
 				B48709C6269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
@@ -501,6 +532,7 @@
 				B4C024D726884FD700E53554 /* ContentView.swift in Sources */,
 				B4E1071E268DC4D1006C1742 /* AuthStorage.swift in Sources */,
 				B4DBF61626897A170027233F /* TopicView.swift in Sources */,
+				B4EB80EA269B13B90014DDFA /* ImageOverlay.swift in Sources */,
 				B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF609268976470027233F /* TimeAgo.swift in Sources */,
 				375E616A4BCE12A43666F04C /* macOSNGAApp.swift in Sources */,
@@ -573,7 +605,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				LIBRARY_SEARCH_PATHS = "../out/libs/**";
+				MACOSX_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -630,7 +664,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
 				LIBRARY_SEARCH_PATHS = "../out/libs/**";
+				MACOSX_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -658,6 +694,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS";
 				PRODUCT_NAME = NGA;
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -681,6 +718,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS";
 				PRODUCT_NAME = NGA;
 				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -847,6 +885,11 @@
 			package = B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
 		};
+		B437B278269B09DC0092FF9E /* SwiftUIRefresh */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
+			productName = SwiftUIRefresh;
+		};
 		B45819C6268D9B5600999830 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
@@ -871,11 +914,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */;
 			productName = ImageViewer;
-		};
-		B4920CD32690224F00762FC9 /* SwiftUIRefresh */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
-			productName = SwiftUIRefresh;
 		};
 		B4920CE22690E65600762FC9 /* HalfASheet */ = {
 			isa = XCSwiftPackageProductDependency;

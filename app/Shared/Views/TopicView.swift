@@ -77,7 +77,10 @@ struct TopicView_Previews: PreviewProvider {
     AuthedPreview {
       List {
         item(0); item(20); item(50); item(150); item(250); item(550);
-      } .listStyle(GroupedListStyle())
+      }
+      #if os(iOS)
+        .listStyle(GroupedListStyle())
+      #endif
     }
   }
 }

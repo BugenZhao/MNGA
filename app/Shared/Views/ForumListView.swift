@@ -172,21 +172,19 @@ struct ForumListView: View {
       }
     } .onAppear { loadData() }
       .navigationTitle("Forums")
+    #if os(iOS)
       .navigationSearchBar {
-      SearchBar(
-        NSLocalizedString("Search Forums", comment: ""),
-        text: $searchText,
-        isEditing: $isSearching.animation()
-      )
-    }
-      .toolbar {
-      ToolbarItem(placement: .navigationBarLeading) {
-        UserMenu(showHistory: $showHistory)
+        SearchBar(
+          NSLocalizedString("Search Forums", comment: ""),
+          text: $searchText,
+          isEditing: $isSearching.animation()
+        )
       }
-      ToolbarItem(placement: .navigationBarTrailing) {
-        filterMenu
-      }
-    }
+    #endif
+    .modifier(DoubleItemsToolbarModifier(
+      buildLeading: { UserMenu(showHistory: $showHistory) },
+      buildTrailing: { filterMenu }
+      ))
       .background {
       NavigationLink(destination: TopicHistoryListView(), isActive: $showHistory) { }
     }

@@ -42,15 +42,15 @@ struct TopicHistoryListView: View {
       }
     } .navigationTitle("History")
       .onAppear { dataSource.initialLoad() }
-      .navigationSearchBar {
-      SearchBar(
-        NSLocalizedString("Search History", comment: ""),
-        text: $searchText,
-        isEditing: $isSearching.animation()
-      )
-    }
     #if os(iOS)
-      .listStyle(GroupedListStyle())
+      .navigationSearchBar {
+        SearchBar(
+          NSLocalizedString("Search History", comment: ""),
+          text: $searchText,
+          isEditing: $isSearching.animation()
+        )
+      }
+        .listStyle(GroupedListStyle())
     #endif
   }
 }

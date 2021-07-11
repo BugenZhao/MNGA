@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 import Combine
-import ImageViewer
 
 struct TopicDetailsView: View {
   let topic: Topic

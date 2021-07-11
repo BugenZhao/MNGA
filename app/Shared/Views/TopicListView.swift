@@ -7,8 +7,11 @@
 
 import Foundation
 import SwiftUI
-import SwiftUIRefresh
 import SDWebImageSwiftUI
+
+#if os(iOS)
+  import SwiftUIRefresh
+#endif
 
 struct TopicListView: View {
   let forum: Forum
@@ -56,7 +59,7 @@ struct TopicListView: View {
 
       Section {
         #if os(macOS)
-          Button(action: { dataSource.refresh(clear: true) }) {
+          Button(action: { dataSource.refresh() }) {
             Label("Refresh", systemImage: "arrow.clockwise")
           }
         #endif
@@ -116,17 +119,14 @@ struct TopicListView: View {
         }
         #if os(iOS)
           .listStyle(GroupedListStyle())
-          .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+            .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
         #endif
       }
     }
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .background { subforum; hotTopics }
       .navigationTitle(forum.name)
-      .toolbar {
-      ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug
-      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
-    }
+      .modifier(SingleItemToolbarModifier { moreMenu })
       .onAppear { dataSource.initialLoad() }
   }
 }

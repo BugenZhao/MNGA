@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import ImageViewer
 import SwiftUIX
 
 struct ContentView: View {
