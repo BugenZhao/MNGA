@@ -46,8 +46,8 @@ struct TopicDetailsView: View {
     let subject = topic.subjectFull
 
     switch UserInterfaceIdiom.current {
-    case .pad, .mac:
-      return [id, subject].joined(separator: " ")
+//    case .pad, .mac:
+//      return [id, subject].joined(separator: " ")
     default:
       return showFullTitle ? subject : id
     }
@@ -58,20 +58,15 @@ struct TopicDetailsView: View {
       List {
         Section(header: HStack {
           Text("Topic")
-          if dataSource.isLoading {
-            Spacer()
-            ProgressView()
-          }
+          Spacer()
+          if dataSource.isLoading { ProgressView() }
         }) {
-          if UserInterfaceIdiom.current == .phone {
-            TopicSubjectView(topic: topic, lineLimit: nil)
-              .onAppear { showFullTitle = false }
-              .onDisappear { showFullTitle = true }
-          }
+          TopicSubjectView(topic: topic, lineLimit: nil)
+            .onAppear { showFullTitle = false }
+            .onDisappear { showFullTitle = true }
           if let first = self.first {
             PostView(post: first)
           }
-
         }
 
         if dataSource.items.count > 1 {

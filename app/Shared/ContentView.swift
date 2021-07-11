@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ImageViewer
+import SwiftUIX
 
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
@@ -14,6 +15,12 @@ struct ContentView: View {
   var body: some View {
     NavigationView {
       ForumListView()
+      if UserInterfaceIdiom.current == .pad {
+        TopicListPlaceholderView()
+      }
+      if UserInterfaceIdiom.current == .pad {
+        EmptyView()
+      }
     }
       .overlay { ImageOverlay() }
       .environmentObject(viewingImage)
