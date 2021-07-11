@@ -16,10 +16,12 @@ class ContentCombiner {
   }
 
   private let parent: ContentCombiner?
+  private let postScroll: PostScrollModel
   private let fontModifier: (Font?) -> Font?
   private let colorModifier: (Color?) -> Color?
 
   private var subviews = [Subview]()
+  private var envs = [String: String]()
 
   private var font: Font? {
     self.fontModifier(parent?.font)
@@ -30,12 +32,14 @@ class ContentCombiner {
 
   init(parent: ContentCombiner, font: @escaping (Font?) -> Font?, color: @escaping (Color?) -> Color?) {
     self.parent = parent
+    self.postScroll = parent.postScroll
     self.fontModifier = font
     self.colorModifier = color
   }
 
-  init() {
+  init(postScroll: PostScrollModel) {
     self.parent = nil
+    self.postScroll = postScroll
     self.fontModifier = { _ in Font.callout }
     self.colorModifier = { _ in Color.primary }
   }
@@ -176,12 +180,18 @@ class ContentCombiner {
   private func visit(quote: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.subheadline }, color: { _ in Color.primary.opacity(0.9) })
     combiner.visit(spans: quote.spans)
+
+    var tapAction: () -> Void = { }
+    if let pid = combiner.envs["pid"] {
+      tapAction = { withAnimation { self.postScroll.pid = pid } }
+    }
+
     let view = HStack { combiner.buildView(); Spacer() }
       .padding(.small)
       .background(
       RoundedRectangle(cornerRadius: 8)
         .fill(Color.systemGroupedBackground)
-    )
+    ) .onTapGesture(perform: tapAction)
 
     self.append(view)
   }
@@ -210,10 +220,12 @@ class ContentCombiner {
       combiner.append(Text("Post"))
       combiner.append(Text(" #\(pid) "))
       self.append(combiner.build())
+      self.envs["pid"] = pid
     }
   }
 
   private func visit(url: Span.Tagged) {
+    // fixme: url in attribute
     if let urlString = url.spans.first?.plain.text {
       let combiner = ContentCombiner(parent: self, font: { $0 }, color: { _ in Color.accentColor })
       let text = Text(Image(systemName: "link")) + Text(" ") + Text(urlString)

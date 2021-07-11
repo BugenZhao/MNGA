@@ -16,6 +16,8 @@ struct PostView: View {
   @State var delta: Int32 = 0
   @State var voteState: VoteState
 
+  @EnvironmentObject var postScroll: PostScrollModel
+
   init(post: Post) {
     self.post = post
     self.user = try! (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
@@ -106,11 +108,11 @@ struct PostView: View {
       PostContentView(spans: post.content.spans)
       footer
     } .padding(.vertical, 4)
-//      .contextMenu {
-//      Button(action: { copyContent(post.content.raw) }) {
-//        Label("Copy Raw Content", systemImage: "doc.on.doc")
-//      }
-//    }
+      .contextMenu {
+      Button(action: { copyContent(post.content.raw) }) {
+        Label("Copy Raw Content", systemImage: "doc.on.doc")
+      }
+    } .listRowBackground(postScroll.pid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
   }
 
   func copyContent(_ content: String) {

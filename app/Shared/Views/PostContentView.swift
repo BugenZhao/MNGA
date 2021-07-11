@@ -51,8 +51,10 @@ struct PostImageView: View {
 struct PostContentView: View, Equatable {
   let spans: [Span]
 
+  @EnvironmentObject var postScroll: PostScrollModel
+
   var body: some View {
-    let combiner = ContentCombiner()
+    let combiner = ContentCombiner(postScroll: postScroll)
     combiner.visit(spans: spans)
     return combiner.buildView()
   }

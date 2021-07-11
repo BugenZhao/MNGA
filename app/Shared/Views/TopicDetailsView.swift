@@ -10,13 +10,17 @@ import SwiftUI
 import SwiftUIX
 import Combine
 
+class PostScrollModel: ObservableObject {
+  @Published var pid: String? = nil
+}
+
 struct TopicDetailsView: View {
   let topic: Topic
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @State var showFullTitle = false
-
   @StateObject var viewingImage = ViewingImageModel()
+  @StateObject var postScroll = PostScrollModel()
 
   init(topic: Topic) {
     self.topic = topic
@@ -54,29 +58,34 @@ struct TopicDetailsView: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      List {
-        Section(header: HStack {
-          Text("Topic")
-          Spacer()
-          if dataSource.isLoading { ProgressView() }
-        }) {
-          TopicSubjectView(topic: topic, lineLimit: nil)
-            .onAppear { showFullTitle = false }
-            .onDisappear { showFullTitle = true }
-          if let first = self.first {
-            PostView(post: first)
+      ScrollViewReader { proxy in
+        List {
+          Section(header: HStack {
+            Text("Topic")
+            Spacer()
+            if dataSource.isLoading { ProgressView() }
+          }) {
+            TopicSubjectView(topic: topic, lineLimit: nil)
+              .onAppear { showFullTitle = false }
+              .onDisappear { showFullTitle = true }
+            if let first = self.first {
+              PostView(post: first).id(first.id.pid)
+            }
           }
-        }
 
-        if dataSource.items.count > 1 {
-          Section(header: Text("Replies")) {
-            ForEach(dataSource.items.dropFirst(), id: \.floor) { post in
-              PostView(post: post)
-                .onAppear { dataSource.loadMoreIfNeeded(currentItem: post)
+          if dataSource.items.count > 1 {
+            Section(header: Text("Replies")) {
+              ForEach(dataSource.items.dropFirst(), id: \.id.pid) { post in
+                PostView(post: post)
+                  .onAppear { dataSource.loadMoreIfNeeded(currentItem: post)
+                } .id(post.id.pid)
               }
             }
           }
-        }
+        } .environmentObject(postScroll)
+          .onReceive(postScroll.$pid) { pid in
+            withAnimation { proxy.scrollTo(pid) }
+          }
       }
       #if os(iOS)
         .listStyle(GroupedListStyle())
