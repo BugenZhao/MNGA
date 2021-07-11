@@ -92,6 +92,7 @@
 		B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
 		B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E5269B13830014DDFA /* ImageOverlay.swift */; };
 		B4EB80EA269B13B90014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */; };
+		B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */; platformFilter = maccatalyst; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -139,6 +140,8 @@
 		B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicHistoryListView.swift; sourceTree = "<group>"; };
 		B4EB80E5269B13830014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
 		B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
+		B4EB80EB269B1B4F0014DDFA /* NGA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NGA.entitlements; sourceTree = "<group>"; };
+		B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogiccatalyst.a; path = ../out/libs/liblogiccatalyst.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F707268DFC4600EB0614 /* Logging in Frameworks */,
+				B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B48B0C4A2694CE660067794F /* ImageViewer in Frameworks */,
@@ -203,6 +207,7 @@
 		B4C024BB26884FD600E53554 = {
 			isa = PBXGroup;
 			children = (
+				B4EB80EB269B1B4F0014DDFA /* NGA.entitlements */,
 				B4C024C026884FD600E53554 /* Shared */,
 				B4C024CA26884FD700E53554 /* iOS */,
 				B4C024D126884FD700E53554 /* macOS */,
@@ -261,6 +266,7 @@
 		B4C024EE268850F300E53554 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */,
 				B4C024F32688511E00E53554 /* liblogicmacos.a */,
 				B4C024F12688510C00E53554 /* liblogicios.a */,
 			);
@@ -681,6 +687,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NGA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AHDHW7HK24;
 				ENABLE_BITCODE = NO;
@@ -694,9 +701,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS";
 				PRODUCT_NAME = NGA;
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -705,6 +713,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NGA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = AHDHW7HK24;
 				ENABLE_BITCODE = NO;
@@ -718,9 +727,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS";
 				PRODUCT_NAME = NGA;
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

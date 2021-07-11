@@ -1,0 +1,7 @@
+[target.x86_64-apple-ios-macabi.dependencies.std]
+
+[profile.release]
+panic = "abort"
+
+[profile.dev]
+panic = "abort"
