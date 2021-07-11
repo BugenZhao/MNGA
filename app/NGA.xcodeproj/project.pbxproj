@@ -93,6 +93,8 @@
 		B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E5269B13830014DDFA /* ImageOverlay.swift */; };
 		B4EB80EA269B13B90014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */; };
 		B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */; platformFilter = maccatalyst; };
+		B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */; };
+		B4EB80F0269B2C090014DDFA /* ContentCombiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -142,6 +144,7 @@
 		B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
 		B4EB80EB269B1B4F0014DDFA /* NGA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NGA.entitlements; sourceTree = "<group>"; };
 		B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogiccatalyst.a; path = ../out/libs/liblogiccatalyst.a; sourceTree = "<group>"; };
+		B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCombiner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,6 +287,7 @@
 				B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */,
 				B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */,
 				B4E2BDCE2691B0030080C790 /* InitConf.swift */,
+				B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -479,6 +483,7 @@
 				B4DBF60C2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
+				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
@@ -519,6 +524,7 @@
 				B4DBF60D2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF613268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
+				B4EB80F0269B2C090014DDFA /* ContentCombiner.swift in Sources */,
 				B4920CDD269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */,

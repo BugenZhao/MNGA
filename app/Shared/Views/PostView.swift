@@ -106,11 +106,11 @@ struct PostView: View {
       PostContentView(spans: post.content.spans)
       footer
     } .padding(.vertical, 4)
-      .contextMenu {
-      Button(action: { copyContent(post.content.raw) }) {
-        Label("Copy Raw Content", systemImage: "doc.on.doc")
-      }
-    }
+//      .contextMenu {
+//      Button(action: { copyContent(post.content.raw) }) {
+//        Label("Copy Raw Content", systemImage: "doc.on.doc")
+//      }
+//    }
   }
 
   func copyContent(_ content: String) {

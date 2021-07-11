@@ -12,16 +12,19 @@ struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
 
   var body: some View {
-    NavigationView {
-      ForumListView()
+    Group {
       if UserInterfaceIdiom.current == .pad {
-        TopicListPlaceholderView()
+        NavigationView {
+          ForumListView()
+          TopicListPlaceholderView()
+          EmptyView()
+        }
+      } else {
+        NavigationView {
+          ForumListView()
+        }
       }
-      if UserInterfaceIdiom.current == .pad {
-        EmptyView()
-      }
-    }
-      .overlay { ImageOverlay() }
+    } .overlay { ImageOverlay() }
       .environmentObject(viewingImage)
   }
 }
