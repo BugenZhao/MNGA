@@ -44,7 +44,7 @@ struct TopicView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
-        TopicSubjectView(topic: topic)
+        TopicSubjectView(topic: topic, lineLimit: 2)
         Spacer()
         RepliesNumView(num: topic.repliesNum)
       }
@@ -59,26 +59,6 @@ struct TopicView: View {
       } .foregroundColor(.secondary)
         .font(.footnote)
     } .padding(.vertical, 4)
-  }
-}
-
-struct FavoriteModifier: ViewModifier {
-  let isFavorite: Bool
-  let toggleFavorite: () -> Void
-
-  func body(content: Content) -> some View {
-    content
-      .contextMenu(ContextMenu(menuItems: {
-      Button(action: {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          withAnimation { toggleFavorite() }
-        }
-      }) {
-        let text: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
-        let image = isFavorite ? "star.slash.fill" : "star"
-        Label(text, systemImage: image)
-      }
-    }))
   }
 }
 

@@ -52,3 +52,22 @@ struct ForumView: View {
   }
 }
 
+struct FavoriteModifier: ViewModifier {
+  let isFavorite: Bool
+  let toggleFavorite: () -> Void
+
+  func body(content: Content) -> some View {
+    content
+      .contextMenu(ContextMenu(menuItems: {
+      Button(action: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+          withAnimation { toggleFavorite() }
+        }
+      }) {
+        let text: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
+        let image = isFavorite ? "star.slash.fill" : "star"
+        Label(text, systemImage: image)
+      }
+    }))
+  }
+}

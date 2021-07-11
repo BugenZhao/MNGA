@@ -116,7 +116,7 @@ struct TopicListView: View {
         }
         #if os(iOS)
           .listStyle(GroupedListStyle())
-          .pullToRefresh(isShowing: $dataSource.isLoading) { dataSource.refresh() }
+          .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
         #endif
       }
     }
@@ -127,13 +127,13 @@ struct TopicListView: View {
       ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
     }
-      .onFirstAppear { dataSource.initialLoad() }
+      .onAppear { dataSource.initialLoad() }
   }
 }
 
 struct TopicListView_Previews: PreviewProvider {
   static var previews: some View {
-    let defaultForum = Forum.with {
+    let _ = Forum.with {
       $0.id = .with { i in i.fid = "-7" }
       $0.name = "大漩涡"
       $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/-7.png"

@@ -64,7 +64,7 @@ struct TopicDetailsView: View {
           }
         }) {
           if UserInterfaceIdiom.current == .phone {
-            TopicSubjectView(topic: topic)
+            TopicSubjectView(topic: topic, lineLimit: nil)
               .onAppear { showFullTitle = false }
               .onDisappear { showFullTitle = true }
           }
@@ -89,7 +89,7 @@ struct TopicDetailsView: View {
       #endif
     }
       .navigationTitle(title)
-      .onFirstAppear { dataSource.initialLoad() }
+      .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
     #endif

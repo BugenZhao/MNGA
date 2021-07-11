@@ -88,6 +88,6 @@ struct HotTopicListView: View {
       ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug
       ToolbarItem(placement: .navigationBarTrailing) { rangeMenu }
     }
-      .onFirstAppear { dataSource.initialLoad() }
+      .onAppear { dataSource.initialLoad() }
   }
 }

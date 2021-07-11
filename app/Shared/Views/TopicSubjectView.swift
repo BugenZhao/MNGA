@@ -10,11 +10,12 @@ import SwiftUI
 
 struct TopicSubjectView: View {
   let topic: Topic
+  let lineLimit: Int?
 
   var body: some View {
     let contentSpan = Text(topic.subjectContent)
       .font(.headline)
-      .lineLimit(2)
+      .lineLimit(lineLimit)
 
     if topic.tags.isEmpty {
       contentSpan

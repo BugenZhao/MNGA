@@ -11,6 +11,7 @@ extension View {
   /// Fix the SwiftUI bug for onAppear twice in subviews
   /// - Parameters:
   ///   - perform: perform the action when appear
+  @available(*, deprecated, message: "nope")
   func onFirstAppear(perform: @escaping () -> Void) -> some View {
     let kAppearAction = "appear_action"
     let queue = OperationQueue.main

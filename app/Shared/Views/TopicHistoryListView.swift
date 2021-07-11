@@ -11,7 +11,7 @@ import SwiftUIX
 
 struct TopicHistoryListView: View {
   @StateObject var dataSource: PagingDataSource<TopicHistoryResponse, TopicSnapshot>
-  
+
   @State var searchText = ""
   @State var isSearching = false
 
@@ -41,7 +41,7 @@ struct TopicHistoryListView: View {
         }
       }
     } .navigationTitle("History")
-      .onFirstAppear { dataSource.initialLoad() }
+      .onAppear { dataSource.initialLoad() }
       .navigationSearchBar {
       SearchBar(
         NSLocalizedString("Search History", comment: ""),
