@@ -118,12 +118,22 @@ class ContentCombiner {
     case .breakLine(_):
       self.append(Spacer().frame(height: 6))
     case .plain(let plain):
-      self.append(Text(plain.text))
+      self.visit(plain: plain)
     case .sticker(let sticker):
       self.visit(sticker: sticker)
     case .tagged(let tagged):
       self.visit(tagged: tagged)
     }
+  }
+  
+  private func visit(plain: Span.Plain) {
+    let text: Text
+    if plain.text == "Post by " {
+      text = Text("Post by") + Text(" ")
+    } else {
+      text = Text(plain.text)
+    }
+    self.append(text)
   }
 
   private func visit(sticker: Span.Sticker) {
@@ -156,6 +166,8 @@ class ContentCombiner {
       self.visit(uid: tagged)
     case "pid":
       self.visit(pid: tagged)
+    case "tid":
+      self.visit(tid: tagged)
     case "url":
       self.visit(url: tagged)
     default:
@@ -189,7 +201,7 @@ class ContentCombiner {
     let view = HStack { combiner.buildView(); Spacer() }
       .padding(.small)
       .background(
-      RoundedRectangle(cornerRadius: 8)
+      RoundedRectangle(cornerRadius: 12)
         .fill(Color.systemGroupedBackground)
     ) .onTapGesture(perform: tapAction)
 
@@ -199,8 +211,10 @@ class ContentCombiner {
   private func visit(bold: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { $0?.bold() }, color: { $0 })
 
-    if bold.spans.first?.plain.text.starts(with: "Post to") == true {
-      self.visit(quote: Span.Tagged.with { $0.spans = Array(bold.spans.dropFirst()) })
+    if bold.spans.first?.plain.text.starts(with: "Reply to") == true {
+      combiner.visit(quote: Span.Tagged.with {
+        $0.spans = Array(bold.spans.dropFirst())
+      })
     } else {
       combiner.visit(spans: bold.spans)
     }
@@ -210,6 +224,7 @@ class ContentCombiner {
 
   private func visit(uid: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { $0 }, color: { _ in Color.accentColor })
+    combiner.append(Text(Image(systemName: "person.fill")))
     combiner.visit(spans: uid.spans)
     self.append(combiner.build())
   }
@@ -224,19 +239,40 @@ class ContentCombiner {
     }
   }
 
+  private func visit(tid: Span.Tagged) {
+    if let tid = tid.attributes.first {
+      let combiner = ContentCombiner(parent: self, font: { $0?.bold() }, color: { $0 })
+      combiner.append(Text("Topic"))
+      combiner.append(Text(" #\(tid) "))
+      self.append(combiner.build())
+      self.envs["pid"] = "0"
+    }
+  }
+
   private func visit(url: Span.Tagged) {
-    // fixme: url in attribute
-    if let urlString = url.spans.first?.plain.text {
+    let urlString: String?
+    let displayString: String
+    
+    let innerString = url.spans.first?.plain.text
+    if let u = url.attributes.first {
+      urlString = u
+      displayString = innerString ?? "Link"
+    } else {
+      urlString = innerString
+      displayString = innerString ?? "Link"
+    }
+    
+    if let urlString = urlString {
       let combiner = ContentCombiner(parent: self, font: { $0 }, color: { _ in Color.accentColor })
-      let text = Text(Image(systemName: "link")) + Text(" ") + Text(urlString)
-      combiner.append(text.lineLimit(1))
+      let text = Text(Image(systemName: "link")) + Text(" ") + Text(displayString)
+      combiner.append(text)
 
       let view = HStack {
-        combiner.buildView()
+        combiner.buildView().lineLimit(1)
         Spacer()
       } .padding(.small)
         .background(
-        RoundedRectangle(cornerRadius: 8)
+        RoundedRectangle(cornerRadius: 12)
           .fill(Color.systemGroupedBackground)
       )
 

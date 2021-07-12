@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "ContentCombiner.append&lt;&#x3c4;_0_0&gt;(_:):ContentCombiner.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.font">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

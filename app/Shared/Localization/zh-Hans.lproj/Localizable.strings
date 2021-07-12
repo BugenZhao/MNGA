@@ -8,6 +8,7 @@
 
 "Topics" = "话题";
 "Topic" = "话题";
+"Post" = "帖子";
 "Replies" = "回复";
 "Subforums" = "子板块";
 "Refresh" = "刷新";
@@ -36,3 +37,4 @@
 "Last month" = "最近一个月";
 "Search History" = "搜索历史";
 "Select a forum in sidebar" = "在边栏中选择一个版块";
+"Post by" = "发表于";

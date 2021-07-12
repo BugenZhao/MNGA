@@ -16,6 +16,8 @@ struct PostView: View {
   @State var delta: Int32 = 0
   @State var voteState: VoteState
 
+  @State var showPostId = false
+
   @EnvironmentObject var postScroll: PostScrollModel
 
   init(post: Post) {
@@ -52,9 +54,10 @@ struct PostView: View {
 
       Spacer()
 
-      (Text("#").font(.footnote) + Text("\(post.floor)").font(.callout))
+      (Text("#").font(.footnote) + Text(showPostId ? post.id.pid : "\(post.floor)").font(.callout))
         .fontWeight(.medium)
         .foregroundColor(.accentColor)
+        .onTapGesture { withAnimation { self.showPostId.toggle() } }
     }
   }
 
@@ -63,7 +66,7 @@ struct PostView: View {
     HStack {
       voter
       Spacer()
-      Text(timeago(post.postDate))
+      DateTimeTextView(timestamp: post.postDate)
         .foregroundColor(.secondary)
         .font(.footnote)
     }
@@ -102,10 +105,16 @@ struct PostView: View {
     }
   }
 
+  @ViewBuilder
+  var content: some View {
+    PostContentView(spans: post.content.spans)
+      .equatable()
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
       header
-      PostContentView(spans: post.content.spans)
+      content
       footer
     } .padding(.vertical, 4)
       .contextMenu {

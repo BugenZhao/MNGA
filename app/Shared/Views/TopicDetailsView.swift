@@ -84,8 +84,8 @@ struct TopicDetailsView: View {
           }
         } .environmentObject(postScroll)
           .onReceive(postScroll.$pid) { pid in
-            withAnimation { proxy.scrollTo(pid) }
-          }
+          withAnimation { proxy.scrollTo(pid) }
+        }
       }
       #if os(iOS)
         .listStyle(GroupedListStyle())
@@ -96,6 +96,15 @@ struct TopicDetailsView: View {
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
     #endif
+    .userActivity("com.bugenzhao.NGA.openTopic") { activity in
+      if let url = URL(string: webpageURL) {
+        activity.webpageURL = url
+      }
+    }
+  }
+
+  var webpageURL: String {
+    "https://ngabbs.com/read.php?tid=\(topic.id)"
   }
 }
 

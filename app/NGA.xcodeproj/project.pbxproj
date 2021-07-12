@@ -13,6 +13,8 @@
 		B412F709268DFC4F00EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F708268DFC4F00EB0614 /* Logging */; };
 		B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B437B278269B09DC0092FF9E /* SwiftUIRefresh */; };
 		B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
+		B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
+		B43DED47269C29BB009C52F5 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
 		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
@@ -49,8 +51,8 @@
 		B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EF268850F300E53554 /* SwiftProtobuf */; };
 		B4C024F22688511400E53554 /* liblogicios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F12688510C00E53554 /* liblogicios.a */; platformFilter = ios; };
 		B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F32688511E00E53554 /* liblogicmacos.a */; };
-		B4DBF608268976470027233F /* TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* TimeAgo.swift */; };
-		B4DBF609268976470027233F /* TimeAgo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* TimeAgo.swift */; };
+		B4DBF608268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
+		B4DBF609268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
 		B4DBF60C2689799F0027233F /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* PostView.swift */; };
 		B4DBF60D2689799F0027233F /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* PostView.swift */; };
 		B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60E268979C20027233F /* TopicDetailsView.swift */; };
@@ -101,6 +103,7 @@
 		375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSNGAApp.swift; sourceTree = "<group>"; };
 		375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = macOSNGAApp.swift; sourceTree = "<group>"; };
 		B437B27B269B0E190092FF9E /* ToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModifier.swift; sourceTree = "<group>"; };
+		B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeTextView.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
@@ -121,7 +124,7 @@
 		B4C024E2268850AA00E53554 /* LogicCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogicCall.swift; sourceTree = "<group>"; };
 		B4C024F12688510C00E53554 /* liblogicios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicios.a; path = ../out/libs/liblogicios.a; sourceTree = "<group>"; };
 		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
-		B4DBF607268976470027233F /* TimeAgo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeAgo.swift; sourceTree = "<group>"; };
+		B4DBF607268976470027233F /* DateFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatters.swift; sourceTree = "<group>"; };
 		B4DBF60B2689799F0027233F /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		B4DBF60E268979C20027233F /* TopicDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailsView.swift; sourceTree = "<group>"; };
 		B4DBF611268979F70027233F /* TopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListView.swift; sourceTree = "<group>"; };
@@ -280,7 +283,7 @@
 			isa = PBXGroup;
 			children = (
 				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
-				B4DBF607268976470027233F /* TimeAgo.swift */,
+				B4DBF607268976470027233F /* DateFormatters.swift */,
 				B4DBF61726897C520027233F /* Misc.swift */,
 				B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */,
 				B4E1071F268DD215006C1742 /* AuthedPreview.swift */,
@@ -318,6 +321,7 @@
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
 				B48B0C4526932CC70067794F /* ForumView.swift */,
 				B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */,
+				B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -480,6 +484,7 @@
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
+				B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */,
 				B4DBF60C2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
@@ -505,7 +510,7 @@
 				B4DBF61526897A170027233F /* TopicView.swift in Sources */,
 				B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */,
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
-				B4DBF608268976470027233F /* TimeAgo.swift in Sources */,
+				B4DBF608268976470027233F /* DateFormatters.swift in Sources */,
 				375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -521,6 +526,7 @@
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
+				B43DED47269C29BB009C52F5 /* DateTimeTextView.swift in Sources */,
 				B4DBF60D2689799F0027233F /* PostView.swift in Sources */,
 				B4DBF613268979F70027233F /* TopicListView.swift in Sources */,
 				B4C024E6268850AA00E53554 /* LogicCall.swift in Sources */,
@@ -546,7 +552,7 @@
 				B4DBF61626897A170027233F /* TopicView.swift in Sources */,
 				B4EB80EA269B13B90014DDFA /* ImageOverlay.swift in Sources */,
 				B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
-				B4DBF609268976470027233F /* TimeAgo.swift in Sources */,
+				B4DBF609268976470027233F /* DateFormatters.swift in Sources */,
 				375E616A4BCE12A43666F04C /* macOSNGAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
