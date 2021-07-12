@@ -1,5 +1,5 @@
 //
-//  PostView.swift
+//  PostRowView.swift
 //  NGA
 //
 //  Created by Bugen Zhao on 6/28/21.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct PostView: View {
+struct PostRowView: View {
   let post: Post
   let user: User?
 

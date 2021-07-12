@@ -1,5 +1,5 @@
 //
-//  ForumView.swift
+//  ForumRowView.swift
 //  NGA
 //
 //  Created by Bugen Zhao on 7/5/21.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct ForumView: View {
+struct ForumRowView: View {
   let forum: Forum
   let isFavorite: Bool
 

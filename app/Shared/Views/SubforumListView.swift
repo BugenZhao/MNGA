@@ -41,7 +41,7 @@ struct SubforumListView: View {
         }
           .foregroundColor(subforum.filterable ? .accentColor : .secondary)
 
-        ForumView(forum: forum, isFavorite: isFavorite)
+        ForumRowView(forum: forum, isFavorite: isFavorite)
       }
         .modifier(FavoriteModifier(
         isFavorite: favorites.isFavorite(id: forum.id),

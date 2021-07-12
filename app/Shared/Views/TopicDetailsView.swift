@@ -69,14 +69,14 @@ struct TopicDetailsView: View {
               .onAppear { showFullTitle = false }
               .onDisappear { showFullTitle = true }
             if let first = self.first {
-              PostView(post: first).id(first.id.pid)
+              PostRowView(post: first).id(first.id.pid)
             }
           }
 
           if dataSource.items.count > 1 {
             Section(header: Text("Replies")) {
               ForEach(dataSource.items.dropFirst(), id: \.id.pid) { post in
-                PostView(post: post)
+                PostRowView(post: post)
                   .onAppear { dataSource.loadMoreIfNeeded(currentItem: post)
                 } .id(post.id.pid)
               }

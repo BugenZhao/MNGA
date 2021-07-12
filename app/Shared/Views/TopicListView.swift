@@ -111,7 +111,7 @@ struct TopicListView: View {
           Section(header: Text("Latest Topics")) {
             ForEach(dataSource.items, id: \.id) { topic in
               NavigationLink(destination: TopicDetailsView(topic: topic)) {
-                TopicView(topic: topic)
+                TopicRowView(topic: topic)
                   .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
               }
             }

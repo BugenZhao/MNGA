@@ -88,7 +88,7 @@ struct ForumListView: View {
     let isFavorite = favorites.isFavorite(id: forum.id)
 
     NavigationLink(destination: TopicListView(forum: forum)) {
-      ForumView(forum: forum, isFavorite: inFavoritesSection && isFavorite)
+      ForumRowView(forum: forum, isFavorite: inFavoritesSection && isFavorite)
         .modifier(FavoriteModifier(
         isFavorite: isFavorite,
         toggleFavorite: { favorites.toggleFavorite(forum: forum) }

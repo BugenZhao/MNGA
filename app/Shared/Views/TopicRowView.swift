@@ -1,5 +1,5 @@
 //
-//  TopicView.swift
+//  TopicRowView.swift
 //  NGA
 //
 //  Created by Bugen Zhao on 6/28/21.
@@ -38,7 +38,7 @@ struct RepliesNumView: View {
   }
 }
 
-struct TopicView: View {
+struct TopicRowView: View {
   let topic: Topic
 
   var body: some View {
@@ -65,7 +65,7 @@ struct TopicView: View {
 struct TopicView_Previews: PreviewProvider {
   static var previews: some View {
     let item = { (n: UInt32) in
-      TopicView(topic: .with {
+      TopicRowView(topic: .with {
         $0.tags = ["不懂就问", "树洞"]
         $0.subjectContent = "很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题"
         $0.repliesNum = n

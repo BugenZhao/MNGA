@@ -73,7 +73,7 @@ struct HotTopicListView: View {
           Section(header: Text(dataSource.range.description)) {
             ForEach(dataSource.items, id: \.id) { topic in
               NavigationLink(destination: TopicDetailsView(topic: topic)) {
-                TopicView(topic: topic)
+                TopicRowView(topic: topic)
               }
             }
           }
