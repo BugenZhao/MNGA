@@ -55,6 +55,7 @@ pub fn extract_user_and_cache(node: Node) -> Option<User> {
         avatar_url: get!(map, "avatar")?,
         reg_date: get!(map, "regdate", _)?,
         post_num: get!(map, "postnum", _).or(get!(map, "posts", _))?,
+        fame: get!(map, "fame", _).or(get!(map, "rvrc", _))?,
         ..Default::default()
     };
 

@@ -1,5 +1,5 @@
 //
-//  TopicDetails.swift
+//  TopicDetailsView.swift
 //  NGA
 //
 //  Created by Bugen Zhao on 6/28/21.
@@ -96,7 +96,7 @@ struct TopicDetailsView: View {
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
     #endif
-    .userActivity("com.bugenzhao.NGA.openTopic") { activity in
+    .userActivity(Constants.Activity.openTopic) { activity in
       if let url = URL(string: webpageURL) {
         activity.webpageURL = url
       }
@@ -104,7 +104,7 @@ struct TopicDetailsView: View {
   }
 
   var webpageURL: String {
-    "https://ngabbs.com/read.php?tid=\(topic.id)"
+    "\(Constants.URL.base)/read.php?tid=\(topic.id)"
   }
 }
 

@@ -128,6 +128,20 @@ struct TopicListView: View {
       .navigationTitle(forum.name)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .onAppear { dataSource.initialLoad() }
+      .userActivity(Constants.Activity.openForum) { activity in
+      if let url = URL(string: webpageURL) {
+        activity.webpageURL = url
+      }
+    }
+  }
+
+  var webpageURL: String {
+    switch forum.id.id! {
+    case .fid(let fid):
+      return "\(Constants.URL.base)/thread.php?fid=\(fid)"
+    case .stid(let stid):
+      return "\(Constants.URL.base)/thread.php?stid=\(stid)"
+    }
   }
 }
 

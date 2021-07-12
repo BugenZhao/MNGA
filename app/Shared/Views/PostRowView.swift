@@ -9,9 +9,72 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct PostRowView: View {
+struct PostRowUserView: View {
   let post: Post
   let user: User?
+
+  @State var showId = false
+
+  init(post: Post) {
+    self.post = post
+    self.user = try! (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
+  }
+
+  @ViewBuilder
+  var avatar: some View {
+    let placeholder = Image(systemName: "person.circle.fill")
+      .resizable()
+
+    if let url = URL(string: user?.avatarURL ?? "") {
+      WebImage(url: url)
+        .resizable()
+        .placeholder(placeholder)
+    } else {
+      placeholder
+    }
+  }
+
+  var body: some View {
+    HStack {
+      avatar
+        .foregroundColor(.accentColor)
+        .frame(width: 36, height: 36)
+        .clipShape(Circle())
+
+      VStack(alignment: .leading, spacing: 2) {
+        Group {
+          if showId {
+            Text(post.authorID)
+          } else {
+            Text(user?.name ?? post.authorID)
+          }
+        } .font(.subheadline)
+          .onTapGesture { withAnimation { self.showId.toggle() } }
+
+        HStack(spacing: 6) {
+
+          HStack(spacing: 2) {
+            Image(systemName: "text.bubble")
+            Text("\(user?.postNum ?? 0)")
+          }
+          HStack(spacing: 2) {
+            Image(systemName: "calendar")
+            Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)
+          }
+          HStack(spacing: 2) {
+            Image(systemName: "flag")
+            Text("\(user?.fame ?? 0)")
+          }
+
+        } .font(.footnote)
+          .foregroundColor(.secondary)
+      }
+    }
+  }
+}
+
+struct PostRowView: View {
+  let post: Post
 
   @State var delta: Int32 = 0
   @State var voteState: VoteState
@@ -22,38 +85,14 @@ struct PostRowView: View {
 
   init(post: Post) {
     self.post = post
-    self.user = try! (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
     self._voteState = .init(wrappedValue: post.voteState)
   }
 
   @ViewBuilder
   var header: some View {
     HStack {
-      avatar
-        .foregroundColor(.accentColor)
-        .frame(width: 36, height: 36)
-        .clipShape(Circle())
-
-      VStack(alignment: .leading, spacing: 2) {
-        Text(user?.name ?? post.authorID)
-          .font(.subheadline)
-
-        if let user = self.user {
-          HStack(spacing: 2) {
-            Image(systemName: "text.bubble")
-            Text("\(user.postNum)")
-
-            Spacer().frame(width: 4)
-
-            Image(systemName: "calendar")
-            Text(Date(timeIntervalSince1970: TimeInterval(user.regDate)), style: .date)
-          } .font(.footnote)
-            .foregroundColor(.secondary)
-        }
-      }
-
+      PostRowUserView(post: post)
       Spacer()
-
       (Text("#").font(.footnote) + Text(showPostId ? post.id.pid : "\(post.floor)").font(.callout))
         .fontWeight(.medium)
         .foregroundColor(.accentColor)
@@ -88,20 +127,6 @@ struct PostRowView: View {
         .foregroundColor(voteState == .down ? .accentColor : .secondary)
         .frame(height: 24)
         .onTapGesture { vote(.downvote) }
-    }
-  }
-
-  @ViewBuilder
-  var avatar: some View {
-    let placeholder = Image(systemName: "person.circle.fill")
-      .resizable()
-
-    if let url = URL(string: user?.avatarURL ?? "") {
-      WebImage(url: url)
-        .resizable()
-        .placeholder(placeholder)
-    } else {
-      placeholder
     }
   }
 
