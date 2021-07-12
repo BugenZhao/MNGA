@@ -77,10 +77,9 @@ struct UserMenu: View {
 
 struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage()
+  @StateObject var searchModel = SearchModel<Forum>()
 
   @State var categories = [Category]()
-  @State var searchText: String = ""
-  @State var isSearching: Bool = false
   @State var showHistory: Bool = false
 
   @ViewBuilder
@@ -126,14 +125,9 @@ struct ForumListView: View {
         }
       } else {
         ForEach(categories, id: \.id) { category in
-          let forums = category.forums.filter {
-            searchText.isEmpty || $0.name.contains(searchText)
-          }
-          if !forums.isEmpty {
-            Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
-              ForEach(forums, id: \.hashIdentifiable) { forum in
-                buildLink(forum)
-              }
+          Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
+            ForEach(category.forums, id: \.hashIdentifiable) { forum in
+              buildLink(forum)
             }
           }
         }
@@ -160,26 +154,39 @@ struct ForumListView: View {
     } .imageScale(.large)
   }
 
+  @ViewBuilder
+  var index: some View {
+    List {
+      favoritesSection
+      if favorites.filterMode == .all {
+        allForumsSection
+      }
+    }
+  }
+
+  @ViewBuilder
+  var search: some View {
+    ForumSearchView()
+      .environmentObject(self.searchModel)
+  }
+
+  var searchBar: SearchBar {
+    SearchBar(
+      NSLocalizedString("Search Forums", comment: ""),
+      text: $searchModel.text,
+      isEditing: $searchModel.isEditing.animation(),
+      onCommit: { searchModel.commitFlag += 1 }
+    ) .onCancel { DispatchQueue.main.async { withAnimation { searchModel.text.removeAll() } } }
+  }
+
   var body: some View {
     VStack {
-      List {
-        if searchText.isEmpty && !isSearching {
-          favoritesSection
-        }
-        if favorites.filterMode == .all || isSearching {
-          allForumsSection
-        }
-      }
+      if searchModel.isSearching { search }
+      else { index }
     } .onAppear { loadData() }
       .navigationTitle("Forums")
     #if os(iOS)
-      .navigationSearchBar {
-        SearchBar(
-          NSLocalizedString("Search Forums", comment: ""),
-          text: $searchText,
-          isEditing: $isSearching.animation()
-        )
-      }
+      .navigationSearchBar { searchBar }
     #endif
     .modifier(DoubleItemsToolbarModifier(
       buildLeading: { UserMenu(showHistory: $showHistory) },

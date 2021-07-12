@@ -22,6 +22,7 @@ pub fn extract_kv(node: Node) -> HashMap<&str, String> {
 pub fn extract_kv_pairs(node: Node) -> Vec<(&str, String)> {
     node.children()
         .into_iter()
+        // fixme: filter element?
         .map(|n| (n.expanded_name().unwrap().local_part(), n.string_value()))
         .collect::<Vec<_>>()
 }

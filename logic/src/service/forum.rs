@@ -4,8 +4,8 @@ use crate::{
     protos::{
         DataModel::{Category, Forum, ForumId, ForumId_oneof_id},
         Service::{
-            ForumListRequest, ForumListResponse, SubforumFilterRequest,
-            SubforumFilterRequest_Operation, SubforumFilterResponse,
+            ForumListRequest, ForumListResponse, ForumSearchRequest, ForumSearchResponse,
+            SubforumFilterRequest, SubforumFilterRequest_Operation, SubforumFilterResponse,
         },
     },
     service::{
@@ -33,7 +33,7 @@ fn extract_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
 
-    let icon_id = get!(map, "id")?;
+    let icon_id = get!(map, "id").or(get!(map, "fid")).unwrap_or_default();
     let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, icon_id);
 
     let fid = get!(map, "fid").map(make_fid);
@@ -114,6 +114,19 @@ pub async fn set_subforum_filter(
     })
 }
 
+pub async fn search_forum(request: ForumSearchRequest) -> LogicResult<ForumSearchResponse> {
+    let package = fetch_package("forum.php", vec![("key", request.get_key())], vec![]).await?;
+
+    let forums = extract_nodes(&package, "/root/item", |ns| {
+        ns.into_iter().filter_map(extract_forum).collect()
+    })?;
+
+    Ok(ForumSearchResponse {
+        forums: forums.into(),
+        ..Default::default()
+    })
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -144,6 +157,22 @@ mod test {
             .map(|c| c.get_forums().first())
             .flatten()
             .is_some();
+        assert!(forum_exists);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_search_forum_chinese() -> LogicResult<()> {
+        let response = search_forum(ForumSearchRequest {
+            key: "原神".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        let forum_exists = response.get_forums().first().is_some();
         assert!(forum_exists);
 
         Ok(())

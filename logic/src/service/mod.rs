@@ -1,7 +1,6 @@
+use crate::error::LogicResult;
 use lazy_static::lazy_static;
 use reqwest::{Client, Url};
-
-use crate::error::LogicResult;
 
 mod constants;
 pub mod forum;
@@ -45,6 +44,7 @@ async fn fetch_package(
 
     let query = {
         query.push(("lite", "xml"));
+        query.push(("__inchst", "UTF8"));
         query
     };
 

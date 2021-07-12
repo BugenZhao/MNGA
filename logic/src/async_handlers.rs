@@ -1,7 +1,7 @@
 use crate::{
     protos::Service::*,
     service::{
-        forum::{get_forum_list, set_subforum_filter},
+        forum::{get_forum_list, search_forum, set_subforum_filter},
         history::get_topic_history,
         post::post_vote,
         topic::{get_hot_topic_list, get_topic_details, get_topic_list},
@@ -55,5 +55,10 @@ pub async fn handle_topic_history(request: TopicHistoryRequest) -> TopicHistoryR
 
 pub async fn handle_hot_topic_list(request: HotTopicListRequest) -> HotTopicListResponse {
     let res = get_hot_topic_list(request).await;
+    or_default!(res)
+}
+
+pub async fn handle_forum_search(request: ForumSearchRequest) -> ForumSearchResponse {
+    let res = search_forum(request).await;
     or_default!(res)
 }
