@@ -33,6 +33,7 @@ message Post {
   uint64 post_date = 4;
   uint32 score = 5;
   VoteState vote_state = 7;
+  repeated Post host_replies = 8;
 }
 
 message Subforum {

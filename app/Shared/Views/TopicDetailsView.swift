@@ -17,10 +17,11 @@ class PostScrollModel: ObservableObject {
 struct TopicDetailsView: View {
   let topic: Topic
 
-  @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @State var showFullTitle = false
-  @StateObject var viewingImage = ViewingImageModel()
+
+  @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @StateObject var postScroll = PostScrollModel()
+  @StateObject var votes = VotesModel()
 
   init(topic: Topic) {
     self.topic = topic
@@ -56,6 +57,13 @@ struct TopicDetailsView: View {
     }
   }
 
+  @ViewBuilder
+  func buildRow(post: Post, withId: Bool = true) -> some View {
+    let row = PostRowView(post: post, vote: votes.binding(for: post))
+    if withId { row.id(post.id.pid) }
+    else { row }
+  }
+
   var body: some View {
     VStack(alignment: .leading) {
       ScrollViewReader { proxy in
@@ -69,16 +77,23 @@ struct TopicDetailsView: View {
               .onAppear { showFullTitle = false }
               .onDisappear { showFullTitle = true }
             if let first = self.first {
-              PostRowView(post: first).id(first.id.pid)
+              buildRow(post: first)
+            }
+          }
+
+          if let hotReplies = self.first?.hostReplies, !hotReplies.isEmpty {
+            Section(header: Text("Hot Replies")) {
+              ForEach(hotReplies, id: \.id.pid) { post in
+                buildRow(post: post, withId: false)
+              }
             }
           }
 
           if dataSource.items.count > 1 {
             Section(header: Text("Replies")) {
               ForEach(dataSource.items.dropFirst(), id: \.id.pid) { post in
-                PostRowView(post: post)
-                  .onAppear { dataSource.loadMoreIfNeeded(currentItem: post)
-                } .id(post.id.pid)
+                buildRow(post: post)
+                  .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
               }
             }
           }

@@ -9,19 +9,21 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct PostRowUserView: View {
+struct PostRowUserView: View, Equatable {
+  static func == (lhs: PostRowUserView, rhs: PostRowUserView) -> Bool {
+    return lhs.post.id == rhs.post.id
+  }
+
   let post: Post
-  let user: User?
 
   @State var showId = false
 
-  init(post: Post) {
-    self.post = post
-    self.user = try! (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
+  var user: User? {
+    try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
   }
 
   @ViewBuilder
-  var avatar: some View {
+  func buildAvatar(user: User?) -> some View {
     let placeholder = Image(systemName: "person.circle.fill")
       .resizable()
 
@@ -35,8 +37,10 @@ struct PostRowUserView: View {
   }
 
   var body: some View {
+    let user = self.user
+
     HStack {
-      avatar
+      buildAvatar(user: user)
         .foregroundColor(.accentColor)
         .frame(width: 36, height: 36)
         .clipShape(Circle())
@@ -76,22 +80,17 @@ struct PostRowUserView: View {
 struct PostRowView: View {
   let post: Post
 
-  @State var delta: Int32 = 0
-  @State var voteState: VoteState
-
   @State var showPostId = false
 
   @EnvironmentObject var postScroll: PostScrollModel
 
-  init(post: Post) {
-    self.post = post
-    self._voteState = .init(wrappedValue: post.voteState)
-  }
+  @Binding var vote: VotesModel.Vote
 
   @ViewBuilder
   var header: some View {
     HStack {
       PostRowUserView(post: post)
+        .equatable()
       Spacer()
       (Text("#").font(.footnote) + Text(showPostId ? post.id.pid : "\(post.floor)").font(.callout))
         .fontWeight(.medium)
@@ -114,19 +113,19 @@ struct PostRowView: View {
   @ViewBuilder
   var voter: some View {
     HStack(spacing: 4) {
-      Image(systemName: voteState == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
-        .foregroundColor(voteState == .up ? .accentColor : .secondary)
+      Image(systemName: vote.state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
+        .foregroundColor(vote.state == .up ? .accentColor : .secondary)
         .frame(height: 24)
-        .onTapGesture { vote(.upvote) }
+        .onTapGesture { doVote(.upvote) }
 
-      Text("\(max(Int32(post.score) + delta, 0))")
-        .foregroundColor(voteState != .none ? .accentColor : .secondary)
+      Text("\(max(Int32(post.score) + vote.delta, 0))")
+        .foregroundColor(vote.state != .none ? .accentColor : .secondary)
         .font(.subheadline.monospacedDigit())
 
-      Image(systemName: voteState == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
-        .foregroundColor(voteState == .down ? .accentColor : .secondary)
+      Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+        .foregroundColor(vote.state == .down ? .accentColor : .secondary)
         .frame(height: 24)
-        .onTapGesture { vote(.downvote) }
+        .onTapGesture { doVote(.downvote) }
     }
   }
 
@@ -159,15 +158,15 @@ struct PostRowView: View {
     #endif
   }
 
-  func vote(_ operation: PostVoteRequest.Operation) {
+  func doVote(_ operation: PostVoteRequest.Operation) {
     logicCallAsync(.postVote(.with {
       $0.postID = post.id
       $0.operation = operation
     })) { (response: PostVoteResponse) in
       if !response.hasError {
         withAnimation {
-          self.voteState = response.state
-          self.delta += response.delta
+          self.vote.state = response.state
+          self.vote.delta += response.delta
         }
       } else {
         // error

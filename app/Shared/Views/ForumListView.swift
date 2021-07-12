@@ -139,7 +139,7 @@ struct ForumListView: View {
   var filterMenu: some View {
     Menu {
       Section {
-        Picker(selection: $favorites.filterMode.animation(), label: Text("Filter Mode")) {
+        Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
           ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
             HStack {
               Text(LocalizedStringKey(mode.rawValue))

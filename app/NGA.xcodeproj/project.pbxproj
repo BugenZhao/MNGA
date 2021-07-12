@@ -21,6 +21,8 @@
 		B43DED4D269C7C8B009C52F5 /* SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED4B269C7C8B009C52F5 /* SearchModel.swift */; };
 		B43DED4F269C7D0B009C52F5 /* ForumSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */; };
 		B43DED50269C7D0B009C52F5 /* ForumSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */; };
+		B43DED52269C9216009C52F5 /* VotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED51269C9216009C52F5 /* VotesModel.swift */; };
+		B43DED53269C9216009C52F5 /* VotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED51269C9216009C52F5 /* VotesModel.swift */; };
 		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
@@ -113,6 +115,7 @@
 		B43DED48269C5F78009C52F5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B43DED4B269C7C8B009C52F5 /* SearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchModel.swift; sourceTree = "<group>"; };
 		B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumSearchView.swift; sourceTree = "<group>"; };
+		B43DED51269C9216009C52F5 /* VotesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesModel.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
@@ -216,6 +219,7 @@
 				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
 				B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */,
 				B43DED4B269C7C8B009C52F5 /* SearchModel.swift */,
+				B43DED51269C9216009C52F5 /* VotesModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -511,6 +515,7 @@
 				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */,
 				B48709C5269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */,
+				B43DED52269C9216009C52F5 /* VotesModel.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
 				B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
@@ -556,6 +561,7 @@
 				B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */,
 				B48709C6269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */,
+				B43DED53269C9216009C52F5 /* VotesModel.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
 				B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */,

@@ -5,7 +5,7 @@ use crate::{
     protos::{DataModel::*, Service::*},
     service::{
         text,
-        utils::{extract_kv, extract_string},
+        utils::{extract_kv, extract_nodes_rel, extract_string},
     },
 };
 use sxd_xpath::nodeset::Node;
@@ -47,6 +47,11 @@ pub fn extract_post(node: Node) -> Option<Post> {
         .map(|r| r.state)
         .unwrap_or(VoteState::NONE);
 
+    let hot_replies = extract_nodes_rel(node, "./hotreply/item", |ns| {
+        ns.into_iter().filter_map(extract_post).collect()
+    })
+    .unwrap_or_default();
+
     let post = Post {
         id: Some(post_id).into(),
         floor: get!(map, "lou", u32)?,
@@ -55,6 +60,7 @@ pub fn extract_post(node: Node) -> Option<Post> {
         post_date: get!(map, "postdatetimestamp", _)?,
         score: get!(map, "score", _)?,
         vote_state,
+        host_replies: hot_replies.into(),
         ..Default::default()
     };
 
