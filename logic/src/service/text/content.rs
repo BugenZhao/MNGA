@@ -98,7 +98,7 @@ peg::parser! {
             }
 
         rule span() -> Span
-            = _ s:(tagged() / sticker() / br() / plain()) _ { s }
+            = s:(tagged() / sticker() / br() / plain()) { s }
 
         pub rule content() -> Vec<Span>
             = ss:(span())* { ss }

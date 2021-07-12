@@ -15,10 +15,17 @@ class ContentCombiner {
     case other(AnyView)
   }
 
+  struct OtherStyles: OptionSet {
+    let rawValue: Int
+    static let underline = Self(rawValue: 1 << 0)
+  }
+
   private let parent: ContentCombiner?
   private let postScroll: PostScrollModel
+
   private let fontModifier: (Font?) -> Font?
   private let colorModifier: (Color?) -> Color?
+  private let otherStylesModifier: (OtherStyles) -> OtherStyles
 
   private var subviews = [Subview]()
   private var envs = [String: String]()
@@ -29,12 +36,21 @@ class ContentCombiner {
   private var color: Color? {
     self.colorModifier(parent?.color)
   }
+  private var otherStyles: OtherStyles {
+    self.otherStylesModifier(parent?.otherStyles ?? [])
+  }
 
-  init(parent: ContentCombiner, font: @escaping (Font?) -> Font?, color: @escaping (Color?) -> Color?) {
+  init(
+    parent: ContentCombiner,
+    font: @escaping (Font?) -> Font? = { $0 },
+    color: @escaping (Color?) -> Color? = { $0 },
+    otherStyles: @escaping (OtherStyles) -> OtherStyles = { $0 }
+  ) {
     self.parent = parent
     self.postScroll = parent.postScroll
     self.fontModifier = font
     self.colorModifier = color
+    self.otherStylesModifier = otherStyles
   }
 
   init(postScroll: PostScrollModel) {
@@ -42,15 +58,21 @@ class ContentCombiner {
     self.postScroll = postScroll
     self.fontModifier = { _ in Font.callout }
     self.colorModifier = { _ in Color.primary }
+    self.otherStylesModifier = { $0 }
   }
 
   private func append<V: View>(_ view: V) {
     let subview: Subview
 
     if view is Text {
-      let text = (view as! Text)
+      var text: Text = (view as! Text)
         .font(self.font)
         .foregroundColor(self.color)
+
+      if otherStyles.contains(.underline) {
+        text = text.underline()
+      }
+
       subview = Subview.text(text)
     } else if view is AnyView {
       subview = Subview.other(view as! AnyView)
@@ -125,7 +147,7 @@ class ContentCombiner {
       self.visit(tagged: tagged)
     }
   }
-  
+
   private func visit(plain: Span.Plain) {
     let text: Text
     if plain.text == "Post by " {
@@ -170,6 +192,14 @@ class ContentCombiner {
       self.visit(tid: tagged)
     case "url":
       self.visit(url: tagged)
+    case "code":
+      self.visit(code: tagged)
+    case "i":
+      self.visit(italic: tagged)
+    case "del":
+      self.visit(deleted: tagged)
+    case "color":
+      self.visit(colored: tagged)
     default:
       self.visit(defaultTagged: tagged)
     }
@@ -209,7 +239,7 @@ class ContentCombiner {
   }
 
   private func visit(bold: Span.Tagged) {
-    let combiner = ContentCombiner(parent: self, font: { $0?.bold() }, color: { $0 })
+    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
 
     if bold.spans.first?.plain.text.starts(with: "Reply to") == true {
       combiner.visit(quote: Span.Tagged.with {
@@ -223,7 +253,7 @@ class ContentCombiner {
   }
 
   private func visit(uid: Span.Tagged) {
-    let combiner = ContentCombiner(parent: self, font: { $0 }, color: { _ in Color.accentColor })
+    let combiner = ContentCombiner(parent: self, color: { _ in Color.accentColor })
     combiner.append(Text(Image(systemName: "person.fill")))
     combiner.visit(spans: uid.spans)
     self.append(combiner.build())
@@ -231,7 +261,7 @@ class ContentCombiner {
 
   private func visit(pid: Span.Tagged) {
     if let pid = pid.attributes.first {
-      let combiner = ContentCombiner(parent: self, font: { $0?.bold() }, color: { $0 })
+      let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
       combiner.append(Text("Post"))
       combiner.append(Text(" #\(pid) "))
       self.append(combiner.build())
@@ -241,7 +271,7 @@ class ContentCombiner {
 
   private func visit(tid: Span.Tagged) {
     if let tid = tid.attributes.first {
-      let combiner = ContentCombiner(parent: self, font: { $0?.bold() }, color: { $0 })
+      let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
       combiner.append(Text("Topic"))
       combiner.append(Text(" #\(tid) "))
       self.append(combiner.build())
@@ -252,7 +282,7 @@ class ContentCombiner {
   private func visit(url: Span.Tagged) {
     let urlString: String?
     let displayString: String
-    
+
     let innerString = url.spans.first?.plain.text
     if let u = url.attributes.first {
       urlString = u
@@ -261,9 +291,9 @@ class ContentCombiner {
       urlString = innerString
       displayString = innerString ?? "Link"
     }
-    
+
     if let urlString = urlString {
-      let combiner = ContentCombiner(parent: self, font: { $0 }, color: { _ in Color.accentColor })
+      let combiner = ContentCombiner(parent: self, color: { _ in Color.accentColor })
       let text = Text(Image(systemName: "link")) + Text(" ") + Text(displayString)
       combiner.append(text)
 
@@ -285,6 +315,47 @@ class ContentCombiner {
         self.append(view)
       }
     }
+  }
+
+  private func visit(code: Span.Tagged) {
+    let combiner = ContentCombiner(parent: self, font: { _ in Font.system(.footnote, design: .monospaced) })
+    combiner.visit(spans: code.spans)
+    self.append(combiner.build())
+  }
+
+  private func visit(underlined: Span.Tagged) {
+    let combiner = ContentCombiner(parent: self, otherStyles: { $0.union(.underline) })
+    combiner.visit(spans: underlined.spans)
+    self.append(combiner.build())
+  }
+
+  private func visit(italic: Span.Tagged) {
+    let combiner = ContentCombiner(parent: self, font: { $0?.italic() })
+    combiner.visit(spans: italic.spans)
+    self.append(combiner.build())
+  }
+
+  private func visit(deleted: Span.Tagged) {
+    let combiner = ContentCombiner(parent: self, color: { _ in Color.tertiaryLabel })
+    combiner.visit(spans: deleted.spans)
+    self.append(combiner.build())
+  }
+
+  private func visit(colored: Span.Tagged) {
+    var colorModifier: (Color?) -> Color? = { $0 }
+
+    if let color = colored.attributes.first {
+      switch color {
+      case "red":
+        colorModifier = { _ in .red }
+      default:
+        break
+      }
+    }
+
+    let combiner = ContentCombiner(parent: self, color: colorModifier)
+    combiner.visit(spans: colored.spans)
+    self.append(combiner.build())
   }
 
   private func visit(defaultTagged: Span.Tagged) {
