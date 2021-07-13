@@ -10,5 +10,16 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "TopicDetailsView.body.getter:TopicDetailsView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.dataSource.items">
+            </PersistentString>
+            <PersistentString
+               value = "self.votes.votes">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

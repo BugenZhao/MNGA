@@ -21,7 +21,7 @@ struct TopicDetailsView: View {
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @StateObject var postScroll = PostScrollModel()
-  @StateObject var votes = VotesModel()
+  @StateObject var votes: VotesModel
 
   init(topic: Topic) {
     self.topic = topic
@@ -41,6 +41,9 @@ struct TopicDetailsView: View {
       id: \.floor.description
     )
     self._dataSource = StateObject(wrappedValue: dataSource)
+
+    let votes = VotesModel()
+    self._votes = StateObject(wrappedValue: votes) // hack: keep votes model
   }
 
   private var first: Post? { dataSource.items.first }

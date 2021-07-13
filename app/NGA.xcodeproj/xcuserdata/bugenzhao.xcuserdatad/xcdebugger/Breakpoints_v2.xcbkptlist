@@ -39,54 +39,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D82CCC88-EB27-416A-9A9E-314EE63CC093"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Shared/Views/TopicDetailsView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "init(topic:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "D82CCC88-EB27-416A-9A9E-314EE63CC093 - fe464247ad1ac3e1"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "NGA.TopicDetailsView.init(topic: NGA.Topic) -&gt; NGA.TopicDetailsView"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Views/TopicDetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "27"
-                  endingLineNumber = "27"
-                  offsetFromSymbolStart = "693">
-               </Location>
-               <Location
-                  uuid = "D82CCC88-EB27-416A-9A9E-314EE63CC093 - 9720ad5af52da152"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (NGA.TopicDetailsResponse) -&gt; (Swift.Array&lt;NGA.Reply&gt;, Swift.Optional&lt;Swift.Int&gt;) in NGA.TopicDetailsView.init(topic: NGA.Topic) -&gt; NGA.TopicDetailsView"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Views/TopicDetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "28"
-                  endingLineNumber = "28"
-                  offsetFromSymbolStart = "30">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "820E5326-DAFB-431B-8687-5AF676CF9BDC"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -290,6 +242,86 @@
             endingLineNumber = "25"
             landmarkName = "setSubforumFilter(show:subforum:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0BE584B3-8173-4F93-AC3D-F638DE4A9DE8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Models/VotesModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "init()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0BE584B3-8173-4F93-AC3D-F638DE4A9DE8 - 8363f80cd97997fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NGA.VotesModel.__allocating_init() -&gt; NGA.VotesModel"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/VotesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "0BE584B3-8173-4F93-AC3D-F638DE4A9DE8 - 1d54ad2d13f4e9e3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NGA.VotesModel.init() -&gt; NGA.VotesModel"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/VotesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "14"
+                  endingLineNumber = "14"
+                  offsetFromSymbolStart = "116">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4B275AF6-7178-4CA5-AD94-507786A35D29"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Views/TopicDetailsView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "init(topic:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3CBBECBD-23AA-4B29-87EC-18645463060F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Views/TopicDetailsView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
