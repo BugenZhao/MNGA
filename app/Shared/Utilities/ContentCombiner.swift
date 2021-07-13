@@ -20,6 +20,12 @@ class ContentCombiner {
     static let underline = Self(rawValue: 1 << 0)
   }
 
+  static private let palette: [String: Color] = [
+    "red": .red,
+    "green": .green,
+    "blue": .blue,
+  ]
+
   private let parent: ContentCombiner?
   private let postScroll: PostScrollModel
 
@@ -61,18 +67,23 @@ class ContentCombiner {
     self.otherStylesModifier = { $0 }
   }
 
+  private func styledText(_ text: Text, overridenFont: Font? = nil, overridenColor: Color? = nil) -> Text {
+    var text: Text = text
+      .font(overridenFont ?? self.font)
+      .foregroundColor(overridenColor ?? self.color)
+
+    if otherStyles.contains(.underline) {
+      text = text.underline()
+    }
+
+    return text
+  }
+
   private func append<V: View>(_ view: V) {
     let subview: Subview
 
     if view is Text {
-      var text: Text = (view as! Text)
-        .font(self.font)
-        .foregroundColor(self.color)
-
-      if otherStyles.contains(.underline) {
-        text = text.underline()
-      }
-
+      let text = self.styledText(view as! Text)
       subview = Subview.text(text)
     } else if view is AnyView {
       subview = Subview.other(view as! AnyView)
@@ -194,12 +205,18 @@ class ContentCombiner {
       self.visit(url: tagged)
     case "code":
       self.visit(code: tagged)
+    case "u":
+      self.visit(underlined: tagged)
     case "i":
       self.visit(italic: tagged)
     case "del":
       self.visit(deleted: tagged)
     case "color":
       self.visit(colored: tagged)
+    case "size":
+      self.visit(sized: tagged)
+    case "collapse":
+      self.visit(collapsed: tagged)
     default:
       self.visit(defaultTagged: tagged)
     }
@@ -342,20 +359,32 @@ class ContentCombiner {
   }
 
   private func visit(colored: Span.Tagged) {
-    var colorModifier: (Color?) -> Color? = { $0 }
-
-    if let color = colored.attributes.first {
-      switch color {
-      case "red":
-        colorModifier = { _ in .red }
-      default:
-        break
-      }
-    }
-
-    let combiner = ContentCombiner(parent: self, color: colorModifier)
+    let color = colored.attributes.first.flatMap { Self.palette[$0] }
+    let combiner = ContentCombiner(parent: self, color: { color ?? $0 })
     combiner.visit(spans: colored.spans)
     self.append(combiner.build())
+  }
+
+  private func visit(sized: Span.Tagged) {
+    let scale = Double(sized.attributes.first?.trimmingCharacters(in: ["%"]) ?? "100") ?? 100.0
+    let combiner = ContentCombiner(parent: self, font: {
+      let baseSize = $0?.getTextStyle()?.defaultMetrics.size ?? Font.TextStyle.callout.defaultMetrics.size
+      let newSize = baseSize * CGFloat(scale / 100)
+      return Font.custom("", fixedSize: newSize)
+    })
+    combiner.visit(spans: sized.spans)
+    self.append(combiner.build())
+  }
+
+  private func visit(collapsed: Span.Tagged) {
+    let title = collapsed.attributes.first ?? NSLocalizedString("Collapsed Content", comment: "")
+
+    let combiner = ContentCombiner(parent: self)
+    combiner.visit(spans: collapsed.spans)
+    let content = combiner.buildView()
+
+    let view = CollapsedContentView(title: title, content: { content })
+    self.append(view)
   }
 
   private func visit(defaultTagged: Span.Tagged) {

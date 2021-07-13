@@ -22,6 +22,8 @@ struct TopicListView: View {
   @State var showingSubforumsModal = false
   @State var showingHotTopics = false
 
+  @State var userActivityIsActive = true
+
   init(forum: Forum) {
     self.forum = forum
 
@@ -127,8 +129,10 @@ struct TopicListView: View {
       .background { subforum; hotTopics }
       .navigationTitle(forum.name)
       .modifier(SingleItemToolbarModifier { moreMenu })
-      .onAppear { dataSource.initialLoad() }
-      .userActivity(Constants.Activity.openForum) { activity in
+      .onAppear { dataSource.initialLoad(); userActivityIsActive = true }
+      .onDisappear { userActivityIsActive = false }
+      .userActivity(Constants.Activity.openForum, isActive: userActivityIsActive) { activity in
+        activity.title = forum.name
       if let url = URL(string: webpageURL) {
         activity.webpageURL = url
       }
