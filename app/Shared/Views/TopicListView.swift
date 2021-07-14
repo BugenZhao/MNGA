@@ -96,6 +96,7 @@ struct TopicListView: View {
       let destination = TopicListView(forum: forum)
       NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
     }
+    NavigationLink(destination: EmptyView()) { } // hack: unexpected pop
   }
 
   @ViewBuilder
@@ -132,7 +133,7 @@ struct TopicListView: View {
       .onAppear { dataSource.initialLoad(); userActivityIsActive = true }
       .onDisappear { userActivityIsActive = false }
       .userActivity(Constants.Activity.openForum, isActive: userActivityIsActive) { activity in
-        activity.title = forum.name
+      activity.title = forum.name
       if let url = URL(string: webpageURL) {
         activity.webpageURL = url
       }

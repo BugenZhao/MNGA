@@ -3,6 +3,9 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "TopicListView.body.getter:TopicListView.swift">
+      </ContextState>
+      <ContextState
          contextName = "ContentCombiner.append&lt;&#x3c4;_0_0&gt;(_:):ContentCombiner.swift">
          <PersistentStrings>
             <PersistentString
@@ -18,6 +21,14 @@
             </PersistentString>
             <PersistentString
                value = "self.votes.votes">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TopicListView.subforum.getter:TopicListView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.currentShowingSubforum">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
