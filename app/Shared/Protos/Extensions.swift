@@ -65,3 +65,16 @@ extension VoteState {
     }
   }
 }
+
+extension Post.Device {
+  var icon: String {
+    switch self {
+    case .apple:
+      return "applelogo"
+    case .android:
+      return "candybarphone"
+    default:
+      return "pc"
+    }
+  }
+}

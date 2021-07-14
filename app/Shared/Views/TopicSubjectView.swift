@@ -13,23 +13,24 @@ struct TopicSubjectView: View {
   let lineLimit: Int?
 
   var body: some View {
-    let contentSpan = Text(topic.subjectContent)
-      .font(.headline)
-      .lineLimit(lineLimit)
-
-    if topic.tags.isEmpty {
-      contentSpan
-    } else {
-      let tagsSpan = Text("\(topic.tags.joined(separator: " "))")
-        .font(.footnote)
-        .fontWeight(.medium)
-        .foregroundColor(.accentColor)
-
-      VStack(alignment: .leading) {
-        tagsSpan
-        Spacer().frame(height: 4)
-        contentSpan
+    VStack(alignment: .leading, spacing: 4) {
+      if !topic.tags.isEmpty || topic.hasParentForum {
+        HStack(alignment: .bottom) {
+          if topic.hasParentForum {
+            Text(topic.parentForum.name)
+              .fontWeight(.heavy)
+          }
+          ForEach(topic.tags, id: \.self) { tag in
+            Text(tag)
+          }
+        } .font(.footnote)
+          .foregroundColor(.accentColor)
+          .lineLimit(1)
       }
+
+      Text(topic.subjectContent)
+        .font(.headline)
+        .lineLimit(lineLimit)
     }
   }
 }

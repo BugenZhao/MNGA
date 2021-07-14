@@ -12,8 +12,8 @@ use crate::{
         text,
         user::extract_user_and_cache,
         utils::{
-            extract_kv, extract_kv_pairs, extract_node, extract_nodes, extract_pages,
-            extract_string,
+            extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes,
+            extract_pages, extract_string,
         },
     },
 };
@@ -21,12 +21,34 @@ use chrono::{Duration, Utc};
 use futures::TryFutureExt;
 use sxd_xpath::nodeset::Node;
 
-fn extract_topic(node: Node) -> Option<Topic> {
+fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
 
+    let fid = get!(map, "_0").map(make_fid);
+    let stid = get!(map, "_1").map(make_stid);
+
+    let forum = Forum {
+        id: stid.or(fid).into(),
+        name: get!(map, "_2")?,
+        ..Default::default()
+    };
+
+    Some(forum)
+}
+
+fn extract_topic(node: Node) -> Option<Topic> {
+    use super::macros::get;
+    let map = extract_kv(node.clone());
+
     let subject_full = get!(map, "subject").map(|s| text::unescape(&s))?;
     let (tags, subject_content) = text::parse_subject(&subject_full).ok()?;
+
+    let parent_forum = extract_node_rel(node, "./parent", extract_topic_parent_forum)
+        .ok()
+        .flatten()
+        .flatten()
+        .map(Topic_oneof__parent_forum::parent_forum);
 
     let topic = Topic {
         id: get!(map, "tid")?,
@@ -37,6 +59,7 @@ fn extract_topic(node: Node) -> Option<Topic> {
         post_date: get!(map, "postdate", _)?,
         last_post_date: get!(map, "lastpost", _)?,
         replies_num: get!(map, "replies", _)?,
+        _parent_forum: parent_forum,
         ..Default::default()
     };
 

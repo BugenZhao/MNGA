@@ -5,7 +5,7 @@ use crate::{
     protos::{DataModel::*, Service::*},
     service::{
         text,
-        utils::{extract_kv, extract_nodes_rel, extract_string},
+        utils::{extract_kv, extract_node_rel, extract_nodes_rel, extract_string},
     },
 };
 use sxd_xpath::nodeset::Node;
@@ -52,6 +52,22 @@ pub fn extract_post(node: Node) -> Option<Post> {
     })
     .unwrap_or_default();
 
+    let device = {
+        let device = extract_node_rel(node, ".//from_client", |n| n.string_value())
+            .ok()
+            .flatten()
+            .unwrap_or_default()
+            .to_lowercase();
+
+        if device.contains("android") {
+            Post_Device::ANDROID
+        } else if device.contains("ios") {
+            Post_Device::APPLE
+        } else {
+            Post_Device::OTHER
+        }
+    };
+
     let post = Post {
         id: Some(post_id).into(),
         floor: get!(map, "lou", u32)?,
@@ -61,6 +77,7 @@ pub fn extract_post(node: Node) -> Option<Post> {
         score: get!(map, "score", _)?,
         vote_state,
         host_replies: hot_replies.into(),
+        device,
         ..Default::default()
     };
 

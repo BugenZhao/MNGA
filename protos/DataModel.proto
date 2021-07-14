@@ -9,6 +9,7 @@ message Topic {
   uint64 post_date = 5;
   uint64 last_post_date = 6;
   uint32 replies_num = 7;
+  optional Forum parent_forum = 10;
 }
 
 message User {
@@ -26,6 +27,12 @@ message PostId {
 }
 
 message Post {
+  enum Device {
+    OTHER = 0;
+    APPLE = 1;
+    ANDROID = 2;
+  }
+
   PostId id = 6;
   uint32 floor = 1;
   string author_id = 2;
@@ -34,6 +41,7 @@ message Post {
   uint32 score = 5;
   VoteState vote_state = 7;
   repeated Post host_replies = 8;
+  Device device = 9;
 }
 
 message Subforum {

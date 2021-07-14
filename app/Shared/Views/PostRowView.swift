@@ -104,8 +104,11 @@ struct PostRowView: View {
     HStack {
       voter
       Spacer()
-      DateTimeTextView(timestamp: post.postDate)
-        .foregroundColor(.secondary)
+      Group {
+        DateTimeTextView(timestamp: post.postDate)
+        Image(systemName: post.device.icon)
+          .frame(width: 10)
+      } .foregroundColor(.secondary)
         .font(.footnote)
     }
   }
