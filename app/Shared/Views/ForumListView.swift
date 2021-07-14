@@ -109,7 +109,10 @@ struct ForumListView: View {
       text: $searchModel.text,
       isEditing: $searchModel.isEditing.animation(),
       onCommit: { searchModel.commitFlag += 1 }
-    ) .onCancel { DispatchQueue.main.async { withAnimation { searchModel.text.removeAll() } } }
+    )
+    #if os(iOS)
+      .onCancel { DispatchQueue.main.async { withAnimation { searchModel.text.removeAll() } } }
+    #endif
   }
 
   var body: some View {

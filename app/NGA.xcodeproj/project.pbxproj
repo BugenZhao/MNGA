@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		375E616A4BCE12A43666F04C /* macOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */; };
 		375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */; };
+		B409CE6B269F3A6E00F617EC /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B409CE6A269F3A6E00F617EC /* AlertToast */; };
 		B412F707268DFC4600EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F706268DFC4600EB0614 /* Logging */; };
 		B412F709268DFC4F00EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F708268DFC4F00EB0614 /* Logging */; };
 		B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B437B278269B09DC0092FF9E /* SwiftUIRefresh */; };
@@ -33,7 +34,13 @@
 		B43DED61269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED62269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED63269F02CF009C52F5 /* HapticUtils.swift */; };
-		B43DED65269F02CF009C52F5 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED63269F02CF009C52F5 /* HapticUtils.swift */; };
+		B43DEDAC269F0951009C52F5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B43DEDAB269F0951009C52F5 /* WidgetKit.framework */; platformFilter = maccatalyst; };
+		B43DEDAE269F0951009C52F5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B43DEDAD269F0951009C52F5 /* SwiftUI.framework */; platformFilter = maccatalyst; };
+		B43DEDB1269F0951009C52F5 /* NGAWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DEDB0269F0951009C52F5 /* NGAWidget.swift */; };
+		B43DEDB4269F0952009C52F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B43DEDB3269F0952009C52F5 /* Assets.xcassets */; };
+		B43DEDB6269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */; };
+		B43DEDB7269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */; };
+		B43DEDBA269F0952009C52F5 /* NGAWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
@@ -118,6 +125,30 @@
 		B4EB80F0269B2C090014DDFA /* ContentCombiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B43DEDB8269F0952009C52F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4C024BC26884FD600E53554 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B43DEDA9269F0951009C52F5;
+			remoteInfo = NGAWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B43DEDBC269F0952009C52F5 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B43DEDBA269F0952009C52F5 /* NGAWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSNGAApp.swift; sourceTree = "<group>"; };
 		375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = macOSNGAApp.swift; sourceTree = "<group>"; };
@@ -132,6 +163,14 @@
 		B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMenuView.swift; sourceTree = "<group>"; };
 		B43DED60269EFAF4009C52F5 /* ToastModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModel.swift; sourceTree = "<group>"; };
 		B43DED63269F02CF009C52F5 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
+		B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NGAWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B43DEDAB269F0951009C52F5 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		B43DEDAD269F0951009C52F5 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		B43DEDB0269F0951009C52F5 /* NGAWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NGAWidget.swift; sourceTree = "<group>"; };
+		B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = NGAWidget.intentdefinition; sourceTree = "<group>"; };
+		B43DEDB3269F0952009C52F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B43DEDB5269F0952009C52F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B43DEDBB269F0952009C52F5 /* NGAWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NGAWidgetExtension.entitlements; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
@@ -179,6 +218,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B43DEDA7269F0951009C52F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B43DEDAE269F0951009C52F5 /* SwiftUI.framework in Frameworks */,
+				B43DEDAC269F0951009C52F5 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B4C024C526884FD700E53554 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -202,6 +250,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F709268DFC4F00EB0614 /* Logging in Frameworks */,
+				B409CE6B269F3A6E00F617EC /* AlertToast in Frameworks */,
 				B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */,
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
@@ -219,6 +268,17 @@
 				B437B27B269B0E190092FF9E /* ToolbarModifier.swift */,
 			);
 			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		B43DEDAF269F0951009C52F5 /* NGAWidget */ = {
+			isa = PBXGroup;
+			children = (
+				B43DEDB0269F0951009C52F5 /* NGAWidget.swift */,
+				B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */,
+				B43DEDB3269F0952009C52F5 /* Assets.xcassets */,
+				B43DEDB5269F0952009C52F5 /* Info.plist */,
+			);
+			path = NGAWidget;
 			sourceTree = "<group>";
 		};
 		B45819C1268D820400999830 /* Storage */ = {
@@ -245,10 +305,12 @@
 		B4C024BB26884FD600E53554 = {
 			isa = PBXGroup;
 			children = (
+				B43DEDBB269F0952009C52F5 /* NGAWidgetExtension.entitlements */,
 				B4EB80EB269B1B4F0014DDFA /* NGA.entitlements */,
 				B4C024C026884FD600E53554 /* Shared */,
 				B4C024CA26884FD700E53554 /* iOS */,
 				B4C024D126884FD700E53554 /* macOS */,
+				B43DEDAF269F0951009C52F5 /* NGAWidget */,
 				B4C024C926884FD700E53554 /* Products */,
 				B4C024EE268850F300E53554 /* Frameworks */,
 			);
@@ -276,6 +338,7 @@
 			children = (
 				B4C024C826884FD700E53554 /* NGA.app */,
 				B4C024D026884FD700E53554 /* NGA.app */,
+				B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -307,6 +370,8 @@
 				B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */,
 				B4C024F32688511E00E53554 /* liblogicmacos.a */,
 				B4C024F12688510C00E53554 /* liblogicios.a */,
+				B43DEDAB269F0951009C52F5 /* WidgetKit.framework */,
+				B43DEDAD269F0951009C52F5 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -391,6 +456,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B43DEDA9269F0951009C52F5 /* NGAWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B43DEDBF269F0952009C52F5 /* Build configuration list for PBXNativeTarget "NGAWidgetExtension" */;
+			buildPhases = (
+				B43DEDA6269F0951009C52F5 /* Sources */,
+				B43DEDA7269F0951009C52F5 /* Frameworks */,
+				B43DEDA8269F0951009C52F5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NGAWidgetExtension;
+			productName = NGAWidgetExtension;
+			productReference = B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		B4C024C726884FD700E53554 /* NGA (iOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B4C024DC26884FD700E53554 /* Build configuration list for PBXNativeTarget "NGA (iOS)" */;
@@ -398,10 +480,12 @@
 				B4C024C426884FD700E53554 /* Sources */,
 				B4C024C526884FD700E53554 /* Frameworks */,
 				B4C024C626884FD700E53554 /* Resources */,
+				B43DEDBC269F0952009C52F5 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B43DEDB9269F0952009C52F5 /* PBXTargetDependency */,
 			);
 			name = "NGA (iOS)";
 			packageProductDependencies = (
@@ -438,6 +522,7 @@
 				B45819CD268DA18600999830 /* SwiftUIX */,
 				B4E10717268DADF5006C1742 /* WebView */,
 				B412F708268DFC4F00EB0614 /* Logging */,
+				B409CE6A269F3A6E00F617EC /* AlertToast */,
 			);
 			productName = "NGA (macOS)";
 			productReference = B4C024D026884FD700E53554 /* NGA.app */;
@@ -449,9 +534,12 @@
 		B4C024BC26884FD600E53554 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1300;
 				TargetAttributes = {
+					B43DEDA9269F0951009C52F5 = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					B4C024C726884FD700E53554 = {
 						CreatedOnToolsVersion = 12.5;
 					};
@@ -487,11 +575,20 @@
 			targets = (
 				B4C024C726884FD700E53554 /* NGA (iOS) */,
 				B4C024CF26884FD700E53554 /* NGA (macOS) */,
+				B43DEDA9269F0951009C52F5 /* NGAWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B43DEDA8269F0951009C52F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B43DEDB4269F0952009C52F5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B4C024C626884FD700E53554 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -513,6 +610,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B43DEDA6269F0951009C52F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B43DEDB1269F0951009C52F5 /* NGAWidget.swift in Sources */,
+				B43DEDB6269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B4C024C426884FD700E53554 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -528,6 +634,7 @@
 				B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
 				B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */,
 				B4DBF60C2689799F0027233F /* PostRowView.swift in Sources */,
+				B43DEDB7269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */,
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B43DED55269DE1E4009C52F5 /* CollapsedContentView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
@@ -570,7 +677,6 @@
 			files = (
 				B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */,
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
-				B43DED65269F02CF009C52F5 /* HapticUtils.swift in Sources */,
 				B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
@@ -617,6 +723,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B43DEDB9269F0952009C52F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B43DEDA9269F0951009C52F5 /* NGAWidgetExtension */;
+			targetProxy = B43DEDB8269F0952009C52F5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		B4DCF4532688F68400EC78A4 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
@@ -629,6 +743,69 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		B43DEDBD269F0952009C52F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = NGAWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHDHW7HK24;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NGAWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NGAWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS.NGAWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B43DEDBE269F0952009C52F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = NGAWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AHDHW7HK24;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NGAWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NGAWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS.NGAWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		B4C024DA26884FD700E53554 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -681,9 +858,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LIBRARY_SEARCH_PATHS = "../out/libs/**";
-				MACOSX_DEPLOYMENT_TARGET = 11.4;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -740,9 +917,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LIBRARY_SEARCH_PATHS = "../out/libs/**";
-				MACOSX_DEPLOYMENT_TARGET = 11.4;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -755,6 +932,7 @@
 		B4C024DD26884FD700E53554 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NGA.entitlements;
@@ -763,7 +941,8 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -781,6 +960,7 @@
 		B4C024DE26884FD700E53554 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NGA.entitlements;
@@ -789,7 +969,8 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -858,6 +1039,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B43DEDBF269F0952009C52F5 /* Build configuration list for PBXNativeTarget "NGAWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B43DEDBD269F0952009C52F5 /* Debug */,
+				B43DEDBE269F0952009C52F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B4C024BF26884FD600E53554 /* Build configuration list for PBXProject "NGA" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -963,6 +1153,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B409CE6A269F3A6E00F617EC /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
+		};
 		B412F706268DFC4600EB0614 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */;

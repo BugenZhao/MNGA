@@ -15,7 +15,9 @@ class ToastModel: ObservableObject {
   @Published var message: String? = nil {
     willSet {
       if newValue?.isEmpty == false && newValue != message {
-        HapticUtils.play(type: .error)
+        #if os(iOS)
+          HapticUtils.play(type: .error)
+        #endif
       }
     }
   }

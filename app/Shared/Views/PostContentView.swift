@@ -25,8 +25,8 @@ struct PostImageView: View {
   var body: some View {
     if isOpenSourceStickers {
       WebImage(url: url)
-        // .renderingMode(.template)
-        .resizable()
+      // .renderingMode(.template)
+      .resizable()
         .placeholder {
         ProgressView()
           .frame(height: 50)
@@ -122,7 +122,10 @@ struct PostContentView_Previews: PreviewProvider {
 
     List {
       PostContentView(spans: spans + [image])
-    } .listStyle(GroupedListStyle())
+    }
+    #if os(iOS)
+      .listStyle(GroupedListStyle())
+    #endif
       .preferredColorScheme(.dark)
   }
 }

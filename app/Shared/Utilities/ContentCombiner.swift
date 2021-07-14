@@ -249,7 +249,9 @@ class ContentCombiner {
       .padding(.small)
       .background(
       RoundedRectangle(cornerRadius: 12)
+      #if os(iOS)
         .fill(Color.systemGroupedBackground)
+      #endif
     ) .onTapGesture(perform: tapAction)
 
     self.append(view)
@@ -320,12 +322,18 @@ class ContentCombiner {
       } .padding(.small)
         .background(
         RoundedRectangle(cornerRadius: 12)
+        #if os(iOS)
           .fill(Color.systemGroupedBackground)
+        #endif
       )
 
       if let url = URL(string: urlString) {
         let link = view.onTapGesture {
-          UIApplication.shared.open(url)
+          #if os(iOS)
+            UIApplication.shared.open(url)
+          #elseif os(macOS)
+            NSWorkspace.shared.open(url)
+          #endif
         }
         self.append(link)
       } else {
@@ -368,7 +376,11 @@ class ContentCombiner {
   private func visit(sized: Span.Tagged) {
     let scale = Double(sized.attributes.first?.trimmingCharacters(in: ["%"]) ?? "100") ?? 100.0
     let combiner = ContentCombiner(parent: self, font: {
-      let baseSize = $0?.getTextStyle()?.defaultMetrics.size ?? Font.TextStyle.callout.defaultMetrics.size
+      #if os(iOS)
+        let baseSize = $0?.getTextStyle()?.defaultMetrics.size ?? Font.TextStyle.callout.defaultMetrics.size
+      #elseif os(macOS)
+        let baseSize = CGFloat(16.0)
+      #endif
       let newSize = baseSize * CGFloat(scale / 100)
       return Font.custom("", fixedSize: newSize)
     })

@@ -148,7 +148,10 @@ struct PostRowView: View {
       Button(action: { copyContent(post.content.raw) }) {
         Label("Copy Raw Content", systemImage: "doc.on.doc")
       }
-    } .listRowBackground(postScroll.pid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
+    }
+    #if os(iOS)
+      .listRowBackground(postScroll.pid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
+    #endif
   }
 
   func copyContent(_ content: String) {
@@ -170,7 +173,9 @@ struct PostRowView: View {
         withAnimation {
           self.vote.state = response.state
           self.vote.delta += response.delta
-          HapticUtils.play(type: .success)
+          #if os(iOS)
+            HapticUtils.play(type: .success)
+          #endif
         }
       } else {
         // not used

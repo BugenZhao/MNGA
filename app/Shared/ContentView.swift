@@ -15,7 +15,7 @@ struct ContentView: View {
 
   var body: some View {
     Group {
-      if UserInterfaceIdiom.current == .pad {
+      if UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac {
         NavigationView {
           ForumListView()
           TopicListPlaceholderView()

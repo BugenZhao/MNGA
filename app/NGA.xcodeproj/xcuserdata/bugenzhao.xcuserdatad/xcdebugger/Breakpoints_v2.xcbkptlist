@@ -302,8 +302,8 @@
             filePath = "Shared/Utilities/ContentCombiner.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "344"
-            endingLineNumber = "344"
+            startingLineNumber = "352"
+            endingLineNumber = "352"
             landmarkName = "visit(underlined:)"
             landmarkType = "7">
          </BreakpointContent>
