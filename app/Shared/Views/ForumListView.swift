@@ -15,7 +15,7 @@ struct UserMenu: View {
 
   @State var user: User? = nil
 
-  let showHistory: Binding<Bool>
+  @Binding var showHistory: Bool
 
   var body: some View {
     let uid = authStorage.authInfo.inner.uid
@@ -23,7 +23,7 @@ struct UserMenu: View {
 
     Menu {
       Section {
-        Button(action: { showHistory.wrappedValue = true }) {
+        Button(action: { showHistory = true }) {
           Label("History", systemImage: "clock")
         }
       }
@@ -86,7 +86,7 @@ struct ForumListView: View {
   func buildLink(_ forum: Forum, inFavoritesSection: Bool = true) -> some View {
     let isFavorite = favorites.isFavorite(id: forum.id)
 
-    NavigationLink(destination: TopicListView(forum: forum)) {
+    NavigationLink(destination: TopicListView.build(forum: forum)) {
       ForumRowView(forum: forum, isFavorite: inFavoritesSection && isFavorite)
         .modifier(FavoriteModifier(
         isFavorite: isFavorite,
@@ -193,7 +193,7 @@ struct ForumListView: View {
       buildTrailing: { filterMenu }
       ))
       .background {
-      NavigationLink(destination: TopicHistoryListView(), isActive: $showHistory) { }
+      NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { }
     }
   }
 

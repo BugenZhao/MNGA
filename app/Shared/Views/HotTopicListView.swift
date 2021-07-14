@@ -38,10 +38,9 @@ struct HotTopicListView: View {
   let forum: Forum
 
   @StateObject var dataSource: HotTopicDataSource
-
-  init(forum: Forum) {
-    self.forum = forum
-    self._dataSource = StateObject(wrappedValue: .init(forum: forum))
+  
+  static func build(forum: Forum) -> Self {
+    return Self.init(forum: forum, dataSource: .init(forum: forum))
   }
 
   @ViewBuilder
@@ -72,7 +71,7 @@ struct HotTopicListView: View {
         List {
           Section(header: Text(dataSource.range.description)) {
             ForEach(dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView(topic: topic)) {
+              NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
                 TopicRowView(topic: topic)
               }
             }

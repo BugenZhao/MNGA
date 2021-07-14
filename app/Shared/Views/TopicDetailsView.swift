@@ -21,11 +21,9 @@ struct TopicDetailsView: View {
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @StateObject var postScroll = PostScrollModel()
-  @StateObject var votes: VotesModel
+  @StateObject var votes = VotesModel()
 
-  init(topic: Topic) {
-    self.topic = topic
-
+  static func build(topic: Topic) -> Self {
     let dataSource = PagingDataSource<TopicDetailsResponse, Post>(
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
@@ -40,10 +38,8 @@ struct TopicDetailsView: View {
       },
       id: \.floor.description
     )
-    self._dataSource = StateObject(wrappedValue: dataSource)
 
-    let votes = VotesModel()
-    self._votes = StateObject(wrappedValue: votes) // hack: keep votes model
+    return Self.init(topic: topic, dataSource: dataSource)
   }
 
   private var first: Post? { dataSource.items.first }
@@ -131,7 +127,7 @@ struct TopicDetailsView_Preview: PreviewProvider {
   static var previews: some View {
     AuthedPreview {
       NavigationView {
-        TopicDetailsView(topic: Topic.with {
+        TopicDetailsView.build(topic: Topic.with {
           $0.id = "27555218"
           $0.subjectContent = "Topic Title"
         })

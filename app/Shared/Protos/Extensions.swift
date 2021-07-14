@@ -50,3 +50,18 @@ extension HotTopicListRequest.DateRange {
     }
   }
 }
+
+extension VoteState {
+  var defaultDelta: Int32 {
+    switch self {
+    case .none:
+      return 0
+    case .up:
+      return 1
+    case .down:
+      return -1
+    default:
+      return 0
+    }
+  }
+}

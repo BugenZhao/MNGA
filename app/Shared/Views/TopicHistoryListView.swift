@@ -15,7 +15,7 @@ struct TopicHistoryListView: View {
   @State var searchText = ""
   @State var isSearching = false
 
-  init() {
+  static func build() -> Self {
     let dataSource = PagingDataSource<TopicHistoryResponse, TopicSnapshot>(
       buildRequest: { _ in
         return .topicHistory(TopicHistoryRequest.with {
@@ -28,7 +28,8 @@ struct TopicHistoryListView: View {
       },
       id: \.topicSnapshot.id
     )
-    self._dataSource = StateObject(wrappedValue: dataSource)
+
+    return Self(dataSource: dataSource)
   }
 
   var body: some View {
@@ -36,7 +37,7 @@ struct TopicHistoryListView: View {
       let items = dataSource.items.filter { searchText.isEmpty || $0.topicSnapshot.subjectFull.contains(searchText) }
       ForEach(items, id: \.hashIdentifiable) { snapshot in
         let topic = snapshot.topicSnapshot
-        NavigationLink(destination: TopicDetailsView(topic: topic)) {
+        NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
           TopicRowView(topic: topic)
         }
       }

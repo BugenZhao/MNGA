@@ -24,9 +24,7 @@ struct TopicListView: View {
 
   @State var userActivityIsActive = true
 
-  init(forum: Forum) {
-    self.forum = forum
-
+  static func build(forum: Forum) -> Self {
     let dataSource = PagingDataSource<TopicListResponse, Topic>(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
@@ -41,7 +39,7 @@ struct TopicListView: View {
       },
       id: \.id
     )
-    self._dataSource = StateObject(wrappedValue: dataSource)
+    return Self.init(forum: forum, dataSource: dataSource)
   }
 
   @ViewBuilder
@@ -93,7 +91,7 @@ struct TopicListView: View {
   @ViewBuilder
   var subforum: some View {
     if let forum = self.currentShowingSubforum {
-      let destination = TopicListView(forum: forum)
+      let destination = TopicListView.build(forum: forum)
       NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
     }
     NavigationLink(destination: EmptyView()) { } // hack: unexpected pop
@@ -101,7 +99,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var hotTopics: some View {
-    let destination = HotTopicListView(forum: forum)
+    let destination = HotTopicListView.build(forum: forum)
     NavigationLink(destination: destination, isActive: $showingHotTopics) { }
   }
 
@@ -113,7 +111,7 @@ struct TopicListView: View {
         List {
           Section(header: Text("Latest Topics")) {
             ForEach(dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView(topic: topic)) {
+              NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
                 TopicRowView(topic: topic)
                   .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
               }
@@ -166,7 +164,7 @@ struct TopicListView_Previews: PreviewProvider {
 
     AuthedPreview {
       NavigationView {
-        TopicListView(forum: genshinForum)
+        TopicListView.build(forum: genshinForum)
       }
     }
   }

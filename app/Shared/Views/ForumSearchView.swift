@@ -18,7 +18,7 @@ struct ForumSearchView: View {
   func buildLink(_ forum: Forum) -> some View {
     let isFavorite = favorites.isFavorite(id: forum.id)
 
-    NavigationLink(destination: TopicListView(forum: forum)) {
+    NavigationLink(destination: TopicListView.build(forum: forum)) {
       ForumRowView(forum: forum, isFavorite: isFavorite)
         .modifier(FavoriteModifier(
         isFavorite: isFavorite,
