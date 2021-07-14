@@ -7,9 +7,11 @@
 
 import SwiftUI
 import SwiftUIX
+import AlertToast
 
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
+  @StateObject var toast = ToastModel.shared
 
   var body: some View {
     Group {
@@ -25,6 +27,9 @@ struct ContentView: View {
         }
       }
     } .overlay { ImageOverlay() }
+      .toast(isPresenting: $toast.message.isNotNil(), duration: 3, tapToDismiss: true) {
+      AlertToast(displayMode: .hud, type: .error(.red), title: NSLocalizedString("Error", comment: ""), subTitle: toast.message)
+    }
       .environmentObject(viewingImage)
   }
 }

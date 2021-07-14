@@ -94,7 +94,7 @@ pub unsafe extern "C" fn rust_call_async(data: *const u8, len: usize, callback: 
     may_init();
     log::trace!("get {:?} at {:?}", callback, &callback as *const _);
     let request = parse_from_raw::<AsyncRequest>(data, len);
-    log::info!("async request {:?}", request);
+    log::info!("async request #{:?} {:?}", callback.user_data, request);
     dispatch_request_async(request, callback);
 }
 

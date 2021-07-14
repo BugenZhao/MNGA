@@ -93,15 +93,21 @@ private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: B
 func logicCallAsync<Response: SwiftProtobuf.Message>(
   _ requestValue: AsyncRequest.OneOf_Value,
   onMainThread: Bool = true,
-  closure: @escaping (Response) -> Void
+  onSuccess: @escaping (Response) -> Void,
+  showErrorToast: Bool = true,
+  onError: @escaping (LogicError) -> Void = { _ in }
 ) {
   let request = AsyncRequest.with { $0.value = requestValue }
   let dataCallback = WrappedDataCallback(
     callback: { (resData: Data) in
       let res = try! Response(serializedData: resData)
-      closure(res)
+      onSuccess(res)
     },
-    errorCallback: { e in logger.error("rustCallAsync error: \(e)") },
+    errorCallback: { e in
+      logger.error("logicCallAsync: \(e)")
+      if showErrorToast { ToastModel.shared.message = e.error }
+      onError(e)
+    },
     onMainThread: onMainThread
   )
   let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()

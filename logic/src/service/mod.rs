@@ -1,4 +1,4 @@
-use crate::error::LogicResult;
+use crate::{error::LogicResult, service::utils::extract_error};
 use lazy_static::lazy_static;
 use reqwest::{Client, Url};
 
@@ -61,5 +61,6 @@ async fn fetch_package(
     println!("{:?}", response);
 
     let package = sxd_document::parser::parse(&response)?;
+    let _ = extract_error(&package)?;
     Ok(package)
 }

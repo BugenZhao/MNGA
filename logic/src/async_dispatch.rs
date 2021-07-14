@@ -1,3 +1,4 @@
+use crate::error::{LogicError, LogicResult};
 use crate::protos::Service::*;
 use crate::{async_handlers::*, error::any_err_to_string, ByteBuffer};
 use futures::prelude::*;
@@ -43,8 +44,8 @@ impl Drop for RustCallback {
 }
 
 macro_rules! r {
-    ($e: expr) => {
-        panic::AssertUnwindSafe($e.map(|m| -> Box<dyn Message> { Box::new(m) }))
+    ($r: expr) => {
+        panic::AssertUnwindSafe($r.map(|r| r.map(|m| -> Box<dyn Message> { Box::new(m) })))
             .catch_unwind()
             .await
     };
@@ -57,17 +58,21 @@ pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
         log::debug!("serving async request on {:?}", thread::current());
 
         use AsyncRequest_oneof_value::*;
-        let response = match req.value.expect("no async req") {
-            topic_list(r) => r!(handle_topic_list(r)),
-            topic_details(r) => r!(handle_topic_details(r)),
-            subforum_filter(r) => r!(handle_subforum_filter(r)),
-            forum_list(r) => r!(handle_forum_list(r)),
-            remote_user(r) => r!(handle_remote_user(r)),
-            post_vote(r) => r!(handle_post_vote(r)),
-            topic_history(r) => r!(handle_topic_history(r)),
-            hot_topic_list(r) => r!(handle_hot_topic_list(r)),
-            forum_search(r) => r!(handle_forum_search(r)),
-            favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
+        let response = {
+            let response: Result<LogicResult<Box<dyn Message>>, _> =
+                match req.value.expect("no async req") {
+                    topic_list(r) => r!(handle_topic_list(r)),
+                    topic_details(r) => r!(handle_topic_details(r)),
+                    subforum_filter(r) => r!(handle_subforum_filter(r)),
+                    forum_list(r) => r!(handle_forum_list(r)),
+                    remote_user(r) => r!(handle_remote_user(r)),
+                    post_vote(r) => r!(handle_post_vote(r)),
+                    topic_history(r) => r!(handle_topic_history(r)),
+                    hot_topic_list(r) => r!(handle_hot_topic_list(r)),
+                    forum_search(r) => r!(handle_forum_search(r)),
+                    favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
+                };
+            response.unwrap_or_else(|e| Err(LogicError::Panic(any_err_to_string(e))))
         };
 
         let result = response
@@ -76,7 +81,14 @@ pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
                 response.write_to_vec(&mut response_buf).unwrap();
                 response_buf
             })
-            .map_err(any_err_to_string);
+            .map_err(|e| {
+                log::error!(
+                    "error when serving async request #{:?}: {}",
+                    callback.user_data,
+                    e
+                );
+                e
+            });
 
         let byte_buffer = ByteBuffer::from(result);
         callback.run(byte_buffer);

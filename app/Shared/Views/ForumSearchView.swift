@@ -36,13 +36,16 @@ struct ForumSearchView: View {
   }
 
   func doSearch() {
-    if isLoading { return }
+    if isLoading || model.text.isEmpty { return }
     isLoading = true
 
-    logicCallAsync(.forumSearch(.with { $0.key = model.text }))
-    { (response: ForumSearchResponse) in
+    logicCallAsync(.forumSearch(.with { $0.key = model.text })) { (response: ForumSearchResponse) in
       withAnimation {
         model.results = response.forums
+        isLoading = false
+      }
+    } onError: { e in
+      withAnimation {
         isLoading = false
       }
     }

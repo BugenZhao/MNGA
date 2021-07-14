@@ -92,7 +92,7 @@ message PostVoteRequest {
 }
 message PostVoteResponse {
   sint32 delta = 1;
-  optional string error = 2;
+  optional string error = 2; // not used
   VoteState state = 3;
 }
 

@@ -113,3 +113,9 @@ message TopicSnapshot {
   Topic topic_snapshot = 1;
   uint64 timestamp = 2;
 }
+
+message ErrorMessage {
+  int64 code = 1;
+  string info = 2;
+  string detailed = 3;
+}

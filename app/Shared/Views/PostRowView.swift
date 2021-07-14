@@ -170,9 +170,10 @@ struct PostRowView: View {
         withAnimation {
           self.vote.state = response.state
           self.vote.delta += response.delta
+          HapticUtils.play(type: .success)
         }
       } else {
-        // error
+        // not used
       }
     }
   }

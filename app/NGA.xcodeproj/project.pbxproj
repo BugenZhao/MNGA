@@ -29,6 +29,11 @@
 		B43DED59269ED5EB009C52F5 /* FavoriteTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED57269ED5EB009C52F5 /* FavoriteTopicListView.swift */; };
 		B43DED5B269EDFDA009C52F5 /* UserMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */; };
 		B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */; };
+		B43DED5F269EFA5A009C52F5 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B43DED5E269EFA5A009C52F5 /* AlertToast */; };
+		B43DED61269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
+		B43DED62269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
+		B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED63269F02CF009C52F5 /* HapticUtils.swift */; };
+		B43DED65269F02CF009C52F5 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED63269F02CF009C52F5 /* HapticUtils.swift */; };
 		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
 		B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819C2268D822800999830 /* FavoriteForumsStorage.swift */; };
@@ -125,6 +130,8 @@
 		B43DED54269DE1E4009C52F5 /* CollapsedContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollapsedContentView.swift; sourceTree = "<group>"; };
 		B43DED57269ED5EB009C52F5 /* FavoriteTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteTopicListView.swift; sourceTree = "<group>"; };
 		B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMenuView.swift; sourceTree = "<group>"; };
+		B43DED60269EFAF4009C52F5 /* ToastModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModel.swift; sourceTree = "<group>"; };
+		B43DED63269F02CF009C52F5 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
@@ -177,6 +184,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F707268DFC4600EB0614 /* Logging in Frameworks */,
+				B43DED5F269EFA5A009C52F5 /* AlertToast in Frameworks */,
 				B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
@@ -229,6 +237,7 @@
 				B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */,
 				B43DED4B269C7C8B009C52F5 /* SearchModel.swift */,
 				B43DED51269C9216009C52F5 /* VotesModel.swift */,
+				B43DED60269EFAF4009C52F5 /* ToastModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -315,6 +324,7 @@
 				B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */,
 				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
 				B43DED48269C5F78009C52F5 /* Constants.swift */,
+				B43DED63269F02CF009C52F5 /* HapticUtils.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -403,6 +413,7 @@
 				B4920CE22690E65600762FC9 /* HalfASheet */,
 				B48B0C492694CE660067794F /* ImageViewer */,
 				B437B278269B09DC0092FF9E /* SwiftUIRefresh */,
+				B43DED5E269EFA5A009C52F5 /* AlertToast */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* NGA.app */;
@@ -468,6 +479,7 @@
 				B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
 				B4920CE12690E65600762FC9 /* XCRemoteSwiftPackageReference "HalfASheet" */,
 				B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
+				B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -507,6 +519,7 @@
 			files = (
 				B4920CD926904CE700762FC9 /* Extensions.swift in Sources */,
 				B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */,
+				B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */,
 				B43DED5B269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4D2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B4E2BDCF2691B0030080C790 /* InitConf.swift in Sources */,
@@ -533,6 +546,7 @@
 				B43DED52269C9216009C52F5 /* VotesModel.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
+				B43DED61269EFAF4009C52F5 /* ToastModel.swift in Sources */,
 				B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
 				B48B0C4626932CC70067794F /* ForumRowView.swift in Sources */,
 				B4DBF61E268B8CD80027233F /* ForumListView.swift in Sources */,
@@ -556,6 +570,7 @@
 			files = (
 				B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */,
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
+				B43DED65269F02CF009C52F5 /* HapticUtils.swift in Sources */,
 				B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
@@ -582,6 +597,7 @@
 				B43DED53269C9216009C52F5 /* VotesModel.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
+				B43DED62269EFAF4009C52F5 /* ToastModel.swift in Sources */,
 				B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
 				B48B0C4726932CC70067794F /* ForumRowView.swift in Sources */,
 				B4DBF61F268B8CD80027233F /* ForumListView.swift in Sources */,
@@ -880,6 +896,14 @@
 				minimumVersion = 1.4.2;
 			};
 		};
+		B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/elai950/AlertToast.git";
+			requirement = {
+				kind = revision;
+				revision = cc5bd856ea850d3adf04e05b747a476bf37e8754;
+			};
+		};
 		B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
@@ -953,6 +977,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
 			productName = SwiftUIRefresh;
+		};
+		B43DED5E269EFA5A009C52F5 /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
 		};
 		B45819C6268D9B5600999830 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -86,6 +86,16 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
+    } onError: { e in
+      let action = {
+        self.isRefreshing = false
+        self.isLoading = false
+      }
+      if animated {
+        withAnimation { action() }
+      } else {
+        action()
+      }
     }
   }
 
@@ -120,6 +130,15 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
+    } onError: { e in
+      let action = {
+        self.isLoading = false
+      }
+      if self.items.isEmpty {
+        withAnimation { action() }
+      } else {
+        action()
+      }
     }
   }
 }

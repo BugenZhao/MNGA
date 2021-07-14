@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "AlertToast",
+        "repositoryURL": "https://github.com/elai950/AlertToast.git",
+        "state": {
+          "branch": null,
+          "revision": "cc5bd856ea850d3adf04e05b747a476bf37e8754",
+          "version": null
+        }
+      },
+      {
         "package": "HalfASheet",
         "repositoryURL": "https://github.com/franklynw/HalfASheet",
         "state": {

@@ -3,7 +3,10 @@ use std::collections::HashMap;
 use sxd_document::Package;
 use sxd_xpath::{nodeset::Node, Context, Factory, XPath};
 
-use crate::error::LogicResult;
+use crate::{
+    error::{LogicError, LogicResult},
+    protos::DataModel::ErrorMessage,
+};
 
 fn to_xpath(s: &str) -> LogicResult<XPath> {
     let factory = Factory::new();
@@ -106,4 +109,36 @@ pub fn extract_pages(
     let pages = rows / rows_per_page + u32::from(rows % rows_per_page != 0);
 
     Ok(pages)
+}
+
+pub fn extract_error(package: &Package) -> LogicResult<()> {
+    use super::macros::pget;
+
+    let frontend = extract_node(package, "/root/__MESSAGE", |n| {
+        let pairs = extract_kv_pairs(n);
+        let code = pget!(pairs, 0)
+            .and_then(|c| c.parse::<i64>().ok())
+            .unwrap_or_default();
+        let info = pget!(pairs, 1).unwrap_or_default();
+
+        ErrorMessage {
+            code,
+            info,
+            ..Default::default()
+        }
+    })?;
+
+    let backend = extract_node(package, "/root/error", |n| {
+        let pairs = extract_kv_pairs(n);
+        let info = pget!(pairs, 0).unwrap_or_default();
+
+        ErrorMessage {
+            info,
+            ..Default::default()
+        }
+    })?;
+
+    frontend
+        .or(backend)
+        .map_or_else(|| Ok(()), |e| Err(LogicError::Nga(e)))
 }
