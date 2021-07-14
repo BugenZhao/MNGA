@@ -67,6 +67,7 @@ pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
             topic_history(r) => r!(handle_topic_history(r)),
             hot_topic_list(r) => r!(handle_hot_topic_list(r)),
             forum_search(r) => r!(handle_forum_search(r)),
+            favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
         };
 
         let result = response

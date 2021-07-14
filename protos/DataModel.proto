@@ -10,6 +10,7 @@ message Topic {
   uint64 last_post_date = 6;
   uint32 replies_num = 7;
   optional Forum parent_forum = 10;
+  optional string fav = 11;
 }
 
 message User {

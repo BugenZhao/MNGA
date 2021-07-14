@@ -55,7 +55,7 @@ struct TopicRowView: View {
           Text(topic.authorName)
         }
         Spacer()
-        DateTimeTextView(timestamp: topic.lastPostDate, switchable: false)
+        DateTimeTextView.build(timestamp: topic.lastPostDate, switchable: false)
       } .foregroundColor(.secondary)
         .font(.footnote)
     } .padding(.vertical, 4)

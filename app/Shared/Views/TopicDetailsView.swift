@@ -17,8 +17,6 @@ class PostScrollModel: ObservableObject {
 struct TopicDetailsView: View {
   let topic: Topic
 
-  @State var showFullTitle = false
-
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @StateObject var postScroll = PostScrollModel()
   @StateObject var votes = VotesModel()
@@ -28,6 +26,7 @@ struct TopicDetailsView: View {
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
+          if topic.hasFav { $0.fav = topic.fav }
           $0.page = UInt32(page)
         })
       },
@@ -44,15 +43,18 @@ struct TopicDetailsView: View {
 
   private var first: Post? { dataSource.items.first }
 
-  var title: String {
-    let id = NSLocalizedString("Topic", comment: "") + " #\(topic.id)"
-    let subject = topic.subjectFull
-
-    switch UserInterfaceIdiom.current {
-//    case .pad, .mac:
-//      return [id, subject].joined(separator: " ")
-    default:
-      return showFullTitle ? subject : id
+  @ViewBuilder
+  var moreMenu: some View {
+    Menu {
+      Section {
+        Label("#" + topic.id, systemImage: "number")
+        if topic.hasFav {
+          Label(topic.fav, systemImage: "heart")
+        }
+      }
+    } label: {
+      Label("More", systemImage: "ellipsis.circle")
+        .imageScale(.large)
     }
   }
 
@@ -63,39 +65,50 @@ struct TopicDetailsView: View {
     else { row }
   }
 
+  @ViewBuilder
+  var headerSection: some View {
+    Section(header: HStack {
+      Text("Topic")
+      Spacer()
+      if dataSource.isLoading { ProgressView() }
+    }) {
+      TopicSubjectView(topic: topic, lineLimit: nil)
+      if let first = self.first {
+        buildRow(post: first)
+      }
+    }
+  }
+
+  @ViewBuilder
+  var hotRepliesSection: some View {
+    if let hotReplies = self.first?.hostReplies, !hotReplies.isEmpty {
+      Section(header: Text("Hot Replies")) {
+        ForEach(hotReplies, id: \.id.pid) { post in
+          buildRow(post: post, withId: false)
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  var allRepliesSection: some View {
+    if dataSource.items.count > 1 {
+      Section(header: Text("Replies")) {
+        ForEach(dataSource.items.dropFirst(), id: \.id.pid) { post in
+          buildRow(post: post)
+            .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+        }
+      }
+    }
+  }
+
   var body: some View {
     VStack(alignment: .leading) {
       ScrollViewReader { proxy in
         List {
-          Section(header: HStack {
-            Text("Topic")
-            Spacer()
-            if dataSource.isLoading { ProgressView() }
-          }) {
-            TopicSubjectView(topic: topic, lineLimit: nil)
-              .onAppear { showFullTitle = false }
-              .onDisappear { showFullTitle = true }
-            if let first = self.first {
-              buildRow(post: first)
-            }
-          }
-
-          if let hotReplies = self.first?.hostReplies, !hotReplies.isEmpty {
-            Section(header: Text("Hot Replies")) {
-              ForEach(hotReplies, id: \.id.pid) { post in
-                buildRow(post: post, withId: false)
-              }
-            }
-          }
-
-          if dataSource.items.count > 1 {
-            Section(header: Text("Replies")) {
-              ForEach(dataSource.items.dropFirst(), id: \.id.pid) { post in
-                buildRow(post: post)
-                  .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
-              }
-            }
-          }
+          headerSection
+          hotRepliesSection
+          allRepliesSection
         } .environmentObject(postScroll)
           .onReceive(postScroll.$pid) { pid in
           withAnimation { proxy.scrollTo(pid) }
@@ -105,7 +118,8 @@ struct TopicDetailsView: View {
         .listStyle(GroupedListStyle())
       #endif
     }
-      .navigationTitle(title)
+      .navigationTitle(topic.subjectContent)
+      .modifier(SingleItemToolbarModifier { moreMenu })
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
@@ -118,7 +132,7 @@ struct TopicDetailsView: View {
   }
 
   var webpageURL: String {
-    "\(Constants.URL.base)/read.php?tid=\(topic.id)"
+    "\(Constants.URL.base)/read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : "")
   }
 }
 
@@ -133,6 +147,5 @@ struct TopicDetailsView_Preview: PreviewProvider {
         })
       }
     }
-//    .preferredColorScheme(.dark)
   }
 }

@@ -38,6 +38,7 @@ message AsyncRequest {
     TopicHistoryRequest topic_history = 7;
     HotTopicListRequest hot_topic_list = 8;
     ForumSearchRequest forum_search = 9;
+    FavoriteTopicListRequest favorite_topic_list = 10;
   }
 }
 
@@ -55,6 +56,7 @@ message TopicListResponse {
 
 message TopicDetailsRequest {
   string topic_id = 1;
+  optional string fav = 3;
   uint32 page = 2;
 }
 message TopicDetailsResponse {
@@ -112,3 +114,9 @@ message HotTopicListResponse { repeated Topic topics = 1; }
 
 message ForumSearchRequest { string key = 1; }
 message ForumSearchResponse { repeated Forum forums = 1; }
+
+message FavoriteTopicListRequest { uint32 page = 1; }
+message FavoriteTopicListResponse {
+  repeated Topic topics = 1;
+  uint32 pages = 2;
+}

@@ -38,6 +38,16 @@ fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
 }
 
 fn extract_topic(node: Node) -> Option<Topic> {
+    fn extract_fav(url: &str) -> Option<&str> {
+        use lazy_static::lazy_static;
+        use regex::Regex;
+        lazy_static! {
+            static ref RE: Regex = Regex::new(r"fav=(?P<fav>[a-fA-F0-9]+)").unwrap();
+        }
+        RE.captures(url)
+            .and_then(|cs| cs.name("fav").map(|m| m.as_str()))
+    }
+
     use super::macros::get;
     let map = extract_kv(node.clone());
 
@@ -50,6 +60,10 @@ fn extract_topic(node: Node) -> Option<Topic> {
         .flatten()
         .map(Topic_oneof__parent_forum::parent_forum);
 
+    let fav = get!(map, "tpcurl")
+        .and_then(|s| extract_fav(&s).map(ToOwned::to_owned))
+        .map(Topic_oneof__fav::fav);
+
     let topic = Topic {
         id: get!(map, "tid")?,
         tags: tags.into(),
@@ -60,6 +74,7 @@ fn extract_topic(node: Node) -> Option<Topic> {
         last_post_date: get!(map, "lastpost", _)?,
         replies_num: get!(map, "replies", _)?,
         _parent_forum: parent_forum,
+        _fav: fav,
         ..Default::default()
     };
 
@@ -94,6 +109,29 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     };
 
     Some(subforum)
+}
+
+pub async fn get_favorite_topic_list(
+    request: FavoriteTopicListRequest,
+) -> LogicResult<FavoriteTopicListResponse> {
+    let package = fetch_package(
+        "thread.php",
+        vec![("favor", "1"), ("page", &request.page.to_string())],
+        vec![],
+    )
+    .await?;
+
+    let topics = extract_nodes(&package, "/root/__T/item", |ns| {
+        ns.into_iter().filter_map(extract_topic).collect()
+    })?;
+
+    let pages = extract_pages(&package, "/root/__ROWS", "/root/__T__ROWS_PAGE", 35)?;
+
+    Ok(FavoriteTopicListResponse {
+        topics: topics.into(),
+        pages,
+        ..Default::default()
+    })
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListResponse> {
@@ -216,6 +254,7 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
         vec![
             ("tid", &request.topic_id),
             ("page", &request.page.to_string()),
+            ("fav", &request.get_fav()),
         ],
         vec![],
     )

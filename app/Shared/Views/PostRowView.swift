@@ -60,7 +60,7 @@ struct PostRowUserView: View, Equatable {
           HStack(spacing: 2) {
             Image(systemName: "text.bubble")
             Text("\(user?.postNum ?? 0)")
-          }
+          } .foregroundColor((user?.postNum ?? 50 < 50) ? .red : .secondary)
           HStack(spacing: 2) {
             Image(systemName: "calendar")
             Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)
@@ -68,7 +68,7 @@ struct PostRowUserView: View, Equatable {
           HStack(spacing: 2) {
             Image(systemName: "flag")
             Text("\(user?.fame ?? 0)")
-          }
+          } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
 
         } .font(.footnote)
           .foregroundColor(.secondary)
@@ -105,7 +105,7 @@ struct PostRowView: View {
       voter
       Spacer()
       Group {
-        DateTimeTextView(timestamp: post.postDate)
+        DateTimeTextView.build(timestamp: post.postDate)
         Image(systemName: post.device.icon)
           .frame(width: 10)
       } .foregroundColor(.secondary)

@@ -4,7 +4,7 @@ use crate::{
         forum::{get_forum_list, search_forum, set_subforum_filter},
         history::get_topic_history,
         post::post_vote,
-        topic::{get_hot_topic_list, get_topic_details, get_topic_list},
+        topic::{get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list},
         user::get_remote_user,
     },
 };
@@ -60,5 +60,12 @@ pub async fn handle_hot_topic_list(request: HotTopicListRequest) -> HotTopicList
 
 pub async fn handle_forum_search(request: ForumSearchRequest) -> ForumSearchResponse {
     let res = search_forum(request).await;
+    or_default!(res)
+}
+
+pub async fn handle_favorite_topic_list(
+    request: FavoriteTopicListRequest,
+) -> FavoriteTopicListResponse {
+    let res = get_favorite_topic_list(request).await;
     or_default!(res)
 }
