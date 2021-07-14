@@ -25,7 +25,7 @@ fn extract_topic(node: Node) -> Option<Topic> {
     use super::macros::get;
     let map = extract_kv(node);
 
-    let subject_full = get!(map, "subject").map(|s| text::unescape(&s).into_owned())?;
+    let subject_full = get!(map, "subject").map(|s| text::unescape(&s))?;
     let (tags, subject_content) = text::parse_subject(&subject_full).ok()?;
 
     let topic = Topic {
