@@ -134,8 +134,9 @@ mod test {
     #[tokio::test]
     async fn test_set_filter() -> LogicResult<()> {
         let response = set_subforum_filter(SubforumFilterRequest {
-            forum_id: "12700430".to_owned(),
-            operation: SubforumFilterRequest_Operation::BLOCK,
+            forum_id: "310".to_owned(),
+            subforum_filter_id: "19115466".to_owned(),
+            operation: SubforumFilterRequest_Operation::SHOW,
             ..Default::default()
         })
         .await?;

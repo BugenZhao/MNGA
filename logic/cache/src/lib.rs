@@ -7,29 +7,34 @@ pub use error::{CacheError, CacheResult};
 
 lazy_static! {
     pub static ref CACHE: Cache = {
-        let db = if cfg!(test) {
-            sled::Config::new()
-                .temporary(true)
-                .open()
-                .expect("cannot open or create temporary cache db")
-        } else {
-            let path = &config::CONF.get().expect("no configuration").cache_path;
-            let db = sled::Config::new()
-                .path(path)
-                .flush_every_ms(Some(1000))
-                .cache_capacity(50 * 1024 * 1024)
-                .open()
-                .expect("cannot open or create cache db");
-            log::info!("open db at {:?}, is_empty: {}", path, db.is_empty());
-            db
+        let (db, is_test) = match config::CONF.get().map(|c| &c.cache_path) {
+            Some(path) => {
+                log::info!("open db at {:?}", path);
+                let db = sled::Config::new()
+                    .path(path)
+                    .flush_every_ms(Some(1000))
+                    .cache_capacity(50 * 1024 * 1024)
+                    .open()
+                    .expect("cannot open or create cache db");
+                (db, false)
+            }
+            None => {
+                log::warn!("no cache path conf provided, use temporary location and treat it as a test environment");
+                let db = sled::Config::new()
+                    .temporary(true)
+                    .open()
+                    .expect("cannot open or create temporary cache db");
+                (db, true)
+            }
         };
 
-        Cache::new(db)
+        Cache::new(db, is_test)
     };
 }
 
 pub struct Cache {
     db: sled::Db,
+    is_test: bool,
 }
 
 impl Deref for Cache {
@@ -41,8 +46,8 @@ impl Deref for Cache {
 }
 
 impl Cache {
-    fn new(db: sled::Db) -> Self {
-        Self { db }
+    fn new(db: sled::Db, is_test: bool) -> Self {
+        Self { db, is_test }
     }
 
     fn do_insert_msg<M: protos::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
@@ -64,7 +69,7 @@ impl Cache {
 
     #[allow(unused_results)]
     pub fn insert_msg<M: protos::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
-        if cfg!(test) {
+        if self.is_test {
             // using single threaded runtime
             self.do_insert_msg(key, msg)
         } else {
@@ -73,7 +78,7 @@ impl Cache {
     }
 
     pub fn get_msg<M: protos::Message>(&self, key: &str) -> CacheResult<Option<M>> {
-        if cfg!(test) {
+        if self.is_test {
             // using single threaded runtime
             self.do_get_msg(key)
         } else {
