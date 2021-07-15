@@ -1,9 +1,7 @@
 use crate::{
-    error::LogicResult,
-    service::{
-        fetch_package,
-        utils::{extract_kv, extract_node},
-    },
+    error::ServiceResult,
+    fetch_package,
+    utils::{extract_kv, extract_node},
 };
 use dashmap::DashMap;
 use lazy_static::lazy_static;
@@ -64,7 +62,7 @@ pub fn extract_user_and_cache(node: Node) -> Option<User> {
     Some(user)
 }
 
-pub async fn get_remote_user(request: RemoteUserRequest) -> LogicResult<RemoteUserResponse> {
+pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<RemoteUserResponse> {
     let user_id = request.user_id;
     if let Some(user) = UserController::get().get(&user_id) {
         return Ok(RemoteUserResponse {
@@ -93,7 +91,7 @@ mod test {
     use super::*;
 
     #[tokio::test]
-    async fn test_remote_user() -> LogicResult<()> {
+    async fn test_remote_user() -> ServiceResult<()> {
         let response = get_remote_user(RemoteUserRequest {
             user_id: "41417929".to_owned(),
             ..Default::default()

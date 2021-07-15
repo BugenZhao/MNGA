@@ -9,7 +9,7 @@ pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
 
 #[allow(dead_code)]
 #[derive(Error, Debug)]
-pub enum LogicError {
+pub enum ServiceError {
     #[error("NGA: {}", .0.get_info())]
     Nga(ErrorMessage),
     #[error("missing field: {0}")]
@@ -30,4 +30,4 @@ pub enum LogicError {
     Panic(String),
 }
 
-pub type LogicResult<T> = Result<T, LogicError>;
+pub type ServiceResult<T> = Result<T, ServiceError>;

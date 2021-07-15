@@ -1,24 +1,21 @@
-use std::cmp::Reverse;
-
 use crate::{
-    error::{LogicError, LogicResult},
-    service::{
-        constants::FORUM_ICON_PATH,
-        fetch_package,
-        forum::{make_fid, make_stid},
-        history::insert_topic_history,
-        post::extract_post,
-        user::extract_user_and_cache,
-        utils::{
-            extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes,
-            extract_pages, extract_string,
-        },
+    constants::FORUM_ICON_PATH,
+    error::{ServiceError, ServiceResult},
+    fetch_package,
+    forum::{make_fid, make_stid},
+    history::insert_topic_history,
+    post::extract_post,
+    user::extract_user_and_cache,
+    utils::{
+        extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
+        extract_string,
     },
 };
 use cache::CACHE;
 use chrono::{Duration, Utc};
 use futures::TryFutureExt;
 use protos::{DataModel::*, Service::*};
+use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
 fn favor_response_key(topic_id: &str) -> String {
@@ -126,7 +123,7 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
 
 pub async fn get_favorite_topic_list(
     request: FavoriteTopicListRequest,
-) -> LogicResult<FavoriteTopicListResponse> {
+) -> ServiceResult<FavoriteTopicListResponse> {
     let package = fetch_package(
         "thread.php",
         vec![("favor", "1"), ("page", &request.page.to_string())],
@@ -161,7 +158,7 @@ pub async fn get_favorite_topic_list(
     })
 }
 
-pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListResponse> {
+pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
     let id = request.id.unwrap();
     let package = fetch_package(
         "thread.php",
@@ -229,7 +226,7 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
     })
 }
 
-pub async fn get_hot_topic_list(request: HotTopicListRequest) -> LogicResult<HotTopicListResponse> {
+pub async fn get_hot_topic_list(request: HotTopicListRequest) -> ServiceResult<HotTopicListResponse> {
     let fetch_page_limit = request.get_fetch_page_limit().max(10);
     let start_timestamp = (Utc::now()
         - match request.get_range() {
@@ -268,7 +265,7 @@ pub async fn get_hot_topic_list(request: HotTopicListRequest) -> LogicResult<Hot
     })
 }
 
-pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<TopicDetailsResponse> {
+pub async fn get_topic_details(request: TopicDetailsRequest) -> ServiceResult<TopicDetailsResponse> {
     let package = fetch_package(
         "read.php",
         vec![
@@ -290,7 +287,7 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
 
     let topic = extract_node(&package, "/root/__T", extract_topic)?
         .flatten()
-        .ok_or_else(|| LogicError::MissingField("topic".to_owned()))?;
+        .ok_or_else(|| ServiceError::MissingField("topic".to_owned()))?;
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 
@@ -306,7 +303,7 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
     })
 }
 
-pub async fn topic_favor(request: TopicFavorRequest) -> LogicResult<TopicFavorResponse> {
+pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavorResponse> {
     let (action, tid_key, is_favored) = match request.get_operation() {
         TopicFavorRequest_Operation::ADD => ("add", "tid", true),
         TopicFavorRequest_Operation::DELETE => ("del", "tidarray", false),
@@ -337,7 +334,7 @@ mod test {
     use super::{super::user::UserController, *};
 
     #[tokio::test]
-    async fn test_topic_list() -> LogicResult<()> {
+    async fn test_topic_list() -> ServiceResult<()> {
         let id = make_fid("315".to_owned());
         let response = get_topic_list(TopicListRequest {
             id: Some(id).into(),
@@ -354,7 +351,7 @@ mod test {
     }
 
     #[tokio::test]
-    async fn test_topic_details() -> LogicResult<()> {
+    async fn test_topic_details() -> ServiceResult<()> {
         let response = get_topic_details(TopicDetailsRequest {
             topic_id: "27477718".to_owned(),
             page: 1,
@@ -372,7 +369,7 @@ mod test {
     }
 
     #[tokio::test]
-    async fn test_hot_topic_list() -> LogicResult<()> {
+    async fn test_hot_topic_list() -> ServiceResult<()> {
         let id = make_fid("-7".to_owned());
         let response = get_hot_topic_list(HotTopicListRequest {
             id: Some(id).into(),
@@ -389,7 +386,7 @@ mod test {
     }
 
     #[tokio::test]
-    async fn test_topic_favor() -> LogicResult<()> {
+    async fn test_topic_favor() -> ServiceResult<()> {
         use TopicFavorRequest_Operation::*;
 
         let post = |op| {

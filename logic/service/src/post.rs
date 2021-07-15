@@ -1,7 +1,7 @@
-use super::fetch_package;
 use crate::{
-    error::LogicResult,
-    service::utils::{extract_kv, extract_node_rel, extract_nodes_rel, extract_string},
+    error::ServiceResult,
+    fetch_package,
+    utils::{extract_kv, extract_node_rel, extract_nodes_rel, extract_string},
 };
 use cache::CACHE;
 use protos::{DataModel::*, Service::*};
@@ -81,7 +81,7 @@ pub fn extract_post(node: Node) -> Option<Post> {
     Some(post)
 }
 
-pub async fn post_vote(request: PostVoteRequest) -> LogicResult<PostVoteResponse> {
+pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteResponse> {
     use std::cmp::Ordering::*;
     use PostVoteRequest_Operation::*;
 
@@ -129,7 +129,7 @@ mod test {
     use protos::DataModel::PostId;
 
     #[tokio::test]
-    async fn test_post_vote() -> LogicResult<()> {
+    async fn test_post_vote() -> ServiceResult<()> {
         use PostVoteRequest_Operation::*;
         let vote = |op| {
             post_vote(PostVoteRequest {

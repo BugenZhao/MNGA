@@ -1,24 +1,6 @@
-use crate::{
-    error::LogicResult,
-    service::{constants::URL_BASE, utils::extract_error},
-};
+use crate::{auth, constants::URL_BASE, error::ServiceResult, utils::extract_error};
 use lazy_static::lazy_static;
 use reqwest::{Client, Url};
-
-mod constants;
-pub mod forum;
-pub mod history;
-mod macros;
-pub mod post;
-pub mod topic;
-pub mod user;
-mod utils;
-
-#[cfg(test)]
-#[path = "auth_debug.rs"]
-pub mod auth;
-#[cfg(not(test))]
-pub mod auth;
 
 fn build_client() -> Client {
     log::info!("build reqwest client");
@@ -29,11 +11,11 @@ lazy_static! {
     static ref CLIENT: Client = build_client();
 }
 
-async fn fetch_package(
+pub async fn fetch_package(
     api: &str,
     mut query: Vec<(&str, &str)>,
     mut form: Vec<(&str, &str)>,
-) -> LogicResult<sxd_document::Package> {
+) -> ServiceResult<sxd_document::Package> {
     let url = Url::parse(&format!("{}/{}", URL_BASE, api)).unwrap();
 
     let auth_info = auth::AUTH_INFO.lock().unwrap().clone();

@@ -112,7 +112,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
   )
   let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()
 
-  let rustCallback = RustCallback(user_data: dataCallbackPtr, callback: byteBufferCallback)
+  let rustCallback = Callback(user_data: dataCallbackPtr, callback: byteBufferCallback)
   let reqData = try! request.serializedData()
   reqData.withUnsafeBytes { ptr -> Void in
     let ptr = ptr.bindMemory(to: UInt8.self).baseAddress

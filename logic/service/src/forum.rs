@@ -1,10 +1,8 @@
-use super::fetch_package;
 use crate::{
-    error::LogicResult,
-    service::{
-        constants::FORUM_ICON_PATH,
-        utils::{extract_kv, extract_nodes, extract_nodes_rel},
-    },
+    constants::FORUM_ICON_PATH,
+    error::ServiceResult,
+    fetch_package,
+    utils::{extract_kv, extract_nodes, extract_nodes_rel},
 };
 use protos::{
     DataModel::{Category, Forum, ForumId, ForumId_oneof_id},
@@ -71,7 +69,7 @@ fn extract_category(node: Node) -> Option<Category> {
     Some(category)
 }
 
-pub async fn get_forum_list(_request: ForumListRequest) -> LogicResult<ForumListResponse> {
+pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumListResponse> {
     let package = fetch_package(
         "app_api.php",
         vec![("__lib", "home"), ("__act", "category")],
@@ -91,7 +89,7 @@ pub async fn get_forum_list(_request: ForumListRequest) -> LogicResult<ForumList
 
 pub async fn set_subforum_filter(
     request: SubforumFilterRequest,
-) -> LogicResult<SubforumFilterResponse> {
+) -> ServiceResult<SubforumFilterResponse> {
     let op = match request.get_operation() {
         SubforumFilterRequest_Operation::SHOW => "del",
         SubforumFilterRequest_Operation::BLOCK => "add",
@@ -116,7 +114,7 @@ pub async fn set_subforum_filter(
     })
 }
 
-pub async fn search_forum(request: ForumSearchRequest) -> LogicResult<ForumSearchResponse> {
+pub async fn search_forum(request: ForumSearchRequest) -> ServiceResult<ForumSearchResponse> {
     let package = fetch_package("forum.php", vec![("key", request.get_key())], vec![]).await?;
 
     let forums = extract_nodes(&package, "/root/item", |ns| {
@@ -134,7 +132,7 @@ mod test {
     use super::*;
 
     #[tokio::test]
-    async fn test_set_filter() -> LogicResult<()> {
+    async fn test_set_filter() -> ServiceResult<()> {
         let response = set_subforum_filter(SubforumFilterRequest {
             forum_id: "310".to_owned(),
             subforum_filter_id: "19115466".to_owned(),
@@ -149,7 +147,7 @@ mod test {
     }
 
     #[tokio::test]
-    async fn test_get_forum_list() -> LogicResult<()> {
+    async fn test_get_forum_list() -> ServiceResult<()> {
         let response = get_forum_list(ForumListRequest::new()).await?;
 
         println!("response: {:?}", response);
@@ -166,7 +164,7 @@ mod test {
     }
 
     #[tokio::test]
-    async fn test_search_forum_chinese() -> LogicResult<()> {
+    async fn test_search_forum_chinese() -> ServiceResult<()> {
         let response = search_forum(ForumSearchRequest {
             key: "原神".to_owned(),
             ..Default::default()

@@ -10,10 +10,10 @@ typedef struct ByteBuffer {
   const char *err;
 } ByteBuffer;
 
-typedef struct RustCallback {
+typedef struct Callback {
   const void *user_data;
   void (*callback)(const void*, struct ByteBuffer);
-} RustCallback;
+} Callback;
 
 /**
  * # Safety
@@ -25,7 +25,7 @@ struct ByteBuffer rust_call(const uint8_t *data, uintptr_t len);
  * # Safety
  * totally unsafe
  */
-void rust_call_async(const uint8_t *data, uintptr_t len, struct RustCallback callback);
+void rust_call_async(const uint8_t *data, uintptr_t len, struct Callback callback);
 
 /**
  * # Safety

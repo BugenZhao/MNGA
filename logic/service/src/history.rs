@@ -1,4 +1,4 @@
-use crate::error::LogicResult;
+use crate::error::ServiceResult;
 use cache::CACHE;
 use chrono::Utc;
 use protos::{
@@ -23,7 +23,7 @@ pub fn insert_topic_history(topic: Topic) {
     let _ = CACHE.insert_msg(&key, &snapshot);
 }
 
-pub async fn get_topic_history(request: TopicHistoryRequest) -> LogicResult<TopicHistoryResponse> {
+pub async fn get_topic_history(request: TopicHistoryRequest) -> ServiceResult<TopicHistoryResponse> {
     let snapshots = {
         let mut ss = tokio::task::block_in_place(|| {
             CACHE
