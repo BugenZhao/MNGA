@@ -48,7 +48,7 @@ fn extract_topic(node: Node) -> Option<Topic> {
     }
 
     use super::macros::get;
-    let map = extract_kv(node.clone());
+    let map = extract_kv(node);
 
     let subject_full = get!(map, "subject").map(|s| text::unescape(&s))?;
     let (tags, subject_content) = text::parse_subject(&subject_full).ok()?;
@@ -269,7 +269,7 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
 
     let topic = extract_node(&package, "/root/__T", extract_topic)?
         .flatten()
-        .ok_or(LogicError::MissingField("topic".to_owned()))?;
+        .ok_or_else(|| LogicError::MissingField("topic".to_owned()))?;
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 

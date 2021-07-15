@@ -54,8 +54,8 @@ pub fn extract_user_and_cache(node: Node) -> Option<User> {
         name: get!(map, "username")?,
         avatar_url: get!(map, "avatar")?,
         reg_date: get!(map, "regdate", _)?,
-        post_num: get!(map, "postnum", _).or(get!(map, "posts", _))?,
-        fame: get!(map, "fame", _).or(get!(map, "rvrc", _))?,
+        post_num: get!(map, "postnum", _).or_else(|| get!(map, "posts", _))?,
+        fame: get!(map, "fame", _).or_else(|| get!(map, "rvrc", _))?,
         ..Default::default()
     };
 
@@ -83,7 +83,7 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> LogicResult<RemoteUs
     let user = extract_node(&package, "/root/data/item", extract_user_and_cache)?.flatten();
 
     Ok(RemoteUserResponse {
-        _user: user.map(|u| RemoteUserResponse_oneof__user::user(u)),
+        _user: user.map(RemoteUserResponse_oneof__user::user),
         ..Default::default()
     })
 }

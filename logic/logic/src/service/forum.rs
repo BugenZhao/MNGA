@@ -17,14 +17,14 @@ use sxd_xpath::nodeset::Node;
 
 pub fn make_fid(id: String) -> ForumId {
     ForumId {
-        id: Some(ForumId_oneof_id::fid(id)).into(),
+        id: Some(ForumId_oneof_id::fid(id)),
         ..Default::default()
     }
 }
 
 pub fn make_stid(id: String) -> ForumId {
     ForumId {
-        id: Some(ForumId_oneof_id::stid(id)).into(),
+        id: Some(ForumId_oneof_id::stid(id)),
         ..Default::default()
     }
 }
@@ -33,7 +33,9 @@ fn extract_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
 
-    let icon_id = get!(map, "id").or(get!(map, "fid")).unwrap_or_default();
+    let icon_id = get!(map, "id")
+        .or_else(|| get!(map, "fid"))
+        .unwrap_or_default();
     let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, icon_id);
 
     let fid = get!(map, "fid").map(make_fid);
@@ -52,7 +54,7 @@ fn extract_forum(node: Node) -> Option<Forum> {
 
 fn extract_category(node: Node) -> Option<Category> {
     use super::macros::get;
-    let map = extract_kv(node.clone());
+    let map = extract_kv(node);
 
     let forums = extract_nodes_rel(node, "./groups/item/forums/item", |ns| {
         ns.into_iter().filter_map(extract_forum).collect()

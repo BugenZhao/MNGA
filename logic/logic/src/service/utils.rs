@@ -7,7 +7,7 @@ use sxd_xpath::{nodeset::Node, Context, Factory, XPath};
 fn to_xpath(s: &str) -> LogicResult<XPath> {
     let factory = Factory::new();
     let xpath = factory.build(s).ok().flatten();
-    xpath.ok_or(sxd_xpath::Error::NoXPath.into())
+    xpath.ok_or_else(|| sxd_xpath::Error::NoXPath.into())
 }
 
 pub fn extract_kv(node: Node) -> HashMap<&str, String> {
@@ -43,7 +43,7 @@ where
 
     let items = xpath
         .evaluate(&context, node)
-        .map_err(|ee| sxd_xpath::Error::Executing(ee))?;
+        .map_err(sxd_xpath::Error::Executing)?;
     let extracted = if let sxd_xpath::Value::Nodeset(nodeset) = items {
         f(nodeset.document_order())
     } else {
@@ -70,7 +70,7 @@ where
 
     let item = xpath
         .evaluate(&context, node)
-        .map_err(|ee| sxd_xpath::Error::Executing(ee))?;
+        .map_err(sxd_xpath::Error::Executing)?;
     let extracted = if let sxd_xpath::Value::Nodeset(nodeset) = item {
         nodeset.into_iter().next().map(|node| f(node))
     } else {
