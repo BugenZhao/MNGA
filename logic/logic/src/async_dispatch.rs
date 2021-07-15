@@ -1,8 +1,8 @@
 use crate::error::{LogicError, LogicResult};
-use protos::{Service::*, Message};
 use crate::{async_handlers::*, error::any_err_to_string, ByteBuffer};
 use futures::prelude::*;
 use lazy_static::lazy_static;
+use protos::{Message, Service::*};
 use std::{ffi::c_void, mem, panic, thread};
 use tokio::runtime::Runtime;
 
@@ -46,34 +46,37 @@ macro_rules! r {
     ($r: expr) => {
         panic::AssertUnwindSafe($r.map(|r| r.map(|m| -> Box<dyn Message> { Box::new(m) })))
             .catch_unwind()
+            .unwrap_or_else(|e| Err(LogicError::Panic(any_err_to_string(e))))
             .await
     };
 }
 
-pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
+pub async fn do_dispath(request: AsyncRequest_oneof_value) -> LogicResult<Box<dyn Message>> {
+    use AsyncRequest_oneof_value::*;
+
+    match request {
+        topic_list(r) => r!(handle_topic_list(r)),
+        topic_details(r) => r!(handle_topic_details(r)),
+        subforum_filter(r) => r!(handle_subforum_filter(r)),
+        forum_list(r) => r!(handle_forum_list(r)),
+        remote_user(r) => r!(handle_remote_user(r)),
+        post_vote(r) => r!(handle_post_vote(r)),
+        topic_history(r) => r!(handle_topic_history(r)),
+        hot_topic_list(r) => r!(handle_hot_topic_list(r)),
+        forum_search(r) => r!(handle_forum_search(r)),
+        favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
+        topic_favor(r) => r!(handle_topic_favor(r)),
+    }
+}
+
+pub fn dispatch_request_async(request: AsyncRequest, callback: RustCallback) {
     let _guard = RUNTIME.enter();
 
     tokio::spawn(async move {
         log::debug!("serving async request on {:?}", thread::current());
 
-        use AsyncRequest_oneof_value::*;
-        let response = {
-            let response: Result<LogicResult<Box<dyn Message>>, _> =
-                match req.value.expect("no async req") {
-                    topic_list(r) => r!(handle_topic_list(r)),
-                    topic_details(r) => r!(handle_topic_details(r)),
-                    subforum_filter(r) => r!(handle_subforum_filter(r)),
-                    forum_list(r) => r!(handle_forum_list(r)),
-                    remote_user(r) => r!(handle_remote_user(r)),
-                    post_vote(r) => r!(handle_post_vote(r)),
-                    topic_history(r) => r!(handle_topic_history(r)),
-                    hot_topic_list(r) => r!(handle_hot_topic_list(r)),
-                    forum_search(r) => r!(handle_forum_search(r)),
-                    favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
-                    topic_favor(r) => r!(handle_topic_favor(r)),
-                };
-            response.unwrap_or_else(|e| Err(LogicError::Panic(any_err_to_string(e))))
-        };
+        let request = request.value.expect("no async req");
+        let response = do_dispath(request).await;
 
         let result = response
             .map(|response| {
