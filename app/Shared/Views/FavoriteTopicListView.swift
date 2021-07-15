@@ -41,12 +41,26 @@ struct FavoriteTopicListView: View {
           TopicRowView(topic: topic)
             .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
         }
-      }
-    } .navigationTitle("Favorite Topics")
+      } .onDelete { indexSet in deleteFavorites(at: indexSet) }
+    }
+      .navigationTitle("Favorite Topics")
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .listStyle(GroupedListStyle())
+        .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
+  }
+
+  func deleteFavorites(at indexSet: IndexSet) {
+    guard let firstIndex = indexSet.first else { return }
+    let topic = dataSource.items[firstIndex] // fixme: only first
+
+    logicCallAsync(.topicFavor(.with {
+      $0.topicID = topic.id
+      $0.operation = .delete
+    })) { (response: TopicFavorResponse) in
+      if !response.isFavored { dataSource.items.remove(at: firstIndex) }
+    }
   }
 }
 

@@ -15,10 +15,15 @@ use crate::{
         },
     },
 };
+use cache::CACHE;
 use chrono::{Duration, Utc};
 use futures::TryFutureExt;
 use protos::{DataModel::*, Service::*};
 use sxd_xpath::nodeset::Node;
+
+fn favor_response_key(topic_id: &str) -> String {
+    format!("/favor_response/topic/{}", topic_id)
+}
 
 fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
@@ -63,8 +68,16 @@ fn extract_topic(node: Node) -> Option<Topic> {
         .and_then(|s| extract_fav(&s).map(ToOwned::to_owned))
         .map(Topic_oneof__fav::fav);
 
+    let id = get!(map, "tid")?;
+    let is_favored = CACHE
+        .get_msg::<TopicFavorResponse>(&favor_response_key(&id))
+        .ok()
+        .flatten()
+        .map(|r| r.is_favored)
+        .unwrap_or(false);
+
     let topic = Topic {
-        id: get!(map, "tid")?,
+        id,
         tags: tags.into(),
         subject_content,
         author_id: get!(map, "authorid")?,
@@ -74,6 +87,7 @@ fn extract_topic(node: Node) -> Option<Topic> {
         replies_num: get!(map, "replies", _)?,
         _parent_forum: parent_forum,
         _fav: fav,
+        is_favored,
         ..Default::default()
     };
 
@@ -121,7 +135,21 @@ pub async fn get_favorite_topic_list(
     .await?;
 
     let topics = extract_nodes(&package, "/root/__T/item", |ns| {
-        ns.into_iter().filter_map(extract_topic).collect()
+        ns.into_iter()
+            .filter_map(|node| {
+                let topic = extract_topic(node);
+                if let Some(ref topic) = topic {
+                    let _ = CACHE.insert_msg(
+                        &favor_response_key(topic.get_id()),
+                        &TopicFavorResponse {
+                            is_favored: true,
+                            ..Default::default()
+                        },
+                    );
+                }
+                topic
+            })
+            .collect()
     })?;
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__T__ROWS_PAGE", 35)?;
@@ -154,13 +182,6 @@ pub async fn get_topic_list(request: TopicListRequest) -> LogicResult<TopicListR
     })?;
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__T__ROWS_PAGE", 35)?;
-
-    // NONSENSE fields
-    //
-    // let _selected_subforum_ids = extract_string(&package, "/root/__F/__SELECTED_FORUM")?
-    //     .split(',')
-    //     .map(|s| s.to_owned())
-    //     .collect::<HashSet<_>>();
 
     let subforums = {
         let mut subforums = extract_nodes(&package, "/root/__F/sub_forums/*", |ns| {
@@ -285,6 +306,32 @@ pub async fn get_topic_details(request: TopicDetailsRequest) -> LogicResult<Topi
     })
 }
 
+pub async fn topic_favor(request: TopicFavorRequest) -> LogicResult<TopicFavorResponse> {
+    let (action, tid_key, is_favored) = match request.get_operation() {
+        TopicFavorRequest_Operation::ADD => ("add", "tid", true),
+        TopicFavorRequest_Operation::DELETE => ("del", "tidarray", false),
+    };
+
+    let _package = fetch_package(
+        "nuke.php",
+        vec![("__lib", "topic_favor"), ("__act", "topic_favor")],
+        vec![
+            ("action", action),
+            (tid_key, request.get_topic_id()),
+            ("page", "1"),
+        ],
+    )
+    .await?;
+
+    let response = TopicFavorResponse {
+        is_favored,
+        ..Default::default()
+    };
+    let _ = CACHE.insert_msg(&favor_response_key(request.get_topic_id()), &response);
+
+    Ok(response)
+}
+
 #[cfg(test)]
 mod test {
     use super::{super::user::UserController, *};
@@ -337,6 +384,24 @@ mod test {
         println!("response: {:?}", response);
 
         assert!(!response.get_topics().is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_topic_favor() -> LogicResult<()> {
+        use TopicFavorRequest_Operation::*;
+
+        let post = |op| {
+            topic_favor(TopicFavorRequest {
+                topic_id: "27455825".to_owned(),
+                operation: op,
+                ..Default::default()
+            })
+        };
+
+        post(ADD).await?;
+        post(DELETE).await?;
 
         Ok(())
     }

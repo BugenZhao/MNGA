@@ -21,6 +21,8 @@ struct TopicDetailsView: View {
   @StateObject var postScroll = PostScrollModel()
   @StateObject var votes = VotesModel()
 
+  @State var isFavored: Bool
+
   static func build(topic: Topic) -> Self {
     let dataSource = PagingDataSource<TopicDetailsResponse, Post>(
       buildRequest: { page in
@@ -38,7 +40,7 @@ struct TopicDetailsView: View {
       id: \.floor.description
     )
 
-    return Self.init(topic: topic, dataSource: dataSource)
+    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored)
   }
 
   private var first: Post? { dataSource.items.first }
@@ -47,9 +49,17 @@ struct TopicDetailsView: View {
   var moreMenu: some View {
     Menu {
       Section {
+        Button(action: { toggleFavor() }) {
+          Label(
+            isFavored ? "Remove from Favorites" : "Mark as Favorite",
+            systemImage: isFavored ? "bookmark.fill" : "bookmark"
+          )
+        }
+      }
+      Section {
         Label("#" + topic.id, systemImage: "number")
         if topic.hasFav {
-          Label(topic.fav, systemImage: "heart")
+          Label(topic.fav, systemImage: "bookmark.fill")
         }
       }
     } label: {
@@ -133,6 +143,18 @@ struct TopicDetailsView: View {
 
   var webpageURL: String {
     "\(Constants.URL.base)/read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : "")
+  }
+
+  func toggleFavor() {
+    logicCallAsync(.topicFavor(.with {
+      $0.topicID = topic.id
+      $0.operation = self.isFavored ? .delete : .add
+    })) { (response: TopicFavorResponse) in
+      self.isFavored = response.isFavored
+      #if os(iOS)
+        HapticUtils.play(type: .success)
+      #endif
+    }
   }
 }
 

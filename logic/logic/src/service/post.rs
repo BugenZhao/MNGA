@@ -103,27 +103,24 @@ pub async fn post_vote(request: PostVoteRequest) -> LogicResult<PostVoteResponse
     )
     .await?;
 
-    if let Ok(delta) = extract_string(&package, "/root/data/item[2]") {
-        let delta = delta.parse::<i32>().unwrap_or_default();
-        let state = match (request.get_operation(), delta.cmp(&0)) {
-            (UPVOTE, Greater) => VoteState::UP,
-            (DOWNVOTE, Less) => VoteState::DOWN,
-            (_, _) => VoteState::NONE,
-        };
-        let response = PostVoteResponse {
-            delta,
-            state,
-            ..Default::default()
-        };
-        let _ = CACHE.insert_msg(&vote_response_key(request.get_post_id()), response.clone());
-        Ok(response)
-    } else {
-        let error = extract_string(&package, "/root/error/item[1]").unwrap_or_default();
-        Ok(PostVoteResponse {
-            _error: Some(error).map(PostVoteResponse_oneof__error::error),
-            ..Default::default()
-        })
-    }
+    let delta = extract_string(&package, "/root/data/item[2]")?
+        .parse::<i32>()
+        .unwrap_or_default();
+
+    let state = match (request.get_operation(), delta.cmp(&0)) {
+        (UPVOTE, Greater) => VoteState::UP,
+        (DOWNVOTE, Less) => VoteState::DOWN,
+        (_, _) => VoteState::NONE,
+    };
+
+    let response = PostVoteResponse {
+        delta,
+        state,
+        ..Default::default()
+    };
+    let _ = CACHE.insert_msg(&vote_response_key(request.get_post_id()), &response);
+
+    Ok(response)
 }
 
 #[cfg(test)]

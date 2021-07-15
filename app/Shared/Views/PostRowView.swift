@@ -174,7 +174,9 @@ struct PostRowView: View {
           self.vote.state = response.state
           self.vote.delta += response.delta
           #if os(iOS)
-            HapticUtils.play(type: .success)
+            if self.vote.state != .none {
+              HapticUtils.play(style: .light)
+            }
           #endif
         }
       } else {

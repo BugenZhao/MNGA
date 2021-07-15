@@ -1,4 +1,7 @@
-use crate::{error::LogicResult, service::utils::extract_error};
+use crate::{
+    error::LogicResult,
+    service::{constants::URL_BASE, utils::extract_error},
+};
 use lazy_static::lazy_static;
 use reqwest::{Client, Url};
 
@@ -31,8 +34,6 @@ async fn fetch_package(
     mut query: Vec<(&str, &str)>,
     mut form: Vec<(&str, &str)>,
 ) -> LogicResult<sxd_document::Package> {
-    const URL_BASE: &str = "https://ngabbs.com";
-
     let url = Url::parse(&format!("{}/{}", URL_BASE, api)).unwrap();
 
     let auth_info = auth::AUTH_INFO.lock().unwrap().clone();

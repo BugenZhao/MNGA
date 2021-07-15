@@ -30,7 +30,7 @@ struct UserMenuView: View {
     Menu {
       Section {
         Button(action: { showFavorite = true }) {
-          Label("Favorite Topics", systemImage: "heart.fill")
+          Label("Favorite Topics", systemImage: "bookmark.fill")
         }
         Button(action: { showHistory = true }) {
           Label("History", systemImage: "clock")

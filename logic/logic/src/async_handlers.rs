@@ -4,20 +4,14 @@ use crate::{
         forum::{get_forum_list, search_forum, set_subforum_filter},
         history::get_topic_history,
         post::post_vote,
-        topic::{get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list},
+        topic::{
+            get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list,
+            topic_favor,
+        },
         user::get_remote_user,
     },
 };
 use protos::Service::*;
-
-// macro_rules! or_default {
-//     ($e:expr) => {
-//         $e.unwrap_or_else(|e| {
-//             log::error!("{}", e);
-//             Default::default()
-//         })
-//     };
-// }
 
 pub async fn handle_topic_list(request: TopicListRequest) -> LogicResult<TopicListResponse> {
     get_topic_list(request).await
@@ -67,4 +61,8 @@ pub async fn handle_favorite_topic_list(
     request: FavoriteTopicListRequest,
 ) -> LogicResult<FavoriteTopicListResponse> {
     get_favorite_topic_list(request).await
+}
+
+pub async fn handle_topic_favor(request: TopicFavorRequest) -> LogicResult<TopicFavorResponse> {
+    topic_favor(request).await
 }

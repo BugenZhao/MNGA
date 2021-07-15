@@ -50,7 +50,7 @@ impl Cache {
         Self { db, is_test }
     }
 
-    fn do_insert_msg<M: protos::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
+    fn do_insert_msg<M: protos::Message>(&self, key: &str, msg: &M) -> CacheResult<Option<M>> {
         log::info!("insert: key={}, msg={:?}", key, msg);
         let key_bytes = key.as_bytes();
         let value = msg.write_to_bytes()?;
@@ -68,7 +68,7 @@ impl Cache {
     }
 
     #[allow(unused_results)]
-    pub fn insert_msg<M: protos::Message>(&self, key: &str, msg: M) -> CacheResult<Option<M>> {
+    pub fn insert_msg<M: protos::Message>(&self, key: &str, msg: &M) -> CacheResult<Option<M>> {
         if self.is_test {
             // using single threaded runtime
             self.do_insert_msg(key, msg)

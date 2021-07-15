@@ -105,7 +105,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
     },
     errorCallback: { e in
       logger.error("logicCallAsync: \(e)")
-      if showErrorToast { ToastModel.shared.message = e.error }
+      if showErrorToast { ToastModel.shared.message = .error(e.error) }
       onError(e)
     },
     onMainThread: onMainThread

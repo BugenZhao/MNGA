@@ -70,6 +70,7 @@ pub fn dispatch_request_async(req: AsyncRequest, callback: RustCallback) {
                     hot_topic_list(r) => r!(handle_hot_topic_list(r)),
                     forum_search(r) => r!(handle_forum_search(r)),
                     favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
+                    topic_favor(r) => r!(handle_topic_favor(r)),
                 };
             response.unwrap_or_else(|e| Err(LogicError::Panic(any_err_to_string(e))))
         };

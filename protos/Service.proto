@@ -39,6 +39,7 @@ message AsyncRequest {
     HotTopicListRequest hot_topic_list = 8;
     ForumSearchRequest forum_search = 9;
     FavoriteTopicListRequest favorite_topic_list = 10;
+    TopicFavorRequest topic_favor = 11;
   }
 }
 
@@ -119,4 +120,16 @@ message FavoriteTopicListRequest { uint32 page = 1; }
 message FavoriteTopicListResponse {
   repeated Topic topics = 1;
   uint32 pages = 2;
+}
+
+message TopicFavorRequest {
+  enum Operation {
+    ADD = 0;
+    DELETE = 1;
+  }
+  string topic_id = 1;
+  Operation operation = 2;
+}
+message TopicFavorResponse {
+  bool is_favored = 1;
 }
