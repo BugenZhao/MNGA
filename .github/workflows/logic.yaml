@@ -2,20 +2,25 @@ on: [push, pull_request]
 name: Logic
 
 jobs:
-  test:
-    name: Test
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
     env:
       AUTH_DEBUG_UID: ${{ secrets.LOGIC_AUTH_DEBUG_UID }}
       AUTH_DEBUG_TOKEN: ${{ secrets.LOGIC_AUTH_DEBUG_TOKEN }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v1
+      - uses: arduino/setup-protoc@v1
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: actions-rs/cargo@v1
+      - name: Cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --manifest-path logic/Cargo.toml
+      - name: Cargo test
+        uses: actions-rs/cargo@v1
         with:
           command: test
           args: --manifest-path logic/Cargo.toml
