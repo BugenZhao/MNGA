@@ -47,7 +47,7 @@ logic-debug-catalyst:
 
 logic-bindings:
 	@echo ">>>>> Logic bindings"
-	cp logic/bindings.h ${OUT_INCLUDE}
+	cp logic/logic/bindings.h ${OUT_INCLUDE}
 
 nightly:
 	rustup override set nightly

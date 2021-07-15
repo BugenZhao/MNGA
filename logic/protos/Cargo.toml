@@ -1,0 +1,11 @@
+[package]
+name = "protos"
+version = "0.1.0"
+edition = "2018"
+
+
+[build-dependencies]
+protoc-rust = "2.24.1"
+
+[dependencies]
+protobuf = "2.24.1"
