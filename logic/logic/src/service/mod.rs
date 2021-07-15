@@ -18,11 +18,12 @@ pub mod auth;
 pub mod auth;
 
 fn build_client() -> Client {
+    log::info!("build reqwest client");
     Client::builder().https_only(true).build().unwrap()
 }
 
 lazy_static! {
-    pub static ref CLIENT: Client = build_client();
+    static ref CLIENT: Client = build_client();
 }
 
 async fn fetch_package(
@@ -47,7 +48,15 @@ async fn fetch_package(
         query
     };
 
-    let response = CLIENT
+    // `tokio::test` make a new runtime for every test,
+    // so we should use a thread-local client built in current runtime instead of a `lazy_static` one,
+    // which may cause client being dropped early and `hyper` panicking at 'dispatch dropped without returning error'
+    #[cfg(test)]
+    let client = build_client();
+    #[cfg(not(test))]
+    let client = &CLIENT;
+
+    let response = client
         .post(url)
         .form(&form)
         .query(&query)

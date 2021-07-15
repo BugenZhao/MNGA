@@ -1,6 +1,6 @@
-mod protos;
+mod generated;
 
-pub use protos::*;
+pub use generated::*;
 
 pub use protobuf::Message;
 pub use protobuf::ProtobufError;

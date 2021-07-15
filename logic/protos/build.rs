@@ -4,7 +4,7 @@ use protoc_rust::Customize;
 
 fn main() {
     protoc_rust::Codegen::new()
-        .out_dir("src/protos")
+        .out_dir("src/generated")
         .includes(&["../../protos"])
         .inputs(&["../../protos/Service.proto", "../../protos/DataModel.proto"])
         .customize(Customize {
