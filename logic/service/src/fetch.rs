@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::{auth, constants::URL_BASE, error::ServiceResult, utils::extract_error};
 use lazy_static::lazy_static;
 use reqwest::{
@@ -18,6 +20,7 @@ fn build_client() -> Client {
     Client::builder()
         .https_only(true)
         .default_headers(headers)
+        .timeout(Duration::from_secs(10))
         .build()
         .expect("failed to build reqwest client")
 }

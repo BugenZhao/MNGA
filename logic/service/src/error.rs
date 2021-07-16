@@ -12,7 +12,7 @@ pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
 pub enum ServiceError {
     #[error("NGA: {}", .0.get_info())]
     Nga(ErrorMessage),
-    #[error("missing field: {0}")]
+    #[error("Missing field: {0}")]
     MissingField(String),
 
     #[error(transparent)]

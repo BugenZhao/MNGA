@@ -33,7 +33,7 @@ mod dispatch_async {
             forum_search(r) => r!(handle_forum_search(r)),
             favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
             topic_favor(r) => r!(handle_topic_favor(r)),
-            post_reply_fetch_content(_r) => todo!(),
+            post_reply_fetch_content(r) => r!(handle_post_reply_fetch_content(r)),
             post_reply(r) => r!(handle_post_reply(r)),
         }
     }

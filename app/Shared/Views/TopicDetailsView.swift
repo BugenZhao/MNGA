@@ -75,9 +75,9 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    let row = PostRowView(post: post, vote: votes.binding(for: post))
-    if withId { row.id(post.id.pid) }
-    else { row }
+    PostRowView(post: post, vote: votes.binding(for: post))
+      .id((withId ? "" : "dummy") + post.id.pid)
+      .environmentObject(postReply)
   }
 
   @ViewBuilder
@@ -171,7 +171,7 @@ struct TopicDetailsView: View {
         $0.tid = self.topic.id
         $0.pid = "0"
       }
-    }, content: "")
+    })
   }
 }
 

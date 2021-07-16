@@ -4,7 +4,7 @@ use crate::{
     utils::{extract_kv, extract_node_rel, extract_nodes_rel, extract_string},
 };
 use cache::CACHE;
-use protos::{DataModel::*, Service::*};
+use protos::{DataModel::*, Service::*, ToValue};
 use sxd_xpath::nodeset::Node;
 
 fn vote_response_key(id: &PostId) -> String {
@@ -85,10 +85,7 @@ pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteRespon
     use std::cmp::Ordering::*;
     use PostVoteRequest_Operation::*;
 
-    let value = match request.get_operation() {
-        UPVOTE => "1",
-        DOWNVOTE => "-1",
-    };
+    let value = request.get_operation().to_value();
 
     let package = fetch_package(
         "nuke.php",
@@ -124,13 +121,7 @@ pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteRespon
 }
 
 pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
-    use PostReplyAction_Operation::*;
-
-    let action = match request.get_action().get_operation() {
-        REPLY => "reply",
-        QUOTE => "quote",
-        MODIFY => "modify",
-    };
+    let action = request.get_action().get_operation().to_value();
 
     let _package = fetch_package(
         "post.php",
@@ -146,6 +137,30 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
     .await?;
 
     Ok(PostReplyResponse::new())
+}
+
+pub async fn post_reply_fetch_content(
+    request: PostReplyFetchContentRequest,
+) -> ServiceResult<PostReplyFetchContentResponse> {
+    let action = request.get_action().get_operation().to_value();
+
+    let package = fetch_package(
+        "post.php",
+        vec![
+            ("action", action),
+            ("tid", request.get_action().get_post_id().get_tid()),
+            ("pid", request.get_action().get_post_id().get_pid()),
+        ],
+        vec![],
+    )
+    .await?;
+
+    let content = extract_string(&package, "/root/content").unwrap_or_default();
+
+    Ok(PostReplyFetchContentResponse {
+        content,
+        ..Default::default()
+    })
 }
 
 #[cfg(test)]
@@ -197,6 +212,28 @@ mod test {
             })
             .into(),
             content: "测试回复 from logic test".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_post_reply_fetch_content() -> ServiceResult<()> {
+        let _response = post_reply_fetch_content(PostReplyFetchContentRequest {
+            action: Some(PostReplyAction {
+                operation: PostReplyAction_Operation::QUOTE,
+                post_id: Some(PostId {
+                    pid: "0".to_owned(),
+                    tid: "27455825".to_owned(),
+                    ..Default::default()
+                })
+                .into(),
+                ..Default::default()
+            })
+            .into(),
             ..Default::default()
         })
         .await?;

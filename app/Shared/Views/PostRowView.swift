@@ -82,9 +82,10 @@ struct PostRowView: View {
 
   @State var showPostId = false
 
-  @EnvironmentObject var postScroll: PostScrollModel
-
   @Binding var vote: VotesModel.Vote
+  
+  @EnvironmentObject var postScroll: PostScrollModel
+  @EnvironmentObject var postReply: PostReplyModel
 
   @ViewBuilder
   var header: some View {
@@ -137,6 +138,16 @@ struct PostRowView: View {
     PostContentView(spans: post.content.spans)
       .equatable()
   }
+  
+  @ViewBuilder
+  var menu: some View {
+    Button(action: { copyContent(post.content.raw) }) {
+      Label("Copy Raw Content", systemImage: "doc.on.doc")
+    }
+    Button(action: { doQuote() }) {
+      Label("Quote", systemImage: "quote.bubble")
+    }
+  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -144,11 +155,7 @@ struct PostRowView: View {
       content
       footer
     } .padding(.vertical, 4)
-      .contextMenu {
-      Button(action: { copyContent(post.content.raw) }) {
-        Label("Copy Raw Content", systemImage: "doc.on.doc")
-      }
-    }
+      .contextMenu { menu }
     #if os(iOS)
       .listRowBackground(postScroll.pid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
@@ -183,5 +190,12 @@ struct PostRowView: View {
         // not used
       }
     }
+  }
+  
+  func doQuote() {
+    postReply.show(action: .with {
+      $0.postID = self.post.id
+      $0.operation = .quote
+    })
   }
 }

@@ -20,11 +20,22 @@ struct PostEditorView: View {
 
   @ViewBuilder
   var picker: some View {
-    Picker("Display Mode", selection: $displayMode) {
+    Picker("Display Mode", selection: $displayMode.animation()) {
       ForEach(DisplayMode.allCases, id: \.rawValue) {
         Text(LocalizedStringKey($0.rawValue)).tag($0)
       }
     } .pickerStyle(.segmented)
+  }
+  
+  @ViewBuilder
+  var loading: some View {
+    Spacer()
+    HStack {
+      Spacer()
+      ProgressView()
+      Spacer()
+    }
+    Spacer()
   }
 
   @ViewBuilder
@@ -32,21 +43,25 @@ struct PostEditorView: View {
     VStack(alignment: .leading) {
       picker
 
-      switch displayMode {
-      case .plain:
-        TextEditor(text: $postReply.content)
-      case .preview:
-        ScrollView {
-          PostContentView(spans: spans)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-        } .onAppear { parseContent() }
+      if postReply.content == nil {
+        loading
+      } else {
+        switch displayMode {
+        case .plain:
+          TextEditor(text: $postReply.content ?? "")
+        case .preview:
+          ScrollView {
+            PostContentView(spans: spans)
+              .frame(maxWidth: .infinity, alignment: .topLeading)
+          } .onAppear { parseContent() }
+        }
       }
     } .padding([.horizontal, .top])
   }
 
   func parseContent() {
     DispatchQueue.global(qos: .userInitiated).async {
-      let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = postReply.content }))
+      let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = postReply.content ?? "" }))
       DispatchQueue.main.async {
         self.spans = response?.content.spans ?? []
       }
@@ -81,16 +96,21 @@ struct PostEditorView: View {
 struct PostEditorView_Previews: PreviewProvider {
   struct Preview: View {
     @StateObject var postReply = PostReplyModel()
-    let defaultText: String
+    let defaultText: String?
 
     var body: some View {
       PostEditorView()
         .environmentObject(postReply)
-        .onAppear { postReply.show(action: .init(), content: defaultText) }
+        .onAppear {
+          postReply.showEditor = true
+          postReply.content = defaultText
+          postReply.action = .init() // dummy
+        }
     }
   }
 
   static var previews: some View {
     Preview(defaultText: "Test\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\n")
+    Preview(defaultText: nil)
   }
 }

@@ -9,32 +9,49 @@ import Foundation
 import Combine
 
 class PostReplyModel: ObservableObject {
-  @Published var showEditor = false
-  @Published var content = ""
+  @Published var showEditor = false {
+    didSet {
+      if showEditor == false {
+        self.reset()
+      }
+    }
+  }
+  @Published var content: String? = nil
   @Published var action: PostReplyAction? = nil
   @Published var isSending = false
 
-  func show(action: PostReplyAction, content: String) {
+  private func reset() {
+    self.action = nil
+    self.content = nil
+    self.isSending = false
+  }
+
+  func show(action: PostReplyAction) {
+    if self.showEditor { return }
+
     self.action = action
-    self.content = content
     self.showEditor = true
+
+    logicCallAsync(.postReplyFetchContent(.with {
+      $0.action = action
+    }), errorToastModel: ToastModel.alert) { (response: PostReplyFetchContentResponse) in
+      self.content = response.content
+    } onError: { e in
+      self.content = ""
+    }
   }
 
   func send() {
     guard let action = self.action else { return }
 
-
     self.isSending = true
-    logicCallAsync(.postReply(.with {
-        $0.action = action
-        $0.content = self.content
-      }), errorToastModel: ToastModel.alert)
-    { (response: PostReplyResponse) in
-      self.action = nil
-      self.content = ""
-      self.showEditor = false
-      self.isSending = false
 
+    logicCallAsync(.postReply(.with {
+      $0.action = action
+      $0.content = self.content ?? ""
+    }), errorToastModel: ToastModel.alert)
+    { (response: PostReplyResponse) in
+      self.showEditor = false
       #if os(iOS)
         HapticUtils.play(type: .success)
       #endif
