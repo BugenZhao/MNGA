@@ -17,6 +17,8 @@ class PostScrollModel: ObservableObject {
 
 struct TopicDetailsView: View {
   let topic: Topic
+  
+  @EnvironmentObject var activity: ActivityModel
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @StateObject var postScroll = PostScrollModel()
@@ -60,8 +62,14 @@ struct TopicDetailsView: View {
         Button(action: { self.doReplyTopic() }) {
           Label("Reply", systemImage: "arrowshape.turn.up.left")
         }
+        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
+          Label("Share", systemImage: "square.and.arrow.up")
+        }
       }
       Section {
+        Button(action: { self.dataSource.refresh() }) {
+          Label("Refresh", systemImage: "arrow.clockwise")
+        }
         Label("#" + topic.id, systemImage: "number")
         if topic.hasFav {
           Label(topic.fav, systemImage: "bookmark.fill")
@@ -139,7 +147,7 @@ struct TopicDetailsView: View {
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
-        .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+//        .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
     .userActivity(Constants.Activity.openTopic) { activity in
       if let url = URL(string: webpageURL) {

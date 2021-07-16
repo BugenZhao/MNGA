@@ -10,6 +10,7 @@ import SwiftUIX
 
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
+  @StateObject var activity = ActivityModel()
 
   var body: some View {
     Group {
@@ -25,8 +26,12 @@ struct ContentView: View {
         }
       }
     } .overlay { ImageOverlay() }
+      .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
+        AppActivityView(activityItems: activity.activityItems ?? [])
+      })
       .modifier(HudToastModifier())
       .environmentObject(viewingImage)
+      .environmentObject(activity)
   }
 }
 

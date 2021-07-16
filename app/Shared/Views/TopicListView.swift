@@ -16,12 +16,13 @@ import SDWebImageSwiftUI
 struct TopicListView: View {
   let forum: Forum
 
+  @EnvironmentObject var activity: ActivityModel
+
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
   @State var showingHotTopics = false
-
   @State var userActivityIsActive = true
 
   static func build(forum: Forum) -> Self {
@@ -54,6 +55,9 @@ struct TopicListView: View {
           Button(action: { showingSubforumsModal = true }) {
             Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
           }
+        }
+        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
+          Label("Share", systemImage: "square.and.arrow.up")
         }
       }
 

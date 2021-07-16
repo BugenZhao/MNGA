@@ -12,8 +12,7 @@ import ImageViewer
 
 struct ImageOverlay: View {
   @EnvironmentObject var model: ViewingImageModel
-
-  @State var showingShare = false
+  @EnvironmentObject var activity: ActivityModel
 
   var body: some View {
     ZStack {
@@ -26,8 +25,8 @@ struct ImageOverlay: View {
         VStack {
           HStack(alignment: .center) {
             Spacer()
-            Button(action: { self.showingShare = true }) {
-              Image(systemName: "ellipsis")
+            Button(action: { self.activity.put(model.image) }) {
+              Image(systemName: "square.and.arrow.up")
                 .foregroundColor(.white)
                 .font(.system(size: UIFontMetrics.default.scaledValue(for: 24)))
             }
@@ -36,10 +35,8 @@ struct ImageOverlay: View {
           Spacer()
         } .padding()
           .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+          .zIndex(233)
       }
-
-    } .sheet(isPresented: $showingShare, content: {
-      AppActivityView(activityItems: [model.image as Any])
-    })
+    }
   }
 }

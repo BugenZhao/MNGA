@@ -3,7 +3,18 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "TopicListView.body.getter:TopicListView.swift">
+         contextName = "TopicDetailsView.body.getter:TopicDetailsView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.dataSource.items">
+            </PersistentString>
+            <PersistentString
+               value = "self.votes.votes">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
       </ContextState>
       <ContextState
          contextName = "ContentCombiner.append&lt;&#x3c4;_0_0&gt;(_:):ContentCombiner.swift">
@@ -14,15 +25,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "TopicDetailsView.body.getter:TopicDetailsView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.dataSource.items">
-            </PersistentString>
-            <PersistentString
-               value = "self.votes.votes">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "PostEditorView.inner.getter:PostEditorView.swift">
+      </ContextState>
+      <ContextState
+         contextName = "TopicListView.body.getter:TopicListView.swift">
       </ContextState>
       <ContextState
          contextName = "TopicListView.subforum.getter:TopicListView.swift">
