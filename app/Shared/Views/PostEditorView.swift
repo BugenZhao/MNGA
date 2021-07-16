@@ -26,7 +26,7 @@ struct PostEditorView: View {
       }
     } .pickerStyle(.segmented)
   }
-  
+
   @ViewBuilder
   var loading: some View {
     Spacer()
@@ -48,7 +48,7 @@ struct PostEditorView: View {
       } else {
         switch displayMode {
         case .plain:
-          TextEditor(text: $postReply.content ?? "")
+          PostContentEditorView(content: $postReply.content ?? "")
         case .preview:
           ScrollView {
             PostContentView(spans: spans)
@@ -102,10 +102,10 @@ struct PostEditorView_Previews: PreviewProvider {
       PostEditorView()
         .environmentObject(postReply)
         .onAppear {
-          postReply.showEditor = true
-          postReply.content = defaultText
-          postReply.action = .init() // dummy
-        }
+        postReply.showEditor = true
+        postReply.content = defaultText
+        postReply.action = .init() // dummy
+      }
     }
   }
 
