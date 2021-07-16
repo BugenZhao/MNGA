@@ -3,7 +3,7 @@ use crate::{
     error::{ServiceError, ServiceResult},
     fetch_package,
     forum::{make_fid, make_stid},
-    history::insert_topic_history,
+    history::{find_topic_history, insert_topic_history},
     post::extract_post,
     user::extract_user_and_cache,
     utils::{
@@ -73,6 +73,10 @@ fn extract_topic(node: Node) -> Option<Topic> {
         .map(|r| r.is_favored)
         .unwrap_or(false);
 
+    let replies_num_last_visit = find_topic_history(&id)
+        .map(|s| s.get_topic_snapshot().get_replies_num())
+        .map(Topic_oneof__replies_num_last_visit::replies_num_last_visit);
+
     let topic = Topic {
         id,
         tags: tags.into(),
@@ -85,6 +89,7 @@ fn extract_topic(node: Node) -> Option<Topic> {
         _parent_forum: parent_forum,
         _fav: fav,
         is_favored,
+        _replies_num_last_visit: replies_num_last_visit,
         ..Default::default()
     };
 
@@ -226,7 +231,9 @@ pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicLis
     })
 }
 
-pub async fn get_hot_topic_list(request: HotTopicListRequest) -> ServiceResult<HotTopicListResponse> {
+pub async fn get_hot_topic_list(
+    request: HotTopicListRequest,
+) -> ServiceResult<HotTopicListResponse> {
     let fetch_page_limit = request.get_fetch_page_limit().max(10);
     let start_timestamp = (Utc::now()
         - match request.get_range() {
@@ -265,7 +272,9 @@ pub async fn get_hot_topic_list(request: HotTopicListRequest) -> ServiceResult<H
     })
 }
 
-pub async fn get_topic_details(request: TopicDetailsRequest) -> ServiceResult<TopicDetailsResponse> {
+pub async fn get_topic_details(
+    request: TopicDetailsRequest,
+) -> ServiceResult<TopicDetailsResponse> {
     let package = fetch_package(
         "read.php",
         vec![

@@ -38,7 +38,7 @@ struct FavoriteTopicListView: View {
     List {
       ForEach(dataSource.items, id: \.hashIdentifiable) { topic in
         NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-          TopicRowView(topic: topic)
+          TopicRowView(topic: topic, dimmedSubject: false)
             .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
         }
       } .onDelete { indexSet in deleteFavorites(at: indexSet) }

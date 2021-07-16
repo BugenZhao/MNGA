@@ -11,11 +11,37 @@ import SwiftUI
 struct TopicSubjectView: View {
   let topic: Topic
   let lineLimit: Int?
+  let showIndicators: Bool
+
+  init(topic: Topic, lineLimit: Int? = nil, showIndicators: Bool = false) {
+    self.topic = topic
+    self.lineLimit = lineLimit
+    self.showIndicators = showIndicators
+  }
+
+  @ViewBuilder
+  var indicators: some View {
+    HStack(spacing: 2) {
+      if topic.isFavored {
+        Image(systemName: "bookmark")
+      }
+      if topic.hasRepliesNumLastVisit {
+        Image(systemName: "checkmark.circle")
+      }
+    } .font(.footnote, weight: .bold)
+  }
+
+  var showTagBar: Bool {
+    !topic.tags.isEmpty || topic.hasParentForum || (showIndicators && (topic.isFavored || topic.hasRepliesNumLastVisit))
+  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      if !topic.tags.isEmpty || topic.hasParentForum {
+      if showTagBar {
         HStack(alignment: .bottom) {
+          if showIndicators {
+            indicators
+          }
           if topic.hasParentForum {
             Text(topic.parentForum.name)
               .fontWeight(.heavy)

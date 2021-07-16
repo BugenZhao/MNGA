@@ -10,6 +10,7 @@ import SwiftUI
 
 struct RepliesNumView: View {
   let num: UInt32
+  let lastNum: UInt32?
 
   var fontStyle: (Font?, Color?) {
     switch num {
@@ -30,23 +31,36 @@ struct RepliesNumView: View {
     }
   }
 
-  var body: some View {
+  var text: some View {
     let (font, color) = fontStyle
-    Text("\(num)")
-      .font(font)
-      .foregroundColor(color)
+    var text = Text("\(num)").font(font)
+    if let lastNum = lastNum, num > lastNum {
+      text = text + Text("(+\(num - lastNum))").font(.footnote)
+    }
+    return text.foregroundColor(color)
+  }
+
+  var body: some View {
+    text
   }
 }
 
 struct TopicRowView: View {
   let topic: Topic
-
+  let dimmedSubject: Bool
+  
+  init(topic: Topic, dimmedSubject: Bool = true) {
+    self.topic = topic
+    self.dimmedSubject = dimmedSubject
+  }
+  
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
-        TopicSubjectView(topic: topic, lineLimit: 2)
+        TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: true)
+          .foregroundColor(dimmedSubject && topic.hasRepliesNumLastVisit ? .secondary : nil)
         Spacer()
-        RepliesNumView(num: topic.repliesNum)
+        RepliesNumView(num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil)
       }
 
       HStack {

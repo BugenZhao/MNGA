@@ -312,14 +312,12 @@ class ContentCombiner {
     }
 
     if let urlString = urlString {
-      let combiner = ContentCombiner(parent: self, color: { _ in Color.accentColor })
+      let combiner = ContentCombiner(parent: self, font: { _ in Font.footnote }, color: { _ in Color.accentColor })
       let text = Text(Image(systemName: "link")) + Text(" ") + Text(displayString)
       combiner.append(text)
 
-      let view = HStack {
-        combiner.buildView().lineLimit(1)
-        Spacer()
-      } .padding(.small)
+      let view = combiner.buildView().lineLimit(1)
+        .padding(.small)
         .background(
         RoundedRectangle(cornerRadius: 12)
         #if os(iOS)

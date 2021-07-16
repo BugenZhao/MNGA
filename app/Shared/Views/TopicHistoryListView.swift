@@ -38,7 +38,7 @@ struct TopicHistoryListView: View {
       ForEach(items, id: \.hashIdentifiable) { snapshot in
         let topic = snapshot.topicSnapshot
         NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-          TopicRowView(topic: topic)
+          TopicRowView(topic: topic, dimmedSubject: false)
         }
       }
     } .navigationTitle("History")

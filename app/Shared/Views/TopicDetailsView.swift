@@ -52,7 +52,7 @@ struct TopicDetailsView: View {
         Button(action: { toggleFavor() }) {
           Label(
             isFavored ? "Remove from Favorites" : "Mark as Favorite",
-            systemImage: isFavored ? "bookmark.fill" : "bookmark"
+            systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
           )
         }
       }

@@ -23,7 +23,14 @@ pub fn insert_topic_history(topic: Topic) {
     let _ = CACHE.insert_msg(&key, &snapshot);
 }
 
-pub async fn get_topic_history(request: TopicHistoryRequest) -> ServiceResult<TopicHistoryResponse> {
+pub fn find_topic_history(topic_id: &str) -> Option<TopicSnapshot> {
+    let key = topic_snapshot_key(topic_id);
+    CACHE.get_msg::<TopicSnapshot>(&key).ok().flatten()
+}
+
+pub async fn get_topic_history(
+    request: TopicHistoryRequest,
+) -> ServiceResult<TopicHistoryResponse> {
     let snapshots = {
         let mut ss = tokio::task::block_in_place(|| {
             CACHE

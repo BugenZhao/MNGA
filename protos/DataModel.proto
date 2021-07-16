@@ -12,6 +12,7 @@ message Topic {
   optional Forum parent_forum = 10;
   optional string fav = 11;
   bool is_favored = 12;
+  optional uint32 replies_num_last_visit = 13;
 }
 
 message User {
