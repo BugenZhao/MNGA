@@ -8,9 +8,11 @@
 import Foundation
 import SwiftUI
 import Combine
+import AlertToast
 
 class ToastModel: ObservableObject {
-  static let shared = ToastModel()
+  static let hud = ToastModel()
+  static let alert = ToastModel()
 
   enum Message {
     case success(String)
@@ -36,3 +38,13 @@ class ToastModel: ObservableObject {
 }
 
 extension ToastModel.Message: Equatable { }
+extension ToastModel.Message {
+  func toast(for displayMode: AlertToast.DisplayMode) -> AlertToast {
+    switch self {
+    case .success(let msg):
+      return AlertToast(displayMode: displayMode, type: .complete(.green), title: NSLocalizedString("Success", comment: ""), subTitle: msg)
+    case .error(let msg):
+      return AlertToast(displayMode: displayMode, type: .error(.red), title: NSLocalizedString("Error", comment: ""), subTitle: msg)
+    }
+  }
+}

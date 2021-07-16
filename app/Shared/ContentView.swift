@@ -25,7 +25,7 @@ struct ContentView: View {
         }
       }
     } .overlay { ImageOverlay() }
-      .modifier(ToastModifier())
+      .modifier(HudToastModifier())
       .environmentObject(viewingImage)
   }
 }

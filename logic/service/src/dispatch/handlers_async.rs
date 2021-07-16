@@ -2,7 +2,7 @@ use crate::{
     error::ServiceResult,
     forum::{get_forum_list, search_forum, set_subforum_filter},
     history::get_topic_history,
-    post::post_vote,
+    post::{post_reply, post_vote},
     topic::{
         get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list, topic_favor,
     },
@@ -50,7 +50,9 @@ pub async fn handle_hot_topic_list(
     get_hot_topic_list(request).await
 }
 
-pub async fn handle_forum_search(request: ForumSearchRequest) -> ServiceResult<ForumSearchResponse> {
+pub async fn handle_forum_search(
+    request: ForumSearchRequest,
+) -> ServiceResult<ForumSearchResponse> {
     search_forum(request).await
 }
 
@@ -62,4 +64,8 @@ pub async fn handle_favorite_topic_list(
 
 pub async fn handle_topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavorResponse> {
     topic_favor(request).await
+}
+
+pub async fn handle_post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
+    post_reply(request).await
 }

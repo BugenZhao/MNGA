@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 import Combine
+import SwiftUIRefresh
 
 class PostScrollModel: ObservableObject {
   @Published var pid: String? = nil
@@ -20,6 +21,7 @@ struct TopicDetailsView: View {
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @StateObject var postScroll = PostScrollModel()
   @StateObject var votes = VotesModel()
+  @StateObject var postReply = PostReplyModel()
 
   @State var isFavored: Bool
 
@@ -54,6 +56,9 @@ struct TopicDetailsView: View {
             isFavored ? "Remove from Favorites" : "Mark as Favorite",
             systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
           )
+        }
+        Button(action: { self.doReplyTopic() }) {
+          Label("Reply", systemImage: "arrowshape.turn.up.left")
         }
       }
       Section {
@@ -130,9 +135,11 @@ struct TopicDetailsView: View {
     }
       .navigationTitle(topic.subjectContent)
       .modifier(SingleItemToolbarModifier { moreMenu })
+      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
+        .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
     .userActivity(Constants.Activity.openTopic) { activity in
       if let url = URL(string: webpageURL) {
@@ -155,6 +162,16 @@ struct TopicDetailsView: View {
         HapticUtils.play(type: .success)
       #endif
     }
+  }
+
+  func doReplyTopic() {
+    self.postReply.show(action: .with {
+      $0.operation = .reply
+      $0.postID = .with {
+        $0.tid = self.topic.id
+        $0.pid = "0"
+      }
+    }, content: "")
   }
 }
 

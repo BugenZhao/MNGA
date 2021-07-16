@@ -1,10 +1,25 @@
 use crate::{auth, constants::URL_BASE, error::ServiceResult, utils::extract_error};
 use lazy_static::lazy_static;
-use reqwest::{Client, Url};
+use reqwest::{
+    header::{HeaderMap, HeaderValue},
+    Client, Url,
+};
 
 fn build_client() -> Client {
     log::info!("build reqwest client");
-    Client::builder().https_only(true).build().unwrap()
+    let headers = {
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            "X-User-Agent",
+            HeaderValue::from_static("NGA_skull/7.2.4(iPhone13,2;iOS 14.6)"),
+        );
+        headers
+    };
+    Client::builder()
+        .https_only(true)
+        .default_headers(headers)
+        .build()
+        .expect("failed to build reqwest client")
 }
 
 lazy_static! {

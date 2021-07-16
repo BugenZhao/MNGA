@@ -1,4 +1,7 @@
-use crate::error::{ServiceError, ServiceResult};
+use crate::{
+    constants::SUCCESS_MSGS,
+    error::{ServiceError, ServiceResult},
+};
 use protos::DataModel::ErrorMessage;
 use std::collections::HashMap;
 use sxd_document::Package;
@@ -134,7 +137,14 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
         }
     })?;
 
-    frontend
-        .or(backend)
-        .map_or_else(|| Ok(()), |e| Err(ServiceError::Nga(e)))
+    frontend.or(backend).map_or_else(
+        || Ok(()),
+        |e| {
+            if SUCCESS_MSGS.iter().any(|msg| e.info.contains(msg)) {
+                Ok(())
+            } else {
+                Err(ServiceError::Nga(e))
+            }
+        },
+    )
 }

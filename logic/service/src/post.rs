@@ -123,12 +123,38 @@ pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteRespon
     Ok(response)
 }
 
+pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
+    use PostReplyAction_Operation::*;
+
+    let action = match request.get_action().get_operation() {
+        REPLY => "reply",
+        QUOTE => "quote",
+        MODIFY => "modify",
+    };
+
+    let _package = fetch_package(
+        "post.php",
+        vec![
+            ("action", action),
+            ("tid", request.get_action().get_post_id().get_tid()),
+            ("pid", request.get_action().get_post_id().get_pid()),
+            ("step", "2"),
+            ("post_content", request.get_content()),
+        ],
+        vec![],
+    )
+    .await?;
+
+    Ok(PostReplyResponse::new())
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
     use protos::DataModel::PostId;
 
     #[tokio::test]
+    #[ignore]
     async fn test_post_vote() -> ServiceResult<()> {
         use PostVoteRequest_Operation::*;
         let vote = |op| {
@@ -151,6 +177,29 @@ mod test {
         assert_eq!(vote(UPVOTE).await.unwrap().delta, 1);
         assert_eq!(vote(DOWNVOTE).await.unwrap().delta, -2);
         assert_eq!(vote(DOWNVOTE).await.unwrap().delta, 1);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_post_reply() -> ServiceResult<()> {
+        let _response = post_reply(PostReplyRequest {
+            action: Some(PostReplyAction {
+                operation: PostReplyAction_Operation::REPLY,
+                post_id: Some(PostId {
+                    pid: "0".to_owned(),
+                    tid: "27455825".to_owned(),
+                    ..Default::default()
+                })
+                .into(),
+                ..Default::default()
+            })
+            .into(),
+            content: "测试回复 from logic test".to_owned(),
+            ..Default::default()
+        })
+        .await?;
 
         Ok(())
     }

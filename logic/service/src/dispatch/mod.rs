@@ -33,6 +33,8 @@ mod dispatch_async {
             forum_search(r) => r!(handle_forum_search(r)),
             favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
             topic_favor(r) => r!(handle_topic_favor(r)),
+            post_reply_fetch_content(_r) => todo!(),
+            post_reply(r) => r!(handle_post_reply(r)),
         }
     }
 }
@@ -57,6 +59,7 @@ mod dispatch_sync {
             configure(r) => r!(handle_configure(r)),
             local_user(r) => r!(handle_local_user(r)),
             auth(r) => r!(handle_auth(r)),
+            content_parse(r) => r!(handle_content_parse(r)),
         }
     }
 }

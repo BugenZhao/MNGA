@@ -78,3 +78,18 @@ extension Post.Device {
     }
   }
 }
+
+extension PostReplyAction {
+  var title: LocalizedStringKey {
+    switch self.operation {
+    case .reply:
+      return "Reply"
+    case .quote:
+      return "Quote"
+    case .modify:
+      return "Edit"
+    default:
+      return ""
+    }
+  }
+}

@@ -11,6 +11,7 @@ message SyncRequest {
     ConfigureRequest configure = 1;
     LocalUserRequest local_user = 2;
     AuthRequest auth = 3;
+    ContentParseRequest content_parse = 4;
   }
 }
 
@@ -22,6 +23,14 @@ message LocalUserResponse { optional User user = 1; }
 
 message AuthRequest { AuthInfo info = 1; }
 message AuthResponse {}
+
+message ContentParseRequest { string raw = 1; }
+message ContentParseResponse {
+  oneof result {
+    PostContent content = 1;
+    string error = 2;
+  }
+}
 
 //
 // async
@@ -40,6 +49,8 @@ message AsyncRequest {
     ForumSearchRequest forum_search = 9;
     FavoriteTopicListRequest favorite_topic_list = 10;
     TopicFavorRequest topic_favor = 11;
+    PostReplyFetchContentRequest post_reply_fetch_content = 12;
+    PostReplyRequest post_reply = 13;
   }
 }
 
@@ -130,6 +141,13 @@ message TopicFavorRequest {
   string topic_id = 1;
   Operation operation = 2;
 }
-message TopicFavorResponse {
-  bool is_favored = 1;
+message TopicFavorResponse { bool is_favored = 1; }
+
+message PostReplyFetchContentRequest { PostReplyAction action = 1; }
+message PostReplyFetchContentResponse { string content = 1; }
+
+message PostReplyRequest {
+  PostReplyAction action = 1;
+  string content = 2;
 }
+message PostReplyResponse { string message = 1; }

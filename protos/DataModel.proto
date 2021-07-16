@@ -121,3 +121,13 @@ message ErrorMessage {
   string info = 2;
   string detailed = 3;
 }
+
+message PostReplyAction {
+  enum Operation {
+    REPLY = 0;
+    QUOTE = 1;
+    MODIFY = 2;
+  }
+  Operation operation = 1;
+  PostId post_id = 2;
+}

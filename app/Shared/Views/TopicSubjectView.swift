@@ -25,14 +25,11 @@ struct TopicSubjectView: View {
       if topic.isFavored {
         Image(systemName: "bookmark")
       }
-      if topic.hasRepliesNumLastVisit {
-        Image(systemName: "checkmark.circle")
-      }
     } .font(.footnote, weight: .bold)
   }
 
   var showTagBar: Bool {
-    !topic.tags.isEmpty || topic.hasParentForum || (showIndicators && (topic.isFavored || topic.hasRepliesNumLastVisit))
+    !topic.tags.isEmpty || topic.hasParentForum || (showIndicators && (topic.isFavored))
   }
 
   var body: some View {

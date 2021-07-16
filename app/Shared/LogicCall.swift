@@ -93,8 +93,8 @@ private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: B
 func logicCallAsync<Response: SwiftProtobuf.Message>(
   _ requestValue: AsyncRequest.OneOf_Value,
   onMainThread: Bool = true,
+  errorToastModel: ToastModel? = ToastModel.hud,
   onSuccess: @escaping (Response) -> Void,
-  showErrorToast: Bool = true,
   onError: @escaping (LogicError) -> Void = { _ in }
 ) {
   let request = AsyncRequest.with { $0.value = requestValue }
@@ -105,7 +105,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
     },
     errorCallback: { e in
       logger.error("logicCallAsync: \(e)")
-      if showErrorToast { ToastModel.shared.message = .error(e.error) }
+      if let tm = errorToastModel { tm.message = .error(e.error) }
       onError(e)
     },
     onMainThread: onMainThread

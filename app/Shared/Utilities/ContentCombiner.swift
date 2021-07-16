@@ -27,7 +27,7 @@ class ContentCombiner {
   ]
 
   private let parent: ContentCombiner?
-  private let postScroll: PostScrollModel
+  private let postScroll: PostScrollModel?
 
   private let fontModifier: (Font?) -> Font?
   private let colorModifier: (Color?) -> Color?
@@ -59,7 +59,7 @@ class ContentCombiner {
     self.otherStylesModifier = otherStyles
   }
 
-  init(postScroll: PostScrollModel) {
+  init(postScroll: PostScrollModel?) {
     self.parent = nil
     self.postScroll = postScroll
     self.fontModifier = { _ in Font.callout }
@@ -242,7 +242,11 @@ class ContentCombiner {
 
     var tapAction: () -> Void = { }
     if let pid = combiner.envs["pid"] {
-      tapAction = { withAnimation { self.postScroll.pid = pid } }
+      tapAction = { withAnimation {
+        if let postScroll = self.postScroll {
+          postScroll.pid = pid
+        }
+      } }
     }
 
     let view = HStack { combiner.buildView(); Spacer() }
