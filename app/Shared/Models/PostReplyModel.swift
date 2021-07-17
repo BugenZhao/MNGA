@@ -28,6 +28,10 @@ class PostReplyModel: ObservableObject {
       self.task = task
       self.content = content
     }
+
+    static var dummy: Context {
+      Context.init(task: .init(action: .init(), pageToReload: nil))
+    }
   }
 
   @Published var showEditor = false
@@ -40,10 +44,6 @@ class PostReplyModel: ObservableObject {
 
   private var contexts = [Task: Context]()
 
-  var contentBinding: Binding<String> {
-    Binding<String>.init(get: { self.context?.content ?? "" }, set: { self.context?.content = $0 })
-  }
-
   private func reset() {
     if let context = self.context {
       self.contexts.removeValue(forKey: context.task)
@@ -51,7 +51,7 @@ class PostReplyModel: ObservableObject {
     }
     self.isSending = false
   }
-  
+
   func show(action: PostReplyAction, pageToReload: Int? = nil) {
     return show(task: .init(action: action, pageToReload: pageToReload))
   }
@@ -67,11 +67,11 @@ class PostReplyModel: ObservableObject {
     }
   }
 
-  func forceRefreshCurrentContext() {
+  func discardCurrentContext() {
     guard self.showEditor else { return }
-    guard let task = self.context?.task else { return }
-
-    buildContext(with: task)
+    
+    self.showEditor = false
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.reset() }
   }
 
   private func buildContext(with task: Task, ignoreError: Bool = false) {

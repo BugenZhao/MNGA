@@ -48,7 +48,7 @@ struct PostEditorView: View {
       } else {
         switch displayMode {
         case .plain:
-          PostContentEditorView(content: postReply.contentBinding)
+          PostContentEditorView(content: ($postReply.context ?? .dummy).content ?? "")
         case .preview:
           ScrollView {
             PostContentView(spans: spans)
@@ -84,8 +84,8 @@ struct PostEditorView: View {
           }
         }
         ToolbarItem(placement: .cancellationAction) {
-          Button(action: { self.postReply.forceRefreshCurrentContext() }) {
-            Image(systemName: "arrow.clockwise")
+          Button(action: { self.postReply.discardCurrentContext() }) {
+            Text("Discard").foregroundColor(.red)
           }
         }
       }
