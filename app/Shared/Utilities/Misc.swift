@@ -14,3 +14,11 @@ let logger: Logger = {
   logger.logLevel = .info
   return logger
 }();
+
+public func withAnimation<Result>(_ animation: Animation? = .default, when condition: Bool, _ body: () throws -> Result) rethrows -> Result {
+  if condition {
+    return withAnimation { try! body() }
+  } else {
+    return try! body()
+  }
+}

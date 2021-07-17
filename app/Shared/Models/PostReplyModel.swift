@@ -19,6 +19,7 @@ class PostReplyModel: ObservableObject {
   @Published var content: String? = nil
   @Published var action: PostReplyAction? = nil
   @Published var isSending = false
+  @Published var sent = 0
 
   private func reset() {
     self.action = nil
@@ -52,6 +53,7 @@ class PostReplyModel: ObservableObject {
     }), errorToastModel: ToastModel.alert)
     { (response: PostReplyResponse) in
       self.showEditor = false
+      self.sent += 1
       #if os(iOS)
         HapticUtils.play(type: .success)
       #endif

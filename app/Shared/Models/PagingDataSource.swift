@@ -55,7 +55,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   func loadMoreIfNeeded(currentItem: Item) {
     if let index = itemToIdx[currentItem[keyPath: id]] {
       let threshold = items.index(items.endIndex, offsetBy: -5)
-      if index >= threshold { loadMore() }
+      if index >= threshold { loadMore(background: true) }
     }
   }
 
@@ -74,27 +74,18 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
-      let action = {
+      withAnimation(when: animated) {
         self.replaceItems(newItems)
         self.isRefreshing = false
         self.isLoading = false
       }
-      if animated {
-        withAnimation { action() }
-      } else {
-        action()
-      }
+
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
     } onError: { e in
-      let action = {
+      withAnimation(when: animated) {
         self.isRefreshing = false
         self.isLoading = false
-      }
-      if animated {
-        withAnimation { action() }
-      } else {
-        action()
       }
     }
   }
@@ -105,39 +96,58 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  private func loadMore() {
+  func loadLastPages() {
+    if isLoading { return }
+    isLoading = true;
+
+    for page in [totalPages, totalPages + 1] {
+      let request = buildRequest!(page)
+      let currentId = dataFlowId
+
+      logicCallAsync(request) { (response: Res) in
+        guard currentId == self.dataFlowId else { return }
+
+        self.latestResponse = response
+        let (newItems, newTotalPages) = self.onResponse(response)
+
+        withAnimation {
+          self.upsertItems(newItems)
+          self.isLoading = false
+        }
+        self.totalPages = newTotalPages ?? self.totalPages
+      } onError: { e in
+        withAnimation {
+          self.isLoading = false
+        }
+      }
+    }
+  }
+
+  private func loadMore(background: Bool = false) {
     if isLoading || loadedPage >= totalPages { return }
     isLoading = true;
 
     let request = buildRequest!(loadedPage + 1)
     let currentId = dataFlowId
 
-    logicCallAsync(request) { (response: Res) in
+    let queue = DispatchQueue.global(qos: background ? .background : .userInitiated)
+
+    logicCallAsync(request, requestDispatchQueue: queue) { (response: Res) in
       guard currentId == self.dataFlowId else { return }
 
       self.latestResponse = response
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
-      let action = {
+      withAnimation(when: self.items.isEmpty) {
         self.upsertItems(newItems)
         self.isLoading = false
-      }
-      if self.items.isEmpty {
-        withAnimation { action() }
-      } else {
-        action()
       }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
     } onError: { e in
-      let action = {
+      withAnimation(when: self.items.isEmpty) {
         self.isLoading = false
-      }
-      if self.items.isEmpty {
-        withAnimation { action() }
-      } else {
-        action()
       }
     }
   }

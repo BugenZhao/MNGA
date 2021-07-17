@@ -15,12 +15,14 @@ struct PostRowUserView: View, Equatable {
   }
 
   let post: Post
+  let user: User?
+
+  static func build(post: Post) -> Self {
+    let user = try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
+    return Self.init(post: post, user: user)
+  }
 
   @State var showId = false
-
-  var user: User? {
-    try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
-  }
 
   @ViewBuilder
   func buildAvatar(user: User?) -> some View {
@@ -37,8 +39,6 @@ struct PostRowUserView: View, Equatable {
   }
 
   var body: some View {
-    let user = self.user
-
     HStack {
       buildAvatar(user: user)
         .foregroundColor(.accentColor)
@@ -72,7 +72,7 @@ struct PostRowUserView: View, Equatable {
 
         } .font(.footnote)
           .foregroundColor(.secondary)
-      }
+      } .redacted(reason: user == nil ? .placeholder : [])
     }
   }
 }
@@ -83,14 +83,14 @@ struct PostRowView: View {
   @State var showPostId = false
 
   @Binding var vote: VotesModel.Vote
-  
+
   @EnvironmentObject var postScroll: PostScrollModel
   @EnvironmentObject var postReply: PostReplyModel
 
   @ViewBuilder
   var header: some View {
     HStack {
-      PostRowUserView(post: post)
+      PostRowUserView.build(post: post)
         .equatable()
       Spacer()
       (Text("#").font(.footnote) + Text(showPostId ? post.id.pid : "\(post.floor)").font(.callout))
@@ -138,7 +138,7 @@ struct PostRowView: View {
     PostContentView(spans: post.content.spans)
       .equatable()
   }
-  
+
   @ViewBuilder
   var menu: some View {
     Button(action: { copyContent(post.content.raw) }) {
@@ -191,7 +191,7 @@ struct PostRowView: View {
       }
     }
   }
-  
+
   func doQuote() {
     postReply.show(action: .with {
       $0.postID = self.post.id

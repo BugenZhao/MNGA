@@ -17,7 +17,7 @@ class PostScrollModel: ObservableObject {
 
 struct TopicDetailsView: View {
   let topic: Topic
-  
+
   @EnvironmentObject var activity: ActivityModel
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
@@ -85,7 +85,6 @@ struct TopicDetailsView: View {
   func buildRow(post: Post, withId: Bool = true) -> some View {
     PostRowView(post: post, vote: votes.binding(for: post))
       .id((withId ? "" : "dummy") + post.id.pid)
-      .environmentObject(postReply)
   }
 
   @ViewBuilder
@@ -144,6 +143,8 @@ struct TopicDetailsView: View {
       .navigationTitle(topic.subjectContent)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
+      .onChange(of: postReply.sent) { _ in dataSource.loadLastPages() }
+      .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)

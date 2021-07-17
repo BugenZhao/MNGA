@@ -52,31 +52,23 @@ func logicCall<Response: SwiftProtobuf.Message>(_ requestValue: SyncRequest.OneO
 private class WrappedDataCallback {
   private let callback: (Data) -> Void
   private let errorCallback: (LogicError) -> Void
-  private let onMainThread: Bool
 
   init(
     callback: @escaping (Data) -> Void,
-    errorCallback: @escaping (LogicError) -> Void,
-    onMainThread: Bool
+    errorCallback: @escaping (LogicError) -> Void
   ) {
     self.callback = callback
     self.errorCallback = errorCallback
-    self.onMainThread = onMainThread
   }
 
   func run(_ data: Data?, _ error: LogicError?) {
-    let block = {
+    DispatchQueue.main.async {
       logger.debug("running callback on thread `\(Thread.current)`")
       if let error = error {
         self.errorCallback(error)
       } else {
         self.callback(data!)
       }
-    }
-    if onMainThread {
-      DispatchQueue.main.async(execute: block)
-    } else {
-      block()
     }
   }
 }
@@ -92,30 +84,31 @@ private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: B
 
 func logicCallAsync<Response: SwiftProtobuf.Message>(
   _ requestValue: AsyncRequest.OneOf_Value,
-  onMainThread: Bool = true,
+  requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
   errorToastModel: ToastModel? = ToastModel.hud,
   onSuccess: @escaping (Response) -> Void,
   onError: @escaping (LogicError) -> Void = { _ in }
 ) {
-  let request = AsyncRequest.with { $0.value = requestValue }
-  let dataCallback = WrappedDataCallback(
-    callback: { (resData: Data) in
-      let res = try! Response(serializedData: resData)
-      onSuccess(res)
-    },
-    errorCallback: { e in
-      logger.error("logicCallAsync: \(e)")
-      if let tm = errorToastModel { tm.message = .error(e.error) }
-      onError(e)
-    },
-    onMainThread: onMainThread
-  )
-  let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()
+  requestDispatchQueue.async {
+    let request = AsyncRequest.with { $0.value = requestValue }
+    let dataCallback = WrappedDataCallback(
+      callback: { (resData: Data) in
+        let res = try! Response(serializedData: resData)
+        onSuccess(res)
+      },
+      errorCallback: { e in
+        logger.error("logicCallAsync: \(e)")
+        if let tm = errorToastModel { tm.message = .error(e.error) }
+        onError(e)
+      }
+    )
+    let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()
+    let rustCallback = Callback(user_data: dataCallbackPtr, callback: byteBufferCallback)
 
-  let rustCallback = Callback(user_data: dataCallbackPtr, callback: byteBufferCallback)
-  let reqData = try! request.serializedData()
-  reqData.withUnsafeBytes { ptr -> Void in
-    let ptr = ptr.bindMemory(to: UInt8.self).baseAddress
-    rust_call_async(ptr, UInt(reqData.count), rustCallback)
+    let reqData = try! request.serializedData()
+    reqData.withUnsafeBytes { ptr -> Void in
+      let ptr = ptr.bindMemory(to: UInt8.self).baseAddress
+      rust_call_async(ptr, UInt(reqData.count), rustCallback)
+    }
   }
 }
