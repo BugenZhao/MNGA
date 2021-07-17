@@ -67,6 +67,12 @@ impl Cache {
         Ok(value_msg)
     }
 
+    fn do_scan_msg<M: protos::Message>(&self, prefix: &str) -> impl Iterator<Item = M> {
+        self.db
+            .scan_prefix(prefix)
+            .filter_map(|r| r.ok().map(|(_k, v)| M::parse_from_bytes(&v).ok()).flatten())
+    }
+
     #[allow(unused_results)]
     pub fn insert_msg<M: protos::Message>(&self, key: &str, msg: &M) -> CacheResult<Option<M>> {
         if self.is_test {
@@ -83,6 +89,15 @@ impl Cache {
             self.do_get_msg(key)
         } else {
             tokio::task::block_in_place(move || self.do_get_msg(key))
+        }
+    }
+
+    pub fn scan_msg<M: protos::Message>(&self, prefix: &str) -> impl Iterator<Item = M> {
+        if self.is_test {
+            // using single threaded runtime
+            self.do_scan_msg(prefix)
+        } else {
+            tokio::task::block_in_place(move || self.do_scan_msg(prefix))
         }
     }
 }

@@ -141,6 +141,10 @@
 		B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */; platformFilter = maccatalyst; };
 		B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */; };
 		B4EB80F0269B2C090014DDFA /* ContentCombiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */; };
+		B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408326A30A8500D620B0 /* NotificationListView.swift */; };
+		B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408326A30A8500D620B0 /* NotificationListView.swift */; };
+		B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408626A30C4900D620B0 /* NotificationRowView.swift */; };
+		B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408626A30C4900D620B0 /* NotificationRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -242,6 +246,8 @@
 		B4EB80EB269B1B4F0014DDFA /* NGA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NGA.entitlements; sourceTree = "<group>"; };
 		B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogiccatalyst.a; path = ../out/libs/liblogiccatalyst.a; sourceTree = "<group>"; };
 		B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCombiner.swift; sourceTree = "<group>"; };
+		B4F2408326A30A8500D620B0 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
+		B4F2408626A30C4900D620B0 /* NotificationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -461,6 +467,8 @@
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
+				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
+				B4F2408626A30C4900D620B0 /* NotificationRowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -682,12 +690,14 @@
 				B44463A226A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B444639F26A1D745006FA44D /* StickerImageView.swift in Sources */,
 				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
+				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B444638B26A1981E006FA44D /* PostReplyModel.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
+				B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */,
 				B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */,
 				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */,
@@ -724,6 +734,7 @@
 				B444639726A1C54A006FA44D /* Stickers.swift in Sources */,
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
 				B45A9E8C26A171720088F04D /* PostEditorView.swift in Sources */,
+				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B444639426A1B745006FA44D /* OptionalBinding.swift in Sources */,
 				B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
@@ -731,6 +742,7 @@
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
+				B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */,
 				B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
 				B43DED47269C29BB009C52F5 /* DateTimeTextView.swift in Sources */,
 				B4DBF60D2689799F0027233F /* PostRowView.swift in Sources */,

@@ -35,6 +35,7 @@ mod dispatch_async {
             topic_favor(r) => r!(handle_topic_favor(r)),
             post_reply_fetch_content(r) => r!(handle_post_reply_fetch_content(r)),
             post_reply(r) => r!(handle_post_reply(r)),
+            fetch_notification(r) => r!(handle_fetch_notification(r)),
         }
     }
 }

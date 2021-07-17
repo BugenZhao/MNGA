@@ -51,6 +51,7 @@ message AsyncRequest {
     TopicFavorRequest topic_favor = 11;
     PostReplyFetchContentRequest post_reply_fetch_content = 12;
     PostReplyRequest post_reply = 13;
+    FetchNotificationRequest fetch_notification = 14;
   }
 }
 
@@ -151,3 +152,6 @@ message PostReplyRequest {
   string content = 2;
 }
 message PostReplyResponse { string message = 1; }
+
+message FetchNotificationRequest {}
+message FetchNotificationResponse { repeated Notification notis = 1; }

@@ -93,3 +93,25 @@ extension PostReplyAction {
     }
   }
 }
+
+extension Notification.TypeEnum {
+  var icon: String {
+    switch self {
+    case .replyPost, .replyTopic:
+      return "arrowshape.turn.up.left"
+    case .unknown, .UNRECOGNIZED(_):
+      return "questionmark.circle"
+    }
+  }
+  
+  var description: LocalizedStringKey {
+    switch self {
+    case .replyPost:
+      return "replied to your post"
+    case .replyTopic:
+      return "replied to your topic"
+    case .unknown, .UNRECOGNIZED(_):
+      return ""
+    }
+  }
+}
