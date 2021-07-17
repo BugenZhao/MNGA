@@ -45,7 +45,9 @@ pub fn extract_post(node: Node) -> Option<Post> {
         .unwrap_or(VoteState::NONE);
 
     let hot_replies = extract_nodes_rel(node, "./hotreply/item", |ns| {
-        ns.into_iter().filter_map(extract_post).collect()
+        ns.into_iter()
+            .filter_map(|n| extract_post_with_at_page(1, n))
+            .collect()
     })
     .unwrap_or_default();
 
@@ -75,10 +77,18 @@ pub fn extract_post(node: Node) -> Option<Post> {
         vote_state,
         host_replies: hot_replies.into(),
         device,
+        alter_info: get!(map, "alterinfo").unwrap_or_default(),
         ..Default::default()
     };
 
     Some(post)
+}
+
+pub fn extract_post_with_at_page(at_page: u32, node: Node) -> Option<Post> {
+    extract_post(node).map(|mut p| {
+        p.at_page = at_page;
+        p
+    })
 }
 
 pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteResponse> {

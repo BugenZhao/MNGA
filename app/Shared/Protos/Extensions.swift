@@ -115,3 +115,9 @@ extension Notification.TypeEnum {
     }
   }
 }
+
+extension Post {
+  var idWithAlterInfo: String {
+    return self.id.debugDescription + self.alterInfo
+  }
+}

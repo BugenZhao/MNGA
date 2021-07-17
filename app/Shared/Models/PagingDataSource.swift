@@ -38,8 +38,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private func upsertItems<S>(_ items: S) where S: Sequence, S.Element == Item {
     items.forEach {
       let id = $0[keyPath: self.id]
-      let isNew = self.itemToIdx[id] == nil
-      if isNew {
+
+      if let index = self.itemToIdx[id] {
+        self.items[index] = $0
+      } else { // is new
         self.items.append($0)
         self.itemToIdx[id] = self.items.endIndex - 1
       }
@@ -96,29 +98,30 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func loadLastPages() {
-    if isLoading { return }
-    isLoading = true;
-
+  func reloadLastPages() {
     for page in [totalPages, totalPages + 1] {
-      let request = buildRequest!(page)
-      let currentId = dataFlowId
+      reload(page: page)
+    }
+  }
 
-      logicCallAsync(request) { (response: Res) in
-        guard currentId == self.dataFlowId else { return }
+  func reload(page: Int) {
+    let request = buildRequest!(page)
+    let currentId = dataFlowId
 
-        self.latestResponse = response
-        let (newItems, newTotalPages) = self.onResponse(response)
+    logicCallAsync(request) { (response: Res) in
+      guard currentId == self.dataFlowId else { return }
 
-        withAnimation {
-          self.upsertItems(newItems)
-          self.isLoading = false
-        }
-        self.totalPages = newTotalPages ?? self.totalPages
-      } onError: { e in
-        withAnimation {
-          self.isLoading = false
-        }
+      self.latestResponse = response
+      let (newItems, newTotalPages) = self.onResponse(response)
+
+      withAnimation {
+        self.upsertItems(newItems)
+        self.isLoading = false
+      }
+      self.totalPages = newTotalPages ?? self.totalPages
+    } onError: { e in
+      withAnimation {
+        self.isLoading = false
       }
     }
   }

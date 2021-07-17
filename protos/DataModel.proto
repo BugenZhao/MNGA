@@ -45,6 +45,8 @@ message Post {
   VoteState vote_state = 7;
   repeated Post host_replies = 8;
   Device device = 9;
+  string alter_info = 10;
+  uint32 at_page = 11;
 }
 
 message Subforum {

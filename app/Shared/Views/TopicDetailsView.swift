@@ -143,7 +143,7 @@ struct TopicDetailsView: View {
       .navigationTitle(topic.subjectContent)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
-      .onChange(of: postReply.sent) { _ in dataSource.loadLastPages() }
+      .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
@@ -181,6 +181,16 @@ struct TopicDetailsView: View {
         $0.pid = "0"
       }
     })
+  }
+
+  func reloadPageAfter(sent: PostReplyModel.Context?) {
+    guard let sent = sent else { return }
+
+    if let page = sent.task.pageToReload {
+      dataSource.reload(page: page)
+    } else {
+      dataSource.reloadLastPages()
+    }
   }
 }
 

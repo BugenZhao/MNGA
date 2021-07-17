@@ -86,6 +86,7 @@ struct PostRowView: View {
 
   @EnvironmentObject var postScroll: PostScrollModel
   @EnvironmentObject var postReply: PostReplyModel
+  @EnvironmentObject var authStorage: AuthStorage
 
   @ViewBuilder
   var header: some View {
@@ -106,6 +107,9 @@ struct PostRowView: View {
       voter
       Spacer()
       Group {
+        if !post.alterInfo.isEmpty {
+          Image(systemName: "pencil")
+        }
         DateTimeTextView.build(timestamp: post.postDate)
         Image(systemName: post.device.icon)
           .frame(width: 10)
@@ -146,6 +150,11 @@ struct PostRowView: View {
     }
     Button(action: { doQuote() }) {
       Label("Quote", systemImage: "quote.bubble")
+    }
+    if authStorage.authInfo.inner.uid == post.authorID {
+      Button(action: { doEdit() }) {
+        Label("Edit", systemImage: "pencil")
+      }
     }
   }
 
@@ -197,5 +206,12 @@ struct PostRowView: View {
       $0.postID = self.post.id
       $0.operation = .quote
     })
+  }
+
+  func doEdit() {
+    postReply.show(action: .with {
+      $0.postID = self.post.id
+      $0.operation = .modify
+    }, pageToReload: Int(self.post.atPage))
   }
 }

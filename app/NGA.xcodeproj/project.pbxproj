@@ -453,10 +453,13 @@
 				B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */,
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
+				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
+				B4F2408626A30C4900D620B0 /* NotificationRowView.swift */,
 				B444639B26A1CC9F006FA44D /* PostContentEditorView.swift */,
 				B4DBF61A268A20A90027233F /* PostContentView.swift */,
 				B45A9E8A26A171720088F04D /* PostEditorView.swift */,
 				B4DBF60B2689799F0027233F /* PostRowView.swift */,
+				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
 				B4DBF60E268979C20027233F /* TopicDetailsView.swift */,
@@ -466,9 +469,6 @@
 				B4DBF61426897A170027233F /* TopicRowView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
-				B444639E26A1D745006FA44D /* StickerImageView.swift */,
-				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
-				B4F2408626A30C4900D620B0 /* NotificationRowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

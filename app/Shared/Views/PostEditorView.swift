@@ -43,12 +43,12 @@ struct PostEditorView: View {
     VStack(alignment: .leading) {
       picker
 
-      if postReply.content == nil {
+      if postReply.context?.content == nil {
         loading
       } else {
         switch displayMode {
         case .plain:
-          PostContentEditorView(content: $postReply.content ?? "")
+          PostContentEditorView(content: postReply.contentBinding)
         case .preview:
           ScrollView {
             PostContentView(spans: spans)
@@ -61,7 +61,7 @@ struct PostEditorView: View {
 
   func parseContent() {
     DispatchQueue.global(qos: .userInitiated).async {
-      let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = postReply.content ?? "" }))
+      let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = postReply.context?.content ?? "" }))
       DispatchQueue.main.async {
         self.spans = response?.content.spans ?? []
       }
@@ -72,7 +72,7 @@ struct PostEditorView: View {
     NavigationView {
       inner
         .modifier(AlertToastModifier())
-        .navigationBarTitle(postReply.action?.title ?? "Editor", displayMode: .inline)
+        .navigationBarTitle(postReply.context?.task.action.title ?? "Editor", displayMode: .inline)
         .toolbar {
         ToolbarItem(placement: .confirmationAction) {
           Button(action: { doSend() }) {
@@ -81,6 +81,11 @@ struct PostEditorView: View {
             } else {
               Text("Send")
             }
+          }
+        }
+        ToolbarItem(placement: .cancellationAction) {
+          Button(action: { self.postReply.forceRefreshCurrentContext() }) {
+            Image(systemName: "arrow.clockwise")
           }
         }
       }
@@ -103,8 +108,7 @@ struct PostEditorView_Previews: PreviewProvider {
         .environmentObject(postReply)
         .onAppear {
         postReply.showEditor = true
-        postReply.content = defaultText
-        postReply.action = .init() // dummy
+        postReply.context = .init(task: .init(action: .init(), pageToReload: nil), content: defaultText) // dummy
       }
     }
   }

@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "PostReplyModel.show(action:pageToReload:):PostReplyModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.context">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "TopicDetailsView.body.getter:TopicDetailsView.swift">
          <PersistentStrings>
             <PersistentString
@@ -14,7 +22,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
+         contextName = "PostEditorView.inner.getter:PostEditorView.swift">
       </ContextState>
       <ContextState
          contextName = "ContentCombiner.append&lt;&#x3c4;_0_0&gt;(_:):ContentCombiner.swift">
@@ -25,7 +33,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PostEditorView.inner.getter:PostEditorView.swift">
+         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
       </ContextState>
       <ContextState
          contextName = "TopicListView.body.getter:TopicListView.swift">

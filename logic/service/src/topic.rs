@@ -4,7 +4,7 @@ use crate::{
     fetch_package,
     forum::{make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
-    post::extract_post,
+    post::extract_post_with_at_page,
     user::extract_user_and_cache,
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
@@ -291,7 +291,9 @@ pub async fn get_topic_details(
     })?;
 
     let replies = extract_nodes(&package, "/root/__R/item", |ns| {
-        ns.into_iter().filter_map(extract_post).collect()
+        ns.into_iter()
+            .filter_map(|n| extract_post_with_at_page(request.page, n))
+            .collect()
     })?;
 
     let topic = extract_node(&package, "/root/__T", extract_topic)?
