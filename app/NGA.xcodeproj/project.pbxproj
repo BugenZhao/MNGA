@@ -73,6 +73,8 @@
 		B4715CC326A40DF40049D136 /* PostCommentRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC126A40DF40049D136 /* PostCommentRowView.swift */; };
 		B4715CC526A413E00049D136 /* QuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC426A413E00049D136 /* QuoteView.swift */; };
 		B4715CC626A413E00049D136 /* QuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC426A413E00049D136 /* QuoteView.swift */; };
+		B4715CC826A41F000049D136 /* PostRowUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC726A41F000049D136 /* PostRowUserView.swift */; };
+		B4715CC926A41F000049D136 /* PostRowUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC726A41F000049D136 /* PostRowUserView.swift */; };
 		B48709C5269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */; };
 		B48709C6269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */; };
 		B48B0C4626932CC70067794F /* ForumRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumRowView.swift */; };
@@ -211,6 +213,7 @@
 		B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicListView.swift; sourceTree = "<group>"; };
 		B4715CC126A40DF40049D136 /* PostCommentRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCommentRowView.swift; sourceTree = "<group>"; };
 		B4715CC426A413E00049D136 /* QuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteView.swift; sourceTree = "<group>"; };
+		B4715CC726A41F000049D136 /* PostRowUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRowUserView.swift; sourceTree = "<group>"; };
 		B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListPlaceholderView.swift; sourceTree = "<group>"; };
 		B48B0C4526932CC70067794F /* ForumRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumRowView.swift; sourceTree = "<group>"; };
 		B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingImageModel.swift; sourceTree = "<group>"; };
@@ -461,10 +464,13 @@
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
 				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
 				B4F2408626A30C4900D620B0 /* NotificationRowView.swift */,
+				B4715CC126A40DF40049D136 /* PostCommentRowView.swift */,
 				B444639B26A1CC9F006FA44D /* PostContentEditorView.swift */,
 				B4DBF61A268A20A90027233F /* PostContentView.swift */,
 				B45A9E8A26A171720088F04D /* PostEditorView.swift */,
+				B4715CC726A41F000049D136 /* PostRowUserView.swift */,
 				B4DBF60B2689799F0027233F /* PostRowView.swift */,
+				B4715CC426A413E00049D136 /* QuoteView.swift */,
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
@@ -475,8 +481,6 @@
 				B4DBF61426897A170027233F /* TopicRowView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
-				B4715CC126A40DF40049D136 /* PostCommentRowView.swift */,
-				B4715CC426A413E00049D136 /* QuoteView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -696,6 +700,7 @@
 				B43DED58269ED5EB009C52F5 /* FavoriteTopicListView.swift in Sources */,
 				B43DED4C269C7C8B009C52F5 /* SearchModel.swift in Sources */,
 				B44463A226A1ED2A006FA44D /* ActivityModel.swift in Sources */,
+				B4715CC826A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B444639F26A1D745006FA44D /* StickerImageView.swift in Sources */,
 				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
@@ -766,6 +771,7 @@
 				B444639D26A1CC9F006FA44D /* PostContentEditorView.swift in Sources */,
 				B4920CDD269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */,
+				B4715CC926A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */,
 				B44463A326A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,

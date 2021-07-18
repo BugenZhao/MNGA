@@ -152,6 +152,9 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
         if request.has_subject() {
             query.push(("post_subject", request.get_subject()));
         }
+        if request.get_action().get_operation() == PostReplyAction_Operation::COMMENT {
+            query.push(("comment", "1"))
+        }
         query
     };
 

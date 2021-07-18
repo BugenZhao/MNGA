@@ -130,6 +130,7 @@ message PostReplyAction {
     REPLY = 0;
     QUOTE = 1;
     MODIFY = 2;
+    COMMENT = 3;
   }
   Operation operation = 1;
   PostId post_id = 2;

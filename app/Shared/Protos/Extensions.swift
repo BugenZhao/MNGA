@@ -88,7 +88,9 @@ extension PostReplyAction {
       return "Quote"
     case .modify:
       return "Edit"
-    default:
+    case .comment:
+      return "Comment"
+    case .UNRECOGNIZED(_):
       return ""
     }
   }

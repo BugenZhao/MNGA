@@ -19,6 +19,7 @@ impl ToValue for PostReplyAction_Operation {
             PostReplyAction_Operation::REPLY => "reply",
             PostReplyAction_Operation::QUOTE => "quote",
             PostReplyAction_Operation::MODIFY => "modify",
+            &PostReplyAction_Operation::COMMENT => "reply",
         }
     }
 }
