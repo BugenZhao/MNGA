@@ -75,6 +75,12 @@
 		B4715CC626A413E00049D136 /* QuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC426A413E00049D136 /* QuoteView.swift */; };
 		B4715CC826A41F000049D136 /* PostRowUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC726A41F000049D136 /* PostRowUserView.swift */; };
 		B4715CC926A41F000049D136 /* PostRowUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CC726A41F000049D136 /* PostRowUserView.swift */; };
+		B4715CCB26A480B60049D136 /* BlockWordsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CCA26A480B60049D136 /* BlockWordsStorage.swift */; };
+		B4715CCC26A480B60049D136 /* BlockWordsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CCA26A480B60049D136 /* BlockWordsStorage.swift */; };
+		B4715CCE26A481FF0049D136 /* BlockWordListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CCD26A481FF0049D136 /* BlockWordListView.swift */; };
+		B4715CCF26A481FF0049D136 /* BlockWordListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CCD26A481FF0049D136 /* BlockWordListView.swift */; };
+		B4715CD126A48A930049D136 /* PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CD026A48A930049D136 /* PlaceholderView.swift */; };
+		B4715CD226A48A930049D136 /* PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4715CD026A48A930049D136 /* PlaceholderView.swift */; };
 		B48709C5269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */; };
 		B48709C6269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */; };
 		B48B0C4626932CC70067794F /* ForumRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumRowView.swift */; };
@@ -127,6 +133,8 @@
 		B4DCF44C2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */; };
 		B4DCF4502688F68400EC78A4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4DCF4532688F68400EC78A4 /* Localizable.strings */; };
 		B4DCF4512688F68400EC78A4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4DCF4532688F68400EC78A4 /* Localizable.strings */; };
+		B4DD2BDD26A490960030ADD8 /* BlockedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DD2BDC26A490960030ADD8 /* BlockedView.swift */; };
+		B4DD2BDE26A490960030ADD8 /* BlockedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DD2BDC26A490960030ADD8 /* BlockedView.swift */; };
 		B4E10716268DADEE006C1742 /* WebView in Frameworks */ = {isa = PBXBuildFile; productRef = B4E10715268DADEE006C1742 /* WebView */; };
 		B4E10718268DADF5006C1742 /* WebView in Frameworks */ = {isa = PBXBuildFile; productRef = B4E10717268DADF5006C1742 /* WebView */; };
 		B4E1071A268DADFF006C1742 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10719268DADFF006C1742 /* LoginView.swift */; };
@@ -214,6 +222,9 @@
 		B4715CC126A40DF40049D136 /* PostCommentRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCommentRowView.swift; sourceTree = "<group>"; };
 		B4715CC426A413E00049D136 /* QuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteView.swift; sourceTree = "<group>"; };
 		B4715CC726A41F000049D136 /* PostRowUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRowUserView.swift; sourceTree = "<group>"; };
+		B4715CCA26A480B60049D136 /* BlockWordsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWordsStorage.swift; sourceTree = "<group>"; };
+		B4715CCD26A481FF0049D136 /* BlockWordListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockWordListView.swift; sourceTree = "<group>"; };
+		B4715CD026A48A930049D136 /* PlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderView.swift; sourceTree = "<group>"; };
 		B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicListPlaceholderView.swift; sourceTree = "<group>"; };
 		B48B0C4526932CC70067794F /* ForumRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumRowView.swift; sourceTree = "<group>"; };
 		B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewingImageModel.swift; sourceTree = "<group>"; };
@@ -244,6 +255,7 @@
 		B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingDataSource.swift; sourceTree = "<group>"; };
 		B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+FirstAppear.swift"; sourceTree = "<group>"; };
 		B4DCF4522688F68400EC78A4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		B4DD2BDC26A490960030ADD8 /* BlockedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedView.swift; sourceTree = "<group>"; };
 		B4E10719268DADFF006C1742 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		B4E1071C268DC4D1006C1742 /* AuthStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStorage.swift; sourceTree = "<group>"; };
 		B4E1071F268DD215006C1742 /* AuthedPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthedPreview.swift; sourceTree = "<group>"; };
@@ -329,6 +341,7 @@
 			children = (
 				B4E1071C268DC4D1006C1742 /* AuthStorage.swift */,
 				B45819C2268D822800999830 /* FavoriteForumsStorage.swift */,
+				B4715CCA26A480B60049D136 /* BlockWordsStorage.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -454,6 +467,8 @@
 		B4DCF43E2688C38800EC78A4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B4DD2BDC26A490960030ADD8 /* BlockedView.swift */,
+				B4715CCD26A481FF0049D136 /* BlockWordListView.swift */,
 				B43DED54269DE1E4009C52F5 /* CollapsedContentView.swift */,
 				B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */,
 				B43DED57269ED5EB009C52F5 /* FavoriteTopicListView.swift */,
@@ -464,6 +479,7 @@
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
 				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
 				B4F2408626A30C4900D620B0 /* NotificationRowView.swift */,
+				B4715CD026A48A930049D136 /* PlaceholderView.swift */,
 				B4715CC126A40DF40049D136 /* PostCommentRowView.swift */,
 				B444639B26A1CC9F006FA44D /* PostContentEditorView.swift */,
 				B4DBF61A268A20A90027233F /* PostContentView.swift */,
@@ -688,6 +704,7 @@
 				B444639626A1C54A006FA44D /* Stickers.swift in Sources */,
 				B4E2BDCF2691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
+				B4715CCE26A481FF0049D136 /* BlockWordListView.swift in Sources */,
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
 				B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */,
@@ -712,10 +729,12 @@
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
 				B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */,
 				B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */,
+				B4DD2BDD26A490960030ADD8 /* BlockedView.swift in Sources */,
 				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */,
 				B48709C5269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */,
 				B43DED52269C9216009C52F5 /* VotesModel.swift in Sources */,
+				B4715CD126A48A930049D136 /* PlaceholderView.swift in Sources */,
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
 				B409CE6D26A0920C00F617EC /* ToastModifier.swift in Sources */,
@@ -732,6 +751,7 @@
 				B4DBF61526897A170027233F /* TopicRowView.swift in Sources */,
 				B43DED4F269C7D0B009C52F5 /* ForumSearchView.swift in Sources */,
 				B4715CC526A413E00049D136 /* QuoteView.swift in Sources */,
+				B4715CCB26A480B60049D136 /* BlockWordsStorage.swift in Sources */,
 				B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */,
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF608268976470027233F /* DateFormatters.swift in Sources */,
@@ -750,13 +770,16 @@
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
 				B45A9E8C26A171720088F04D /* PostEditorView.swift in Sources */,
 				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,
+				B4715CCC26A480B60049D136 /* BlockWordsStorage.swift in Sources */,
 				B444639426A1B745006FA44D /* OptionalBinding.swift in Sources */,
+				B4715CCF26A481FF0049D136 /* BlockWordListView.swift in Sources */,
 				B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4715CC626A413E00049D136 /* QuoteView.swift in Sources */,
+				B4DD2BDE26A490960030ADD8 /* BlockedView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */,
 				B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
@@ -781,6 +804,7 @@
 				B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B4920CD72690465100762FC9 /* TopicSubjectView.swift in Sources */,
 				B48709C6269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */,
+				B4715CD226A48A930049D136 /* PlaceholderView.swift in Sources */,
 				B43DED53269C9216009C52F5 /* VotesModel.swift in Sources */,
 				B4DCF43D26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B44463A026A1D745006FA44D /* StickerImageView.swift in Sources */,

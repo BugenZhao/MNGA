@@ -10,7 +10,7 @@ import SwiftUI
 import SwiftUIX
 
 struct ForumListView: View {
-  @StateObject var favorites = FavoriteForumsStorage()
+  @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = SearchModel<Forum>()
 
   @State var categories = [Category]()

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class AuthStorage: ObservableObject {
+class AuthStorage: ObservableObject {  
   @AppStorage("authInfo") var authInfo = WrappedMessage(inner: AuthInfo()) {
     didSet {
       reAuth()

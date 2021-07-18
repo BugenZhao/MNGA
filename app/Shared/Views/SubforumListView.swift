@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct SubforumListView: View {
-  @StateObject var favorites = FavoriteForumsStorage()
+  @StateObject var favorites = FavoriteForumsStorage.shared
 
   let forum: Forum
   let subforums: [Subforum]

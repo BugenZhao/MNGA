@@ -17,12 +17,14 @@ struct UserMenuView: View {
   @State var showHistory: Bool = false
   @State var showFavorite: Bool = false
   @State var showNotifications: Bool = false
+  @State var showBlockingWords: Bool = false
 
   @ViewBuilder
   var navigationBackgrounds: some View {
     NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { }
     NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { }
     NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { }
+    NavigationLink(destination: BlockWordListView(), isActive: $showBlockingWords) { }
   }
 
   var body: some View {
@@ -39,6 +41,9 @@ struct UserMenuView: View {
         }
         Button(action: { showHistory = true }) {
           Label("History", systemImage: "clock")
+        }
+        Button(action: { showBlockingWords = true }) {
+          Label("Block Words", systemImage: "eye.slash")
         }
       }
       Section {

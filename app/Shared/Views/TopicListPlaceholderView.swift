@@ -10,14 +10,7 @@ import SwiftUI
 
 struct TopicListPlaceholderView: View {
   var body: some View {
-    VStack {
-      Image(systemName: "list.bullet.rectangle.portrait")
-        .font(.largeTitle)
-      Spacer()
-        .frame(height: 8)
-      Text("Select a forum in sidebar")
-        .font(.callout)
-    } .foregroundColor(.secondary)
+    PlaceholderView(icon: "list.bullet.rectangle", title: "Select a forum in sidebar")
   }
 }
 

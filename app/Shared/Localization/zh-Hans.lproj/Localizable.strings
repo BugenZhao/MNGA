@@ -57,3 +57,6 @@
 "Subject" = "主题";
 "Content" = "内容";
 "Comment" = "贴条";
+"Block Words" = "屏蔽词";
+"No Block Words" = "没有屏蔽词";
+"New word" = "新关键词";

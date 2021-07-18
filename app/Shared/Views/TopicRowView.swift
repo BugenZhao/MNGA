@@ -48,17 +48,19 @@ struct RepliesNumView: View {
 struct TopicRowView: View {
   let topic: Topic
   let dimmedSubject: Bool
-  
+
   init(topic: Topic, dimmedSubject: Bool = true) {
     self.topic = topic
     self.dimmedSubject = dimmedSubject
   }
-  
+
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
-        TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: true)
-          .foregroundColor(dimmedSubject && topic.hasRepliesNumLastVisit ? .secondary : nil)
+        BlockedView(content: topic.subjectFull, revealOnTap: false) {
+          TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: true)
+            .foregroundColor(dimmedSubject && topic.hasRepliesNumLastVisit ? .secondary : nil)
+        }
         Spacer()
         RepliesNumView(num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil)
       }

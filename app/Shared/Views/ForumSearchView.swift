@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct ForumSearchView: View {
-  @StateObject var favorites = FavoriteForumsStorage()
+  @StateObject var favorites = FavoriteForumsStorage.shared
   @EnvironmentObject var model: SearchModel<Forum>
 
   @State var isLoading = false

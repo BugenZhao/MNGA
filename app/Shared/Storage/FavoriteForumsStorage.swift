@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 class FavoriteForumsStorage: ObservableObject {
+  static let shared = FavoriteForumsStorage()
+  
   enum FilterMode: String, CaseIterable {
     case favoritesOnly = "Favorites Only"
     case all = "All Forums"

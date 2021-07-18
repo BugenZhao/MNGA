@@ -151,3 +151,7 @@ message Notification {
   uint32 page = 7;
   bool read = 8;
 }
+
+message BlockWord {
+  string word = 1;
+}

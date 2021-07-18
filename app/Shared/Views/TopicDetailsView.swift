@@ -149,7 +149,7 @@ struct TopicDetailsView: View {
         .listStyle(GroupedListStyle())
       #endif
     }
-      .navigationTitle(topic.subjectContent)
+      .navigationTitle(latestTopic.subjectContent)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
