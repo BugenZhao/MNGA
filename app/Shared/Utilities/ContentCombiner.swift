@@ -59,11 +59,11 @@ class ContentCombiner {
     self.otherStylesModifier = otherStyles
   }
 
-  init(postScroll: PostScrollModel?) {
+  init(postScroll: PostScrollModel?, defaultFont: Font, defaultColor: Color) {
     self.parent = nil
     self.postScroll = postScroll
-    self.fontModifier = { _ in Font.callout }
-    self.colorModifier = { _ in Color.primary }
+    self.fontModifier = { _ in defaultFont }
+    self.colorModifier = { _ in defaultColor }
     self.otherStylesModifier = { $0 }
   }
 
@@ -249,14 +249,9 @@ class ContentCombiner {
       } }
     }
 
-    let view = HStack { combiner.buildView(); Spacer() }
-      .padding(.small)
-      .background(
-      RoundedRectangle(cornerRadius: 12)
-      #if os(iOS)
-        .fill(Color.systemGroupedBackground)
-      #endif
-    ) .onTapGesture(perform: tapAction)
+    let view = QuoteView(fullWidth: true) {
+      combiner.buildView()
+    } .onTapGesture(perform: tapAction)
 
     self.append(view)
   }
@@ -329,18 +324,19 @@ class ContentCombiner {
         #endif
       )
 
-      if let url = URL(string: urlString) {
-        let link = view.onTapGesture {
+      let link = Button(action: {
+        if let url = URL(string: urlString) {
           #if os(iOS)
             UIApplication.shared.open(url)
           #elseif os(macOS)
             NSWorkspace.shared.open(url)
           #endif
         }
-        self.append(link)
-      } else {
-        self.append(view)
-      }
+      }) {
+        view
+      } .buttonStyle(.plain)
+
+      self.append(link)
     }
   }
 

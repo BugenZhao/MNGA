@@ -112,7 +112,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var hotRepliesSection: some View {
-    if let hotReplies = self.first?.hostReplies, !hotReplies.isEmpty {
+    if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
       Section(header: Text("Hot Replies")) {
         ForEach(hotReplies, id: \.id.pid) { post in
           buildRow(post: post, withId: false)
@@ -209,7 +209,7 @@ struct TopicDetailsView_Preview: PreviewProvider {
     AuthedPreview {
       NavigationView {
         TopicDetailsView.build(topic: Topic.with {
-          $0.id = "27555218"
+          $0.id = "27637920" // "27555218"
           $0.subjectContent = "Topic Title"
         })
       }

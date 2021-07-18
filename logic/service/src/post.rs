@@ -51,6 +51,13 @@ pub fn extract_post(node: Node) -> Option<Post> {
     })
     .unwrap_or_default();
 
+    let comments = extract_nodes_rel(node, "./comment/item", |ns| {
+        ns.into_iter()
+            .filter_map(|n| extract_post_with_at_page(1, n))
+            .collect()
+    })
+    .unwrap_or_default();
+
     let device = {
         let device = extract_node_rel(node, ".//from_client", |n| n.string_value())
             .ok()
@@ -75,7 +82,8 @@ pub fn extract_post(node: Node) -> Option<Post> {
         post_date: get!(map, "postdatetimestamp", _)?,
         score: get!(map, "score", _)?,
         vote_state,
-        host_replies: hot_replies.into(),
+        hot_replies: hot_replies.into(),
+        comments: comments.into(),
         device,
         alter_info: get!(map, "alterinfo").unwrap_or_default(),
         ..Default::default()
@@ -169,7 +177,9 @@ pub async fn post_reply_fetch_content(
     .await?;
 
     let content = extract_string(&package, "/root/content").unwrap_or_default();
-    let subject = extract_string(&package, "/root/subject").ok().filter(|s| !s.is_empty());
+    let subject = extract_string(&package, "/root/subject")
+        .ok()
+        .filter(|s| !s.is_empty());
 
     Ok(PostReplyFetchContentResponse {
         content,

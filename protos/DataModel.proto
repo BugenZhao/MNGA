@@ -43,7 +43,8 @@ message Post {
   uint64 post_date = 4;
   uint32 score = 5;
   VoteState vote_state = 7;
-  repeated Post host_replies = 8;
+  repeated Post hot_replies = 8;
+  repeated Post comments = 12;
   Device device = 9;
   string alter_info = 10;
   uint32 at_page = 11;

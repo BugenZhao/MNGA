@@ -16,19 +16,18 @@ struct CollapsedContentView<Content: View>: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      Button(action: { withAnimation { self.collapsed.toggle() } }) {
+      Button(action: { withAnimation(.spring()) { self.collapsed.toggle() } }) {
         HStack {
-          Image(systemName: self.collapsed ? "chevron.down" : "chevron.up")
+          Image(systemName: self.collapsed ? "eye.slash" : "eye.fill")
           Text(self.title)
         } .padding(.bottom, 1)
           .foregroundColor(.accentColor)
           .font(.subheadline.bold())
       } .buttonStyle(PlainButtonStyle())
 
-      if !self.collapsed {
-        self.content()
-          .transition(.move(edge: .top).combined(with: .opacity))
-      }
+      self.content()
+        .redacted(reason: self.collapsed ? .placeholder : [])
+        .allowsHitTesting(!self.collapsed)
     }
   }
 }

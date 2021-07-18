@@ -16,10 +16,15 @@ struct PostRowUserView: View, Equatable {
 
   let post: Post
   let user: User?
+  let compact: Bool
 
-  static func build(post: Post) -> Self {
+  private var avatarSize: CGFloat {
+    compact ? 24 : 36
+  }
+
+  static func build(post: Post, compact: Bool = false) -> Self {
     let user = try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
-    return Self.init(post: post, user: user)
+    return Self.init(post: post, user: user, compact: compact)
   }
 
   @State var showId = false
@@ -42,7 +47,7 @@ struct PostRowUserView: View, Equatable {
     HStack {
       buildAvatar(user: user)
         .foregroundColor(.accentColor)
-        .frame(width: 36, height: 36)
+        .frame(width: avatarSize, height: avatarSize)
         .clipShape(Circle())
 
       VStack(alignment: .leading, spacing: 2) {
@@ -55,23 +60,25 @@ struct PostRowUserView: View, Equatable {
         } .font(.subheadline)
           .onTapGesture { withAnimation { self.showId.toggle() } }
 
-        HStack(spacing: 6) {
+        if !compact {
+          HStack(spacing: 6) {
 
-          HStack(spacing: 2) {
-            Image(systemName: "text.bubble")
-            Text("\(user?.postNum ?? 0)")
-          } .foregroundColor((user?.postNum ?? 50 < 50) ? .red : .secondary)
-          HStack(spacing: 2) {
-            Image(systemName: "calendar")
-            Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)
-          }
-          HStack(spacing: 2) {
-            Image(systemName: "flag")
-            Text("\(user?.fame ?? 0)")
-          } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
+            HStack(spacing: 2) {
+              Image(systemName: "text.bubble")
+              Text("\(user?.postNum ?? 0)")
+            } .foregroundColor((user?.postNum ?? 50 < 50) ? .red : .secondary)
+            HStack(spacing: 2) {
+              Image(systemName: "calendar")
+              Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)
+            }
+            HStack(spacing: 2) {
+              Image(systemName: "flag")
+              Text("\(user?.fame ?? 0)")
+            } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
 
-        } .font(.footnote)
-          .foregroundColor(.secondary)
+          } .font(.footnote)
+            .foregroundColor(.secondary)
+        }
       } .redacted(reason: user == nil ? .placeholder : [])
     }
   }
@@ -119,21 +126,35 @@ struct PostRowView: View {
   }
 
   @ViewBuilder
+  var comments: some View {
+    if !post.comments.isEmpty {
+      VStack {
+        Divider()
+        ForEach(post.comments, id: \.hashIdentifiable) { comment in
+          PostCommentRowView(comment: comment)
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
   var voter: some View {
     HStack(spacing: 4) {
-      Image(systemName: vote.state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
-        .foregroundColor(vote.state == .up ? .accentColor : .secondary)
-        .frame(height: 24)
-        .onTapGesture { doVote(.upvote) }
+      Button(action: { doVote(.upvote) }) {
+        Image(systemName: vote.state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
+          .foregroundColor(vote.state == .up ? .accentColor : .secondary)
+          .frame(height: 24)
+      } .buttonStyle(.plain)
 
       Text("\(max(Int32(post.score) + vote.delta, 0))")
         .foregroundColor(vote.state != .none ? .accentColor : .secondary)
         .font(.subheadline.monospacedDigit())
 
-      Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
-        .foregroundColor(vote.state == .down ? .accentColor : .secondary)
-        .frame(height: 24)
-        .onTapGesture { doVote(.downvote) }
+      Button(action: { doVote(.downvote) }) {
+        Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+          .foregroundColor(vote.state == .down ? .accentColor : .secondary)
+          .frame(height: 24)
+      } .buttonStyle(.plain)
     }
   }
 
@@ -163,6 +184,7 @@ struct PostRowView: View {
       header
       content
       footer
+      comments
     } .padding(.vertical, 4)
       .contextMenu { menu }
     #if os(iOS)

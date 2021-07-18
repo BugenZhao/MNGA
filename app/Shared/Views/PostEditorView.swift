@@ -32,17 +32,6 @@ struct PostEditorView: View {
   }
 
   @ViewBuilder
-  var loading: some View {
-    Spacer()
-    HStack {
-      Spacer()
-      ProgressView()
-      Spacer()
-    }
-    Spacer()
-  }
-
-  @ViewBuilder
   var preview: some View {
     List {
       Section(header: Text("Preview")) {
@@ -63,7 +52,7 @@ struct PostEditorView: View {
   @ViewBuilder
   var inner: some View {
     if postReply.context == nil {
-      loading
+      ProgressView()
     } else {
       switch displayMode {
       case .plain:

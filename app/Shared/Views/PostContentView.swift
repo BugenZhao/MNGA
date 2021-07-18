@@ -50,11 +50,19 @@ struct PostImageView: View {
 
 struct PostContentView: View, Equatable {
   let spans: [Span]
+  let defaultFont: Font
+  let defaultColor: Color
+
+  init(spans: [Span], defaultFont: Font = .callout, defaultColor: Color = .primary) {
+    self.spans = spans
+    self.defaultFont = defaultFont
+    self.defaultColor = defaultColor
+  }
 
   @OptionalEnvironmentObject<PostScrollModel> var postScroll
 
   var body: some View {
-    let combiner = ContentCombiner(postScroll: postScroll)
+    let combiner = ContentCombiner(postScroll: postScroll, defaultFont: defaultFont, defaultColor: defaultColor)
     combiner.visit(spans: spans)
     return combiner.buildView()
   }
@@ -126,6 +134,6 @@ struct PostContentView_Previews: PreviewProvider {
     #if os(iOS)
       .listStyle(GroupedListStyle())
     #endif
-      .preferredColorScheme(.dark)
+    .preferredColorScheme(.dark)
   }
 }
