@@ -18,6 +18,10 @@ struct PostEditorView: View {
   @State var displayMode = DisplayMode.plain
   @State var spans = [Span]()
 
+  var title: LocalizedStringKey {
+    postReply.context?.task.action.title ?? "Editor"
+  }
+
   @ViewBuilder
   var picker: some View {
     Picker("Display Mode", selection: $displayMode.animation()) {
@@ -39,24 +43,35 @@ struct PostEditorView: View {
   }
 
   @ViewBuilder
-  var inner: some View {
-    VStack(alignment: .leading) {
-      picker
-
-      if postReply.context?.content == nil {
-        loading
-      } else {
-        switch displayMode {
-        case .plain:
-          PostContentEditorView(content: ($postReply.context ?? .dummy).content ?? "")
-        case .preview:
-          ScrollView {
-            PostContentView(spans: spans)
-              .frame(maxWidth: .infinity, alignment: .topLeading)
-          } .onAppear { parseContent() }
-        }
+  var preview: some View {
+    List {
+      Section(header: Text("Preview")) {
+        PostContentView(spans: spans)
       }
-    } .padding([.horizontal, .top])
+    } .listStyle(GroupedListStyle())
+      .onAppear { parseContent() }
+  }
+
+  var subjectBinding: Binding<String?> {
+    ($postReply.context ?? .dummy).subject
+  }
+
+  var contentBinding: Binding<String> {
+    ($postReply.context ?? .dummy).content ?? ""
+  }
+
+  @ViewBuilder
+  var inner: some View {
+    if postReply.context == nil {
+      loading
+    } else {
+      switch displayMode {
+      case .plain:
+        PostContentEditorView(subject: subjectBinding, content: contentBinding)
+      case .preview:
+        preview
+      }
+    }
   }
 
   func parseContent() {
@@ -72,7 +87,7 @@ struct PostEditorView: View {
     NavigationView {
       inner
         .modifier(AlertToastModifier())
-        .navigationBarTitle(postReply.context?.task.action.title ?? "Editor", displayMode: .inline)
+        .navigationBarTitle(title, displayMode: .inline)
         .toolbar {
         ToolbarItem(placement: .confirmationAction) {
           Button(action: { doSend() }) {
@@ -87,6 +102,9 @@ struct PostEditorView: View {
           Button(action: { self.postReply.discardCurrentContext() }) {
             Text("Discard").foregroundColor(.red)
           }
+        }
+        ToolbarItem(placement: .bottomBar) {
+          picker
         }
       }
     }

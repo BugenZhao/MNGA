@@ -21,11 +21,13 @@ class PostReplyModel: ObservableObject {
     }
 
     let task: Task
+    var subject: String?
     var content: String?
     let seed = UUID()
 
-    init(task: Task, content: String? = nil) {
+    init(task: Task, subject: String? = nil, content: String? = nil) {
       self.task = task
+      self.subject = subject
       self.content = content
     }
 
@@ -69,7 +71,7 @@ class PostReplyModel: ObservableObject {
 
   func discardCurrentContext() {
     guard self.showEditor else { return }
-    
+
     self.showEditor = false
     DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.reset() }
   }
@@ -79,9 +81,12 @@ class PostReplyModel: ObservableObject {
       $0.action = task.action
     }), errorToastModel: ToastModel.alert) { (response: PostReplyFetchContentResponse) in
       // only build context after successful fetching
-      let context = Context.init(task: task, content: response.content)
+      print(response)
+      let subject = response.hasSubject ? response.subject : nil
+      let content = response.content
+      let context = Context.init(task: task, subject: subject, content: content)
       self.contexts[task] = context
-      self.context = context
+      withAnimation { self.context = context }
     } onError: { e in
       if !ignoreError {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.showEditor = false }
@@ -97,6 +102,7 @@ class PostReplyModel: ObservableObject {
     logicCallAsync(.postReply(.with {
       $0.action = context.task.action
       $0.content = context.content ?? ""
+      if let subject = context.subject { $0.subject = subject }
     }), errorToastModel: ToastModel.alert)
     { (response: PostReplyResponse) in
       self.showEditor = false

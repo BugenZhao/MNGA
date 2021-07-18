@@ -145,11 +145,15 @@ message TopicFavorRequest {
 message TopicFavorResponse { bool is_favored = 1; }
 
 message PostReplyFetchContentRequest { PostReplyAction action = 1; }
-message PostReplyFetchContentResponse { string content = 1; }
+message PostReplyFetchContentResponse {
+  string content = 1;
+  optional string subject = 2;
+}
 
 message PostReplyRequest {
   PostReplyAction action = 1;
   string content = 2;
+  optional string subject = 3;
 }
 message PostReplyResponse { string message = 1; }
 

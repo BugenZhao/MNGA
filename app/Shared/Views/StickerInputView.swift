@@ -10,10 +10,10 @@ import SwiftUI
 
 struct StickerInputView: View {
   @Binding var text: String
-  
+
   var body: some View {
     let rows = [GridItem](repeating: .init(.fixed(50)), count: 4)
-    
+
     ScrollView(.horizontal) {
       LazyHGrid(rows: rows, spacing: 10) {
         ForEach(stickerImageNames, id: \.self) { name in
@@ -26,15 +26,16 @@ struct StickerInputView: View {
               .frame(height: 50)
           }
         }
-      }
+      }.padding(.horizontal)
     } .foregroundColor(.primary)
+      .frame(height: 240)
   }
 }
 
 struct StickerInputView_Previews: PreviewProvider {
   struct Preview: View {
     @State var text = "233"
-    
+
     var body: some View {
       VStack {
         Text(text)
@@ -43,7 +44,7 @@ struct StickerInputView_Previews: PreviewProvider {
       }
     }
   }
-  
+
   static var previews: some View {
     Preview()
   }

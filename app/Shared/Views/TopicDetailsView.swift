@@ -49,6 +49,15 @@ struct TopicDetailsView: View {
 
   private var first: Post? { dataSource.items.first }
 
+  private var latestTopic: Topic {
+    var latest = self.topic
+    if let newTopic = self.dataSource.latestResponse?.topic {
+      latest.tags = newTopic.tags
+      latest.subjectContent = newTopic.subjectContent
+    }
+    return latest
+  }
+
   @ViewBuilder
   var moreMenu: some View {
     Menu {
@@ -94,7 +103,7 @@ struct TopicDetailsView: View {
       Spacer()
       if dataSource.isLoading { ProgressView() }
     }) {
-      TopicSubjectView(topic: topic, lineLimit: nil)
+      TopicSubjectView(topic: latestTopic, lineLimit: nil)
       if let first = self.first {
         buildRow(post: first)
       }

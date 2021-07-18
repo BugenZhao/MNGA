@@ -133,18 +133,21 @@ pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteRespon
 pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
     let action = request.get_action().get_operation().to_value();
 
-    let _package = fetch_package(
-        "post.php",
-        vec![
+    let query = {
+        let mut query = vec![
             ("action", action),
             ("tid", request.get_action().get_post_id().get_tid()),
             ("pid", request.get_action().get_post_id().get_pid()),
             ("step", "2"),
             ("post_content", request.get_content()),
-        ],
-        vec![],
-    )
-    .await?;
+        ];
+        if request.has_subject() {
+            query.push(("post_subject", request.get_subject()));
+        }
+        query
+    };
+
+    let _package = fetch_package("post.php", query, vec![]).await?;
 
     Ok(PostReplyResponse::new())
 }
@@ -166,9 +169,11 @@ pub async fn post_reply_fetch_content(
     .await?;
 
     let content = extract_string(&package, "/root/content").unwrap_or_default();
+    let subject = extract_string(&package, "/root/subject").ok().filter(|s| !s.is_empty());
 
     Ok(PostReplyFetchContentResponse {
         content,
+        _subject: subject.map(PostReplyFetchContentResponse_oneof__subject::subject),
         ..Default::default()
     })
 }
