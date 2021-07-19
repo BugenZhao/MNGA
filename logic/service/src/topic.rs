@@ -302,9 +302,7 @@ pub async fn get_topic_details(
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 
-    if request.page == 1 {
-        insert_topic_history(topic.clone());
-    }
+    insert_topic_history(topic.clone()); // save history
 
     Ok(TopicDetailsResponse {
         topic: Some(topic).into(),

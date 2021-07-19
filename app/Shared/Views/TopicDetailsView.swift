@@ -125,7 +125,7 @@ struct TopicDetailsView: View {
   var allRepliesSection: some View {
     if dataSource.items.count > 1 {
       Section(header: Text("Replies")) {
-        ForEach(dataSource.items.dropFirst(), id: \.id.pid) { post in
+        ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
           buildRow(post: post)
             .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
         }

@@ -34,6 +34,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.onResponse = onResponse
     self.id = id
   }
+  
+  func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
+    self.items.sorted { $0[keyPath: key] < $1[keyPath: key] }
+  }
 
   private func upsertItems<S>(_ items: S) where S: Sequence, S.Element == Item {
     items.forEach {

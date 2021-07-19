@@ -7,16 +7,25 @@
 
 import Foundation
 import SwiftUI
-import Combine
 
-class HotTopicDataSource: PagingDataSource<HotTopicListResponse, Topic> {
-  @Published var range: HotTopicListRequest.DateRange = .day {
-    didSet { self.refresh(animated: true) }
-  }
+struct HotTopicListInnerView: View {
+  typealias DateRange = HotTopicListRequest.DateRange
+  typealias DataSource = PagingDataSource<HotTopicListResponse, Topic>
 
-  init(forum: Forum) {
-    super.init(
-      buildRequest: nil,
+  let forum: Forum
+  let range: DateRange
+
+  @StateObject var dataSource: DataSource
+
+  static func build(forum: Forum, range: DateRange) -> Self {
+    let dataSource = DataSource(
+      buildRequest: { _ in
+          .hotTopicList(HotTopicListRequest.with {
+          $0.id = forum.id
+          $0.range = range
+          $0.fetchPageLimit = 5
+        })
+      },
       onResponse: { response in
         let items = response.topics
         return (items, 1)
@@ -24,30 +33,45 @@ class HotTopicDataSource: PagingDataSource<HotTopicListResponse, Topic> {
       id: \.id
     )
 
-    self.buildRequest = { _ in
-      return .hotTopicList(HotTopicListRequest.with {
-        $0.id = forum.id
-        $0.range = self.range
-        $0.fetchPageLimit = 5
-      })
-    }
+    return Self.init(forum: forum, range: range, dataSource: dataSource)
+  }
+
+  var body: some View {
+    Group {
+      if dataSource.items.isEmpty {
+        ProgressView()
+      } else {
+        List {
+          Section(header: Text(range.description)) {
+            ForEach(dataSource.items, id: \.id) { topic in
+              NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
+                TopicRowView(topic: topic)
+              }
+            }
+          }
+        }
+        #if os(iOS)
+          .listStyle(GroupedListStyle())
+        #endif
+      }
+    } .onAppear { dataSource.initialLoad() }
   }
 }
 
 struct HotTopicListView: View {
   let forum: Forum
 
-  @StateObject var dataSource: HotTopicDataSource
-  
+  @State var range = HotTopicListRequest.DateRange.day
+
   static func build(forum: Forum) -> Self {
-    return Self.init(forum: forum, dataSource: .init(forum: forum))
+    return Self.init(forum: forum)
   }
 
   @ViewBuilder
   var rangeMenu: some View {
     Menu {
       Section {
-        Picker(selection: $dataSource.range.animation(), label: Text("Range")) {
+        Picker(selection: $range.animation(), label: Text("Range")) {
           ForEach(HotTopicListRequest.DateRange.allCases, id: \.rawValue) { range in
             HStack {
               Text(range.description)
@@ -60,29 +84,12 @@ struct HotTopicListView: View {
     } label: {
       Label("Range", systemImage: "calendar")
     } .imageScale(.large)
-
   }
 
   var body: some View {
-    Group {
-      if dataSource.items.isEmpty {
-        ProgressView()
-      } else {
-        List {
-          Section(header: Text(dataSource.range.description)) {
-            ForEach(dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-                TopicRowView(topic: topic)
-              }
-            }
-          }
-        }
-        #if os(iOS)
-          .listStyle(GroupedListStyle())
-        #endif
-      }
-    } .navigationTitle("Hot Topics")
+    HotTopicListInnerView.build(forum: forum, range: range)
+      .id(range)
+      .navigationTitle("Hot Topics")
       .modifier(SingleItemToolbarModifier { rangeMenu })
-      .onAppear { dataSource.initialLoad() }
   }
 }

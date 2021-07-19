@@ -174,8 +174,8 @@
             filePath = "Shared/Views/HotTopicListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
             landmarkName = "rangeMenu"
             landmarkType = "24">
          </BreakpointContent>
@@ -288,7 +288,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "136"
             endingLineNumber = "136"
-            landmarkName = "body"
+            landmarkName = "allRepliesSection"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
@@ -418,36 +418,52 @@
             endingLineNumber = "44"
             landmarkName = "sent"
             landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DADBB34C-A75D-4B65-A1A0-ECA6D712EF82"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Views/HotTopicListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "body"
+            landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - 9c7f78599472b336"
+                  uuid = "DADBB34C-A75D-4B65-A1A0-ECA6D712EF82 - 47c76e206d04746d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "NGA.PostReplyModel.sent.didset : Swift.Optional&lt;NGA.PostReplyModel.Context&gt;"
+                  symbolName = "closure #1 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.listStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ListStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0&gt; in NGA.HotTopicListInnerView.body.getter : some"
                   moduleName = "NGA"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PostReplyModel.swift"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Views/HotTopicListView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "296">
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "716">
                </Location>
                <Location
-                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - f2f01ee1109b3a38"
+                  uuid = "DADBB34C-A75D-4B65-A1A0-ECA6D712EF82 - 96eeadc14c037079"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in NGA.PostReplyModel.sent.didset : Swift.Optional&lt;NGA.PostReplyModel.Context&gt;"
+                  symbolName = "protocol witness for SwiftUI.View.body.getter : &#x3c4;_0_0.Body in conformance NGA.HotTopicListInnerView : SwiftUI.View in NGA"
                   moduleName = "NGA"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PostReplyModel.swift"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Views/HotTopicListView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25"
-                  offsetFromSymbolStart = "28">
+                  startingLineNumber = "40"
+                  endingLineNumber = "40"
+                  offsetFromSymbolStart = "316">
                </Location>
             </Locations>
          </BreakpointContent>
