@@ -61,7 +61,7 @@ struct BlockWordListView: View {
       } else {
         list
       }
-    }.listStyle(.insetGrouped)
+    } .listStyle(.insetGrouped)
       .modifier(SingleItemToolbarModifier { addButton })
       .navigationTitle("Block Words")
   }
