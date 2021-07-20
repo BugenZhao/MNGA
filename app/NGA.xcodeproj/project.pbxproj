@@ -159,8 +159,8 @@
 		B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408326A30A8500D620B0 /* NotificationListView.swift */; };
 		B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408626A30C4900D620B0 /* NotificationRowView.swift */; };
 		B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408626A30C4900D620B0 /* NotificationRowView.swift */; };
-		B4FBED7F26A6D70F006390A3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* SettingsView.swift */; };
-		B4FBED8026A6D70F006390A3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* SettingsView.swift */; };
+		B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */; };
+		B4FBED8026A6D70F006390A3 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */; };
 		B4FBED8226A7163E006390A3 /* PreferencesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */; };
 		B4FBED8326A7163E006390A3 /* PreferencesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */; };
 /* End PBXBuildFile section */
@@ -273,7 +273,7 @@
 		B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCombiner.swift; sourceTree = "<group>"; };
 		B4F2408326A30A8500D620B0 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
 		B4F2408626A30C4900D620B0 /* NotificationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRowView.swift; sourceTree = "<group>"; };
-		B4FBED7E26A6D70F006390A3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesStorage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -494,7 +494,7 @@
 				B4715CC726A41F000049D136 /* PostRowUserView.swift */,
 				B4DBF60B2689799F0027233F /* PostRowView.swift */,
 				B4715CC426A413E00049D136 /* QuoteView.swift */,
-				B4FBED7E26A6D70F006390A3 /* SettingsView.swift */,
+				B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */,
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
@@ -728,7 +728,7 @@
 				B4715CC826A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B444639F26A1D745006FA44D /* StickerImageView.swift in Sources */,
 				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
-				B4FBED7F26A6D70F006390A3 /* SettingsView.swift in Sources */,
+				B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B444638B26A1981E006FA44D /* PostReplyModel.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
@@ -804,7 +804,7 @@
 				B444639D26A1CC9F006FA44D /* PostContentEditorView.swift in Sources */,
 				B4920CDD269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F72692FBF50072DAC0 /* HotTopicListView.swift in Sources */,
-				B4FBED8026A6D70F006390A3 /* SettingsView.swift in Sources */,
+				B4FBED8026A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4715CC926A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */,
 				B44463A326A1ED2A006FA44D /* ActivityModel.swift in Sources */,

@@ -11,6 +11,7 @@ import SwiftUIX
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
   @StateObject var activity = ActivityModel()
+  @StateObject var prefs = PreferencesStorage()
 
   var body: some View {
     Group {
@@ -32,6 +33,7 @@ struct ContentView: View {
       .modifier(HudToastModifier())
       .environmentObject(viewingImage)
       .environmentObject(activity)
+      .environment(\.useRedact, prefs.useRedact)
   }
 }
 

@@ -17,7 +17,7 @@ struct UserMenuView: View {
   @State var showHistory: Bool = false
   @State var showFavorite: Bool = false
   @State var showNotifications: Bool = false
-  @State var showSettingsModal: Bool = false
+  @State var showPreferencesModal: Bool = false
 
   @ViewBuilder
   var navigationBackgrounds: some View {
@@ -66,8 +66,8 @@ struct UserMenuView: View {
           }
         }
 
-        Button(action: { showSettingsModal = true }) {
-          Label("Settings", systemImage: "gear")
+        Button(action: { showPreferencesModal = true }) {
+          Label("Preferences", systemImage: "gear")
         }
       }
     } label: {
@@ -78,7 +78,7 @@ struct UserMenuView: View {
       .onAppear { loadData() }
       .onChange(of: authStorage.authInfo) { _ in loadData() }
       .background { navigationBackgrounds }
-      .sheet(isPresented: $showSettingsModal) { SettingsView() }
+      .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
   }
 
   func loadData() {

@@ -8,9 +8,22 @@
 import Foundation
 import SwiftUI
 
+struct UseRedactKey: EnvironmentKey {  
+  static let defaultValue: Bool = true
+}
+
+extension EnvironmentValues {
+  var useRedact: Bool {
+    get { self[UseRedactKey.self] }
+    set { self[UseRedactKey.self] = newValue }
+  }
+}
+
 struct CollapsedContentView<Content: View>: View {
   let title: String
   @ViewBuilder let content: () -> Content
+
+  @Environment(\.useRedact) var useRedact
 
   @State private var collapsed: Bool = true
 
@@ -25,9 +38,15 @@ struct CollapsedContentView<Content: View>: View {
           .font(.subheadline.bold())
       } .buttonStyle(PlainButtonStyle())
 
-      self.content()
-        .redacted(reason: self.collapsed ? .placeholder : [])
-        .allowsHitTesting(!self.collapsed)
+      if useRedact {
+        self.content()
+          .redacted(reason: self.collapsed ? .placeholder : [])
+          .allowsHitTesting(!self.collapsed)
+      } else {
+        if !self.collapsed {
+          self.content()
+        }
+      }
     }
   }
 }

@@ -60,6 +60,9 @@
 "Block Words" = "屏蔽词";
 "No Block Words" = "没有屏蔽词";
 "New word" = "新关键词";
-"Settings" = "设置";
+"Preferences" = "设置";
 "Reading" = "阅读";
 "Show Signature" = "展示签名";
+"Collapsed Style" = "折叠风格";
+"Redact" = "遮盖";
+"Hidden" = "隐藏";

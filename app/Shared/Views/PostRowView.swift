@@ -103,6 +103,7 @@ struct PostRowView: View {
           .imageScale(.small)
         PostContentView(spans: sigSpans, defaultFont: .subheadline, defaultColor: .secondary)
           .equatable()
+          .environment(\.useRedact, false)
       }
     }
   }
