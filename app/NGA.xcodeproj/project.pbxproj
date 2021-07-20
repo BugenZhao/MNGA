@@ -161,6 +161,8 @@
 		B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408626A30C4900D620B0 /* NotificationRowView.swift */; };
 		B4FBED7F26A6D70F006390A3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* SettingsView.swift */; };
 		B4FBED8026A6D70F006390A3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* SettingsView.swift */; };
+		B4FBED8226A7163E006390A3 /* PreferencesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */; };
+		B4FBED8326A7163E006390A3 /* PreferencesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -272,6 +274,7 @@
 		B4F2408326A30A8500D620B0 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
 		B4F2408626A30C4900D620B0 /* NotificationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRowView.swift; sourceTree = "<group>"; };
 		B4FBED7E26A6D70F006390A3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesStorage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -345,6 +348,7 @@
 				B4E1071C268DC4D1006C1742 /* AuthStorage.swift */,
 				B45819C2268D822800999830 /* FavoriteForumsStorage.swift */,
 				B4715CCA26A480B60049D136 /* BlockWordsStorage.swift */,
+				B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -490,6 +494,7 @@
 				B4715CC726A41F000049D136 /* PostRowUserView.swift */,
 				B4DBF60B2689799F0027233F /* PostRowView.swift */,
 				B4715CC426A413E00049D136 /* QuoteView.swift */,
+				B4FBED7E26A6D70F006390A3 /* SettingsView.swift */,
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
@@ -500,7 +505,6 @@
 				B4DBF61426897A170027233F /* TopicRowView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
-				B4FBED7E26A6D70F006390A3 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -754,6 +758,7 @@
 				B4E1071D268DC4D1006C1742 /* AuthStorage.swift in Sources */,
 				B45A9E8B26A171720088F04D /* PostEditorView.swift in Sources */,
 				B4DBF61526897A170027233F /* TopicRowView.swift in Sources */,
+				B4FBED8226A7163E006390A3 /* PreferencesStorage.swift in Sources */,
 				B43DED4F269C7D0B009C52F5 /* ForumSearchView.swift in Sources */,
 				B4715CC526A413E00049D136 /* QuoteView.swift in Sources */,
 				B4715CCB26A480B60049D136 /* BlockWordsStorage.swift in Sources */,
@@ -805,6 +810,7 @@
 				B44463A326A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
 				B4E10721268DD215006C1742 /* AuthedPreview.swift in Sources */,
+				B4FBED8326A7163E006390A3 /* PreferencesStorage.swift in Sources */,
 				B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */,
 				B4715CC326A40DF40049D136 /* PostCommentRowView.swift in Sources */,
 				B45819BD268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,

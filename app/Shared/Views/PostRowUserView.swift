@@ -22,8 +22,11 @@ struct PostRowUserView: View, Equatable {
     compact ? 24 : 36
   }
 
-  static func build(post: Post, compact: Bool = false) -> Self {
-    let user = try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
+  static func build(post: Post, user: User? = nil, compact: Bool = false) -> Self {
+    var user = user
+    if user == nil {
+      user = try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
+    }
     return Self.init(post: post, user: user, compact: compact)
   }
 

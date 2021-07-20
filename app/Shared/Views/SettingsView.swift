@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 struct SettingsView: View {
+  @StateObject var pref = PreferencesStorage.shared
+
   @ViewBuilder
   var list: some View {
     List {
@@ -16,8 +18,12 @@ struct SettingsView: View {
         NavigationLink(destination: BlockWordListView()) {
           Label("Block Words", systemImage: "eye.slash")
         }
+        Toggle(isOn: $pref.showSignature) {
+          Label("Show Signature", systemImage: "signature")
+        }
       }
-    } .listStyle(.insetGrouped)
+    } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+      .listStyle(.insetGrouped)
   }
 
   var body: some View {

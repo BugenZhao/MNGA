@@ -92,7 +92,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    PostRowView(post: post, vote: votes.binding(for: post))
+    PostRowView.build(post: post, vote: votes.binding(for: post))
       .id((withId ? "" : "dummy") + post.id.pid)
   }
 

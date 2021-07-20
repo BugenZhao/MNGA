@@ -11,25 +11,29 @@ fn vote_response_key(id: &PostId) -> String {
     format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)
 }
 
-pub fn extract_post(node: Node) -> Option<Post> {
-    use super::macros::get;
-    let map = extract_kv(node);
-
-    let raw_content = get!(map, "content")?;
-    let spans = text::parse_content(&raw_content).unwrap_or_else(|_| {
+pub fn extract_post_content(raw: String) -> PostContent {
+    let spans = text::parse_content(&raw).unwrap_or_else(|_| {
         vec![Span {
             value: Some(Span_oneof_value::plain(Span_Plain {
-                text: raw_content.clone(),
+                text: raw.clone(), // todo: extract plain text
                 ..Default::default()
             })),
             ..Default::default()
         }]
     });
-    let content = PostContent {
+    PostContent {
         spans: spans.into(),
-        raw: raw_content,
+        raw,
         ..Default::default()
-    };
+    }
+}
+
+pub fn extract_post(node: Node) -> Option<Post> {
+    use super::macros::get;
+    let map = extract_kv(node);
+
+    let raw_content = get!(map, "content")?;
+    let content = extract_post_content(raw_content);
 
     let post_id = PostId {
         pid: get!(map, "pid")?,

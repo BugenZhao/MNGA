@@ -10,6 +10,7 @@ import SwiftUI
 
 struct PostRowView: View {
   let post: Post
+  let user: User?
 
   @State var showPostId = false
 
@@ -19,10 +20,17 @@ struct PostRowView: View {
   @EnvironmentObject var postReply: PostReplyModel
   @EnvironmentObject var authStorage: AuthStorage
 
+  @StateObject var pref = PreferencesStorage.shared
+
+  static func build(post: Post, vote: Binding<VotesModel.Vote>) -> Self {
+    let user = try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
+    return Self.init(post: post, user: user, vote: vote)
+  }
+
   @ViewBuilder
   var header: some View {
     HStack {
-      PostRowUserView.build(post: post)
+      PostRowUserView.build(post: post, user: user)
         .equatable()
       Spacer()
       (Text("#").font(.footnote) + Text(showPostId ? post.id.pid : "\(post.floor)").font(.callout))
@@ -86,6 +94,20 @@ struct PostRowView: View {
   }
 
   @ViewBuilder
+  var signature: some View {
+    if pref.showSignature, let sigSpans = user?.signature.spans, !sigSpans.isEmpty {
+      Divider()
+      HStack(alignment: .top) {
+        Image(systemName: "signature")
+          .foregroundColor(.accentColor)
+          .imageScale(.small)
+        PostContentView(spans: sigSpans, defaultFont: .subheadline, defaultColor: .secondary)
+          .equatable()
+      }
+    }
+  }
+
+  @ViewBuilder
   var content: some View {
     PostContentView(spans: post.content.spans)
       .equatable()
@@ -115,6 +137,7 @@ struct PostRowView: View {
       content
       footer
       comments
+      signature
     } .padding(.vertical, 4)
       .contextMenu { menu }
     #if os(iOS)
@@ -159,7 +182,7 @@ struct PostRowView: View {
       $0.operation = .quote
     })
   }
-  
+
   func doComment() {
     postReply.show(action: .with {
       $0.postID = self.post.id

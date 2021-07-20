@@ -22,6 +22,7 @@ message User {
   uint64 reg_date = 4;
   uint32 post_num = 5;
   sint64 fame = 6;
+  PostContent signature = 7;
 }
 
 message PostId {

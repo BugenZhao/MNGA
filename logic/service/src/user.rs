@@ -1,6 +1,7 @@
 use crate::{
     error::ServiceResult,
     fetch_package,
+    post::extract_post_content,
     utils::{extract_kv, extract_node},
 };
 use dashmap::DashMap;
@@ -47,6 +48,9 @@ pub fn extract_user_and_cache(node: Node) -> Option<User> {
     use super::macros::get;
     let map = extract_kv(node);
 
+    let raw_signature = get!(map, "signature").unwrap_or_default();
+    let signature = extract_post_content(raw_signature);
+
     let user = User {
         id: get!(map, "uid")?,
         name: get!(map, "username")?,
@@ -54,6 +58,7 @@ pub fn extract_user_and_cache(node: Node) -> Option<User> {
         reg_date: get!(map, "regdate", _)?,
         post_num: get!(map, "postnum", _).or_else(|| get!(map, "posts", _))?,
         fame: get!(map, "fame", _).or_else(|| get!(map, "rvrc", _))?,
+        signature: Some(signature).into(),
         ..Default::default()
     };
 
