@@ -181,20 +181,20 @@ struct PostRowView: View {
     postReply.show(action: .with {
       $0.postID = self.post.id
       $0.operation = .quote
-    })
+    }, pageToReload: .last)
   }
 
   func doComment() {
     postReply.show(action: .with {
       $0.postID = self.post.id
       $0.operation = .comment
-    }, pageToReload: Int(self.post.atPage))
+    }, pageToReload: .exact(Int(self.post.atPage)))
   }
 
   func doEdit() {
     postReply.show(action: .with {
       $0.postID = self.post.id
       $0.operation = .modify
-    }, pageToReload: Int(self.post.atPage))
+    }, pageToReload: .exact(Int(self.post.atPage)))
   }
 }

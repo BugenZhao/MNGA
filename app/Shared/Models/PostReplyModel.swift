@@ -10,9 +10,14 @@ import Combine
 import SwiftUI
 
 class PostReplyModel: ObservableObject {
+  enum PageToReload: Equatable, Hashable {
+    case last
+    case exact(Int)
+  }
+  
   struct Task: Equatable, Hashable {
     let action: PostReplyAction
-    let pageToReload: Int?
+    let pageToReload: PageToReload?
   }
 
   class Context: Equatable {
@@ -54,7 +59,7 @@ class PostReplyModel: ObservableObject {
     self.isSending = false
   }
 
-  func show(action: PostReplyAction, pageToReload: Int? = nil) {
+  func show(action: PostReplyAction, pageToReload: PageToReload) {
     return show(task: .init(action: action, pageToReload: pageToReload))
   }
 

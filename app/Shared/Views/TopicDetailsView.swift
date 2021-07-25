@@ -189,16 +189,19 @@ struct TopicDetailsView: View {
         $0.tid = self.topic.id
         $0.pid = "0"
       }
-    })
+    }, pageToReload: .last)
   }
 
   func reloadPageAfter(sent: PostReplyModel.Context?) {
     guard let sent = sent else { return }
-
-    if let page = sent.task.pageToReload {
+    
+    switch sent.task.pageToReload {
+    case .exact(let page):
       dataSource.reload(page: page)
-    } else {
+    case .last:
       dataSource.reloadLastPages()
+    case .none:
+      break
     }
   }
 }
