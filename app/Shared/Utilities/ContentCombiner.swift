@@ -27,7 +27,7 @@ class ContentCombiner {
   ]
 
   private let parent: ContentCombiner?
-  private let postScroll: PostScrollModel?
+  private let actionModel: TopicDetailsActionModel?
 
   private let fontModifier: (Font?) -> Font?
   private let colorModifier: (Color?) -> Color?
@@ -53,15 +53,15 @@ class ContentCombiner {
     otherStyles: @escaping (OtherStyles) -> OtherStyles = { $0 }
   ) {
     self.parent = parent
-    self.postScroll = parent.postScroll
+    self.actionModel = parent.actionModel
     self.fontModifier = font
     self.colorModifier = color
     self.otherStylesModifier = otherStyles
   }
 
-  init(postScroll: PostScrollModel?, defaultFont: Font, defaultColor: Color) {
+  init(actionModel: TopicDetailsActionModel?, defaultFont: Font, defaultColor: Color) {
     self.parent = nil
-    self.postScroll = postScroll
+    self.actionModel = actionModel
     self.fontModifier = { _ in defaultFont }
     self.colorModifier = { _ in defaultColor }
     self.otherStylesModifier = { $0 }
@@ -243,8 +243,8 @@ class ContentCombiner {
     var tapAction: () -> Void = { }
     if let pid = combiner.envs["pid"] {
       tapAction = { withAnimation {
-        if let postScroll = self.postScroll {
-          postScroll.pid = pid
+        if let model = self.actionModel {
+          model.scrollToPid = pid
         }
       } }
     }
@@ -326,11 +326,16 @@ class ContentCombiner {
 
       let link = Button(action: {
         if let url = URL(string: urlString) {
-          #if os(iOS)
-            UIApplication.shared.open(url)
-          #elseif os(macOS)
-            NSWorkspace.shared.open(url)
-          #endif
+          if url.lastPathComponent == "read.php",
+            let tid = extractQueryParams(query: url.query ?? "", param: "tid") {
+            self.actionModel?.navigateToTid = tid
+          } else {
+            #if os(iOS)
+              UIApplication.shared.open(url)
+            #elseif os(macOS)
+              NSWorkspace.shared.open(url)
+            #endif
+          }
         }
       }) {
         view

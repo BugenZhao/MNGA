@@ -16,7 +16,7 @@ struct PostRowView: View {
 
   @Binding var vote: VotesModel.Vote
 
-  @EnvironmentObject var postScroll: PostScrollModel
+  @EnvironmentObject var action: TopicDetailsActionModel
   @EnvironmentObject var postReply: PostReplyModel
   @EnvironmentObject var authStorage: AuthStorage
 
@@ -142,7 +142,7 @@ struct PostRowView: View {
     } .padding(.vertical, 4)
       .contextMenu { menu }
     #if os(iOS)
-      .listRowBackground(postScroll.pid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
+      .listRowBackground(action.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
   }
 

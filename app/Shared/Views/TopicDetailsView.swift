@@ -11,8 +11,10 @@ import SwiftUIX
 import Combine
 import SwiftUIRefresh
 
-class PostScrollModel: ObservableObject {
-  @Published var pid: String? = nil
+class TopicDetailsActionModel: ObservableObject {
+  @Published var scrollToPid: String? = nil
+
+  @Published var navigateToTid: String? = nil
 }
 
 struct TopicDetailsView: View {
@@ -21,7 +23,7 @@ struct TopicDetailsView: View {
   @EnvironmentObject var activity: ActivityModel
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
-  @StateObject var postScroll = PostScrollModel()
+  @StateObject var action = TopicDetailsActionModel()
   @StateObject var votes = VotesModel()
   @StateObject var postReply = PostReplyModel()
 
@@ -133,6 +135,14 @@ struct TopicDetailsView: View {
     }
   }
 
+  @ViewBuilder
+  var navigation: some View {
+    if let tid = self.action.navigateToTid {
+      let topic = Topic.with { $0.id = tid }
+      NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
+    }
+  }
+
   var body: some View {
     VStack(alignment: .leading) {
       ScrollViewReader { proxy in
@@ -140,8 +150,8 @@ struct TopicDetailsView: View {
           headerSection
           hotRepliesSection
           allRepliesSection
-        } .environmentObject(postScroll)
-          .onReceive(postScroll.$pid) { pid in
+        } .environmentObject(action)
+          .onReceive(action.$scrollToPid) { pid in
           withAnimation { proxy.scrollTo(pid) }
         }
       }
@@ -152,6 +162,7 @@ struct TopicDetailsView: View {
       .navigationTitle(latestTopic.subjectContent)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
+      .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
@@ -194,7 +205,7 @@ struct TopicDetailsView: View {
 
   func reloadPageAfter(sent: PostReplyModel.Context?) {
     guard let sent = sent else { return }
-    
+
     switch sent.task.pageToReload {
     case .exact(let page):
       dataSource.reload(page: page)

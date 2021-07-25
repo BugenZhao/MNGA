@@ -59,10 +59,10 @@ struct PostContentView: View, Equatable {
     self.defaultColor = defaultColor
   }
 
-  @OptionalEnvironmentObject<PostScrollModel> var postScroll
+  @OptionalEnvironmentObject<TopicDetailsActionModel> var actionModel
 
   var body: some View {
-    let combiner = ContentCombiner(postScroll: postScroll, defaultFont: defaultFont, defaultColor: defaultColor)
+    let combiner = ContentCombiner(actionModel: actionModel, defaultFont: defaultFont, defaultColor: defaultColor)
     combiner.visit(spans: spans)
     return combiner.buildView()
   }
