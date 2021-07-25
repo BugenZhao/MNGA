@@ -1,5 +1,5 @@
 use crate::{
-    android::callback::AndroidCallback, callback::CallbackTrait, init::may_init,
+    android::callback::AndroidCallback, callback_trait::CallbackTrait, init::may_init,
     r#async::serve_request_async, sync::serve_request_sync,
 };
 use jni::{

@@ -1,12 +1,7 @@
+use super::byte_buffer::ByteBuffer;
+use crate::callback_trait::CallbackTrait;
 use service::error::ServiceResult;
-
-use crate::byte_buffer::ByteBuffer;
 use std::{ffi::c_void, mem};
-
-pub trait CallbackTrait: Send {
-    fn id(&self) -> String;
-    fn run(self, result: ServiceResult<Vec<u8>>);
-}
 
 #[repr(C)]
 #[derive(Debug)]
@@ -19,6 +14,7 @@ unsafe impl Send for Callback {}
 impl Callback {
     /// # Safety
     /// total unsafe
+    #[allow(dead_code)]
     pub unsafe fn new(user_data: *const c_void, callback: *const c_void) -> Self {
         Self {
             user_data,

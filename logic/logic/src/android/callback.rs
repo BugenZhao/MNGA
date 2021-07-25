@@ -1,9 +1,9 @@
+use crate::callback_trait::CallbackTrait;
 use jni::{
     objects::{GlobalRef, JObject, JValue},
     JNIEnv, JavaVM,
 };
-
-use crate::callback::CallbackTrait;
+use service::error::ServiceResult;
 
 pub struct AndroidCallback {
     jvm: JavaVM,
@@ -27,7 +27,7 @@ impl CallbackTrait for AndroidCallback {
         format!("{:?}", *self.callback.as_obj() as *const _)
     }
 
-    fn run(self, result: service::error::ServiceResult<Vec<u8>>) {
+    fn run(self, result: ServiceResult<Vec<u8>>) {
         let env = self.jvm.attach_current_thread().unwrap();
 
         let args: [JValue; 2] = match result {

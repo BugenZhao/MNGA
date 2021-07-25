@@ -1,4 +1,4 @@
-use crate::callback::CallbackTrait;
+use crate::callback_trait::CallbackTrait;
 use lazy_static::lazy_static;
 use protos::Service::*;
 use service::dispatch_async;
