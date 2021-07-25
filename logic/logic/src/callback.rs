@@ -1,5 +1,12 @@
+use service::error::ServiceResult;
+
 use crate::byte_buffer::ByteBuffer;
 use std::{ffi::c_void, mem};
+
+pub trait CallbackTrait: Send {
+    fn id(&self) -> String;
+    fn run(self, result: ServiceResult<Vec<u8>>);
+}
 
 #[repr(C)]
 #[derive(Debug)]
@@ -18,9 +25,16 @@ impl Callback {
             callback: mem::transmute(callback),
         }
     }
+}
 
-    pub fn run(self, byte_buffer: ByteBuffer) {
+impl CallbackTrait for Callback {
+    fn run(self, result: ServiceResult<Vec<u8>>) {
+        let byte_buffer = ByteBuffer::from(result);
         (self.callback)(self.user_data, byte_buffer)
+    }
+
+    fn id(&self) -> String {
+        format!("{:?}", self.user_data)
     }
 }
 

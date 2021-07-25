@@ -1,4 +1,5 @@
 syntax = "proto3";
+option java_package = "com.bugenzhao.nga.protos.datamodel";
 
 message Topic {
   string id = 1;

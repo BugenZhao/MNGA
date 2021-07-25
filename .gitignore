@@ -1,3 +1,4 @@
 /out/**/*.h
 /out/**/*.a
+/out/**/*.so
 .idea/

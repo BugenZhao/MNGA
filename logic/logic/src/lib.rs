@@ -1,8 +1,12 @@
+#[cfg(target_os = "android")]
+mod android;
 mod r#async;
 mod byte_buffer;
 mod callback;
+mod init;
 mod sync;
 
+use crate::{callback::CallbackTrait, init::may_init};
 use byte_buffer::ByteBuffer;
 use callback::Callback;
 use protos::{
@@ -10,22 +14,12 @@ use protos::{
     Service::{AsyncRequest, SyncRequest},
 };
 use r#async::serve_request_async;
-use std::{ffi, slice, sync::Once};
+use std::{ffi, slice};
 use sync::serve_request_sync;
 
 unsafe fn parse_from_raw<T: Message>(data: *const u8, len: usize) -> T {
     let bytes = slice::from_raw_parts(data, len);
     T::parse_from_bytes(bytes).expect("invalid request")
-}
-
-static INIT: Once = Once::new();
-
-fn may_init() {
-    INIT.call_once(|| {
-        env_logger::builder()
-            .filter_level(log::LevelFilter::Info)
-            .init();
-    })
 }
 
 /// # Safety
@@ -46,7 +40,7 @@ pub unsafe extern "C" fn rust_call_async(data: *const u8, len: usize, callback: 
     may_init();
     log::trace!("get {:?} at {:?}", callback, &callback as *const _);
     let request = parse_from_raw::<AsyncRequest>(data, len);
-    log::info!("async request #{:?} {:?}", callback.user_data, request);
+    log::info!("async request #{:?} {:?}", callback.id(), request);
     serve_request_async(request, callback);
 }
 

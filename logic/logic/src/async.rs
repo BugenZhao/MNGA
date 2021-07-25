@@ -1,4 +1,4 @@
-use crate::{ByteBuffer, Callback};
+use crate::callback::CallbackTrait;
 use lazy_static::lazy_static;
 use protos::Service::*;
 use service::dispatch_async;
@@ -12,7 +12,10 @@ lazy_static! {
     };
 }
 
-pub fn serve_request_async(request: AsyncRequest, callback: Callback) {
+pub fn serve_request_async<Cb>(request: AsyncRequest, callback: Cb)
+where
+    Cb: CallbackTrait + Send + 'static,
+{
     let _guard = RUNTIME.enter();
 
     tokio::spawn(async move {
@@ -30,13 +33,12 @@ pub fn serve_request_async(request: AsyncRequest, callback: Callback) {
             .map_err(|e| {
                 log::error!(
                     "error when serving async request #{:?}: {}",
-                    callback.user_data,
+                    callback.id(),
                     e
                 );
                 e
             });
 
-        let byte_buffer = ByteBuffer::from(result);
-        callback.run(byte_buffer);
+        callback.run(result);
     });
 }
