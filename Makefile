@@ -61,6 +61,13 @@ logic-debug-android:
 	cp logic/target/x86_64-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
 	cp logic/target/i686-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86/
 
+logic-release-android:
+	@echo ">>>>> Logic Android"
+	cd logic && ${CARGO} ndk --target arm64-v8a --target x86_64 --target x86 --platform 26 build --release
+	cp logic/target/aarch64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
+	cp logic/target/x86_64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
+	cp logic/target/i686-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86/
+
 nightly:
 	rustup override set nightly
 
