@@ -51,11 +51,7 @@ struct ForumListView: View {
   var allForumsSection: some View {
     Group {
       if categories.isEmpty {
-        HStack {
-          Spacer()
-          ProgressView()
-          Spacer()
-        }
+        LoadingRowView()
       } else {
         ForEach(categories, id: \.id) { category in
           Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {

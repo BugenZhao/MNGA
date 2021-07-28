@@ -24,6 +24,8 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private var loadedPage = 0
   private var totalPages = 1
   private var dataFlowId = UUID()
+  
+  var hasMore: Bool { loadedPage < totalPages }
 
   init(
     buildRequest: ((_ page: Int) -> AsyncRequest.OneOf_Value)?,
@@ -58,9 +60,15 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.upsertItems(items)
   }
 
+  func loadMore(after: Double) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + after) {
+      self.loadMore(background: false, alwaysAnimation: true)
+    }
+  }
+  
   func loadMoreIfNeeded(currentItem: Item) {
     if let index = itemToIdx[currentItem[keyPath: id]] {
-      let threshold = items.index(items.endIndex, offsetBy: -5)
+      let threshold = items.index(items.endIndex, offsetBy: -2)
       if index >= threshold { loadMore(background: true) }
     }
   }
@@ -130,7 +138,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  private func loadMore(background: Bool = false) {
+  private func loadMore(background: Bool = false, alwaysAnimation: Bool = false) {
     if isLoading || loadedPage >= totalPages { return }
     isLoading = true;
 
@@ -146,7 +154,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
-      withAnimation(when: self.items.isEmpty) {
+      withAnimation(when: self.items.isEmpty || alwaysAnimation) {
         self.upsertItems(newItems)
         self.isLoading = false
       }

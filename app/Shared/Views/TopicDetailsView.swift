@@ -129,7 +129,11 @@ struct TopicDetailsView: View {
       Section(header: Text("Replies")) {
         ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
           buildRow(post: post)
-            .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+//            .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+        }
+        if dataSource.hasMore {
+          LoadingRowView()
+            .onAppear { dataSource.loadMore(after: 0.5) }
         }
       }
     }
