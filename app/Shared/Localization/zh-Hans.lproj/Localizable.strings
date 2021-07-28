@@ -63,6 +63,10 @@
 "Preferences" = "设置";
 "Reading" = "阅读";
 "Show Signature" = "展示签名";
+"Show Avatar" = "显示头像";
 "Collapsed Style" = "折叠风格";
 "Redact" = "遮盖";
 "Hidden" = "隐藏";
+"Advanced" = "高级";
+"Cache" = "缓存";
+"Image Cache" = "图片缓存";

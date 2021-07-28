@@ -10,6 +10,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct PostRowUserView: View, Equatable {
+  @StateObject var pref = PreferencesStorage.shared
+
   static func == (lhs: PostRowUserView, rhs: PostRowUserView) -> Bool {
     return lhs.post.id == rhs.post.id
   }
@@ -37,7 +39,7 @@ struct PostRowUserView: View, Equatable {
     let placeholder = Image(systemName: "person.circle.fill")
       .resizable()
 
-    if let url = URL(string: user?.avatarURL ?? "") {
+    if pref.showAvatar, let url = URL(string: user?.avatarURL ?? "") {
       WebImage(url: url)
         .resizable()
         .placeholder(placeholder)

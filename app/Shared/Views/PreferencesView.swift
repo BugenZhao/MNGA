@@ -21,11 +21,20 @@ struct PreferencesView: View {
         Toggle(isOn: $pref.showSignature) {
           Label("Show Signature", systemImage: "signature")
         }
+        Toggle(isOn: $pref.showAvatar) {
+          Label("Show Avatar", systemImage: "person.circle")
+        }
         Picker(selection: $pref.useRedact) {
           Text("Redact").tag(true)
           Text("Hidden").tag(false)
         } label: {
           Label("Collapsed Style", systemImage: "eye.slash")
+        }
+      }
+      
+      Section(header: Text("Advanced")) {
+        NavigationLink(destination: CacheView()) {
+          Label("Cache", systemImage: "internaldrive")
         }
       }
     } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
