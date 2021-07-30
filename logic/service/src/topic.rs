@@ -81,8 +81,8 @@ fn extract_topic(node: Node) -> Option<Topic> {
         id,
         tags: tags.into(),
         subject_content,
-        author_id: get!(map, "authorid")?,
-        author_name: get!(map, "author")?,
+        author_id: get!(map, "authorid").unwrap_or_default(), // fix 0730 bug
+        author_name: get!(map, "author").unwrap_or_default(), // fix 0730 bug
         post_date: get!(map, "postdate", _)?,
         last_post_date: get!(map, "lastpost", _)?,
         replies_num: get!(map, "replies", _)?,
