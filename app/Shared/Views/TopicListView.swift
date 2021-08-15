@@ -117,8 +117,7 @@ struct TopicListView: View {
             ForEach(dataSource.items, id: \.id) { topic in
               NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
                 TopicRowView(topic: topic)
-                  .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
-              }
+              } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
             }
           }
         }
@@ -133,7 +132,10 @@ struct TopicListView: View {
       .navigationTitle(forum.name)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .onAppear { dataSource.initialLoad(); userActivityIsActive = true }
-      .onDisappear { userActivityIsActive = false }
+      .onDisappear {
+        // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping
+        // userActivityIsActive = false
+      }
       .userActivity(Constants.Activity.openForum, isActive: userActivityIsActive) { activity in
       activity.title = forum.name
       if let url = URL(string: webpageURL) {

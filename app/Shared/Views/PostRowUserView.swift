@@ -11,25 +11,25 @@ import SDWebImageSwiftUI
 
 struct PostRowUserView: View, Equatable {
   @StateObject var pref = PreferencesStorage.shared
+  @StateObject var users = UsersModel.shared
 
   static func == (lhs: PostRowUserView, rhs: PostRowUserView) -> Bool {
     return lhs.post.id == rhs.post.id
   }
 
   let post: Post
-  let user: User?
   let compact: Bool
+  
+  private var user: User? {
+    self.users.localUser(id: self.post.authorID)
+  }
 
   private var avatarSize: CGFloat {
     compact ? 24 : 36
   }
 
-  static func build(post: Post, user: User? = nil, compact: Bool = false) -> Self {
-    var user = user
-    if user == nil {
-      user = try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
-    }
-    return Self.init(post: post, user: user, compact: compact)
+  static func build(post: Post, compact: Bool = false) -> Self {
+    return Self.init(post: post, compact: compact)
   }
 
   @State var showId = false
@@ -84,7 +84,7 @@ struct PostRowUserView: View, Equatable {
           } .font(.footnote)
             .foregroundColor(.secondary)
         }
-      } .redacted(reason: user == nil ? .placeholder : [])
+      } .redacted(reason: user == nil || user == User.init() ? .placeholder : [])
     }
   }
 }

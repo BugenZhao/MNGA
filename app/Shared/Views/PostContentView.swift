@@ -25,12 +25,8 @@ struct PostImageView: View {
   var body: some View {
     if isOpenSourceStickers {
       WebImage(url: url)
-      // .renderingMode(.template)
-      .resizable()
-        .placeholder {
-        ProgressView()
-          .frame(height: 50)
-      }
+        .resizable()
+        .indicator(.activity)
         .aspectRatio(contentMode: .fit)
         .frame(width: 50, height: 50)
     } else {

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct PostRowView: View {
   let post: Post
-  let user: User?
 
   @State var showPostId = false
 
@@ -21,17 +20,20 @@ struct PostRowView: View {
   @EnvironmentObject var authStorage: AuthStorage
 
   @StateObject var pref = PreferencesStorage.shared
+  @StateObject var users = UsersModel.shared
+  
+  private var user: User? {
+    self.users.localUser(id: self.post.authorID)
+  }
 
   static func build(post: Post, vote: Binding<VotesModel.Vote>) -> Self {
-    let user = try? (logicCall(.localUser(.with { $0.userID = post.authorID })) as LocalUserResponse).user
-    return Self.init(post: post, user: user, vote: vote)
+    return Self.init(post: post, vote: vote)
   }
 
   @ViewBuilder
   var header: some View {
     HStack {
-      PostRowUserView.build(post: post, user: user)
-        .equatable()
+      PostRowUserView.build(post: post)
       Spacer()
       (Text("#").font(.footnote) + Text(showPostId ? post.id.pid : "\(post.floor)").font(.callout))
         .fontWeight(.medium)

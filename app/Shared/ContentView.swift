@@ -11,7 +11,7 @@ import SwiftUIX
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
   @StateObject var activity = ActivityModel()
-  @StateObject var prefs = PreferencesStorage()
+  @StateObject var prefs = PreferencesStorage.shared
 
   var body: some View {
     Group {

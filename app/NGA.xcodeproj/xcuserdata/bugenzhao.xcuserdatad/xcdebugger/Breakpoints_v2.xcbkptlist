@@ -286,8 +286,8 @@
             filePath = "Shared/Views/TopicDetailsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -302,8 +302,8 @@
             filePath = "Shared/Views/TopicListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -318,8 +318,8 @@
             filePath = "Shared/Views/TopicListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -382,8 +382,8 @@
             filePath = "Shared/Utilities/ContentCombiner.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
             landmarkName = "visit(quote:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -464,6 +464,114 @@
                   startingLineNumber = "40"
                   endingLineNumber = "40"
                   offsetFromSymbolStart = "316">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Models/PagingDataSource.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "initialLoad()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 3ce3512ed1beed89"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 () -&gt; () in NGA.TopicDetailsView.body.getter : some"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "108"
+                  endingLineNumber = "108"
+                  offsetFromSymbolStart = "100">
+               </Location>
+               <Location
+                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 97d6d4a811a1df14"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in NGA.TopicHistoryListView.body.getter : some"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "108"
+                  endingLineNumber = "108"
+                  offsetFromSymbolStart = "100">
+               </Location>
+               <Location
+                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - ee8d5a0d8ea72ee6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 () -&gt; () in NGA.TopicListView.body.getter : some"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "108"
+                  endingLineNumber = "108"
+                  offsetFromSymbolStart = "108">
+               </Location>
+               <Location
+                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - b17cbb153e4ad8f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in NGA.FavoriteTopicListView.body.getter : some"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "108"
+                  endingLineNumber = "108"
+                  offsetFromSymbolStart = "100">
+               </Location>
+               <Location
+                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 2dd29425e40146"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in NGA.NotificationListView.body.getter : some"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "108"
+                  endingLineNumber = "108"
+                  offsetFromSymbolStart = "104">
+               </Location>
+               <Location
+                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 4e7717e7de276192"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in NGA.HotTopicListInnerView.body.getter : some"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "108"
+                  endingLineNumber = "108"
+                  offsetFromSymbolStart = "100">
                </Location>
             </Locations>
          </BreakpointContent>

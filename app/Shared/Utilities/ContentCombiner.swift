@@ -12,6 +12,7 @@ import SwiftUIX
 class ContentCombiner {
   enum Subview {
     case text(Text)
+    case breakline
     case other(AnyView)
   }
 
@@ -106,9 +107,16 @@ class ContentCombiner {
       switch subview {
       case .text(let text):
         textBuffer = (textBuffer ?? Text("")) + text
+      case .breakline:
+        if let tb = textBuffer {
+          results.append(AnyView(tb.lineLimit(nil)))
+          textBuffer = nil
+        } else {
+          results.append(AnyView(Spacer().height(6)))
+        }
       case .other(let view):
         if let tb = textBuffer {
-          results.append(AnyView(tb))
+          results.append(AnyView(tb.lineLimit(nil)))
           textBuffer = nil
         }
         results.append(view)
@@ -121,7 +129,7 @@ class ContentCombiner {
     } else {
       // complex view
       if let tb = textBuffer { results.append(AnyView(tb)) }
-      let stack = VStack(alignment: .leading) {
+      let stack = VStack(alignment: .leading, spacing: 4) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
         }
@@ -135,6 +143,9 @@ class ContentCombiner {
     switch self.build() {
     case .text(let text):
       text
+    case .breakline:
+      // not reached
+      EmptyView()
     case .other(let any):
       any
     }
@@ -149,7 +160,7 @@ class ContentCombiner {
 
     switch value {
     case .breakLine(_):
-      self.append(Spacer().frame(height: 6))
+      self.append(.breakline)
     case .plain(let plain):
       self.visit(plain: plain)
     case .sticker(let sticker):

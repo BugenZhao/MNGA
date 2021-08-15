@@ -26,6 +26,8 @@ struct TopicDetailsView: View {
   @StateObject var action = TopicDetailsActionModel()
   @StateObject var votes = VotesModel()
   @StateObject var postReply = PostReplyModel()
+  @StateObject var prefs = PreferencesStorage.shared
+  @StateObject var users = UsersModel.shared
 
   @State var isFavored: Bool
 
@@ -129,12 +131,12 @@ struct TopicDetailsView: View {
       Section(header: Text("Replies")) {
         ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
           buildRow(post: post)
-//            .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+            .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
         }
-        if dataSource.hasMore {
-          LoadingRowView()
-            .onAppear { dataSource.loadMore(after: 0.5) }
-        }
+//        if dataSource.hasMore {
+//          LoadingRowView()
+//            .onAppear { dataSource.loadMore(after: 0.5) }
+//        }
       }
     }
   }
@@ -147,27 +149,78 @@ struct TopicDetailsView: View {
     }
   }
 
+  @ViewBuilder
+  var listMain: some View {
+    List {
+      headerSection
+      hotRepliesSection
+      allRepliesSection
+    }
+    #if os(iOS)
+      .listStyle(GroupedListStyle())
+    #endif
+  }
+
+  @ViewBuilder
+  var stackMain: some View {
+    GeometryReader { geometry in
+      ScrollView {
+        VStack(alignment: .leading) {
+          Group {
+            Text("Topic").font(.footnote).foregroundColor(.secondaryLabel)
+            Divider()
+            TopicSubjectView(topic: latestTopic, lineLimit: nil)
+              .frame(minWidth: 0, maxWidth: .infinity)
+            if let first = self.first {
+              Divider().padding(.leading)
+              buildRow(post: first) .padding(.horizontal)
+            }
+            Divider()
+          }
+
+          if dataSource.items.count >= 1 {
+            Spacer().height(30)
+            Text("Replies").font(.footnote).foregroundColor(.secondaryLabel)
+            Divider()
+          }
+
+          ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
+            buildRow(post: post) .padding(.horizontal)
+            Divider().padding(.leading)
+          }
+        } .frame(minWidth: 0, maxWidth: .infinity)
+
+        LazyVStack {
+          if dataSource.hasMore && dataSource.items.count > 0 {
+            LoadingRowView()
+              .onAppear { dataSource.loadMore(after: 0.5) }
+          }
+        }
+      }
+    }
+  }
+
   var body: some View {
     VStack(alignment: .leading) {
       ScrollViewReader { proxy in
-        List {
-          headerSection
-          hotRepliesSection
-          allRepliesSection
+        Group {
+          if prefs.useStackDetails {
+            stackMain
+          } else {
+            listMain
+          }
         } .environmentObject(action)
           .onReceive(action.$scrollToPid) { pid in
           withAnimation { proxy.scrollTo(pid) }
         }
       }
-      #if os(iOS)
-        .listStyle(GroupedListStyle())
-      #endif
     }
       .navigationTitle(latestTopic.subjectContent)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
+      .onChange(of: dataSource.latestResponse, perform: self.preloadUsers(response:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
@@ -217,6 +270,16 @@ struct TopicDetailsView: View {
       dataSource.reloadLastPages()
     case .none:
       break
+    }
+  }
+  
+  func preloadUsers(response: TopicDetailsResponse?) {
+    if let response = response {
+      DispatchQueue.main.async {
+        for id in response.replies.map(\.authorID) {
+          let _ = self.users.localUser(id: id)
+        }
+      }
     }
   }
 }
