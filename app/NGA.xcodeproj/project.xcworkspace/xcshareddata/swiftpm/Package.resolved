@@ -47,7 +47,7 @@
         }
       },
       {
-        "package": "swift-protobuf",
+        "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf",
         "state": {
           "branch": null,
@@ -56,7 +56,7 @@
         }
       },
       {
-        "package": "swiftui-image-viewer",
+        "package": "SwiftUIImageViewer",
         "repositoryURL": "https://github.com/Jake-Short/swiftui-image-viewer.git",
         "state": {
           "branch": null,
@@ -65,7 +65,7 @@
         }
       },
       {
-        "package": "SwiftUI-Introspect",
+        "package": "Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect.git",
         "state": {
           "branch": null,
@@ -74,7 +74,7 @@
         }
       },
       {
-        "package": "SwiftUI-WebView",
+        "package": "WebView",
         "repositoryURL": "https://github.com/kylehickinson/SwiftUI-WebView",
         "state": {
           "branch": null,
@@ -96,12 +96,12 @@
         "repositoryURL": "https://github.com/SwiftUIX/SwiftUIX",
         "state": {
           "branch": null,
-          "revision": "5837e88eca8e05fa70c82c6aaecfc59bf7e81bfd",
-          "version": "0.0.7"
+          "revision": "6aa1b4ec2e0d3e5cfc7494c84519402a16dd1316",
+          "version": "0.0.8"
         }
       },
       {
-        "package": "url-image",
+        "package": "URLImage",
         "repositoryURL": "https://github.com/dmytro-anokhin/url-image.git",
         "state": {
           "branch": null,

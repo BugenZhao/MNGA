@@ -1245,7 +1245,7 @@
 			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.7;
+				minimumVersion = 0.0.8;
 			};
 		};
 		B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */ = {

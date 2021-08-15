@@ -18,6 +18,8 @@ struct TopicListView: View {
 
   @EnvironmentObject var activity: ActivityModel
 
+  @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
+
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
 
   @State var currentShowingSubforum: Forum? = nil
@@ -131,11 +133,11 @@ struct TopicListView: View {
       .background { subforum; hotTopics }
       .navigationTitle(forum.name)
       .modifier(SingleItemToolbarModifier { moreMenu })
-      .onAppear { dataSource.initialLoad(); userActivityIsActive = true }
+      .onAppear { dataSource.initialLoad(); userActivityIsActive = true; selectedForum.inner = forum }
       .onDisappear {
-        // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping
-        // userActivityIsActive = false
-      }
+      // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping
+      // userActivityIsActive = false
+    }
       .userActivity(Constants.Activity.openForum, isActive: userActivityIsActive) { activity in
       activity.title = forum.name
       if let url = URL(string: webpageURL) {

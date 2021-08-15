@@ -13,17 +13,26 @@ struct ContentView: View {
   @StateObject var activity = ActivityModel()
   @StateObject var prefs = PreferencesStorage.shared
 
+  @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
+
   var body: some View {
     Group {
       if UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac {
         NavigationView {
           ForumListView()
-          TopicListPlaceholderView()
+          if selectedForum.inner != Forum() {
+            TopicListView.build(forum: selectedForum.inner)
+          } else {
+            TopicListPlaceholderView()
+          }
           EmptyView()
         }
       } else {
         NavigationView {
           ForumListView()
+          if selectedForum.inner != Forum() {
+            TopicListView.build(forum: selectedForum.inner)
+          }
         }
       }
     } .overlay { ImageOverlay() }
