@@ -24,3 +24,4 @@ class VotesModel: ObservableObject {
     )
   }
 }
+

@@ -382,8 +382,8 @@
             filePath = "Shared/Utilities/ContentCombiner.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
+            startingLineNumber = "277"
+            endingLineNumber = "277"
             landmarkName = "visit(quote:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -418,6 +418,38 @@
             endingLineNumber = "49"
             landmarkName = "sent"
             landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - 9c7f78599472b42e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NGA.PostReplyModel.sent.didset : Swift.Optional&lt;NGA.PostReplyModel.Context&gt;"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PostReplyModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "296">
+               </Location>
+               <Location
+                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - f2f01ee1109b3d20"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in NGA.PostReplyModel.sent.didset : Swift.Optional&lt;NGA.PostReplyModel.Context&gt;"
+                  moduleName = "NGA"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PostReplyModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "28">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -434,45 +466,13 @@
             endingLineNumber = "39"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "DADBB34C-A75D-4B65-A1A0-ECA6D712EF82 - 47c76e206d04746d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI._ConditionalContent&lt;SwiftUI.ProgressView&lt;SwiftUI.EmptyView, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.listStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ListStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0&gt; in NGA.HotTopicListInnerView.body.getter : some"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Views/HotTopicListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "41"
-                  endingLineNumber = "41"
-                  offsetFromSymbolStart = "716">
-               </Location>
-               <Location
-                  uuid = "DADBB34C-A75D-4B65-A1A0-ECA6D712EF82 - 96eeadc14c037079"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "protocol witness for SwiftUI.View.body.getter : &#x3c4;_0_0.Body in conformance NGA.HotTopicListInnerView : SwiftUI.View in NGA"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Views/HotTopicListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40"
-                  offsetFromSymbolStart = "316">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Shared/Models/PagingDataSource.swift"
@@ -482,98 +482,38 @@
             endingLineNumber = "107"
             landmarkName = "initialLoad()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 3ce3512ed1beed89"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #5 () -&gt; () in NGA.TopicDetailsView.body.getter : some"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "100">
-               </Location>
-               <Location
-                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 97d6d4a811a1df14"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in NGA.TopicHistoryListView.body.getter : some"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "100">
-               </Location>
-               <Location
-                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - ee8d5a0d8ea72ee6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #5 () -&gt; () in NGA.TopicListView.body.getter : some"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "108">
-               </Location>
-               <Location
-                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - b17cbb153e4ad8f1"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in NGA.FavoriteTopicListView.body.getter : some"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "100">
-               </Location>
-               <Location
-                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 2dd29425e40146"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in NGA.NotificationListView.body.getter : some"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "104">
-               </Location>
-               <Location
-                  uuid = "D778F74A-CF14-4C7B-80C0-D6E79523DA08 - 4e7717e7de276192"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in NGA.HotTopicListInnerView.body.getter : some"
-                  moduleName = "NGA"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PagingDataSource.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "100">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "90045562-200D-4E2B-BB01-8B202FAB09DE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Utilities/ContentCombiner.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "252"
+            endingLineNumber = "252"
+            landmarkName = "visit(image:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "406B7102-C2BA-4B43-915D-0692BB186B39"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Utilities/ContentCombiner.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
+            landmarkName = "visit(quote:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

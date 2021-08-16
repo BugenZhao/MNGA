@@ -21,7 +21,7 @@ struct PostRowView: View {
 
   @StateObject var pref = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
-  
+
   private var user: User? {
     self.users.localUser(id: self.post.authorID)
   }
@@ -83,9 +83,10 @@ struct PostRowView: View {
           .frame(height: 24)
       } .buttonStyle(.plain)
 
+      let font = Font.subheadline.monospacedDigit()
       Text("\(max(Int32(post.score) + vote.delta, 0))")
-        .foregroundColor(vote.state != .none ? .accentColor : .secondary)
-        .font(.subheadline.monospacedDigit())
+        .foregroundColor(vote.state == .up ? .accentColor : .secondary)
+        .font(vote.state == .up ? font.bold() : font)
 
       Button(action: { doVote(.downvote) }) {
         Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")

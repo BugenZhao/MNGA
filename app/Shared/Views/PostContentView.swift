@@ -12,13 +12,15 @@ import SwiftUIX
 
 struct PostImageView: View {
   let url: URL
+  let onlyThumbs: Bool
   let isOpenSourceStickers: Bool
 
   @EnvironmentObject var viewingImage: ViewingImageModel
   @State var overlayImage: PlatformImage?
 
-  init(url: URL) {
+  init(url: URL, onlyThumbs: Bool = false) {
     self.url = url
+    self.onlyThumbs = onlyThumbs
     self.isOpenSourceStickers = openSourceStickersNames.contains(url.lastPathComponent)
   }
 
@@ -30,7 +32,22 @@ struct PostImageView: View {
         .aspectRatio(contentMode: .fit)
         .frame(width: 50, height: 50)
     } else {
-      WebImage(url: url)
+      if onlyThumbs {
+        Button(action: self.showImage) {
+          (Text(Image(systemName: "photo")) + Text(" ") + Text("View Image"))
+            .font(.footnote)
+            .foregroundColor(.accentColor)
+            .padding(.small)
+            .background(
+            RoundedRectangle(cornerRadius: 12)
+            #if os(iOS)
+              .fill(Color.secondarySystemGroupedBackground)
+            #endif
+          )
+        } .buttonStyle(.plain)
+      }
+
+      let image = WebImage(url: url)
         .onSuccess { image, _, _ in
         DispatchQueue.main.async {
           self.overlayImage = image
@@ -39,8 +56,18 @@ struct PostImageView: View {
         .resizable()
         .indicator(.activity)
         .scaledToFit()
-        .onTapGesture { self.viewingImage.show(image: self.overlayImage) }
+        .onTapGesture(perform: self.showImage)
+
+      if onlyThumbs {
+        image.frame(maxHeight: 0) // still needed to load image
+      } else {
+        image
+      }
     }
+  }
+
+  func showImage() {
+    self.viewingImage.show(image: self.overlayImage)
   }
 }
 

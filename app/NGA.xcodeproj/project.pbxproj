@@ -494,6 +494,7 @@
 				B48B0C4526932CC70067794F /* ForumRowView.swift */,
 				B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */,
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
+				B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */,
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
 				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
 				B4F2408626A30C4900D620B0 /* NotificationRowView.swift */,
@@ -516,7 +517,6 @@
 				B4DBF61426897A170027233F /* TopicRowView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
-				B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

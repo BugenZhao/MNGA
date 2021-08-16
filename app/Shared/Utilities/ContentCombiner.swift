@@ -47,6 +47,22 @@ class ContentCombiner {
     self.otherStylesModifier(parent?.otherStyles ?? [])
   }
 
+  private func setEnv(key: String, value: String?) {
+    self.envs[key] = value
+  }
+  private func getEnv(key: String) -> String? {
+    if let v = self.envs[key] {
+      return v
+    } else {
+      return self.parent?.getEnv(key: key)
+    }
+  }
+
+  private var inQuote: Bool {
+    get { self.getEnv(key: "inQuote") != nil }
+    set { self.setEnv(key: "inQuote", value: newValue ? "true" : nil) }
+  }
+
   init(
     parent: ContentCombiner,
     font: @escaping (Font?) -> Font? = { $0 },
@@ -243,16 +259,18 @@ class ContentCombiner {
     }
     guard let url = URL(string: urlText) else { return }
 
-    let image = PostImageView(url: url)
+    let image = PostImageView(url: url, onlyThumbs: self.inQuote)
     self.append(image)
   }
 
   private func visit(quote: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.subheadline }, color: { _ in Color.primary.opacity(0.9) })
+    combiner.inQuote = true
+
     combiner.visit(spans: quote.spans)
 
     var tapAction: () -> Void = { }
-    if let pid = combiner.envs["pid"] {
+    if let pid = combiner.getEnv(key: "pid") {
       tapAction = { withAnimation {
         if let model = self.actionModel {
           model.scrollToPid = pid
@@ -294,7 +312,7 @@ class ContentCombiner {
       combiner.append(Text("Post"))
       combiner.append(Text(" #\(pid) "))
       self.append(combiner.build())
-      self.envs["pid"] = pid
+      self.setEnv(key: "pid", value: pid)
     }
   }
 
@@ -304,7 +322,7 @@ class ContentCombiner {
       combiner.append(Text("Topic"))
       combiner.append(Text(" #\(tid) "))
       self.append(combiner.build())
-      self.envs["pid"] = "0"
+      self.setEnv(key: "pid", value: "0")
     }
   }
 
@@ -331,7 +349,7 @@ class ContentCombiner {
         .background(
         RoundedRectangle(cornerRadius: 12)
         #if os(iOS)
-          .fill(Color.systemGroupedBackground)
+          .fill(self.inQuote ? Color.secondarySystemGroupedBackground : Color.systemGroupedBackground)
         #endif
       )
 

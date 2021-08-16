@@ -21,7 +21,6 @@ struct PostContentPanelView: View {
 struct PostContentEditorView: View {
   @Binding var subject: String?
   @Binding var content: String
-  @ObservedObject var keyboard = Keyboard.main
 
   var body: some View {
     VStack {
@@ -51,11 +50,9 @@ struct PostContentEditorView: View {
 
       } .listStyle(GroupedListStyle())
 
-      if !keyboard.isShowing {
-        PostContentPanelView(content: $content)
-      }
+      PostContentPanelView(content: $content)
+        .hiddenIfKeyboardActive()
     }
-
   }
 }
 
