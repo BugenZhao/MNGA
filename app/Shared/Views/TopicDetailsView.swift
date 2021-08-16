@@ -29,6 +29,7 @@ struct TopicDetailsView: View {
   @StateObject var postReply = PostReplyModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
+  @StateObject var alert = ToastModel.alert
 
   @State var isFavored: Bool
 
@@ -332,7 +333,14 @@ struct TopicDetailsView: View {
   }
 
   func shareAsImage() {
-    viewingImage.show(image: screenshotView.snapshot())
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      let image = screenshotView.snapshot()
+      if image.size == .zero {
+        self.alert.message = .error(NSLocalizedString("Contents are too large to take a screenshot.", comment: ""))
+      } else {
+        viewingImage.show(image: image)
+      }
+    }
   }
 }
 

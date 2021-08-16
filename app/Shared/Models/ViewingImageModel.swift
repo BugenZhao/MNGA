@@ -21,7 +21,11 @@ class ViewingImageModel: ObservableObject {
   @Published var isShowing = false
 
   func show(image: PlatformImage?) {
-    self.image = image
-    self.isShowing = image != nil
+    if image?.size == .zero {
+      self.show(image: nil)
+    } else {
+      self.image = image
+      self.isShowing = image != nil
+    }
   }
 }

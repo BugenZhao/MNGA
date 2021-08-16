@@ -40,7 +40,7 @@ struct CollapsedContentView<Content: View>: View {
 
       if useRedact {
         self.content()
-          .redacted(reason: self.collapsed ? .placeholder : [])
+          .redacted(if: self.collapsed)
           .allowsHitTesting(!self.collapsed)
       } else {
         if !self.collapsed {

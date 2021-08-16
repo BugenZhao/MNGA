@@ -19,7 +19,7 @@ struct PostRowUserView: View, Equatable {
 
   let post: Post
   let compact: Bool
-  
+
   private var user: User? {
     self.users.localUser(id: self.post.authorID)
   }
@@ -48,6 +48,20 @@ struct PostRowUserView: View, Equatable {
     }
   }
 
+  var name: String {
+    if let name = user?.name, !name.isEmpty {
+      return name
+    } else if !post.authorID.isEmpty {
+      return post.authorID
+    } else {
+      return "????????"
+    }
+  }
+  
+  var badUser: Bool {
+    user == nil || user == User.init()
+  }
+
   var body: some View {
     HStack {
       buildAvatar(user: user)
@@ -60,31 +74,34 @@ struct PostRowUserView: View, Equatable {
           if showId {
             Text(post.authorID)
           } else {
-            Text(user?.name ?? post.authorID)
+            Text(self.name)
           }
         } .font(.subheadline)
           .onTapGesture { withAnimation { self.showId.toggle() } }
+          .redacted(if: badUser)
 
         if !compact {
           HStack(spacing: 6) {
-
             HStack(spacing: 2) {
               Image(systemName: "text.bubble")
               Text("\(user?.postNum ?? 0)")
+                .redacted(if: badUser)
             } .foregroundColor((user?.postNum ?? 50 < 50) ? .red : .secondary)
             HStack(spacing: 2) {
               Image(systemName: "calendar")
               Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)
+                .redacted(if: badUser)
             }
             HStack(spacing: 2) {
               Image(systemName: "flag")
               Text("\(user?.fame ?? 0)")
+                .redacted(if: badUser)
             } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
 
           } .font(.footnote)
             .foregroundColor(.secondary)
         }
-      } .redacted(reason: user == nil || user == User.init() ? .placeholder : [])
+      }
     }
   }
 }

@@ -22,7 +22,7 @@ struct BlockedView<Content>: View where Content: View {
 
   var body: some View {
     let view = build()
-      .redacted(reason: redacted ? .placeholder : [])
+      .redacted(if: redacted)
 
     if revealOnTap {
       view

@@ -15,18 +15,7 @@ struct ForumRowView: View {
 
   var body: some View {
     HStack {
-      let defaultIcon = Image("default_forum_icon")
-
-      if let url = URL(string: forum.iconURL) {
-        WebImage(url: url)
-          .resizable()
-          .placeholder(defaultIcon)
-          .frame(width: 28, height: 28)
-      } else {
-        defaultIcon
-          .resizable()
-          .frame(width: 28, height: 28)
-      }
+      ForumIconView(iconURL: forum.iconURL)
 
       HStack {
         Text(forum.name)

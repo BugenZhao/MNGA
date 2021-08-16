@@ -109,6 +109,11 @@ struct TopicListView: View {
     NavigationLink(destination: destination, isActive: $showingHotTopics) { }
   }
 
+  @ViewBuilder
+  var icon: some View {
+    ForumIconView(iconURL: forum.iconURL)
+  }
+
   var body: some View {
     Group {
       if dataSource.items.isEmpty {
@@ -132,7 +137,10 @@ struct TopicListView: View {
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .background { subforum; hotTopics }
       .navigationTitle(forum.name)
-      .modifier(SingleItemToolbarModifier { moreMenu })
+      .toolbar {
+      ToolbarItem(placement: .navigationBarTrailing) { icon }
+      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+    }
       .onAppear { dataSource.initialLoad(); userActivityIsActive = true; selectedForum.inner = forum }
       .onDisappear {
       // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping
