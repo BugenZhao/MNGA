@@ -148,6 +148,7 @@ class ContentCombiner {
       let stack = VStack(alignment: .leading, spacing: 4) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
+            .fixedSize(horizontal: false, vertical: true)
         }
       }
       return .other(AnyView(stack))

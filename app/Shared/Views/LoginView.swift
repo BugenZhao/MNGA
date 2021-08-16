@@ -12,8 +12,8 @@ import WebView
 
 struct LoginView: View {
   @Environment(\.presentationMode) var presentationMode
-  @EnvironmentObject var authStorage: AuthStorage
 
+  @StateObject var authStorage = AuthStorage.shared
   @StateObject var webViewStore: WebViewStore
 
   @State var authing = false

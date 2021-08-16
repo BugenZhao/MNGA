@@ -141,6 +141,8 @@
 		B4DD2BDE26A490960030ADD8 /* BlockedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DD2BDC26A490960030ADD8 /* BlockedView.swift */; };
 		B4DDFD9C26B1B602004FFB17 /* CacheView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DDFD9B26B1B602004FFB17 /* CacheView.swift */; };
 		B4DDFD9D26B1B602004FFB17 /* CacheView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DDFD9B26B1B602004FFB17 /* CacheView.swift */; };
+		B4DF95A826CAC20D0081ECBB /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DF95A726CAC20D0081ECBB /* Snapshot.swift */; };
+		B4DF95A926CAC20D0081ECBB /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DF95A726CAC20D0081ECBB /* Snapshot.swift */; };
 		B4E10716268DADEE006C1742 /* WebView in Frameworks */ = {isa = PBXBuildFile; productRef = B4E10715268DADEE006C1742 /* WebView */; };
 		B4E10718268DADF5006C1742 /* WebView in Frameworks */ = {isa = PBXBuildFile; productRef = B4E10717268DADF5006C1742 /* WebView */; };
 		B4E1071A268DADFF006C1742 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10719268DADFF006C1742 /* LoginView.swift */; };
@@ -269,6 +271,7 @@
 		B4DCF4522688F68400EC78A4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B4DD2BDC26A490960030ADD8 /* BlockedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedView.swift; sourceTree = "<group>"; };
 		B4DDFD9B26B1B602004FFB17 /* CacheView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheView.swift; sourceTree = "<group>"; };
+		B4DF95A726CAC20D0081ECBB /* Snapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snapshot.swift; sourceTree = "<group>"; };
 		B4E10719268DADFF006C1742 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		B4E1071C268DC4D1006C1742 /* AuthStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStorage.swift; sourceTree = "<group>"; };
 		B4E1071F268DD215006C1742 /* AuthedPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthedPreview.swift; sourceTree = "<group>"; };
@@ -467,6 +470,7 @@
 				B43DED63269F02CF009C52F5 /* HapticUtils.swift */,
 				B444639226A1B745006FA44D /* OptionalBinding.swift */,
 				B444639526A1C54A006FA44D /* Stickers.swift */,
+				B4DF95A726CAC20D0081ECBB /* Snapshot.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -736,6 +740,7 @@
 				B43DED55269DE1E4009C52F5 /* CollapsedContentView.swift in Sources */,
 				B444639C26A1CC9F006FA44D /* PostContentEditorView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
+				B4DF95A826CAC20D0081ECBB /* Snapshot.swift in Sources */,
 				B43DED58269ED5EB009C52F5 /* FavoriteTopicListView.swift in Sources */,
 				B43DED4C269C7C8B009C52F5 /* SearchModel.swift in Sources */,
 				B44463A226A1ED2A006FA44D /* ActivityModel.swift in Sources */,
@@ -803,6 +808,7 @@
 				B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
+				B4DF95A926CAC20D0081ECBB /* Snapshot.swift in Sources */,
 				B4715CC626A413E00049D136 /* QuoteView.swift in Sources */,
 				B4DD2BDE26A490960030ADD8 /* BlockedView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,

@@ -6,8 +6,6 @@ import SwiftUI
 
 @main
 struct macOSNGAApp: App {
-  @StateObject var authStorage = AuthStorage()
-
   init() {
     logger.info("macOS init")
     initConf()
@@ -17,8 +15,8 @@ struct macOSNGAApp: App {
     WindowGroup {
       ContentView()
         .sheet(isPresented: .constant(authStorage.shouldLogin)) {
-          LoginView()
-        }.environmentObject(authStorage)
+        LoginView()
+      }
     }
   }
 }

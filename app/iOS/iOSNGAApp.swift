@@ -15,7 +15,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct iOSNGAApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
-  @StateObject var authStorage = AuthStorage()
+  @StateObject var authStorage = AuthStorage.shared
 
   init() {
     logger.info("iOS init")
@@ -25,9 +25,7 @@ struct iOSNGAApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()
-        .sheet(isPresented: .constant(authStorage.shouldLogin)) {
-        LoginView()
-      }.environmentObject(authStorage)
+        .sheet(isPresented: .constant(authStorage.shouldLogin)) { LoginView() }
     }
   }
 }

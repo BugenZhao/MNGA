@@ -56,6 +56,7 @@ struct PostImageView: View {
         .resizable()
         .indicator(.activity)
         .scaledToFit()
+        .clipShape(RoundedRectangle(cornerRadius: 8))
         .onTapGesture(perform: self.showImage)
 
       if onlyThumbs {

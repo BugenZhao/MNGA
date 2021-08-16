@@ -8,7 +8,9 @@
 import Foundation
 import SwiftUI
 
-class AuthStorage: ObservableObject {  
+class AuthStorage: ObservableObject {
+  static let shared = AuthStorage()
+
   @AppStorage("authInfo") var authInfo = WrappedMessage(inner: AuthInfo()) {
     didSet {
       reAuth()

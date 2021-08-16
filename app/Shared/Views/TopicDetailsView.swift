@@ -21,6 +21,7 @@ struct TopicDetailsView: View {
   let topic: Topic
 
   @EnvironmentObject var activity: ActivityModel
+  @EnvironmentObject var viewingImage: ViewingImageModel
 
   @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
   @StateObject var action = TopicDetailsActionModel()
@@ -75,8 +76,13 @@ struct TopicDetailsView: View {
         Button(action: { self.doReplyTopic() }) {
           Label("Reply", systemImage: "arrowshape.turn.up.left")
         }
+      }
+      Section {
         Button(action: { self.activity.put(URL(string: webpageURL)) }) {
           Label("Share", systemImage: "square.and.arrow.up")
+        }
+        Button(action: self.shareAsImage) {
+          Label("Share As Image", systemImage: "text.below.photo")
         }
       }
       Section {
@@ -101,16 +107,22 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  var headerSectionInner: some View {
+    TopicSubjectView(topic: latestTopic, lineLimit: nil)
+      .fixedSize(horizontal: false, vertical: true)
+    if let first = self.first {
+      buildRow(post: first)
+    }
+  }
+
+  @ViewBuilder
   var headerSection: some View {
     Section(header: HStack {
       Text("Topic")
       Spacer()
       if dataSource.isLoading { ProgressView() }
     }) {
-      TopicSubjectView(topic: latestTopic, lineLimit: nil)
-      if let first = self.first {
-        buildRow(post: first)
-      }
+      headerSectionInner
     }
   }
 
@@ -272,7 +284,7 @@ struct TopicDetailsView: View {
       break
     }
   }
-  
+
   func preloadUsers(response: TopicDetailsResponse?) {
     if let response = response {
       DispatchQueue.main.async {
@@ -281,6 +293,46 @@ struct TopicDetailsView: View {
         }
       }
     }
+  }
+
+  @ViewBuilder
+  var screenshotView: some View {
+    VStack(alignment: .leading) {
+      headerSectionInner
+
+      if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
+        Spacer()
+          .height(20)
+        Text("Hot Replies")
+          .font(.footnote)
+          .foregroundColor(.secondary)
+        ForEach(hotReplies, id: \.id.pid) { post in
+          Divider()
+          buildRow(post: post, withId: false)
+        }
+      } else if let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5),
+        !latestReplies.isEmpty
+      {
+        Spacer()
+          .height(20)
+        Text("Replies")
+          .font(.footnote)
+          .foregroundColor(.secondary)
+        ForEach(latestReplies, id: \.id.pid) { post in
+          Divider()
+          buildRow(post: post, withId: false)
+        }
+      }
+    }
+      .padding()
+      .background(.secondarySystemGroupedBackground)
+      .frame(width: UIScreen.main.bounds.size.width)
+      .environmentObject(action)
+      .environmentObject(postReply)
+  }
+
+  func shareAsImage() {
+    viewingImage.show(image: screenshotView.snapshot())
   }
 }
 

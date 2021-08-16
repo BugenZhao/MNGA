@@ -10,7 +10,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserMenuView: View {
-  @EnvironmentObject var authStorage: AuthStorage
+  @StateObject var authStorage = AuthStorage.shared
 
   @State var user: User? = nil
 

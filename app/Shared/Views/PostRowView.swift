@@ -17,8 +17,8 @@ struct PostRowView: View {
 
   @EnvironmentObject var action: TopicDetailsActionModel
   @EnvironmentObject var postReply: PostReplyModel
-  @EnvironmentObject var authStorage: AuthStorage
 
+  @StateObject var authStorage = AuthStorage.shared
   @StateObject var pref = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
 
@@ -68,6 +68,7 @@ struct PostRowView: View {
         VStack {
           ForEach(post.comments, id: \.hashIdentifiable) { comment in
             PostCommentRowView(comment: comment)
+              .fixedSize(horizontal: false, vertical: true)
           }
         }
       }
