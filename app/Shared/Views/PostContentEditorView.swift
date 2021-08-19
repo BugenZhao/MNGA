@@ -22,6 +22,8 @@ struct PostContentEditorView: View {
   @Binding var subject: String?
   @Binding var content: String
 
+  @StateObject var keyboard = Keyboard.main
+
   var body: some View {
     VStack {
       List {
@@ -42,16 +44,18 @@ struct PostContentEditorView: View {
               toolBar.setItems([flexButton, doneButton], animated: true)
               textView.inputAccessoryView = toolBar
               textView.isScrollEnabled = false
+              textView.backgroundColor = UIColor.secondarySystemGroupedBackground
             }
             Text(content).opacity(0).padding(.all, 8)
           } .font(.callout)
-            .frame(minHeight: 200)
+            .frame(minHeight: 250)
         }
 
       } .listStyle(GroupedListStyle())
 
-      PostContentPanelView(content: $content)
-        .hiddenIfKeyboardActive()
+      if !keyboard.isShowing {
+        PostContentPanelView(content: $content)
+      }
     }
   }
 }

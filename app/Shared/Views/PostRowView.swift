@@ -10,8 +10,7 @@ import SwiftUI
 
 struct PostRowView: View {
   let post: Post
-
-  @State var showPostId = false
+  let useContextMenu: Bool
 
   @Binding var vote: VotesModel.Vote
 
@@ -26,19 +25,24 @@ struct PostRowView: View {
     self.users.localUser(id: self.post.authorID)
   }
 
-  static func build(post: Post, vote: Binding<VotesModel.Vote>) -> Self {
-    return Self.init(post: post, vote: vote)
-  }
-
   @ViewBuilder
   var header: some View {
+    let floor = (Text("#").font(.footnote) + Text("\(post.floor)").font(.callout))
+      .fontWeight(.medium)
+      .foregroundColor(.accentColor)
+
     HStack {
       PostRowUserView.build(post: post)
       Spacer()
-      (Text("#").font(.footnote) + Text(showPostId ? post.id.pid : "\(post.floor)").font(.callout))
-        .fontWeight(.medium)
-        .foregroundColor(.accentColor)
-        .onTapGesture { withAnimation { self.showPostId.toggle() } }
+
+      if useContextMenu {
+        floor
+      } else {
+        Menu(content: { menu }) {
+          floor
+          Image(systemName: "ellipsis")
+        }
+      }
     }
   }
 
@@ -120,34 +124,44 @@ struct PostRowView: View {
 
   @ViewBuilder
   var menu: some View {
-    Button(action: { copyContent(post.content.raw) }) {
-      Label("Copy Raw Content", systemImage: "doc.on.doc")
+    Section {
+      Label("#\(post.id.pid)", systemImage: "number")
     }
-    Button(action: { doQuote() }) {
-      Label("Quote", systemImage: "quote.bubble")
-    }
-    Button(action: { doComment() }) {
-      Label("Comment", systemImage: "tag")
-    }
-    if authStorage.authInfo.inner.uid == post.authorID {
-      Button(action: { doEdit() }) {
-        Label("Edit", systemImage: "pencil")
+    Section {
+      Button(action: { copyContent(post.content.raw) }) {
+        Label("Copy Raw Content", systemImage: "doc.on.doc")
+      }
+      Button(action: { doQuote() }) {
+        Label("Quote", systemImage: "quote.bubble")
+      }
+      Button(action: { doComment() }) {
+        Label("Comment", systemImage: "tag")
+      }
+      if authStorage.authInfo.inner.uid == post.authorID {
+        Button(action: { doEdit() }) {
+          Label("Edit", systemImage: "pencil")
+        }
       }
     }
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
+    let view = VStack(alignment: .leading, spacing: 10) {
       header
       content
       footer
       comments
       signature
     } .padding(.vertical, 4)
-      .contextMenu { menu }
     #if os(iOS)
       .listRowBackground(action.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
+
+    if useContextMenu {
+      view.contextMenu { menu }
+    } else {
+      view
+    }
   }
 
   func copyContent(_ content: String) {

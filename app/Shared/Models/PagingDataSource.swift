@@ -11,12 +11,12 @@ import SwiftProtobuf
 import SwiftUI
 
 class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
-  var buildRequest: ((_ page: Int) -> AsyncRequest.OneOf_Value)?
+  private let buildRequest: (_ page: Int) -> AsyncRequest.OneOf_Value
   private let onResponse: (_ response: Res) -> ([Item], Int?)
   private let id: KeyPath<Item, String>
 
   @Published var items = [Item]()
-  @Published var itemToIdx = [String: Int]()
+  @Published var itemToIndexAndPage = [String: (index: Int, page: Int)]()
   @Published var isLoading = false
   @Published var isRefreshing = false
   @Published var latestResponse: Res?
@@ -24,11 +24,12 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private var loadedPage = 0
   private var totalPages = 1
   private var dataFlowId = UUID()
-  
+
   var hasMore: Bool { loadedPage < totalPages }
+  var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
 
   init(
-    buildRequest: ((_ page: Int) -> AsyncRequest.OneOf_Value)?,
+    buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
     onResponse: @escaping (_ response: Res) -> ([Item], Int?),
     id: KeyPath<Item, String>
   ) {
@@ -36,38 +37,48 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.onResponse = onResponse
     self.id = id
   }
-  
+
   func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
     self.items.sorted { $0[keyPath: key] < $1[keyPath: key] }
   }
+  
+  var pagedItems: [(page: Int, items: [Item])] {
+    var pagedItems = [Int: [Item]]()
+    for item in items {
+      let id = item[keyPath: id]
+      let page = itemToIndexAndPage[id]!.page
+      pagedItems[page, default: []].append(item)
+    }
+    return pagedItems.sorted { $0.key < $1.key }.map { (page: $0.key, items: $0.value) }
+  }
 
-  private func upsertItems<S>(_ items: S) where S: Sequence, S.Element == Item {
+  private func upsertItems<S>(_ items: S, page: Int) where S: Sequence, S.Element == Item {
     items.forEach {
       let id = $0[keyPath: self.id]
 
-      if let index = self.itemToIdx[id] {
+      if let index = self.itemToIndexAndPage[id]?.index {
         self.items[index] = $0
       } else { // is new
         self.items.append($0)
-        self.itemToIdx[id] = self.items.endIndex - 1
+        self.itemToIndexAndPage[id] = (index: self.items.endIndex - 1, page: page)
       }
     }
   }
 
-  private func replaceItems<S>(_ items: S) where S: Sequence, S.Element == Item {
+  private func replaceItems<S>(_ items: S, page: Int) where S: Sequence, S.Element == Item {
     self.items.removeAll()
-    self.itemToIdx.removeAll()
-    self.upsertItems(items)
+    self.itemToIndexAndPage.removeAll()
+    self.upsertItems(items, page: page)
   }
 
-  func loadMore(after: Double) {
+  func loadMore(after: Double = 0.0) {
     DispatchQueue.main.asyncAfter(deadline: .now() + after) {
       self.loadMore(background: false, alwaysAnimation: true)
     }
   }
-  
+
   func loadMoreIfNeeded(currentItem: Item) {
-    if let index = itemToIdx[currentItem[keyPath: id]] {
+    if let index = itemToIndexAndPage[currentItem[keyPath: id]]?.index {
       let threshold = items.index(items.endIndex, offsetBy: -2)
       if index >= threshold { loadMore(background: true) }
     }
@@ -82,14 +93,15 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.loadedPage = 0
     self.totalPages = 1
 
-    let request = buildRequest!(1)
+    let page = 1
+    let request = buildRequest(page)
     logicCallAsync(request) { (response: Res) in
       self.latestResponse = response
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
       withAnimation(when: animated) {
-        self.replaceItems(newItems)
+        self.replaceItems(newItems, page: page)
         self.isRefreshing = false
         self.isLoading = false
       }
@@ -117,7 +129,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 
   func reload(page: Int) {
-    let request = buildRequest!(page)
+    let request = buildRequest(page)
     let currentId = dataFlowId
 
     logicCallAsync(request) { (response: Res) in
@@ -127,7 +139,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       let (newItems, newTotalPages) = self.onResponse(response)
 
       withAnimation {
-        self.upsertItems(newItems)
+        self.upsertItems(newItems, page: page)
         self.isLoading = false
       }
       self.totalPages = newTotalPages ?? self.totalPages
@@ -142,7 +154,8 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     if isLoading || loadedPage >= totalPages { return }
     isLoading = true;
 
-    let request = buildRequest!(loadedPage + 1)
+    let page = loadedPage + 1
+    let request = buildRequest(page)
     let currentId = dataFlowId
 
     let queue = DispatchQueue.global(qos: background ? .background : .userInitiated)
@@ -155,7 +168,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
       withAnimation(when: self.items.isEmpty || alwaysAnimation) {
-        self.upsertItems(newItems)
+        self.upsertItems(newItems, page: page)
         self.isLoading = false
       }
       self.totalPages = newTotalPages ?? self.totalPages

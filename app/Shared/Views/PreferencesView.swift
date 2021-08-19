@@ -34,7 +34,7 @@ struct PreferencesView: View {
       
       Section(header: Text("Advanced")) {
         Toggle(isOn: $pref.useStackDetails) {
-          Label("Use Stack Details (Experimental)", systemImage: "square.stack")
+          Label("Use Stack for Details", systemImage: "square.stack")
         }
         NavigationLink(destination: CacheView()) {
           Label("Cache", systemImage: "internaldrive")

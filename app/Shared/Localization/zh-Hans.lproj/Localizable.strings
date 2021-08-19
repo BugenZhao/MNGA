@@ -72,3 +72,6 @@
 "Image Cache" = "图片缓存";
 "View Image" = "查看图片";
 "Share As Image" = "作为图片分享";
+"Page %lld" = "第 %lld 页";
+"Load This Page" = "加载本页";
+"Use Stack for Details" = "为话题详情使用 Stack 布局";

@@ -103,7 +103,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    PostRowView.build(post: post, vote: votes.binding(for: post))
+    PostRowView(post: post, useContextMenu: !prefs.useStackDetails, vote: votes.binding(for: post))
       .id((withId ? "" : "dummy") + post.id.pid)
   }
 
@@ -113,6 +113,8 @@ struct TopicDetailsView: View {
       .fixedSize(horizontal: false, vertical: true)
     if let first = self.first {
       buildRow(post: first)
+    } else {
+      LoadingRowView(high: true)
     }
   }
 
@@ -120,8 +122,8 @@ struct TopicDetailsView: View {
   var headerSection: some View {
     Section(header: HStack {
       Text("Topic")
-      Spacer()
-      if dataSource.isLoading { ProgressView() }
+//      Spacer()
+//      if dataSource.isLoading { ProgressView().scaleEffect(0.7) }
     }) {
       headerSectionInner
     }
@@ -146,10 +148,6 @@ struct TopicDetailsView: View {
           buildRow(post: post)
             .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
         }
-//        if dataSource.hasMore {
-//          LoadingRowView()
-//            .onAppear { dataSource.loadMore(after: 0.5) }
-//        }
       }
     }
   }
@@ -168,6 +166,64 @@ struct TopicDetailsView: View {
       headerSection
       hotRepliesSection
       allRepliesSection
+    }
+    #if os(iOS)
+      .listStyle(GroupedListStyle())
+    #endif
+  }
+
+  @ViewBuilder
+  func buildStack(_ items: Array<Post>.SubSequence) -> some View {
+    VStack(alignment: .leading) {
+      ForEach(items, id: \.id.pid) { post in
+        buildRow(post: post)
+        if post.id != items.last?.id {
+          Divider()
+            .padding(.trailing, -20)
+        }
+      }
+    } .fixedSize(horizontal: false, vertical: true)
+  }
+
+  @ViewBuilder
+  var listStackHotRepliesSection: some View {
+    if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
+      Section(header: Text("Hot Replies")) {
+        buildStack(hotReplies[...])
+      }
+    }
+  }
+
+  @ViewBuilder
+  var listStackAllRepliesSections: some View {
+    if dataSource.items.count > 1 {
+      ForEach(dataSource.pagedItems, id: \.page) { pair in
+        Section(header: Text("Page \(pair.page)")) {
+          let items = pair.items.dropFirst(pair.page == 1 ? 1 : 0)
+          buildStack(items)
+        }
+      }
+
+      if let nextPage = dataSource.nextPage {
+        Section(header: Text("Page \(nextPage)")) {
+          if dataSource.isLoading {
+            LoadingRowView()
+          } else {
+            Button(action: { dataSource.loadMore() }) {
+              Label("Load This Page", systemImage: "arrow.clockwise")
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  var listStackMain: some View {
+    List {
+      headerSection
+      listStackHotRepliesSection
+      listStackAllRepliesSections
     }
     #if os(iOS)
       .listStyle(GroupedListStyle())
@@ -218,7 +274,7 @@ struct TopicDetailsView: View {
       ScrollViewReader { proxy in
         Group {
           if prefs.useStackDetails {
-            stackMain
+            listStackMain
           } else {
             listMain
           }
@@ -287,13 +343,13 @@ struct TopicDetailsView: View {
   }
 
   func preloadUsers(response: TopicDetailsResponse?) {
-    if let response = response {
-      DispatchQueue.main.async {
-        for id in response.replies.map(\.authorID) {
-          let _ = self.users.localUser(id: id)
-        }
-      }
-    }
+//    if let response = response {
+//      DispatchQueue.main.async {
+//        for id in response.replies.map(\.authorID) {
+//          let _ = self.users.localUser(id: id)
+//        }
+//      }
+//    }
   }
 
   @ViewBuilder

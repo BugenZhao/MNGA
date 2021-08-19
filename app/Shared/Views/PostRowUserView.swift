@@ -35,7 +35,7 @@ struct PostRowUserView: View, Equatable {
   @State var showId = false
 
   @ViewBuilder
-  func buildAvatar(user: User?) -> some View {
+  var avatar: some View {
     let placeholder = Image(systemName: "person.circle.fill")
       .resizable()
 
@@ -64,7 +64,7 @@ struct PostRowUserView: View, Equatable {
 
   var body: some View {
     HStack {
-      buildAvatar(user: user)
+      avatar
         .foregroundColor(.accentColor)
         .frame(width: avatarSize, height: avatarSize)
         .clipShape(Circle())
