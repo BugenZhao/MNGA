@@ -103,7 +103,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    PostRowView(post: post, useContextMenu: !prefs.useStackDetails, vote: votes.binding(for: post))
+    PostRowView(post: post, useContextMenu: !prefs.usePaginatedDetails, vote: votes.binding(for: post))
       .id((withId ? "" : "dummy") + post.id.pid)
   }
 
@@ -113,20 +113,17 @@ struct TopicDetailsView: View {
       .fixedSize(horizontal: false, vertical: true)
     if let first = self.first {
       buildRow(post: first)
-    } else {
-      LoadingRowView(high: true)
     }
+//    else {
+//      LoadingRowView(high: true)
+//    }
   }
 
   @ViewBuilder
   var headerSection: some View {
-    Section(header: HStack {
-      Text("Topic")
-//      Spacer()
-//      if dataSource.isLoading { ProgressView().scaleEffect(0.7) }
-    }) {
+    Section(header: Text("Topic")) {
       headerSectionInner
-    }
+    } .transition(.asymmetric(insertion: .scale, removal: .opacity))
   }
 
   @ViewBuilder
@@ -233,50 +230,50 @@ struct TopicDetailsView: View {
     #endif
   }
 
-  @ViewBuilder
-  var stackMain: some View {
-    GeometryReader { geometry in
-      ScrollView {
-        VStack(alignment: .leading) {
-          Group {
-            Text("Topic").font(.footnote).foregroundColor(.secondaryLabel)
-            Divider()
-            TopicSubjectView(topic: latestTopic, lineLimit: nil)
-              .frame(minWidth: 0, maxWidth: .infinity)
-            if let first = self.first {
-              Divider().padding(.leading)
-              buildRow(post: first) .padding(.horizontal)
-            }
-            Divider()
-          }
-
-          if dataSource.items.count >= 1 {
-            Spacer().height(30)
-            Text("Replies").font(.footnote).foregroundColor(.secondaryLabel)
-            Divider()
-          }
-
-          ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
-            buildRow(post: post) .padding(.horizontal)
-            Divider().padding(.leading)
-          }
-        } .frame(minWidth: 0, maxWidth: .infinity)
-
-        LazyVStack {
-          if dataSource.hasMore && dataSource.items.count > 0 {
-            LoadingRowView()
-              .onAppear { dataSource.loadMore(after: 0.5) }
-          }
-        }
-      }
-    }
-  }
+//  @ViewBuilder
+//  var stackMain: some View {
+//    GeometryReader { geometry in
+//      ScrollView {
+//        VStack(alignment: .leading) {
+//          Group {
+//            Text("Topic").font(.footnote).foregroundColor(.secondaryLabel)
+//            Divider()
+//            TopicSubjectView(topic: latestTopic, lineLimit: nil)
+//              .frame(minWidth: 0, maxWidth: .infinity)
+//            if let first = self.first {
+//              Divider().padding(.leading)
+//              buildRow(post: first) .padding(.horizontal)
+//            }
+//            Divider()
+//          }
+//
+//          if dataSource.items.count >= 1 {
+//            Spacer().height(30)
+//            Text("Replies").font(.footnote).foregroundColor(.secondaryLabel)
+//            Divider()
+//          }
+//
+//          ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
+//            buildRow(post: post) .padding(.horizontal)
+//            Divider().padding(.leading)
+//          }
+//        } .frame(minWidth: 0, maxWidth: .infinity)
+//
+//        LazyVStack {
+//          if dataSource.hasMore && dataSource.items.count > 0 {
+//            LoadingRowView()
+//              .onAppear { dataSource.loadMore(after: 0.5) }
+//          }
+//        }
+//      }
+//    }
+//  }
 
   var body: some View {
     VStack(alignment: .leading) {
       ScrollViewReader { proxy in
         Group {
-          if prefs.useStackDetails {
+          if prefs.usePaginatedDetails {
             listStackMain
           } else {
             listMain
@@ -297,7 +294,7 @@ struct TopicDetailsView: View {
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
-//        .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+      .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
     .userActivity(Constants.Activity.openTopic) { activity in
       if let url = URL(string: webpageURL) {

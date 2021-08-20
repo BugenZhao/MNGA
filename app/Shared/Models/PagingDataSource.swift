@@ -27,6 +27,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   var hasMore: Bool { loadedPage < totalPages }
   var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
+  var isInitialLoading: Bool { isLoading && loadedPage == 0 }
 
   init(
     buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,

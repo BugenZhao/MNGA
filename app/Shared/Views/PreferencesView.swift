@@ -33,8 +33,8 @@ struct PreferencesView: View {
       }
       
       Section(header: Text("Advanced")) {
-        Toggle(isOn: $pref.useStackDetails) {
-          Label("Use Stack for Details", systemImage: "square.stack")
+        Toggle(isOn: $pref.usePaginatedDetails) {
+          Label("Use Paginated Details", systemImage: "square.stack")
         }
         NavigationLink(destination: CacheView()) {
           Label("Cache", systemImage: "internaldrive")
