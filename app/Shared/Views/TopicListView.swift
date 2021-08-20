@@ -96,10 +96,8 @@ struct TopicListView: View {
 
   @ViewBuilder
   var subforum: some View {
-    if let forum = self.currentShowingSubforum {
-      let destination = TopicListView.build(forum: forum)
-      NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
-    }
+    let destination = TopicListView.build(forum: self.currentShowingSubforum ?? Forum())
+    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
     NavigationLink(destination: EmptyView()) { } // hack: unexpected pop
   }
 

@@ -154,10 +154,10 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var navigation: some View {
-    if let tid = self.action.navigateToTid {
-      let topic = Topic.with { $0.id = tid }
-      NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
+    let topic = Topic.with {
+      if let tid = self.action.navigateToTid { $0.id = tid }
     }
+    NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
   }
 
   @ViewBuilder
