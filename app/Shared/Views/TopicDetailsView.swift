@@ -205,15 +205,18 @@ struct TopicDetailsView: View {
       }
 
       if let nextPage = dataSource.nextPage {
-        Section(header: Text("Page \(nextPage)")) {
-          if dataSource.isLoading {
-            LoadingRowView()
-          } else {
-            Button(action: { dataSource.loadMore() }) {
-              Label("Load This Page", systemImage: "arrow.clockwise")
-            }
-          }
-        }
+        let loadTrigger = Text("").onAppear { dataSource.loadMore(after: 0.7) }
+        Section(header: Text("Page \(nextPage)"), footer: loadTrigger) {
+          // BUGEN'S HACK:
+          // the first view of this section will unexpectedly call `onAppear(_:)`
+          // even if we are scrolling the previous section.
+          // While the next ones won't, this can not be a solution since displaying
+          // TWO dummy views here seems too strange for users.
+          // Fortunately, using `onAppear(_:)` on the footer of the section works.
+          // Note that the `.id(_:)` on this section is necessary, or the `onAppear`
+          // trigger can not be triggered again.
+          LoadingRowView()
+        } .id(nextPage)
       }
     }
   }
@@ -334,9 +337,9 @@ struct TopicDetailsView: View {
 
     switch sent.task.pageToReload {
     case .exact(let page):
-      dataSource.reload(page: page)
+      dataSource.reload(page: page, evenIfNotLoaded: false)
     case .last:
-      dataSource.reloadLastPages()
+      dataSource.reloadLastPages(evenIfNotLoaded: false)
     case .none:
       break
     }

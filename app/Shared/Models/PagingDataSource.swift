@@ -41,7 +41,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
     self.items.sorted { $0[keyPath: key] < $1[keyPath: key] }
   }
-  
+
   var pagedItems: [(page: Int, items: [Item])] {
     var pagedItems = [Int: [Item]]()
     for item in items {
@@ -122,13 +122,14 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func reloadLastPages() {
+  func reloadLastPages(evenIfNotLoaded: Bool) {
     for page in [totalPages, totalPages + 1] {
-      reload(page: page)
+      reload(page: page, evenIfNotLoaded: evenIfNotLoaded)
     }
   }
 
-  func reload(page: Int) {
+  func reload(page: Int, evenIfNotLoaded: Bool) {
+    guard page <= loadedPage || evenIfNotLoaded else { return }
     let request = buildRequest(page)
     let currentId = dataFlowId
 
