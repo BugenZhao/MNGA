@@ -245,6 +245,8 @@ class ContentCombiner {
       self.visit(sized: tagged)
     case "collapse":
       self.visit(collapsed: tagged)
+    case "flash":
+      self.visit(flash: tagged)
     default:
       self.visit(defaultTagged: tagged)
     }
@@ -260,7 +262,7 @@ class ContentCombiner {
     }
     guard let url = URL(string: urlText) else { return }
 
-    let image = PostImageView(url: url, onlyThumbs: self.inQuote)
+    let image = ContentImageView(url: url, onlyThumbs: self.inQuote)
     self.append(image)
   }
 
@@ -341,36 +343,16 @@ class ContentCombiner {
     }
 
     if let urlString = urlString {
-      let combiner = ContentCombiner(parent: self, font: { _ in Font.footnote }, color: { _ in Color.accentColor })
-      let text = Text(Image(systemName: "link")) + Text(" ") + Text(displayString)
-      combiner.append(text)
-
-      let view = combiner.buildView().lineLimit(1)
-        .padding(.small)
-        .background(
-        RoundedRectangle(cornerRadius: 12)
-        #if os(iOS)
-          .fill(self.inQuote ? Color.secondarySystemGroupedBackground : Color.systemGroupedBackground)
-        #endif
-      )
-
-      let link = Button(action: {
+      let link = ContentButtonView(icon: "link", title: Text(displayString), inQuote: inQuote) {
         if let url = URL(string: urlString) {
           if url.lastPathComponent == "read.php",
             let tid = extractQueryParams(query: url.query ?? "", param: "tid") {
             self.actionModel?.navigateToTid = tid
           } else {
-            #if os(iOS)
-              UIApplication.shared.open(url)
-            #elseif os(macOS)
-              NSWorkspace.shared.open(url)
-            #endif
+            OpenURLModel.shared.open(url: url)
           }
         }
-      }) {
-        view
-      } .buttonStyle(.plain)
-
+      }
       self.append(link)
     }
   }
@@ -430,6 +412,31 @@ class ContentCombiner {
 
     let view = CollapsedContentView(title: title, content: { content })
     self.append(view)
+  }
+
+  private func visit(flash: Span.Tagged) {
+    switch flash.attributes.first {
+    case "video":
+      self.visitFlash(video: flash)
+    default:
+      self.visit(defaultTagged: flash)
+    }
+  }
+
+  private func visitFlash(video: Span.Tagged) {
+    guard let value = video.spans.first?.value else { return }
+    guard case .plain(let plain) = value else { return }
+
+    var urlText = plain.text
+    if !urlText.contains("http") {
+      urlText = "https://img.nga.178.com/attachments/" + urlText
+    }
+    guard let url = URL(string: urlText) else { return }
+
+    let link = ContentButtonView(icon: "film", title: Text("View Video"), inQuote: inQuote) {
+      OpenURLModel.shared.open(url: url, inApp: true)
+    }
+    self.append(link)
   }
 
   private func visit(defaultTagged: Span.Tagged) {

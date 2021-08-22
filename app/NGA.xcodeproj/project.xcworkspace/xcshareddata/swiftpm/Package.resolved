@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "BetterSafariView",
+        "repositoryURL": "https://github.com/stleamist/BetterSafariView",
+        "state": {
+          "branch": null,
+          "revision": "561919b490eddf8f999b0f855cbf237001cbfccd",
+          "version": "2.3.1"
+        }
+      },
+      {
         "package": "HalfASheet",
         "repositoryURL": "https://github.com/franklynw/HalfASheet",
         "state": {

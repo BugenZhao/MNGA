@@ -7,60 +7,7 @@
 
 import Foundation
 import SwiftUI
-import SDWebImageSwiftUI
 import SwiftUIX
-
-struct PostImageView: View {
-  let url: URL
-  let onlyThumbs: Bool
-  let isOpenSourceStickers: Bool
-
-  @EnvironmentObject var viewingImage: ViewingImageModel
-
-  init(url: URL, onlyThumbs: Bool = false) {
-    self.url = url
-    self.onlyThumbs = onlyThumbs
-    self.isOpenSourceStickers = openSourceStickersNames.contains(url.lastPathComponent)
-  }
-
-  var body: some View {
-    if isOpenSourceStickers {
-      WebImage(url: url)
-        .resizable()
-        .indicator(.activity)
-        .aspectRatio(contentMode: .fit)
-        .frame(width: 50, height: 50)
-    } else {
-      if onlyThumbs {
-        Button(action: self.showImage) {
-          (Text(Image(systemName: "photo")) + Text(" ") + Text("View Image"))
-            .font(.footnote)
-            .foregroundColor(.accentColor)
-            .padding(.small)
-            .background(
-            RoundedRectangle(cornerRadius: 12)
-            #if os(iOS)
-              .fill(Color.secondarySystemGroupedBackground)
-            #endif
-          )
-        } .buttonStyle(.plain)
-      }
-
-      if !onlyThumbs {
-        WebImage(url: url)
-          .resizable()
-          .indicator(.activity)
-          .scaledToFit()
-          .clipShape(RoundedRectangle(cornerRadius: 8))
-          .onTapGesture(perform: self.showImage)
-      }
-    }
-  }
-
-  func showImage() {
-    self.viewingImage.show(url: url)
-  }
-}
 
 struct PostContentView: View, Equatable {
   let spans: [Span]

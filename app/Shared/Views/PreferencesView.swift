@@ -30,6 +30,9 @@ struct PreferencesView: View {
         } label: {
           Label("Collapsed Style", systemImage: "eye.slash")
         }
+        Toggle(isOn: $pref.useInAppSafari) {
+          Label("Always Use In-App Safari", systemImage: "safari")
+        }
       }
       
       Section(header: Text("Advanced")) {

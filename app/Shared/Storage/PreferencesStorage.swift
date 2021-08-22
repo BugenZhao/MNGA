@@ -16,4 +16,5 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("showAvatar") var showAvatar = true
   @AppStorage("useRedact") var useRedact = true
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = true
+  @AppStorage("useInAppSafari") var useInAppSafari = true
 }

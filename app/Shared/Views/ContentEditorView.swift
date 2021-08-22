@@ -1,6 +1,6 @@
 //
-//  PostContentEditorView.swift
-//  PostContentEditorView
+//  ContentEditorView.swift
+//  ContentEditorView
 //
 //  Created by Bugen Zhao on 7/16/21.
 //
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-struct PostContentPanelView: View {
+struct ContentEditorPanelView: View {
   @Binding var content: String
 
   var body: some View {
@@ -18,7 +18,7 @@ struct PostContentPanelView: View {
   }
 }
 
-struct PostContentEditorView: View {
+struct ContentEditorView: View {
   @Binding var subject: String?
   @Binding var content: String
 
@@ -54,7 +54,7 @@ struct PostContentEditorView: View {
       } .listStyle(GroupedListStyle())
 
       if !keyboard.isShowing {
-        PostContentPanelView(content: $content)
+        ContentEditorPanelView(content: $content)
       }
     }
   }
@@ -72,7 +72,7 @@ struct PostContentEditorView_Previews: PreviewProvider {
     @State var content = ""
 
     var body: some View {
-      PostContentEditorView(subject: $subject, content: $content)
+      ContentEditorView(subject: $subject, content: $content)
     }
   }
 

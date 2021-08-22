@@ -7,11 +7,13 @@
 
 import SwiftUI
 import SwiftUIX
+import BetterSafariView
 
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
   @StateObject var activity = ActivityModel()
   @StateObject var prefs = PreferencesStorage.shared
+  @StateObject var openURL = OpenURLModel.shared
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
@@ -36,6 +38,7 @@ struct ContentView: View {
         }
       }
     } .overlay { ImageOverlay() }
+      .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })
