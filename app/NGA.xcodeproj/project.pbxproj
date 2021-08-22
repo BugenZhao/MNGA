@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		375E616A4BCE12A43666F04C /* macOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */; };
 		375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */; };
+		B409251A26D2810F00BCB666 /* ImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251926D2810F00BCB666 /* ImageViewer.swift */; };
 		B409CE6B269F3A6E00F617EC /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B409CE6A269F3A6E00F617EC /* AlertToast */; };
 		B409CE6D26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
@@ -87,7 +88,6 @@
 		B48709C6269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */; };
 		B48B0C4626932CC70067794F /* ForumRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumRowView.swift */; };
 		B48B0C4726932CC70067794F /* ForumRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4526932CC70067794F /* ForumRowView.swift */; };
-		B48B0C4A2694CE660067794F /* ImageViewer in Frameworks */ = {isa = PBXBuildFile; productRef = B48B0C492694CE660067794F /* ImageViewer */; };
 		B48B0C4D2694D4FF0067794F /* ViewingImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */; };
 		B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */; };
 		B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
@@ -204,6 +204,7 @@
 /* Begin PBXFileReference section */
 		375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSNGAApp.swift; sourceTree = "<group>"; };
 		375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = macOSNGAApp.swift; sourceTree = "<group>"; };
+		B409251926D2810F00BCB666 /* ImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewer.swift; sourceTree = "<group>"; };
 		B409CE6C26A0920C00F617EC /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
 		B437B27B269B0E190092FF9E /* ToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModifier.swift; sourceTree = "<group>"; };
 		B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeTextView.swift; sourceTree = "<group>"; };
@@ -314,7 +315,6 @@
 				B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
-				B48B0C4A2694CE660067794F /* ImageViewer in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
 				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
 				B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */,
@@ -545,6 +545,7 @@
 			isa = PBXGroup;
 			children = (
 				B4EB80E5269B13830014DDFA /* ImageOverlay.swift */,
+				B409251926D2810F00BCB666 /* ImageViewer.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -599,7 +600,6 @@
 				B4E10715268DADEE006C1742 /* WebView */,
 				B412F706268DFC4600EB0614 /* Logging */,
 				B4920CE22690E65600762FC9 /* HalfASheet */,
-				B48B0C492694CE660067794F /* ImageViewer */,
 				B437B278269B09DC0092FF9E /* SwiftUIRefresh */,
 				B43DED5E269EFA5A009C52F5 /* AlertToast */,
 			);
@@ -670,7 +670,6 @@
 				B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */,
 				B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
 				B4920CE12690E65600762FC9 /* XCRemoteSwiftPackageReference "HalfASheet" */,
-				B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
 				B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
@@ -760,6 +759,7 @@
 				B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B444638B26A1981E006FA44D /* PostReplyModel.swift in Sources */,
+				B409251A26D2810F00BCB666 /* ImageViewer.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
@@ -1266,14 +1266,6 @@
 				minimumVersion = 0.0.8;
 			};
 		};
-		B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Jake-Short/swiftui-image-viewer.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 		B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUIRefresh";
@@ -1353,11 +1345,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
 			productName = SwiftUIX;
-		};
-		B48B0C492694CE660067794F /* ImageViewer */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B48B0C482694CE660067794F /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */;
-			productName = ImageViewer;
 		};
 		B4920CE22690E65600762FC9 /* HalfASheet */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -16,7 +16,6 @@ struct PostImageView: View {
   let isOpenSourceStickers: Bool
 
   @EnvironmentObject var viewingImage: ViewingImageModel
-  @State var overlayImage: PlatformImage?
 
   init(url: URL, onlyThumbs: Bool = false) {
     self.url = url
@@ -47,28 +46,19 @@ struct PostImageView: View {
         } .buttonStyle(.plain)
       }
 
-      let image = WebImage(url: url)
-        .onSuccess { image, _, _ in
-        DispatchQueue.main.async {
-          self.overlayImage = image
-        }
-      }
-        .resizable()
-        .indicator(.activity)
-        .scaledToFit()
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .onTapGesture(perform: self.showImage)
-
-      if onlyThumbs {
-        image.frame(maxHeight: 0) // still needed to load image
-      } else {
-        image
+      if !onlyThumbs {
+        WebImage(url: url)
+          .resizable()
+          .indicator(.activity)
+          .scaledToFit()
+          .clipShape(RoundedRectangle(cornerRadius: 8))
+          .onTapGesture(perform: self.showImage)
       }
     }
   }
 
   func showImage() {
-    self.viewingImage.show(image: self.overlayImage)
+    self.viewingImage.show(url: url)
   }
 }
 

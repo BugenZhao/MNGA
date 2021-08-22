@@ -12,20 +12,30 @@ import SwiftUIX
 import SDWebImageSwiftUI
 
 class ViewingImageModel: ObservableObject {
-  @Published var imageView: Image?
+  @Published var view: AnyView?
+  @Published var image: PlatformImage?
 
-  private(set) var image: PlatformImage? {
-    didSet { self.imageView = image == nil ? nil : Image(image: image!) }
+  func show(image: PlatformImage) {
+    withAnimation {
+      self.view = Image(image: image)
+        .resizable()
+        .eraseToAnyView()
+      self.image = image
+    }
   }
 
-  @Published var isShowing = false
-
-  func show(image: PlatformImage?) {
-    if image?.size == .zero {
-      self.show(image: nil)
-    } else {
-      self.image = image
-      self.isShowing = image != nil
+  func show(url: URL) {
+    withAnimation {
+      self.view = WebImage(url: url)
+        .onSuccess { image, _, _ in
+        DispatchQueue.main.async {
+          self.image = image
+        }
+      }
+        .resizable()
+        .indicator(.progress)
+        .eraseToAnyView()
+      self.image = nil
     }
   }
 }
