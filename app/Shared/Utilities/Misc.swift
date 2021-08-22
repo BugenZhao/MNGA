@@ -24,7 +24,7 @@ public func withAnimation<Result>(_ animation: Animation? = .default, when condi
 }
 
 public func extractQueryParams(query: String, param: String) -> String? {
-  guard let regex = try? NSRegularExpression(pattern: "\(param)=(?<v>\\d+)", options: .caseInsensitive) else { return nil }
+  guard let regex = try? NSRegularExpression(pattern: "\(param)=(?<v>[^&]+)", options: .caseInsensitive) else { return nil }
   if let match = regex.firstMatch(in: query, options: [], range: NSRange(query.startIndex..., in: query)) {
     if let range = Range(match.range(withName: "v"), in: query) {
       return String(query[range])

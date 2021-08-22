@@ -17,5 +17,6 @@ struct Constants {
   
   struct URL {
     static let base = "https://ngabbs.com/"
+    static let attachmentBase = "https://img.nga.178.com/attachments/"
   }
 }

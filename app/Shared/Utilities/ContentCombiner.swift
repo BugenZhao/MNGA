@@ -258,7 +258,7 @@ class ContentCombiner {
 
     var urlText = plain.text
     if !urlText.contains("http") {
-      urlText = "https://img.nga.178.com/attachments/" + urlText
+      urlText = Constants.URL.attachmentBase + urlText
     }
     guard let url = URL(string: urlText) else { return }
 
@@ -418,6 +418,8 @@ class ContentCombiner {
     switch flash.attributes.first {
     case "video":
       self.visitFlash(video: flash)
+    case "audio":
+      self.visitFlash(audio: flash)
     default:
       self.visit(defaultTagged: flash)
     }
@@ -429,11 +431,36 @@ class ContentCombiner {
 
     var urlText = plain.text
     if !urlText.contains("http") {
-      urlText = "https://img.nga.178.com/attachments/" + urlText
+      urlText = Constants.URL.attachmentBase + urlText
     }
     guard let url = URL(string: urlText) else { return }
 
     let link = ContentButtonView(icon: "film", title: Text("View Video"), inQuote: inQuote) {
+      OpenURLModel.shared.open(url: url, inApp: true)
+    }
+    self.append(link)
+  }
+
+  private func visitFlash(audio: Span.Tagged) {
+    guard let value = audio.spans.first?.value else { return }
+    guard case .plain(let plain) = value else { return }
+
+    let tokens = plain.text.split(separator: "?").map(String.init)
+    let duration = tokens.last { $0.contains("duration") }
+    var urlText = tokens.first!
+    if !urlText.contains("http") {
+      urlText = Constants.URL.attachmentBase + urlText
+    }
+    guard let url = URL(string: urlText) else { return }
+
+    let title: Text
+    if let duration = extractQueryParams(query: duration ?? "", param: "duration") {
+      title = Text(duration)
+    } else {
+      title = Text("Audio")
+    }
+
+    let link = ContentButtonView(icon: "waveform", title: title, inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
     }
     self.append(link)
