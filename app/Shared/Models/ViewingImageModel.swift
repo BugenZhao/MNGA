@@ -13,14 +13,14 @@ import SDWebImageSwiftUI
 
 class ViewingImageModel: ObservableObject {
   @Published var view: AnyView?
-  @Published var image: PlatformImage?
+  @Published var imageData: Data?
 
   func show(image: PlatformImage) {
     withAnimation {
       self.view = Image(image: image)
         .resizable()
         .eraseToAnyView()
-      self.image = image
+      self.imageData = image.sd_imageData()
     }
   }
 
@@ -29,13 +29,13 @@ class ViewingImageModel: ObservableObject {
       self.view = WebImage(url: url)
         .onSuccess { image, _, _ in
         DispatchQueue.main.async {
-          self.image = image
+          self.imageData = image.sd_imageData()
         }
       }
         .resizable()
         .indicator(.progress)
         .eraseToAnyView()
-      self.image = nil
+      self.imageData = nil
     }
   }
 }

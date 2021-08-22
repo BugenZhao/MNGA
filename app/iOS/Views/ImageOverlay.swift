@@ -18,8 +18,8 @@ struct ImageOverlay: View {
       view: model.view,
       viewerShown: $model.view.isNotNil().animation()
     ) .overlay(alignment: .topTrailing) {
-      if model.view != nil && model.image != nil {
-        Button(action: { self.activity.put(model.image) }) {
+      if model.view != nil && model.imageData != nil {
+        Button(action: { self.activity.put(model.imageData) }) {
           Image(systemName: "square.and.arrow.up")
             .padding(.small)
             .foregroundColor(.white)
