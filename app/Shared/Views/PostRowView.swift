@@ -20,6 +20,7 @@ struct PostRowView: View {
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var pref = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
+  @StateObject var attachments = AttachmentsModel()
 
   private var user: User? {
     self.users.localUser(id: self.post.authorID)
@@ -157,11 +158,14 @@ struct PostRowView: View {
       .listRowBackground(action.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
 
-    if useContextMenu {
-      view.contextMenu { menu }
-    } else {
-      view
-    }
+    Group {
+      if useContextMenu {
+        view.contextMenu { menu }
+      } else {
+        view
+      }
+    } .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
+      .environmentObject(attachments)
   }
 
   func copyContent(_ content: String) {

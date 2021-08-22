@@ -9,6 +9,17 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+struct InRealPostKey: EnvironmentKey {
+  static let defaultValue: Bool = true
+}
+
+extension EnvironmentValues {
+  var inRealPost: Bool {
+    get { self[InRealPostKey.self] }
+    set { self[InRealPostKey.self] = newValue }
+  }
+}
+
 struct PostContentView: View, Equatable {
   let spans: [Span]
   let defaultFont: Font

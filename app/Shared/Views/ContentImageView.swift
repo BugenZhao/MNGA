@@ -8,13 +8,16 @@
 import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUIX
 
 struct ContentImageView: View {
   let url: URL
   let onlyThumbs: Bool
   let isOpenSourceStickers: Bool
 
+  @Environment(\.inRealPost) var inRealPost
   @EnvironmentObject var viewingImage: ViewingImageModel
+  @OptionalEnvironmentObject<AttachmentsModel> var attachmentsModel
 
   init(url: URL, onlyThumbs: Bool = false) {
     self.url = url
@@ -44,6 +47,8 @@ struct ContentImageView: View {
   }
 
   func showImage() {
-    self.viewingImage.show(url: url)
+    guard inRealPost else { return }
+    let attachURL = self.attachmentsModel?.attachmentURL(for: self.url) ?? self.url
+    self.viewingImage.show(url: attachURL)
   }
 }

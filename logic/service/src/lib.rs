@@ -1,3 +1,4 @@
+mod attachment;
 #[cfg(test)]
 #[path = "auth_debug.rs"]
 mod auth;

@@ -39,6 +39,7 @@ struct PostEditorView: View {
       }
     } .listStyle(GroupedListStyle())
       .onAppear { parseContent() }
+      .environment(\.inRealPost, false)
   }
 
   var subjectBinding: Binding<String?> {

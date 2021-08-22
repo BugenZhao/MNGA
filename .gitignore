@@ -2,3 +2,4 @@
 /out/**/*.a
 /out/**/*.so
 .idea/
+.build/

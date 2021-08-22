@@ -50,6 +50,7 @@ message Post {
   Device device = 9;
   string alter_info = 10;
   uint32 at_page = 11;
+  repeated Attachment attachments = 13;
 }
 
 message Subforum {
@@ -103,6 +104,12 @@ message PostContent {
   string raw = 2;
 }
 
+message Attachment {
+  string url = 1;
+  uint64 size = 2;
+  string type = 3;
+}
+
 message Configuration { string document_dir_path = 1; }
 
 message AuthInfo {
@@ -154,6 +161,4 @@ message Notification {
   bool read = 8;
 }
 
-message BlockWord {
-  string word = 1;
-}
+message BlockWord { string word = 1; }

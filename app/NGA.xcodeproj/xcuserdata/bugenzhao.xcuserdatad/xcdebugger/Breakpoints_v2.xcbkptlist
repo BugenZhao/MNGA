@@ -334,8 +334,8 @@
             filePath = "Shared/Views/PostEditorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
             landmarkName = "inner"
             landmarkType = "24">
          </BreakpointContent>
@@ -497,6 +497,22 @@
             startingLineNumber = "444"
             endingLineNumber = "444"
             landmarkName = "visitFlash(audio:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B42926D0-9060-47F2-9CA4-28E6C2AC9538"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/Views/ContentImageView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "showImage()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

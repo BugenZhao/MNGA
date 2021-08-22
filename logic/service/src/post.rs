@@ -1,4 +1,5 @@
 use crate::{
+    attachment::extract_attachment,
     error::ServiceResult,
     fetch_package,
     utils::{extract_kv, extract_node_rel, extract_nodes_rel, extract_string},
@@ -78,6 +79,11 @@ pub fn extract_post(node: Node) -> Option<Post> {
         }
     };
 
+    let attachments = extract_nodes_rel(node, "./attachs/item", |ns| {
+        ns.into_iter().filter_map(extract_attachment).collect()
+    })
+    .unwrap_or_default();
+
     let post = Post {
         id: Some(post_id).into(),
         floor: get!(map, "lou", u32)?,
@@ -90,6 +96,7 @@ pub fn extract_post(node: Node) -> Option<Post> {
         comments: comments.into(),
         device,
         alter_info: get!(map, "alterinfo").unwrap_or_default(),
+        attachments: attachments.into(),
         ..Default::default()
     };
 
