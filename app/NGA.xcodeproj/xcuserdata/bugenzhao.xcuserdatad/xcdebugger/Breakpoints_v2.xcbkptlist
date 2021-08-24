@@ -526,8 +526,8 @@
             filePath = "Shared/Views/ContentEditorView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
             landmarkName = "showSticker()"
             landmarkType = "7">
          </BreakpointContent>
