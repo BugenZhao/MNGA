@@ -57,7 +57,7 @@ struct PostEditorView: View {
     } else {
       switch displayMode {
       case .plain:
-        ContentEditorView(subject: subjectBinding, content: contentBinding)
+        ContentEditorView.build(subject: subjectBinding, content: contentBinding)
       case .preview:
         preview
       }

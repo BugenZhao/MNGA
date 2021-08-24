@@ -10,6 +10,7 @@ import SwiftUI
 
 struct StickerInputView: View {
   @Binding var text: String
+  @Binding var position: Int?
 
   var body: some View {
     let rows = [GridItem](repeating: .init(.fixed(50)), count: 4)
@@ -17,7 +18,7 @@ struct StickerInputView: View {
     ScrollView(.horizontal) {
       LazyHGrid(rows: rows, spacing: 10) {
         ForEach(stickerImageNames, id: \.self) { name in
-          Button(action: { text.append(stickerImageNameToCode(name)) }) {
+          Button(action: { self.insert(name: name) }) {
             Image(name)
               .renderingMode(name.starts(with: "a") ? .template : .original)
               .resizable()
@@ -30,6 +31,17 @@ struct StickerInputView: View {
     } .foregroundColor(.primary)
       .frame(height: 240)
   }
+
+  func insert(name: String) {
+    let code = stickerImageNameToCode(name)
+    if let position = position {
+      let index = self.text.index(self.text.startIndex, offsetBy: position)
+      self.text.insert(contentsOf: code, at: index)
+      self.position! += code.count
+    } else {
+      self.text.append(contentsOf: code)
+    }
+  }
 }
 
 struct StickerInputView_Previews: PreviewProvider {
@@ -39,7 +51,7 @@ struct StickerInputView_Previews: PreviewProvider {
     var body: some View {
       VStack {
         Text(text)
-        StickerInputView(text: $text)
+        StickerInputView(text: $text, position: .constant(nil))
           .background(.secondary.opacity(0.2))
       }
     }

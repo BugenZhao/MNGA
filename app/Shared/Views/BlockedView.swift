@@ -16,13 +16,13 @@ struct BlockedView<Content>: View where Content: View {
   @StateObject var blockWords = BlockWordsStorage.shared
   @State var hidden = true
 
-  var redacted: Bool {
+  var shouldHide: Bool {
     hidden && blockWords.blocked(content)
   }
 
   var body: some View {
     let view = build()
-      .redacted(if: redacted)
+      .redacted(if: shouldHide)
 
     if revealOnTap {
       view
