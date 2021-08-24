@@ -37,5 +37,6 @@ mod test {
         let text = "&amp;#128514;&amp;#128513;";
         let unescaped = unescape(text);
         println!("{}", unescaped);
+        assert_eq!(unescaped, "😂😁");
     }
 }

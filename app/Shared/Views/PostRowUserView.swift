@@ -86,7 +86,7 @@ struct PostRowUserView: View, Equatable {
               Image(systemName: "text.bubble")
               Text("\(user?.postNum ?? 0)")
                 .redacted(if: badUser)
-            } .foregroundColor((user?.postNum ?? 50 < 50) ? .red : .secondary)
+            } .foregroundColor((1..<50 ~= user?.postNum ?? 50) ? .red : .secondary)
             HStack(spacing: 2) {
               Image(systemName: "calendar")
               Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)

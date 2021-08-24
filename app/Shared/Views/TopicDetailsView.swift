@@ -230,45 +230,6 @@ struct TopicDetailsView: View {
     #endif
   }
 
-//  @ViewBuilder
-//  var stackMain: some View {
-//    GeometryReader { geometry in
-//      ScrollView {
-//        VStack(alignment: .leading) {
-//          Group {
-//            Text("Topic").font(.footnote).foregroundColor(.secondaryLabel)
-//            Divider()
-//            TopicSubjectView(topic: latestTopic, lineLimit: nil)
-//              .frame(minWidth: 0, maxWidth: .infinity)
-//            if let first = self.first {
-//              Divider().padding(.leading)
-//              buildRow(post: first) .padding(.horizontal)
-//            }
-//            Divider()
-//          }
-//
-//          if dataSource.items.count >= 1 {
-//            Spacer().height(30)
-//            Text("Replies").font(.footnote).foregroundColor(.secondaryLabel)
-//            Divider()
-//          }
-//
-//          ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
-//            buildRow(post: post) .padding(.horizontal)
-//            Divider().padding(.leading)
-//          }
-//        } .frame(minWidth: 0, maxWidth: .infinity)
-//
-//        LazyVStack {
-//          if dataSource.hasMore && dataSource.items.count > 0 {
-//            LoadingRowView()
-//              .onAppear { dataSource.loadMore(after: 0.5) }
-//          }
-//        }
-//      }
-//    }
-//  }
-
   var body: some View {
     VStack(alignment: .leading) {
       ScrollViewReader { proxy in
@@ -294,7 +255,7 @@ struct TopicDetailsView: View {
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
-      .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+//      .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
     .userActivity(Constants.Activity.openTopic) { activity in
       if let url = URL(string: webpageURL) {
