@@ -20,93 +20,58 @@ class ContentEditorModel: ObservableObject {
   @Published var showing = Panel.none {
     didSet { if showing != .none { keyboard.dismiss() } }
   }
-  @Published var moveToPosition = nil as Int? // todo: real two-way binding position
-  @Published var position = nil as Int?
-
-  @Binding private var content: String
-
-  init(content: Binding<String>) {
-    self._content = content
-  }
+  @Published var selected: NSRange
+  @Published var text: String
 
   @objc func showSticker() {
     self.showing = .sticker
   }
 
-  private func insert(_ string: String, move: Int) {
-    if let position = position {
-      let index = content.index(content.startIndex, offsetBy: position)
-      content.insert(contentsOf: string, at: index)
-      moveToPosition = position + move
-    } else {
-      content.append(contentsOf: string)
-    }
+  init(initialText: String) {
+    self._text = .init(initialValue: initialText)
+    self._selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
+  }
+
+  private func appendTag(_ tag: String) {
+    let range = Range(selected, in: text)!
+    let selectedText = text[range]
+    text.replaceSubrange(range, with: "[\(tag)]\(selectedText)[/\(tag)]")
+    let newLocation = selected.location + (tag as NSString).length + 2
+    selected = NSRange(location: newLocation, length: selected.length)
   }
 
   @objc func appendBold() {
-    self.insert("[b][/b]", move: 3)
+    self.appendTag("b")
   }
-  
+
   @objc func appendDel() {
-    self.insert("[del][/del]", move: 5)
+    self.appendTag("del")
   }
 }
 
 struct ContentEditorView: View {
   @Binding var subject: String?
-  @Binding var content: String
-
-  @State var introspected = false
+  @Binding var contentToCommit: String
 
   @StateObject var model: ContentEditorModel
   @StateObject var keyboard = Keyboard.main
 
   static func build(subject: Binding<String?>, content: Binding<String>) -> Self {
-    UITextView.appearance().backgroundColor = .clear
-    let model = ContentEditorModel(content: content)
-    return Self.init(subject: subject, content: content, model: model)
+    let model = ContentEditorModel(initialText: content.wrappedValue)
+    return Self.init(subject: subject, contentToCommit: content, model: model)
   }
 
   @ViewBuilder
   var textEditor: some View {
-    TextEditor(text: $content).introspectTextView { textView in
-      if keyboard.isShowing { // keep tracking the cursor position
-        model.position = textView.selectedRange.lowerBound
-        if let moveTo = model.moveToPosition {
-          model.moveToPosition = nil
-          textView.selectedRange = NSRange(location: moveTo, length: 0)
-        }
-      }
-
-      guard !introspected else { return }
-      defer { DispatchQueue.main.async { introspected = true } }
-
-      let inputView = UIInputView.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44), inputViewStyle: .keyboard)
-
-      let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-      let flexButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-      let doneButton = UIBarButtonItem(image: UIImage(systemName: "keyboard.chevron.compact.down"), style: .done, target: self, action: #selector(textView.doneButtonTapped(button:)))
-      let stickerButton = UIBarButtonItem(image: UIImage(systemName: "face.smiling"), style: .plain, target: self.model, action: #selector(ContentEditorModel.showSticker))
-      let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self.model, action: #selector(ContentEditorModel.appendBold))
-      let delButton = UIBarButtonItem(image: UIImage(systemName: "strikethrough"), style: .plain, target: self.model, action: #selector(ContentEditorModel.appendDel))
-      toolbar.items = [stickerButton, boldButton, delButton, flexButton, doneButton]
-
-      // make it clear and
-      toolbar.isTranslucent = true
-      toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-      toolbar.backgroundColor = .clear
-      inputView.addSubview(toolbar)
-
-      textView.inputAccessoryView = inputView
-      textView.isScrollEnabled = false
-      textView.becomeFirstResponder()
-    }
+    ContentTextEditorView(model: self.model)
   }
 
   @ViewBuilder
   var stickerPanel: some View {
-    StickerInputView(text: $content, position: $model.position)
+    StickerInputView(text: $model.text, selected: $model.selected)
+      .background(.secondarySystemGroupedBackground)
       .frame(maxHeight: 240)
+    EmptyView()
   }
 
   var body: some View {
@@ -119,9 +84,9 @@ struct ContentEditorView: View {
         }
 
         Section(header: Text("Content")) {
-          ZStack { // hack for dynamic height
+          ZStack(alignment: .topLeading) { // hack for dynamic height
             textEditor
-            Text(content).opacity(0).padding(.all, 8)
+            Text(model.text).opacity(0).padding(.all, 6)
           } .font(.callout)
             .frame(minHeight: 250)
         }
@@ -135,12 +100,7 @@ struct ContentEditorView: View {
       }
     }
       .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
-  }
-}
-
-extension UITextView {
-  @objc func doneButtonTapped(button: UIBarButtonItem) -> Void {
-    self.resignFirstResponder()
+      .onChange(of: model.text) { text in contentToCommit = text }
   }
 }
 

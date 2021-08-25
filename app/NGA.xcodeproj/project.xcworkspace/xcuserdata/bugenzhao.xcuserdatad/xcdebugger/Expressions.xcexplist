@@ -3,6 +3,9 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "static ContentEditorView.build(subject:content:):ContentEditorView.swift">
+      </ContextState>
+      <ContextState
          contextName = "PostReplyModel.show(action:pageToReload:):PostReplyModel.swift">
          <PersistentStrings>
             <PersistentString
@@ -25,18 +28,65 @@
          contextName = "PostEditorView.inner.getter:PostEditorView.swift">
       </ContextState>
       <ContextState
-         contextName = "ContentCombiner.append&lt;&#x3c4;_0_0&gt;(_:):ContentCombiner.swift">
+         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
+      </ContextState>
+      <ContextState
+         contextName = "MyTextView.Coordinator.textViewDidChangeSelection(_:):ContentEditorView.swift">
          <PersistentStrings>
             <PersistentString
-               value = "self.font">
+               value = "textView.selectedRange">
+            </PersistentString>
+            <PersistentString
+               value = "model.selected">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
+         contextName = "ContentEditorView.body.getter:ContentEditorView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "model.text">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "TopicListView.body.getter:TopicListView.swift">
+         contextName = "MyTextView.Coordinator.textViewDidChange(_:):ContentEditorView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "textView.text!">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MyTextView.updateUIView(_:context:):ContentEditorView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "textView.selectedRange">
+            </PersistentString>
+            <PersistentString
+               value = "model.text">
+            </PersistentString>
+            <PersistentString
+               value = "model.selected">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ContentEditorModel.appendTag(_:):ContentEditorView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "selected.lowerBound == text.index(after: text.startIndex)">
+            </PersistentString>
+            <PersistentString
+               value = "String(text[selected])">
+            </PersistentString>
+            <PersistentString
+               value = "text[selected.lowerBound]">
+            </PersistentString>
+            <PersistentString
+               value = "text">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "TopicListView.subforum.getter:TopicListView.swift">
@@ -45,6 +95,17 @@
                value = "self.currentShowingSubforum">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ContentCombiner.append&lt;&#x3c4;_0_0&gt;(_:):ContentCombiner.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.font">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TopicListView.body.getter:TopicListView.swift">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

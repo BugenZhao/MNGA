@@ -58,6 +58,7 @@ struct PostEditorView: View {
       switch displayMode {
       case .plain:
         ContentEditorView.build(subject: subjectBinding, content: contentBinding)
+          .id(postReply.context!.task)
       case .preview:
         preview
       }

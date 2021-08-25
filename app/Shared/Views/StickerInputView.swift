@@ -10,7 +10,7 @@ import SwiftUI
 
 struct StickerInputView: View {
   @Binding var text: String
-  @Binding var position: Int?
+  @Binding var selected: NSRange
 
   var body: some View {
     let rows = [GridItem](repeating: .init(.fixed(50)), count: 4)
@@ -33,25 +33,23 @@ struct StickerInputView: View {
   }
 
   func insert(name: String) {
+    let range = Range(selected, in: text)!
     let code = stickerImageNameToCode(name)
-    if let position = position {
-      let index = self.text.index(self.text.startIndex, offsetBy: position)
-      self.text.insert(contentsOf: code, at: index)
-      self.position! += code.count
-    } else {
-      self.text.append(contentsOf: code)
-    }
+    text.replaceSubrange(range, with: code)
+    let newLocation = selected.location + (code as NSString).length
+    selected = NSRange(location: newLocation, length: 0)
   }
 }
 
 struct StickerInputView_Previews: PreviewProvider {
   struct Preview: View {
     @State var text = "233"
+    @State var selected = NSRange()
 
     var body: some View {
       VStack {
         Text(text)
-        StickerInputView(text: $text, position: .constant(nil))
+        StickerInputView(text: $text, selected: $selected)
           .background(.secondary.opacity(0.2))
       }
     }
