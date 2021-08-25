@@ -91,16 +91,22 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
 ) {
   requestDispatchQueue.async {
     let request = AsyncRequest.with { $0.value = requestValue }
+    let errorCallback = { (e: LogicError) in
+      logger.error("logicCallAsync: \(e)")
+      if let tm = errorToastModel { tm.message = .error(e.error) }
+      onError(e)
+    }
     let dataCallback = WrappedDataCallback(
       callback: { (resData: Data) in
-        let res = try! Response(serializedData: resData)
-        onSuccess(res)
+        do {
+          let res = try Response(serializedData: resData)
+          onSuccess(res)
+        } catch {
+          let e = LogicError(error: "\(type(of: error)): \(error)")
+          errorCallback(e)
+        }
       },
-      errorCallback: { e in
-        logger.error("logicCallAsync: \(e)")
-        if let tm = errorToastModel { tm.message = .error(e.error) }
-        onError(e)
-      }
+      errorCallback: errorCallback
     )
     let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()
     let rustCallback = Callback(user_data: dataCallbackPtr, callback: byteBufferCallback)
