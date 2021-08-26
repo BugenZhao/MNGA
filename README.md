@@ -26,20 +26,41 @@ An NGA App in SwiftUI with cross-platform logic in Rust.
 
 ## Build the Project
 
-1. 安装 Xcode 及 Rust 相关工具链
-2. 安装 Swift 的 Protobuf 编译器
-   ```bash
-   $ brew install swift-protobuf
-   ```
-3. 克隆仓库到本地，在项目的根目录，运行
+1. Install Xcode and Rust toolchains. Make sure you have set your command line tools location correctly by
+
+   安装 Xcode 及 Rust 相关工具链。
 
    ```bash
+   $ sudo xcode-select --switch /Applications/Xcode.app
+   ```
+
+2. Install other prerequisites.
+
+   安装其他依赖。
+
+   ```bash
+   $ brew install swift-protobuf
+   $ cargo install cargo-lipo
+   $ rustup target add aarch64-apple-ios
+   $ rustup target add x86_64-apple-ios  # Intel Macs only
+   ```
+
+3. Clone the repository and run at the project root:
+
+   克隆仓库到本地，在项目的根目录，运行
+
+   ```bash
+   $ cargo install cargo-lipo
    $ make release
    ```
 
+   You'll find a `.a` archive and its header under `out/`
+
    检查 `out` 目录，将会生成一个 `.a` 库和其对应的 `.h` 头文件
 
-4. 打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置签名 Apple ID 后，编译运行
+4. Open the Xcode project `app/NGA.xcodeproj`. Run the app after you set the correct Apple ID.
+
+打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置签名 Apple ID 后，编译运行
 
 ## Statements
 
