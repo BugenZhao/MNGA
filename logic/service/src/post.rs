@@ -149,14 +149,32 @@ pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteRespon
     Ok(response)
 }
 
+macro_rules! query_insert_id {
+    ($query:expr, $request:expr) => {{
+        use PostReplyAction_Operation::*;
+        match $request.get_action().get_operation() {
+            REPLY | QUOTE | MODIFY | COMMENT => {
+                $query.push(("tid", $request.get_action().get_post_id().get_tid()));
+                $query.push(("pid", $request.get_action().get_post_id().get_pid()));
+            }
+            NEW => {
+                let id = $request.get_action().get_forum_id();
+                $query.push(if id.has_stid() {
+                    ("stid", id.get_stid())
+                } else {
+                    ("fid", id.get_fid())
+                });
+            }
+        }
+    }};
+}
+
 pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
     let action = request.get_action().get_operation().to_value();
 
     let query = {
         let mut query = vec![
             ("action", action),
-            ("tid", request.get_action().get_post_id().get_tid()),
-            ("pid", request.get_action().get_post_id().get_pid()),
             ("step", "2"),
             ("post_content", request.get_content()),
         ];
@@ -164,8 +182,14 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
             query.push(("post_subject", request.get_subject()));
         }
         if request.get_action().get_operation() == PostReplyAction_Operation::COMMENT {
-            query.push(("comment", "1"))
+            query.push(("comment", "1"));
         }
+        if request.get_action().get_operation() == PostReplyAction_Operation::MODIFY
+            && request.get_action().get_modify_append()
+        {
+            query.push(("modify_append", "1"));
+        }
+        query_insert_id!(query, request);
         query
     };
 
@@ -179,31 +203,38 @@ pub async fn post_reply_fetch_content(
 ) -> ServiceResult<PostReplyFetchContentResponse> {
     let action = request.get_action().get_operation().to_value();
 
-    let package = fetch_package(
-        "post.php",
-        vec![
+    let query = {
+        let mut query = vec![
             ("action", action),
             ("tid", request.get_action().get_post_id().get_tid()),
             ("pid", request.get_action().get_post_id().get_pid()),
-        ],
-        vec![],
-    )
-    .await?;
+        ];
+        query_insert_id!(query, request);
+        query
+    };
+
+    let package = fetch_package("post.php", query, vec![]).await?;
 
     let content = extract_string(&package, "/root/content").unwrap_or_default();
     let subject = extract_string(&package, "/root/subject")
         .ok()
         .filter(|s| !s.is_empty());
+    let modify_append = !extract_string(&package, "/root/modify_append")
+        .unwrap_or_default()
+        .is_empty();
 
     Ok(PostReplyFetchContentResponse {
         content,
         _subject: subject.map(PostReplyFetchContentResponse_oneof__subject::subject),
+        modify_append,
         ..Default::default()
     })
 }
 
 #[cfg(test)]
 mod test {
+    use crate::forum::make_stid;
+
     use super::*;
     use protos::DataModel::PostId;
 
@@ -241,7 +272,7 @@ mod test {
         let _response = post_reply(PostReplyRequest {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::REPLY,
-                post_id: Some(PostId {
+                id: PostReplyAction_oneof_id::post_id(PostId {
                     pid: "0".to_owned(),
                     tid: "27455825".to_owned(),
                     ..Default::default()
@@ -264,7 +295,7 @@ mod test {
         let _response = post_reply_fetch_content(PostReplyFetchContentRequest {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::QUOTE,
-                post_id: Some(PostId {
+                id: PostReplyAction_oneof_id::post_id(PostId {
                     pid: "0".to_owned(),
                     tid: "27455825".to_owned(),
                     ..Default::default()
@@ -273,6 +304,26 @@ mod test {
                 ..Default::default()
             })
             .into(),
+            ..Default::default()
+        })
+        .await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_post_new_topic() -> ServiceResult<()> {
+        let _response = post_reply(PostReplyRequest {
+            action: Some(PostReplyAction {
+                operation: PostReplyAction_Operation::NEW,
+                id: PostReplyAction_oneof_id::forum_id(make_stid("12689291".to_owned())).into(),
+                ..Default::default()
+            })
+            .into(),
+            _subject: PostReplyRequest_oneof__subject::subject("测试发帖 from logic test".to_owned())
+                .into(),
+            content: "测试内容 from logic test".to_owned(),
             ..Default::default()
         })
         .await?;

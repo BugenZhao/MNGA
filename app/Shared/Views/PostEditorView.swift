@@ -52,22 +52,23 @@ struct PostEditorView: View {
 
   @ViewBuilder
   var inner: some View {
-    if postReply.context == nil {
-      ProgressView()
-    } else {
+    if let context = postReply.context {
       switch displayMode {
       case .plain:
         ContentEditorView.build(subject: subjectBinding, content: contentBinding)
-          .id(postReply.context!.task)
+          .id(context.task)
       case .preview:
         preview
       }
+    } else {
+      ProgressView()
     }
   }
 
   func parseContent() {
     DispatchQueue.global(qos: .userInitiated).async {
-      let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = postReply.context?.content ?? "" }))
+      let content = (postReply.context?.content ?? "").replacingOccurrences(of: "\n", with: "<br/>")
+      let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = content }))
       DispatchQueue.main.async {
         self.spans = response?.content.spans ?? []
       }

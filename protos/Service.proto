@@ -149,6 +149,7 @@ message PostReplyFetchContentRequest { PostReplyAction action = 1; }
 message PostReplyFetchContentResponse {
   string content = 1;
   optional string subject = 2;
+  bool modify_append = 3;
 }
 
 message PostReplyRequest {

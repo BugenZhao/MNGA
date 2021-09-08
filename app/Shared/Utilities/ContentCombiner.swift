@@ -125,14 +125,14 @@ class ContentCombiner {
         textBuffer = (textBuffer ?? Text("")) + text
       case .breakline:
         if let tb = textBuffer {
-          results.append(AnyView(tb.lineLimit(nil)))
+          results.append(AnyView(tb))
           textBuffer = nil
         } else {
           results.append(AnyView(Spacer().height(6)))
         }
       case .other(let view):
         if let tb = textBuffer {
-          results.append(AnyView(tb.lineLimit(nil)))
+          results.append(AnyView(tb))
           textBuffer = nil
         }
         results.append(view)
@@ -184,6 +184,8 @@ class ContentCombiner {
       self.visit(sticker: sticker)
     case .tagged(let tagged):
       self.visit(tagged: tagged)
+    case .divider(let divider):
+      self.visit(divider: divider)
     }
   }
 
@@ -195,6 +197,15 @@ class ContentCombiner {
       text = Text(plain.text)
     }
     self.append(text)
+  }
+  
+  private func visit(divider: Span.Divider) {
+    let combiner = ContentCombiner(parent: self, font: { _ in Font.headline }, color: { _ in Color.accentColor })
+    combiner.append(Spacer().height(8))
+    combiner.append(Text(divider.text))
+    combiner.append(Divider())
+    let subview = combiner.build()
+    self.append(subview)
   }
 
   private func visit(sticker: Span.Sticker) {
@@ -262,7 +273,8 @@ class ContentCombiner {
     }
     guard let url = URL(string: urlText) else { return }
 
-    let image = ContentImageView(url: url, onlyThumbs: self.inQuote)
+    let onlyThumbs = self.inQuote && self.getEnv(key: "pid") != nil
+    let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
     self.append(image)
   }
 
@@ -420,8 +432,8 @@ class ContentCombiner {
       self.visitFlash(video: flash)
     case "audio":
       self.visitFlash(audio: flash)
-    default:
-      self.visit(defaultTagged: flash)
+    default: // treat as video
+      self.visitFlash(video: flash)
     }
   }
 

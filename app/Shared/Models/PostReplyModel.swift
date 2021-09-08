@@ -14,9 +14,9 @@ class PostReplyModel: ObservableObject {
     case last
     case exact(Int)
   }
-  
+
   struct Task: Equatable, Hashable {
-    let action: PostReplyAction
+    var action: PostReplyAction
     let pageToReload: PageToReload?
   }
 
@@ -59,12 +59,13 @@ class PostReplyModel: ObservableObject {
     self.isSending = false
   }
 
-  func show(action: PostReplyAction, pageToReload: PageToReload) {
+  func show(action: PostReplyAction, pageToReload: PageToReload?) {
     return show(task: .init(action: action, pageToReload: pageToReload))
   }
 
-  func show(task: Task) {
+  private func show(task: Task) {
     if self.showEditor { return }
+    self.context = nil
     self.showEditor = true
 
     if let context = self.contexts[task] {
@@ -87,9 +88,12 @@ class PostReplyModel: ObservableObject {
     }), errorToastModel: ToastModel.alert) { (response: PostReplyFetchContentResponse) in
       // only build context after successful fetching
       print(response)
-      let subject = response.hasSubject ? response.subject : nil
+      var task = task
+      task.action.modifyAppend = response.modifyAppend
+      let subject = (response.hasSubject || task.action.operation == .new) ? response.subject : nil
       let content = response.content
-      let context = Context.init(task: task, subject: subject, content: content)
+      let context = Context(task: task, subject: subject, content: content)
+
       self.contexts[task] = context
       withAnimation { self.context = context }
     } onError: { e in

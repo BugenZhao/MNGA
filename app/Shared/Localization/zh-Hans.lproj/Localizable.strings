@@ -37,7 +37,7 @@
 "Last month" = "最近一个月";
 "Search History" = "搜索历史";
 "Select a forum in sidebar" = "在边栏中选择一个版块";
-"Post by" = "发表于";
+"Post by" = "发表自";
 "Filters" = "过滤";
 "Hot Replies" = "热门回复";
 "Collapsed Content" = "折叠的内容";
@@ -78,3 +78,6 @@
 "View Video" = "查看视频";
 "Always Use In-App Safari" = "始终使用内置 Safari";
 "Audio" = "音频";
+"Show Topic Subject" = "显示话题主题";
+"Append" = "追加编辑";
+"New Topic" = "发表话题";

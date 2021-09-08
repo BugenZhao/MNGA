@@ -27,6 +27,7 @@ peg::parser! {
         rule ws() = [' ' | '\t' | '\r' | '\n']
         rule _() = ws()*
         rule br_tag() = "<br/>"
+        rule divider_tag() = "==="
 
         rule token() -> &'input str
             = $( aldig()+ )
@@ -45,7 +46,7 @@ peg::parser! {
             = left_close_bracket() t:token() right_bracket() { t }
 
         rule plain_text() -> &'input str
-            = $( (!(start_tag() / close_tag() / br_tag() / left_sticker_bracket()) any_char())+ )
+            = $( (!(start_tag() / close_tag() / br_tag() / left_sticker_bracket() / divider_tag()) any_char())+ )
 
         rule well_tagged() -> Span
             = st:start_tag() s:(span()*) ct:close_tag() {?
@@ -89,6 +90,14 @@ peg::parser! {
                 }))
             }
 
+        rule divider() -> Span
+            = divider_tag() pt:plain_text() divider_tag() {
+                span_of!(divider(Span_Divider {
+                    text: pt.to_owned(),
+                    ..Default::default()
+                }))
+            }
+
         rule plain() -> Span
             = pt:plain_text() {
                 span_of!(plain(Span_Plain {
@@ -98,7 +107,7 @@ peg::parser! {
             }
 
         rule span() -> Span
-            = s:(tagged() / sticker() / br() / plain()) { s }
+            = s:(tagged() / sticker() / br() / divider() / plain()) { s }
 
         pub rule content() -> Vec<Span>
             = ss:(span())* { ss }
@@ -226,6 +235,13 @@ Hello world
          [img]./mon_202107/03/-7Q2o-eeg[/quote]
          <br/><br/>同样人均GDP四万多的地方表示公务员年总收入只有赣州一半<br/>而且有些人均GDP七万多的城市和我们收入差不多[s:ac:羡慕]
         "#;
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_divider() {
+        let text = r#"[s:a2:doge][s:a2:doge]<br/>===2021-09-08 21:36===<br/>帖子超过修改时限，在此提交的内容将被增加至原帖，如需修改原帖请联系版主<br/>===2021-09-08 21:59===<br/>追加编辑中"#;
         let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }

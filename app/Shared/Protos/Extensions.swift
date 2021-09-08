@@ -87,9 +87,11 @@ extension PostReplyAction {
     case .quote:
       return "Quote"
     case .modify:
-      return "Edit"
+      return self.modifyAppend ? "Append" : "Edit"
     case .comment:
       return "Comment"
+    case .new:
+      return "New Topic"
     case .UNRECOGNIZED(_):
       return ""
     }
