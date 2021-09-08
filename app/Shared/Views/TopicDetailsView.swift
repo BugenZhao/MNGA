@@ -245,7 +245,7 @@ struct TopicDetailsView: View {
         }
       }
     }
-      .navigationTitle(latestTopic.subjectContent)
+      .navigationTitle(prefs.showTopicSubject ? latestTopic.subjectContent : NSLocalizedString("Topic", comment: ""))
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }

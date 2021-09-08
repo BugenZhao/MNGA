@@ -11,7 +11,8 @@ import SwiftUI
 
 class PreferencesStorage: ObservableObject {
   static let shared = PreferencesStorage()
-  
+
+  @AppStorage("showTopicSubject") var showTopicSubject = false
   @AppStorage("showSignature") var showSignature = true
   @AppStorage("showAvatar") var showAvatar = true
   @AppStorage("useRedact") var useRedact = true

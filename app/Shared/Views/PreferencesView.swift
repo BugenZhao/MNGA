@@ -18,6 +18,9 @@ struct PreferencesView: View {
         NavigationLink(destination: BlockWordListView()) {
           Label("Block Words", systemImage: "hand.raised")
         }
+        Toggle(isOn: $pref.showTopicSubject) {
+          Label("Show Topic Subject", systemImage: "paragraphsign")
+        }
         Toggle(isOn: $pref.showSignature) {
           Label("Show Signature", systemImage: "signature")
         }
