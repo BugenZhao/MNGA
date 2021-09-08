@@ -16,6 +16,8 @@ struct PostEditorView: View {
 
   @EnvironmentObject var postReply: PostReplyModel
   @State var displayMode = DisplayMode.plain
+
+  @State var subject = nil as Subject?
   @State var spans = [Span]()
 
   var title: LocalizedStringKey {
@@ -35,6 +37,9 @@ struct PostEditorView: View {
   var preview: some View {
     List {
       Section(header: Text("Preview")) {
+        if let subject = self.subject {
+          TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
+        }
         PostContentView(spans: spans)
       }
     } .listStyle(GroupedListStyle())
@@ -69,8 +74,12 @@ struct PostEditorView: View {
     DispatchQueue.global(qos: .userInitiated).async {
       let content = (postReply.context?.content ?? "").replacingOccurrences(of: "\n", with: "<br/>")
       let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = content }))
-      DispatchQueue.main.async {
-        self.spans = response?.content.spans ?? []
+      self.spans = response?.content.spans ?? []
+    }
+    if let subject = postReply.context?.subject {
+      DispatchQueue.global(qos: .userInitiated).async {
+        let response: SubjectParseResponse? = try? logicCall(.subjectParse(.with { $0.raw = subject }))
+        self.subject = response?.subject
       }
     }
   }

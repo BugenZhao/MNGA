@@ -61,6 +61,7 @@ mod dispatch_sync {
             local_user(r) => r!(handle_local_user(r)),
             auth(r) => r!(handle_auth(r)),
             content_parse(r) => r!(handle_content_parse(r)),
+            subject_parse(r) => r!(handle_subject_parse(r)),
         }
     }
 }

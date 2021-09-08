@@ -13,6 +13,7 @@ message SyncRequest {
     LocalUserRequest local_user = 2;
     AuthRequest auth = 3;
     ContentParseRequest content_parse = 4;
+    SubjectParseRequest subject_parse = 5;
   }
 }
 
@@ -31,6 +32,11 @@ message ContentParseResponse {
     PostContent content = 1;
     string error = 2;
   }
+}
+
+message SubjectParseRequest { string raw = 1; }
+message SubjectParseResponse {
+  Subject subject = 1;
 }
 
 //

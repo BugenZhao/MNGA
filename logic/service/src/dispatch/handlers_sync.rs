@@ -1,4 +1,4 @@
-use crate::{auth, error::ServiceResult, user::UserController};
+use crate::{auth, error::ServiceResult, topic::extract_topic_subject, user::UserController};
 use protos::{DataModel::PostContent, Service::*};
 
 pub fn handle_configure(mut request: ConfigureRequest) -> ServiceResult<ConfigureResponse> {
@@ -34,6 +34,14 @@ pub fn handle_content_parse(request: ContentParseRequest) -> ServiceResult<Conte
     );
     Ok(ContentParseResponse {
         result: Some(result).into(),
+        ..Default::default()
+    })
+}
+
+pub fn handle_subject_parse(request: SubjectParseRequest) -> ServiceResult<SubjectParseResponse> {
+    let subject = extract_topic_subject(request.raw);
+    Ok(SubjectParseResponse {
+        subject: Some(subject).into(),
         ..Default::default()
     })
 }

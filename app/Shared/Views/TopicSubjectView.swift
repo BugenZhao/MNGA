@@ -27,9 +27,17 @@ struct TopicSubjectView: View {
       }
     } .font(.footnote, weight: .bold)
   }
+  
+  // for compatibility
+  var tags: [String] {
+    topic.subject.tags.isEmpty ? topic.tags : topic.subject.tags
+  }
+  var content: String {
+    topic.subject.content.isEmpty ? topic.subjectContent : topic.subject.content
+  }
 
   var showTagBar: Bool {
-    !topic.tags.isEmpty || topic.hasParentForum || (showIndicators && (topic.isFavored))
+    !tags.isEmpty || topic.hasParentForum || (showIndicators && (topic.isFavored))
   }
 
   var body: some View {
@@ -43,7 +51,7 @@ struct TopicSubjectView: View {
             Text(topic.parentForum.name)
               .fontWeight(.heavy)
           }
-          ForEach(topic.tags, id: \.self) { tag in
+          ForEach(tags, id: \.self) { tag in
             Text(tag)
           }
         } .font(.footnote)
@@ -51,7 +59,7 @@ struct TopicSubjectView: View {
           .lineLimit(1)
       }
 
-      Text(topic.subjectContent)
+      Text(content)
         .font(.headline)
         .lineLimit(lineLimit)
     }

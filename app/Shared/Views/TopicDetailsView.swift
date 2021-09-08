@@ -58,8 +58,7 @@ struct TopicDetailsView: View {
   private var latestTopic: Topic {
     var latest = self.topic
     if let newTopic = self.dataSource.latestResponse?.topic {
-      latest.tags = newTopic.tags
-      latest.subjectContent = newTopic.subjectContent
+      latest.subject = newTopic.subject
     }
     return latest
   }
@@ -245,7 +244,7 @@ struct TopicDetailsView: View {
         }
       }
     }
-      .navigationTitle(prefs.showTopicSubject ? latestTopic.subjectContent : NSLocalizedString("Topic", comment: ""))
+      .navigationTitle(prefs.showTopicSubject ? latestTopic.subject.content : NSLocalizedString("Topic", comment: ""))
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
@@ -368,7 +367,9 @@ struct TopicDetailsView_Preview: PreviewProvider {
       NavigationView {
         TopicDetailsView.build(topic: Topic.with {
           $0.id = "27637920" // "27555218"
-          $0.subjectContent = "Topic Title"
+          $0.subject = .with { s in
+            s.content = "Topic Title"
+          }
         })
       }
     }

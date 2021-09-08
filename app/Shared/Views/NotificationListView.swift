@@ -34,7 +34,7 @@ struct NotificationListView: View {
       ForEach(dataSource.items, id: \.hashIdentifiable) { notification in
         let topic = Topic.with {
           $0.id = notification.otherPostID.tid
-          $0.subjectContent = notification.topicSubject
+          $0.subject = try! logicCall(.subjectParse(.with { r in r.raw = notification.topicSubject }))
         }
         NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
           NotificationRowView(noti: notification)

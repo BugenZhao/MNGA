@@ -8,9 +8,9 @@
 import Foundation
 import SwiftUI
 
-extension Topic {
-  var subjectFull: String {
-    self.tags.map { t in "[\(t)] " }.joined() + self.subjectContent
+extension Subject {
+  var full: String {
+    self.tags.map { t in "[\(t)] " }.joined() + self.content
   }
 }
 

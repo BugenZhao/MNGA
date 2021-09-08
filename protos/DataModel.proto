@@ -1,10 +1,16 @@
 syntax = "proto3";
 option java_package = "com.bugenzhao.nga.protos.datamodel";
 
+message Subject {
+  repeated string tags = 1;
+  string content = 2;
+}
+
 message Topic {
   string id = 1;
-  repeated string tags = 8;
-  string subject_content = 9;
+  repeated string tags = 8 [deprecated = true];
+  string subject_content = 9 [deprecated = true];
+  Subject subject = 2;
   string author_id = 3;
   string author_name = 4;
   uint64 post_date = 5;
