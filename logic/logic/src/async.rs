@@ -14,7 +14,7 @@ lazy_static! {
 
 pub fn serve_request_async<Cb>(request: AsyncRequest, callback: Cb)
 where
-    Cb: CallbackTrait + Send + 'static,
+    Cb: CallbackTrait,
 {
     let _guard = RUNTIME.enter();
 

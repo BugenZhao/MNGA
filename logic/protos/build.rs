@@ -3,6 +3,10 @@ extern crate protoc_rust;
 use protoc_rust::Customize;
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=../Cargo.lock");
+    println!("cargo:rerun-if-changed=../../protos/*");
+
     protoc_rust::Codegen::new()
         .out_dir("src/generated")
         .includes(&["../../protos"])
