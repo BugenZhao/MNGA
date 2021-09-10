@@ -8,14 +8,7 @@
 import Foundation
 import SwiftUI
 import SwiftUIX
-import Combine
 import SwiftUIRefresh
-
-class TopicDetailsActionModel: ObservableObject {
-  @Published var scrollToPid: String? = nil
-
-  @Published var navigateToTid: String? = nil
-}
 
 struct TopicDetailsView: View {
   let topic: Topic
@@ -153,7 +146,12 @@ struct TopicDetailsView: View {
     let topic = Topic.with {
       if let tid = self.action.navigateToTid { $0.id = tid }
     }
-    NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
+    let user = self.action.showUserProfile ?? .init()
+
+    Group {
+      NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
+      NavigationLink(destination: UserProfileView(user: user), isActive: self.$action.showUserProfile.isNotNil()) { }
+    }
   }
 
   @ViewBuilder

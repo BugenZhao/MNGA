@@ -286,8 +286,8 @@
             filePath = "Shared/Views/TopicDetailsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "246"
-            endingLineNumber = "246"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -302,8 +302,8 @@
             filePath = "Shared/Views/TopicListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -318,8 +318,8 @@
             filePath = "Shared/Views/TopicListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "subforum"
             landmarkType = "24">
          </BreakpointContent>
@@ -350,8 +350,8 @@
             filePath = "Shared/Utilities/ContentCombiner.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "292"
-            endingLineNumber = "292"
+            startingLineNumber = "294"
+            endingLineNumber = "294"
             landmarkName = "visit(quote:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -388,14 +388,14 @@
             landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - 9c7f78599472b42e"
+                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - 2b52b0406354c876"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "NGA.PostReplyModel.sent.didset : Swift.Optional&lt;NGA.PostReplyModel.Context&gt;"
                   moduleName = "NGA"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PostReplyModel.swift"
+                  urlString = "file:///Users/bugenzhao/Developer/Works/NGA/app/Shared/Models/PostReplyModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "49"
@@ -403,14 +403,14 @@
                   offsetFromSymbolStart = "296">
                </Location>
                <Location
-                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - f2f01ee1109b3d20"
+                  uuid = "77DB3A1A-F2BF-40DE-B6CD-E2D3B857EEFD - 45ddd6f8e7bd4178"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "closure #1 () -&gt; () in NGA.PostReplyModel.sent.didset : Swift.Optional&lt;NGA.PostReplyModel.Context&gt;"
                   moduleName = "NGA"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/bugenzhao/Developer/Codes/NGA/app/Shared/Models/PostReplyModel.swift"
+                  urlString = "file:///Users/bugenzhao/Developer/Works/NGA/app/Shared/Models/PostReplyModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "49"
@@ -462,8 +462,8 @@
             filePath = "Shared/Utilities/ContentCombiner.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
             landmarkName = "visit(image:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -478,8 +478,8 @@
             filePath = "Shared/Utilities/ContentCombiner.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "283"
+            endingLineNumber = "283"
             landmarkName = "visit(quote:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -494,8 +494,8 @@
             filePath = "Shared/Utilities/ContentCombiner.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "456"
-            endingLineNumber = "456"
+            startingLineNumber = "458"
+            endingLineNumber = "458"
             landmarkName = "visitFlash(audio:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -562,6 +562,22 @@
             endingLineNumber = "87"
             landmarkName = "body"
             landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ACBF0A31-8773-484A-A61F-07F554143DC1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Shared/LogicCall.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "logicCall(_:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -33,7 +33,7 @@ struct PostRowView: View {
       .foregroundColor(.accentColor)
 
     HStack {
-      PostRowUserView.build(post: post)
+      PostRowUserView(post: post)
       Spacer()
 
       if useContextMenu {

@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		375E616A4BCE12A43666F04C /* macOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */; };
 		375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */; };
+		B402308226EBB72C0077D3AA /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308126EBB72C0077D3AA /* UserProfileView.swift */; };
+		B402308326EBB72C0077D3AA /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308126EBB72C0077D3AA /* UserProfileView.swift */; };
+		B402308526EBBA7A0077D3AA /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308426EBBA7A0077D3AA /* UserView.swift */; };
+		B402308626EBBA7A0077D3AA /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308426EBBA7A0077D3AA /* UserView.swift */; };
+		B402308826EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */; };
+		B402308926EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */; };
 		B409251A26D2810F00BCB666 /* ImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251926D2810F00BCB666 /* ImageViewer.swift */; };
 		B409251C26D299E600BCB666 /* ContentButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251B26D299E600BCB666 /* ContentButtonView.swift */; };
 		B409251D26D299E600BCB666 /* ContentButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251B26D299E600BCB666 /* ContentButtonView.swift */; };
@@ -215,6 +221,9 @@
 /* Begin PBXFileReference section */
 		375E6730A9F56C0953D5C7DA /* iOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSNGAApp.swift; sourceTree = "<group>"; };
 		375E6F6186F4BE7808B20F34 /* macOSNGAApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = macOSNGAApp.swift; sourceTree = "<group>"; };
+		B402308126EBB72C0077D3AA /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
+		B402308426EBBA7A0077D3AA /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
+		B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailsActionModel.swift; sourceTree = "<group>"; };
 		B409251926D2810F00BCB666 /* ImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewer.swift; sourceTree = "<group>"; };
 		B409251B26D299E600BCB666 /* ContentButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentButtonView.swift; sourceTree = "<group>"; };
 		B409252126D29D2100BCB666 /* ContentImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentImageView.swift; sourceTree = "<group>"; };
@@ -391,16 +400,17 @@
 		B48B0C4B2694D4E50067794F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
-				B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */,
-				B43DED4B269C7C8B009C52F5 /* SearchModel.swift */,
-				B43DED51269C9216009C52F5 /* VotesModel.swift */,
-				B43DED60269EFAF4009C52F5 /* ToastModel.swift */,
-				B444638A26A1981E006FA44D /* PostReplyModel.swift */,
 				B44463A126A1ED2A006FA44D /* ActivityModel.swift */,
-				B4B3545E26C91DA00052FE80 /* UsersModel.swift */,
-				B409252726D29FD900BCB666 /* OpenURLModel.swift */,
 				B475FD9D26D2B1B300109CEA /* AttachmentsModel.swift */,
+				B409252726D29FD900BCB666 /* OpenURLModel.swift */,
+				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
+				B444638A26A1981E006FA44D /* PostReplyModel.swift */,
+				B43DED4B269C7C8B009C52F5 /* SearchModel.swift */,
+				B43DED60269EFAF4009C52F5 /* ToastModel.swift */,
+				B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */,
+				B4B3545E26C91DA00052FE80 /* UsersModel.swift */,
+				B48B0C4C2694D4FF0067794F /* ViewingImageModel.swift */,
+				B43DED51269C9216009C52F5 /* VotesModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -551,6 +561,8 @@
 				B4DBF61426897A170027233F /* TopicRowView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
+				B402308126EBB72C0077D3AA /* UserProfileView.swift */,
+				B402308426EBBA7A0077D3AA /* UserView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -781,6 +793,7 @@
 				B44463A226A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B4715CC826A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B444639F26A1D745006FA44D /* StickerImageView.swift in Sources */,
+				B402308226EBB72C0077D3AA /* UserProfileView.swift in Sources */,
 				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
 				B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
@@ -797,6 +810,7 @@
 				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B409251C26D299E600BCB666 /* ContentButtonView.swift in Sources */,
 				B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */,
+				B402308526EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B48709C5269AEA9F00E88E5A /* TopicListPlaceholderView.swift in Sources */,
 				B43DED52269C9216009C52F5 /* VotesModel.swift in Sources */,
 				B4B3545F26C91DA00052FE80 /* UsersModel.swift in Sources */,
@@ -824,6 +838,7 @@
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF608268976470027233F /* DateFormatters.swift in Sources */,
 				375E675E5D65ECFBF0231735 /* iOSNGAApp.swift in Sources */,
+				B402308826EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */,
 				B4715CC226A40DF40049D136 /* PostCommentRowView.swift in Sources */,
 				B43DED49269C5F78009C52F5 /* Constants.swift in Sources */,
 				B409252826D29FD900BCB666 /* OpenURLModel.swift in Sources */,
@@ -837,6 +852,7 @@
 				B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */,
 				B444639726A1C54A006FA44D /* Stickers.swift in Sources */,
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
+				B402308626EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B45A9E8C26A171720088F04D /* PostEditorView.swift in Sources */,
 				B4855B5A26D6B61100BC2680 /* ContentTextEditorView.swift in Sources */,
 				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,
@@ -846,6 +862,7 @@
 				B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */,
+				B402308926EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B409252926D29FD900BCB666 /* OpenURLModel.swift in Sources */,
@@ -874,6 +891,7 @@
 				B4FBED8026A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4715CC926A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */,
+				B402308326EBB72C0077D3AA /* UserProfileView.swift in Sources */,
 				B44463A326A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,
 				B4E10721268DD215006C1742 /* AuthedPreview.swift in Sources */,
