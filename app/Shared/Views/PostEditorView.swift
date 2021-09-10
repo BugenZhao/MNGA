@@ -91,11 +91,18 @@ struct PostEditorView: View {
         .navigationBarTitle(title, displayMode: .inline)
         .toolbar {
         ToolbarItem(placement: .confirmationAction) {
-          Button(action: { doSend() }) {
-            if postReply.isSending {
-              ProgressView()
-            } else {
-              Text("Send")
+          switch displayMode {
+          case .plain:
+            Button(action: { withAnimation { displayMode = .preview } }) {
+              Text("Preview")
+            }
+          case .preview:
+            Button(action: { doSend() }) {
+              if postReply.isSending {
+                ProgressView()
+              } else {
+                Text("Send")
+              }
             }
           }
         }

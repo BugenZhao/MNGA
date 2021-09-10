@@ -22,6 +22,7 @@ struct TopicListView: View {
 
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
   @StateObject var postReply = PostReplyModel()
+  @StateObject var favoriteForums = FavoriteForumsStorage.shared
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
@@ -45,29 +46,33 @@ struct TopicListView: View {
     )
     return Self.init(forum: forum, dataSource: dataSource)
   }
-  
+
   func newTopic() {
     self.postReply.show(action: .with {
       $0.operation = .new
       $0.forumID = self.forum.id
     }, pageToReload: nil)
   }
+  
+  var isFavorite: Bool {
+    favoriteForums.isFavorite(id: forum.id)
+  }
 
   @ViewBuilder
   var moreMenu: some View {
     Menu {
       Section {
+        Button(action: { favoriteForums.toggleFavorite(forum: forum) }) {
+          Label(
+            isFavorite ? "Remove from Favorites" : "Mark as Favorite",
+            systemImage: isFavorite ? "star.slash.fill" : "star"
+          )
+        }
         Button(action: { self.newTopic() }) {
           Label("New Topic", systemImage: "plus.circle")
         }
       }
-      
-      Section {
-        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
-          Label("Share", systemImage: "square.and.arrow.up")
-        }
-      }
-      
+
       Section {
         Button(action: { showingHotTopics = true }) {
           Label("Hot Topics", systemImage: "flame")
@@ -77,6 +82,12 @@ struct TopicListView: View {
           Button(action: { showingSubforumsModal = true }) {
             Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
           }
+        }
+      }
+
+      Section {
+        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
+          Label("Share", systemImage: "square.and.arrow.up")
         }
       }
 

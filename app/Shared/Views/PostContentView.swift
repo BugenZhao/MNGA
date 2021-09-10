@@ -9,6 +9,18 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+extension View {
+  func mayEnableTextSelection() -> some View {
+    Group {
+      if #available(iOS 15.0, *) {
+        self.textSelection(.enabled)
+      } else {
+        self
+      }
+    }
+  }
+}
+
 struct InRealPostKey: EnvironmentKey {
   static let defaultValue: Bool = true
 }
@@ -36,7 +48,7 @@ struct PostContentView: View, Equatable {
   var body: some View {
     let combiner = ContentCombiner(actionModel: actionModel, defaultFont: defaultFont, defaultColor: defaultColor)
     combiner.visit(spans: spans)
-    return combiner.buildView()
+    return combiner.buildView().mayEnableTextSelection()
   }
 
   static func == (lhs: PostContentView, rhs: PostContentView) -> Bool {

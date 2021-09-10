@@ -105,7 +105,7 @@ class ContentCombiner {
     } else if view is AnyView {
       subview = Subview.other(view as! AnyView)
     } else {
-      subview = Subview.other(AnyView(view))
+      subview = Subview.other(view.eraseToAnyView())
     }
 
     self.subviews.append(subview)
@@ -119,22 +119,24 @@ class ContentCombiner {
     var textBuffer: Text? = nil
     var results = [AnyView]()
 
+    func tryAppendTextBuffer() {
+      if let tb = textBuffer {
+        let view = tb.eraseToAnyView()
+        results.append(view)
+        textBuffer = nil
+      }
+    }
+
     for subview in self.subviews {
       switch subview {
       case .text(let text):
         textBuffer = (textBuffer ?? Text("")) + text
       case .breakline:
-        if let tb = textBuffer {
-          results.append(AnyView(tb))
-          textBuffer = nil
-        } else {
-          results.append(AnyView(Spacer().height(6)))
+        if textBuffer != nil {
+          textBuffer = textBuffer! + Text("\n")
         }
       case .other(let view):
-        if let tb = textBuffer {
-          results.append(AnyView(tb))
-          textBuffer = nil
-        }
+        tryAppendTextBuffer()
         results.append(view)
       }
     }
@@ -144,8 +146,8 @@ class ContentCombiner {
       return .text(textBuffer ?? Text(""))
     } else {
       // complex view
-      if let tb = textBuffer { results.append(AnyView(tb)) }
-      let stack = VStack(alignment: .leading, spacing: 4) {
+      tryAppendTextBuffer()
+      let stack = VStack(alignment: .leading, spacing: 8) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
@@ -198,7 +200,7 @@ class ContentCombiner {
     }
     self.append(text)
   }
-  
+
   private func visit(divider: Span.Divider) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.headline }, color: { _ in Color.accentColor })
     combiner.append(Spacer().height(8))
