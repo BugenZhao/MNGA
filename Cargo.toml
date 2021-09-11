@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "logic/logic",
+    "logic/protos",
+    "logic/text",
+    "logic/cache",
+    "logic/config",
+    "logic/service",
+]
+
+# [profile.release]
+# debug = true

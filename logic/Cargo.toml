@@ -1,5 +1,0 @@
-[workspace]
-members = ["logic", "protos", "text", "cache", "config", "service"]
-
-# [profile.release]
-# debug = true

@@ -3,3 +3,7 @@
 /out/**/*.so
 .idea/
 .build/
+
+target
+Cargo.lock
+.env
