@@ -28,7 +28,7 @@ struct UserView: View {
   let style: Style
 
   init(id: String, style: Style) {
-    self.user = nil
+    self.user = UsersModel.shared.localUser(id: id)
     self.id = id
     self.style = style
   }
@@ -112,7 +112,7 @@ struct UserView: View {
           } else {
             Text(self.name)
           }
-        } .font(style == .huge ? .title.bold() : .subheadline)
+        } .font(style == .huge ? .title : .subheadline, weight: style == .huge ? .bold : .medium)
           .onTapGesture { withAnimation { self.showId.toggle() } }
           .redacted(if: badUser)
 

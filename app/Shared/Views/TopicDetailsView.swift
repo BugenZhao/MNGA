@@ -199,7 +199,7 @@ struct TopicDetailsView: View {
       }
 
       if let nextPage = dataSource.nextPage {
-        let loadTrigger = Text("").onAppear { dataSource.loadMore(after: 0.7) }
+        let loadTrigger = Text("").onAppear { dataSource.loadMore(after: 0.3) }
         Section(header: Text("Page \(nextPage)"), footer: loadTrigger) {
           // BUGEN'S HACK:
           // the first view of this section will unexpectedly call `onAppear(_:)`

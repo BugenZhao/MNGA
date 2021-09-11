@@ -50,6 +50,13 @@ class ContentCombiner {
   private func setEnv(key: String, value: String?) {
     self.envs[key] = value
   }
+  private func setEnv(key: String, globalValue: String?) {
+    if self.parent == nil {
+      self.envs[key] = globalValue
+    } else {
+      self.parent?.setEnv(key: key, globalValue: globalValue)
+    }
+  }
   private func getEnv(key: String) -> String? {
     if let v = self.envs[key] {
       return v
@@ -64,13 +71,13 @@ class ContentCombiner {
   }
 
   init(
-    parent: ContentCombiner,
+    parent: ContentCombiner?,
     font: @escaping (Font?) -> Font? = { $0 },
     color: @escaping (Color?) -> Color? = { $0 },
     otherStyles: @escaping (OtherStyles) -> OtherStyles = { $0 }
   ) {
     self.parent = parent
-    self.actionModel = parent.actionModel
+    self.actionModel = parent?.actionModel
     self.fontModifier = font
     self.colorModifier = color
     self.otherStylesModifier = otherStyles
@@ -170,7 +177,7 @@ class ContentCombiner {
     }
   }
 
-  func visit(spans: [Span]) {
+  func visit<S: Sequence>(spans: S) where S.Element == Span {
     spans.forEach(visit(span:))
   }
 
@@ -284,20 +291,35 @@ class ContentCombiner {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.subheadline }, color: { _ in Color.primary.opacity(0.9) })
     combiner.inQuote = true
 
-    combiner.visit(spans: quote.spans)
+    let spans = quote.spans
+    let metaSpans = spans.prefix { $0.value != .breakLine(.init()) }
+    let metaCombiner = ContentCombiner(parent: nil)
+    metaCombiner.inQuote = true
+    metaCombiner.visit(spans: metaSpans)
 
-    var tapAction: () -> Void = { }
-    if let pid = combiner.getEnv(key: "pid") {
-      tapAction = { withAnimation {
-        if let model = self.actionModel {
-          model.scrollToPid = pid
-        }
-      } }
+    if let _ = metaCombiner.getEnv(key: "pid"), let uid = metaCombiner.getEnv(key: "uid") {
+      let userView = UserView(id: uid, style: .compact)
+      combiner.append(userView)
+      let contentSpans = spans[metaSpans.count...]
+      combiner.visit(spans: contentSpans)
+    } else {
+      // failed to extract metadata, use plain formatting
+      combiner.visit(spans: spans)
     }
+
+//    var tapAction: () -> Void = { }
+//    if let pid = combiner.getEnv(key: "pid") {
+//      tapAction = { withAnimation {
+//        if let model = self.actionModel {
+//          model.scrollToPid = pid
+//        }
+//      } }
+//    }
 
     let view = QuoteView(fullWidth: true) {
       combiner.buildView()
-    } .onTapGesture(perform: tapAction)
+    }
+//      .onTapGesture(perform: tapAction)
 
     self.append(view)
   }
@@ -320,17 +342,20 @@ class ContentCombiner {
     let combiner = ContentCombiner(parent: self, color: { _ in Color.accentColor })
     combiner.append(Text(Image(systemName: "person.fill")))
     combiner.visit(spans: uid.spans)
+    if let uid = uid.attributes.first {
+      self.setEnv(key: "uid", globalValue: uid)
+    }
     self.append(combiner.build())
   }
 
   private func visit(pid: Span.Tagged) {
+    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
+    combiner.append(Text("Post"))
     if let pid = pid.attributes.first {
-      let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
-      combiner.append(Text("Post"))
       combiner.append(Text(" #\(pid) "))
-      self.append(combiner.build())
-      self.setEnv(key: "pid", value: pid)
+      self.setEnv(key: "pid", globalValue: pid)
     }
+    self.append(combiner.build())
   }
 
   private func visit(tid: Span.Tagged) {

@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "ContentCombiner.visit(quote:):ContentCombiner.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "Array(metaSpans)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "static ContentEditorView.build(subject:content:):ContentEditorView.swift">
       </ContextState>
       <ContextState
@@ -25,10 +33,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PostEditorView.inner.getter:PostEditorView.swift">
+         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
+         contextName = "PostEditorView.inner.getter:PostEditorView.swift">
       </ContextState>
       <ContextState
          contextName = "MyTextView.Coordinator.textViewDidChangeSelection(_:):ContentEditorView.swift">
@@ -58,20 +66,6 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "MyTextView.updateUIView(_:context:):ContentEditorView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "textView.selectedRange">
-            </PersistentString>
-            <PersistentString
-               value = "model.text">
-            </PersistentString>
-            <PersistentString
-               value = "model.selected">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "ContentEditorModel.appendTag(_:):ContentEditorView.swift">
          <PersistentStrings>
             <PersistentString
@@ -85,6 +79,20 @@
             </PersistentString>
             <PersistentString
                value = "text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MyTextView.updateUIView(_:context:):ContentEditorView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "textView.selectedRange">
+            </PersistentString>
+            <PersistentString
+               value = "model.text">
+            </PersistentString>
+            <PersistentString
+               value = "model.selected">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
