@@ -34,11 +34,13 @@ extension EnvironmentValues {
 
 struct PostContentView: View, Equatable {
   let spans: [Span]
+  let id: PostId?
   let defaultFont: Font
   let defaultColor: Color
 
-  init(spans: [Span], defaultFont: Font = .callout, defaultColor: Color = .primary) {
+  init(spans: [Span], id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary) {
     self.spans = spans
+    self.id = id
     self.defaultFont = defaultFont
     self.defaultColor = defaultColor
   }
@@ -46,7 +48,7 @@ struct PostContentView: View, Equatable {
   @OptionalEnvironmentObject<TopicDetailsActionModel> var actionModel
 
   var body: some View {
-    let combiner = ContentCombiner(actionModel: actionModel, defaultFont: defaultFont, defaultColor: defaultColor)
+    let combiner = ContentCombiner(actionModel: actionModel, id: id, defaultFont: defaultFont, defaultColor: defaultColor)
     combiner.visit(spans: spans)
     return combiner.buildView().mayEnableTextSelection()
   }

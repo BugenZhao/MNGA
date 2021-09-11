@@ -10,13 +10,29 @@ import SwiftUI
 import SwiftUIX
 import SwiftUIRefresh
 
+struct TopicDetailsActionNavigationView: View {
+  @ObservedObject var action: TopicDetailsActionModel
+
+  var body: some View {
+    let topic = Topic.with {
+      if let tid = self.action.navigateToTid { $0.id = tid }
+    }
+    let user = self.action.showUserProfile ?? .init()
+
+    NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
+    NavigationLink(destination: UserProfileView(user: user), isActive: self.$action.showUserProfile.isNotNil()) { }
+  }
+}
+
 struct TopicDetailsView: View {
+  typealias DataSource = PagingDataSource<TopicDetailsResponse, Post>
+
   let topic: Topic
 
   @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var viewingImage: ViewingImageModel
 
-  @StateObject var dataSource: PagingDataSource<TopicDetailsResponse, Post>
+  @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
   @StateObject var votes = VotesModel()
   @StateObject var postReply = PostReplyModel()
@@ -27,7 +43,7 @@ struct TopicDetailsView: View {
   @State var isFavored: Bool
 
   static func build(topic: Topic) -> Self {
-    let dataSource = PagingDataSource<TopicDetailsResponse, Post>(
+    let dataSource = DataSource(
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
@@ -143,15 +159,10 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var navigation: some View {
-    let topic = Topic.with {
-      if let tid = self.action.navigateToTid { $0.id = tid }
-    }
-    let user = self.action.showUserProfile ?? .init()
+    TopicDetailsActionNavigationView(action: self.action)
 
-    Group {
-      NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
-      NavigationLink(destination: UserProfileView(user: user), isActive: self.$action.showUserProfile.isNotNil()) { }
-    }
+    let showingChain = self.action.showingReplyChain ?? .init()
+    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) { }
   }
 
   @ViewBuilder

@@ -22,6 +22,9 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "closure #2 in PostReplyChainView.loadRemotePost(id:):PostReplyChainView.swift">
+      </ContextState>
+      <ContextState
          contextName = "TopicDetailsView.body.getter:TopicDetailsView.swift">
          <PersistentStrings>
             <PersistentString
@@ -33,10 +36,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
+         contextName = "PostEditorView.inner.getter:PostEditorView.swift">
       </ContextState>
       <ContextState
-         contextName = "PostEditorView.inner.getter:PostEditorView.swift">
+         contextName = "closure #1 in closure #4 in ContentCombiner.visit(quote:):ContentCombiner.swift">
       </ContextState>
       <ContextState
          contextName = "MyTextView.Coordinator.textViewDidChangeSelection(_:):ContentEditorView.swift">
@@ -95,6 +98,9 @@
                value = "model.selected">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #1 in PostReplyChainView.body.getter:PostReplyChainView.swift">
       </ContextState>
       <ContextState
          contextName = "TopicListView.subforum.getter:TopicListView.swift">

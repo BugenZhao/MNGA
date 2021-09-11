@@ -35,7 +35,7 @@ class ContentCombiner {
   private let otherStylesModifier: (OtherStyles) -> OtherStyles
 
   private var subviews = [Subview]()
-  private var envs = [String: String]()
+  private var envs = [String: Any]()
 
   private var font: Font? {
     self.fontModifier(parent?.font)
@@ -47,17 +47,17 @@ class ContentCombiner {
     self.otherStylesModifier(parent?.otherStyles ?? [])
   }
 
-  private func setEnv(key: String, value: String?) {
+  private func setEnv(key: String, value: Any?) {
     self.envs[key] = value
   }
-  private func setEnv(key: String, globalValue: String?) {
+  private func setEnv(key: String, globalValue: Any?) {
     if self.parent == nil {
       self.envs[key] = globalValue
     } else {
       self.parent?.setEnv(key: key, globalValue: globalValue)
     }
   }
-  private func getEnv(key: String) -> String? {
+  private func getEnv(key: String) -> Any? {
     if let v = self.envs[key] {
       return v
     } else {
@@ -68,6 +68,14 @@ class ContentCombiner {
   private var inQuote: Bool {
     get { self.getEnv(key: "inQuote") != nil }
     set { self.setEnv(key: "inQuote", value: newValue ? "true" : nil) }
+  }
+  private var replyTo: PostId? {
+    get { self.getEnv(key: "replyTo") as! PostId? }
+    set { self.setEnv(key: "replyTo", value: newValue) }
+  }
+  private var selfId: PostId? {
+    get { self.getEnv(key: "id") as! PostId? }
+    set { self.setEnv(key: "id", value: newValue) }
   }
 
   init(
@@ -83,12 +91,14 @@ class ContentCombiner {
     self.otherStylesModifier = otherStyles
   }
 
-  init(actionModel: TopicDetailsActionModel?, defaultFont: Font, defaultColor: Color) {
+  init(actionModel: TopicDetailsActionModel?, id: PostId?, defaultFont: Font, defaultColor: Color) {
     self.parent = nil
     self.actionModel = actionModel
     self.fontModifier = { _ in defaultFont }
     self.colorModifier = { _ in defaultColor }
     self.otherStylesModifier = { $0 }
+
+    self.selfId = id
   }
 
   private func styledText(_ text: Text, overridenFont: Font? = nil, overridenColor: Color? = nil) -> Text {
@@ -282,7 +292,7 @@ class ContentCombiner {
     }
     guard let url = URL(string: urlText) else { return }
 
-    let onlyThumbs = self.inQuote && self.getEnv(key: "pid") != nil
+    let onlyThumbs = self.inQuote && self.replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
     self.append(image)
   }
@@ -297,9 +307,17 @@ class ContentCombiner {
     metaCombiner.inQuote = true
     metaCombiner.visit(spans: metaSpans)
 
-    if let _ = metaCombiner.getEnv(key: "pid"), let uid = metaCombiner.getEnv(key: "uid") {
-      let userView = UserView(id: uid, style: .compact)
+    var tapAction: (() -> Void)?
+
+    if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
+      if let model = self.actionModel, let id = self.selfId {
+        model.recordReply(from: id, to: pid)
+        tapAction = { model.showReplyChain(from: id) }
+      }
+
+      let userView = QuoteUserView(uid: uid, action: tapAction)
       combiner.append(userView)
+      combiner.envs = metaCombiner.envs
       let contentSpans = spans[metaSpans.count...]
       combiner.visit(spans: contentSpans)
     } else {
@@ -307,20 +325,9 @@ class ContentCombiner {
       combiner.visit(spans: spans)
     }
 
-//    var tapAction: () -> Void = { }
-//    if let pid = combiner.getEnv(key: "pid") {
-//      tapAction = { withAnimation {
-//        if let model = self.actionModel {
-//          model.scrollToPid = pid
-//        }
-//      } }
-//    }
-
     let view = QuoteView(fullWidth: true) {
       combiner.buildView()
     }
-//      .onTapGesture(perform: tapAction)
-
     self.append(view)
   }
 
@@ -351,21 +358,28 @@ class ContentCombiner {
   private func visit(pid: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
     combiner.append(Text("Post"))
-    if let pid = pid.attributes.first {
-      combiner.append(Text(" #\(pid) "))
-      self.setEnv(key: "pid", globalValue: pid)
+    if pid.attributes.count > 2 {
+      let id = PostId.with {
+        $0.pid = pid.attributes[0]
+        $0.tid = pid.attributes[1]
+      }
+      combiner.append(Text(" #\(id.pid) "))
+      self.replyTo = id
     }
     self.append(combiner.build())
   }
 
   private func visit(tid: Span.Tagged) {
+    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
+    combiner.append(Text("Topic"))
     if let tid = tid.attributes.first {
-      let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
-      combiner.append(Text("Topic"))
       combiner.append(Text(" #\(tid) "))
-      self.append(combiner.build())
-      self.setEnv(key: "pid", value: "0")
+      self.replyTo = .with {
+        $0.pid = "0"
+        $0.tid = tid
+      }
     }
+    self.append(combiner.build())
   }
 
   private func visit(url: Span.Tagged) {

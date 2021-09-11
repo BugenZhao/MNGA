@@ -116,6 +116,10 @@
 		B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDE2690A98200762FC9 /* SubforumListView.swift */; };
 		B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CDE2690A98200762FC9 /* SubforumListView.swift */; };
 		B4920CE32690E65600762FC9 /* HalfASheet in Frameworks */ = {isa = PBXBuildFile; productRef = B4920CE22690E65600762FC9 /* HalfASheet */; };
+		B498FEF926EC7938008C577B /* QuoteUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEF826EC7938008C577B /* QuoteUserView.swift */; };
+		B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEF826EC7938008C577B /* QuoteUserView.swift */; };
+		B498FEFC26EC8735008C577B /* PostReplyChainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEFB26EC8735008C577B /* PostReplyChainView.swift */; };
+		B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEFB26EC8735008C577B /* PostReplyChainView.swift */; };
 		B4B3545F26C91DA00052FE80 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3545E26C91DA00052FE80 /* UsersModel.swift */; };
 		B4B3546026C91DA00052FE80 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3545E26C91DA00052FE80 /* UsersModel.swift */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
@@ -275,6 +279,8 @@
 		B4920CD826904CE700762FC9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSourceStickers.swift; sourceTree = "<group>"; };
 		B4920CDE2690A98200762FC9 /* SubforumListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubforumListView.swift; sourceTree = "<group>"; };
+		B498FEF826EC7938008C577B /* QuoteUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteUserView.swift; sourceTree = "<group>"; };
+		B498FEFB26EC8735008C577B /* PostReplyChainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostReplyChainView.swift; sourceTree = "<group>"; };
 		B4B3545E26C91DA00052FE80 /* UsersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersModel.swift; sourceTree = "<group>"; };
 		B4C024C226884FD600E53554 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B4C024C326884FD700E53554 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -547,9 +553,11 @@
 				B4715CC126A40DF40049D136 /* PostCommentRowView.swift */,
 				B4DBF61A268A20A90027233F /* PostContentView.swift */,
 				B45A9E8A26A171720088F04D /* PostEditorView.swift */,
+				B498FEFB26EC8735008C577B /* PostReplyChainView.swift */,
 				B4715CC726A41F000049D136 /* PostRowUserView.swift */,
 				B4DBF60B2689799F0027233F /* PostRowView.swift */,
 				B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */,
+				B498FEF826EC7938008C577B /* QuoteUserView.swift */,
 				B4715CC426A413E00049D136 /* QuoteView.swift */,
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
@@ -768,6 +776,7 @@
 				B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */,
 				B43DED5B269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4D2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
+				B498FEF926EC7938008C577B /* QuoteUserView.swift in Sources */,
 				B444639626A1C54A006FA44D /* Stickers.swift in Sources */,
 				B4E2BDCF2691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
@@ -792,6 +801,7 @@
 				B43DED4C269C7C8B009C52F5 /* SearchModel.swift in Sources */,
 				B44463A226A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B4715CC826A41F000049D136 /* PostRowUserView.swift in Sources */,
+				B498FEFC26EC8735008C577B /* PostReplyChainView.swift in Sources */,
 				B444639F26A1D745006FA44D /* StickerImageView.swift in Sources */,
 				B402308226EBB72C0077D3AA /* UserProfileView.swift in Sources */,
 				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
@@ -855,6 +865,8 @@
 				B402308626EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B45A9E8C26A171720088F04D /* PostEditorView.swift in Sources */,
 				B4855B5A26D6B61100BC2680 /* ContentTextEditorView.swift in Sources */,
+				B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */,
+				B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */,
 				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B4715CCC26A480B60049D136 /* BlockWordsStorage.swift in Sources */,
 				B444639426A1B745006FA44D /* OptionalBinding.swift in Sources */,

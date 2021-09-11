@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 struct PostRowView: View {
   let post: Post
@@ -14,8 +15,8 @@ struct PostRowView: View {
 
   @Binding var vote: VotesModel.Vote
 
-  @EnvironmentObject var action: TopicDetailsActionModel
-  @EnvironmentObject var postReply: PostReplyModel
+  @OptionalEnvironmentObject<TopicDetailsActionModel> var action
+  @OptionalEnvironmentObject<PostReplyModel> var postReply
 
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var pref = PreferencesStorage.shared
@@ -27,11 +28,16 @@ struct PostRowView: View {
   }
 
   @ViewBuilder
-  var header: some View {
-    let floor = (Text("#").font(.footnote) + Text("\(post.floor)").font(.callout))
-      .fontWeight(.medium)
-      .foregroundColor(.accentColor)
+  var floor: some View {
+    if post.floor != 0 {
+      (Text("#").font(.footnote) + Text("\(post.floor)").font(.callout))
+        .fontWeight(.medium)
+        .foregroundColor(.accentColor)
+    }
+  }
 
+  @ViewBuilder
+  var header: some View {
     HStack {
       PostRowUserView(post: post)
       Spacer()
@@ -119,7 +125,7 @@ struct PostRowView: View {
 
   @ViewBuilder
   var content: some View {
-    PostContentView(spans: post.content.spans)
+    PostContentView(spans: post.content.spans, id: post.id)
       .equatable()
   }
 
@@ -132,15 +138,17 @@ struct PostRowView: View {
       Button(action: { copyContent(post.content.raw) }) {
         Label("Copy Raw Content", systemImage: "doc.on.doc")
       }
-      Button(action: { doQuote() }) {
-        Label("Quote", systemImage: "quote.bubble")
-      }
-      Button(action: { doComment() }) {
-        Label("Comment", systemImage: "tag")
-      }
-      if authStorage.authInfo.inner.uid == post.authorID {
-        Button(action: { doEdit() }) {
-          Label("Edit", systemImage: "pencil")
+      if let model = postReply {
+        Button(action: { doQuote(model: model) }) {
+          Label("Quote", systemImage: "quote.bubble")
+        }
+        Button(action: { doComment(model: model) }) {
+          Label("Comment", systemImage: "tag")
+        }
+        if authStorage.authInfo.inner.uid == post.authorID {
+          Button(action: { doEdit(model: model) }) {
+            Label("Edit", systemImage: "pencil")
+          }
         }
       }
     }
@@ -155,7 +163,7 @@ struct PostRowView: View {
       signature
     } .padding(.vertical, 4)
     #if os(iOS)
-      .listRowBackground(action.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
+      .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
 
     Group {
@@ -199,22 +207,22 @@ struct PostRowView: View {
     }
   }
 
-  func doQuote() {
-    postReply.show(action: .with {
+  func doQuote(model: PostReplyModel) {
+    model.show(action: .with {
       $0.postID = self.post.id
       $0.operation = .quote
     }, pageToReload: .last)
   }
 
-  func doComment() {
-    postReply.show(action: .with {
+  func doComment(model: PostReplyModel) {
+    model.show(action: .with {
       $0.postID = self.post.id
       $0.operation = .comment
     }, pageToReload: .exact(Int(self.post.atPage)))
   }
 
-  func doEdit() {
-    postReply.show(action: .with {
+  func doEdit(model: PostReplyModel) {
+    model.show(action: .with {
       $0.postID = self.post.id
       $0.operation = .modify
     }, pageToReload: .exact(Int(self.post.atPage)))
