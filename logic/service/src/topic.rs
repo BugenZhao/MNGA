@@ -286,9 +286,11 @@ pub async fn get_topic_details(
     let package = fetch_package(
         "read.php",
         vec![
-            ("tid", &request.topic_id),
-            ("page", &request.page.to_string()),
-            ("fav", &request.get_fav()),
+            ("tid", request.get_topic_id()),
+            ("page", &request.get_page().to_string()),
+            ("fav", request.get_fav()),
+            ("pid", request.get_post_id()),
+            ("authorid", request.get_author_id()),
         ],
         vec![],
     )
@@ -416,6 +418,40 @@ mod test {
 
         post(ADD).await?;
         post(DELETE).await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_specific_post() -> ServiceResult<()> {
+        let response = get_topic_details(TopicDetailsRequest {
+            post_id: "549031060".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        assert_eq!(response.get_replies().len(), 1);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_author_only() -> ServiceResult<()> {
+        // https://ngabbs.com/read.php?tid=28454798&authorid=62765271
+        let author_id = "62765271";
+
+        let response = get_topic_details(TopicDetailsRequest {
+            topic_id: "28454798".to_owned(),
+            author_id: author_id.to_owned(),
+            page: 1,
+            ..Default::default()
+        })
+        .await?;
+
+        assert!(response
+            .get_replies()
+            .iter()
+            .all(|p| p.author_id == author_id));
 
         Ok(())
     }

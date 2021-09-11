@@ -47,6 +47,9 @@ pub async fn fetch_package(
         query.push(("lite", "xml"));
         query.push(("__inchst", "UTF8"));
         query
+            .into_iter()
+            .filter(|(_k, v)| !v.is_empty())
+            .collect::<Vec<_>>()
     };
 
     // `tokio::test` make a new runtime for every test,

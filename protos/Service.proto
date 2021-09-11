@@ -76,7 +76,9 @@ message TopicListResponse {
 
 message TopicDetailsRequest {
   string topic_id = 1;
-  optional string fav = 3;
+  string fav = 3;
+  string post_id = 4;
+  string author_id = 5;
   uint32 page = 2;
 }
 message TopicDetailsResponse {
