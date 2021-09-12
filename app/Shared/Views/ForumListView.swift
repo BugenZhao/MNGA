@@ -14,13 +14,21 @@ struct ForumListView: View {
   @StateObject var searchModel = SearchModel<Forum>()
 
   @State var categories = [Category]()
+  @State var favoriteEditing = false
 
   @ViewBuilder
-  func buildLink(_ forum: Forum, inFavoritesSection: Bool = true) -> some View {
+  func buildFavoriteSectionLink(_ forum: Forum) -> some View {
+    NavigationLink(destination: TopicListView.build(forum: forum)) {
+      ForumRowView(forum: forum, isFavorite: false)
+    }
+  }
+
+  @ViewBuilder
+  func buildNormalLink(_ forum: Forum) -> some View {
     let isFavorite = favorites.isFavorite(id: forum.id)
 
     NavigationLink(destination: TopicListView.build(forum: forum)) {
-      ForumRowView(forum: forum, isFavorite: inFavoritesSection && isFavorite)
+      ForumRowView(forum: forum, isFavorite: isFavorite)
         .modifier(FavoriteModifier(
         isFavorite: isFavorite,
         toggleFavorite: { favorites.toggleFavorite(forum: forum) }
@@ -40,9 +48,12 @@ struct ForumListView: View {
         }
       } else {
         ForEach(favorites.favoriteForums, id: \.hashIdentifiable) { forum in
-          buildLink(forum, inFavoritesSection: false)
+          buildFavoriteSectionLink(forum)
         } .onDelete { offsets in
           favorites.favoriteForums.remove(atOffsets: offsets)
+        } .onMove { from, to in
+          favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
+          withAnimation { self.favoriteEditing = false }
         }
       }
     }
@@ -56,7 +67,7 @@ struct ForumListView: View {
         ForEach(categories, id: \.id) { category in
           Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
             ForEach(category.forums, id: \.hashIdentifiable) { forum in
-              buildLink(forum)
+              buildNormalLink(forum)
             }
           }
         }
@@ -68,13 +79,14 @@ struct ForumListView: View {
   var filterMenu: some View {
     Menu {
       Section {
+        EditButton()
+      }
+
+      Section {
         Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
           ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-            HStack {
-              Text(LocalizedStringKey(mode.rawValue))
-              Spacer()
-              Image(systemName: mode.icon)
-            } .tag(mode)
+            Label(LocalizedStringKey(mode.rawValue), systemImage: mode.icon)
+              .tag(mode)
           }
         }
       }
