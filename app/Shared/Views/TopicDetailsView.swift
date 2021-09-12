@@ -14,12 +14,12 @@ struct TopicDetailsActionNavigationView: View {
   @ObservedObject var action: TopicDetailsActionModel
 
   var body: some View {
-    let topic = Topic.with {
+    let navTopic = Topic.with {
       if let tid = self.action.navigateToTid { $0.id = tid }
     }
     let user = self.action.showUserProfile ?? .init()
 
-    NavigationLink(destination: TopicDetailsView.build(topic: topic), isActive: self.$action.navigateToTid.isNotNil()) { }
+    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { }
     NavigationLink(destination: UserProfileView(user: user), isActive: self.$action.showUserProfile.isNotNil()) { }
   }
 }
@@ -29,6 +29,7 @@ struct TopicDetailsView: View {
 
   let topic: Topic
 
+  @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var viewingImage: ViewingImageModel
 
@@ -62,7 +63,39 @@ struct TopicDetailsView: View {
     return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored)
   }
 
-  private var first: Post? { dataSource.items.first }
+  static func build(topic: Topic, only authorID: String) -> some View {
+    let dataSource = DataSource(
+      buildRequest: { page in
+        return .topicDetails(TopicDetailsRequest.with {
+          $0.topicID = topic.id
+          if topic.hasFav { $0.fav = topic.fav }
+          $0.authorID = authorID
+          $0.page = UInt32(page)
+        })
+      },
+      onResponse: { response in
+        let items = response.replies
+        let pages = response.pages
+        return (items, Int(pages))
+      },
+      id: \.floor.description
+    )
+
+    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored)
+      .environment(\.enableAuthorOnly, false)
+  }
+
+  private var first: Post? {
+    if let first = dataSource.items.first, first.authorID == topic.authorID {
+      return first
+    } else {
+      return nil
+    }
+  }
+
+  private var shouldShowReplies: Bool {
+    dataSource.items.contains(where: { $0.id != first?.id })
+  }
 
   private var latestTopic: Topic {
     var latest = self.topic
@@ -95,6 +128,11 @@ struct TopicDetailsView: View {
         }
       }
       Section {
+        if enableAuthorOnly {
+          Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
+            Label("Author Only", systemImage: "person.fill")
+          }
+        }
         Button(action: { self.dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
@@ -147,9 +185,9 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var allRepliesSection: some View {
-    if dataSource.items.count > 1 {
+    if shouldShowReplies {
       Section(header: Text("Replies")) {
-        ForEach(dataSource.sortedItems(by: \.floor).dropFirst(), id: \.id.pid) { post in
+        ForEach(dataSource.sortedItems(by: \.floor).filter { $0.id != first?.id }, id: \.id.pid) { post in
           buildRow(post: post)
             .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
         }
@@ -159,10 +197,13 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var navigation: some View {
-    TopicDetailsActionNavigationView(action: self.action)
+    TopicDetailsActionNavigationView(action: action)
 
     let showingChain = self.action.showingReplyChain ?? .init()
     NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) { }
+
+    let authorOnlyView = TopicDetailsView.build(topic: topic, only: self.action.navigateToAuthorOnly ?? .init())
+    NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) { }
   }
 
   @ViewBuilder
@@ -178,8 +219,8 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
-  func buildStack(_ items: Array<Post>.SubSequence) -> some View {
-    VStack(alignment: .leading) {
+  func buildStack<S: RandomAccessCollection>(_ items: S) -> some View where S.Element == Post {
+    VStack(alignment: .leading, spacing: 6) {
       ForEach(items, id: \.id.pid) { post in
         buildRow(post: post)
         if post.id != items.last?.id {
@@ -194,17 +235,17 @@ struct TopicDetailsView: View {
   var listStackHotRepliesSection: some View {
     if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
       Section(header: Text("Hot Replies")) {
-        buildStack(hotReplies[...])
+        buildStack(hotReplies)
       }
     }
   }
 
   @ViewBuilder
   var listStackAllRepliesSections: some View {
-    if dataSource.items.count > 1 {
+    if shouldShowReplies {
       ForEach(dataSource.pagedItems, id: \.page) { pair in
         Section(header: Text("Page \(pair.page)")) {
-          let items = pair.items.dropFirst(pair.page == 1 ? 1 : 0)
+          let items = pair.items.filter { $0.id != first?.id }
           buildStack(items)
         }
       }
@@ -238,6 +279,16 @@ struct TopicDetailsView: View {
     #endif
   }
 
+  var title: String {
+    if !enableAuthorOnly {
+      return NSLocalizedString("Author Only", comment: "")
+    } else if prefs.showTopicSubject {
+      return latestTopic.subject.content
+    } else {
+      return NSLocalizedString("Topic", comment: "")
+    }
+  }
+
   var body: some View {
     VStack(alignment: .leading) {
       ScrollViewReader { proxy in
@@ -253,7 +304,7 @@ struct TopicDetailsView: View {
         }
       }
     }
-      .navigationTitle(prefs.showTopicSubject ? latestTopic.subject.content : NSLocalizedString("Topic", comment: ""))
+      .navigationTitle(title)
       .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }

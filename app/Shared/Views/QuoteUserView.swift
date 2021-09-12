@@ -12,10 +12,12 @@ struct QuoteUserView: View {
   let uid: String
   let action: (() -> Void)?
 
+  @Environment(\.enableShowReplyChain) var enableShowReplyChain
+
   var body: some View {
     HStack {
       UserView(id: uid, style: .compact)
-      if let action = self.action {
+      if let action = self.action, enableShowReplyChain {
         Spacer()
         Button(action: action) {
           HStack(spacing: 2) {

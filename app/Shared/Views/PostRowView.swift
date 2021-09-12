@@ -17,6 +17,7 @@ struct PostRowView: View {
 
   @OptionalEnvironmentObject<TopicDetailsActionModel> var action
   @OptionalEnvironmentObject<PostReplyModel> var postReply
+  @Environment(\.enableAuthorOnly) var enableAuthorOnly
 
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var pref = PreferencesStorage.shared
@@ -138,7 +139,9 @@ struct PostRowView: View {
       Button(action: { copyContent(post.content.raw) }) {
         Label("Copy Raw Content", systemImage: "doc.on.doc")
       }
-      if let model = postReply {
+    }
+    if let model = postReply {
+      Section {
         Button(action: { doQuote(model: model) }) {
           Label("Quote", systemImage: "quote.bubble")
         }
@@ -148,6 +151,15 @@ struct PostRowView: View {
         if authStorage.authInfo.inner.uid == post.authorID {
           Button(action: { doEdit(model: model) }) {
             Label("Edit", systemImage: "pencil")
+          }
+        }
+      }
+    }
+    if let action = action {
+      Section {
+        if enableAuthorOnly {
+          Button(action: { action.navigateToAuthorOnly = post.authorID }) {
+            Label("This Author Only", systemImage: "person")
           }
         }
       }
