@@ -23,13 +23,16 @@ class ContentEditorModel: ObservableObject {
   @Published var selected: NSRange
   @Published var text: String
 
+  private let action: PostReplyAction
+
   @objc func showSticker() {
     self.showing = .sticker
   }
 
-  init(initialText: String) {
+  init(initialText: String, action: PostReplyAction) {
     self._text = .init(initialValue: initialText)
     self._selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
+    self.action = action
   }
 
   private func appendTag(_ tag: String) {
@@ -56,8 +59,8 @@ struct ContentEditorView: View {
   @StateObject var model: ContentEditorModel
   @StateObject var keyboard = Keyboard.main
 
-  static func build(subject: Binding<String?>, content: Binding<String>) -> Self {
-    let model = ContentEditorModel(initialText: content.wrappedValue)
+  static func build(subject: Binding<String?>, content: Binding<String>, action: PostReplyAction) -> Self {
+    let model = ContentEditorModel(initialText: content.wrappedValue, action: action)
     return Self.init(subject: subject, contentToCommit: content, model: model)
   }
 
@@ -110,7 +113,7 @@ struct PostContentEditorView_Previews: PreviewProvider {
     @State var content = ""
 
     var body: some View {
-      ContentEditorView.build(subject: $subject, content: $content)
+      ContentEditorView.build(subject: $subject, content: $content, action: .init())
     }
   }
 

@@ -28,12 +28,15 @@ class PostReplyModel: ObservableObject {
     let task: Task
     var subject: String?
     var content: String?
+    var attachments: [PostAttachment]
+    
     let seed = UUID()
 
     init(task: Task, subject: String? = nil, content: String? = nil) {
       self.task = task
       self.subject = subject
       self.content = content
+      self.attachments = []
     }
 
     static var dummy: Context {
@@ -89,7 +92,7 @@ class PostReplyModel: ObservableObject {
       // only build context after successful fetching
       print(response)
       var task = task
-      task.action.modifyAppend = response.modifyAppend
+      task.action.verbatim = response.verbatim
       let subject = (response.hasSubject || task.action.operation == .new) ? response.subject : nil
       let content = response.content
       let context = Context(task: task, subject: subject, content: content)
@@ -112,6 +115,7 @@ class PostReplyModel: ObservableObject {
       $0.action = context.task.action
       $0.content = context.content ?? ""
       if let subject = context.subject { $0.subject = subject }
+      $0.attachments = context.attachments
     }), errorToastModel: ToastModel.alert)
     { (response: PostReplyResponse) in
       self.showEditor = false

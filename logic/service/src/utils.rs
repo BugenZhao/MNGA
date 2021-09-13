@@ -135,7 +135,7 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
             info,
             ..Default::default()
         }
-    })?;
+    })?; // todo: error code
 
     frontend.or(backend).map_or_else(
         || Ok(()),

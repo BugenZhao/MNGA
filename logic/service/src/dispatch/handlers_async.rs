@@ -3,7 +3,7 @@ use crate::{
     forum::{get_forum_list, search_forum, set_subforum_filter},
     history::get_topic_history,
     noti::fetch_notis,
-    post::{post_reply, post_reply_fetch_content, post_vote},
+    post::{post_reply, post_reply_fetch_content, post_vote, upload_attachment},
     topic::{
         get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list, topic_favor,
     },
@@ -81,4 +81,10 @@ pub async fn handle_fetch_notification(
     request: FetchNotificationRequest,
 ) -> ServiceResult<FetchNotificationResponse> {
     fetch_notis(request).await
+}
+
+pub async fn handle_upload_attachment(
+    request: UploadAttachmentRequest,
+) -> ServiceResult<UploadAttachmentResponse> {
+    upload_attachment(request).await
 }

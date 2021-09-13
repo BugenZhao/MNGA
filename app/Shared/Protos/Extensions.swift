@@ -87,7 +87,7 @@ extension PostReplyAction {
     case .quote:
       return "Quote"
     case .modify:
-      return self.modifyAppend ? "Append" : "Edit"
+      return self.verbatim.modifyAppend ? "Append" : "Edit"
     case .comment:
       return "Comment"
     case .new:

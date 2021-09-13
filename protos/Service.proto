@@ -59,6 +59,7 @@ message AsyncRequest {
     PostReplyFetchContentRequest post_reply_fetch_content = 12;
     PostReplyRequest post_reply = 13;
     FetchNotificationRequest fetch_notification = 14;
+    UploadAttachmentRequest upload_attachment = 15;
   }
 }
 
@@ -157,15 +158,24 @@ message PostReplyFetchContentRequest { PostReplyAction action = 1; }
 message PostReplyFetchContentResponse {
   string content = 1;
   optional string subject = 2;
-  bool modify_append = 3;
+  PostReplyVerbatim verbatim = 3;
 }
 
 message PostReplyRequest {
   PostReplyAction action = 1;
   string content = 2;
   optional string subject = 3;
+  repeated PostAttachment attachments = 4;
 }
 message PostReplyResponse { string message = 1; }
 
 message FetchNotificationRequest {}
 message FetchNotificationResponse { repeated Notification notis = 1; }
+
+message UploadAttachmentRequest {
+  PostReplyAction action = 1;
+  bytes file = 2;
+}
+message UploadAttachmentResponse {
+  PostAttachment attachment = 1;
+}

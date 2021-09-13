@@ -11,7 +11,10 @@ futures = "0.3.15"
 futures-cache = "0.10.0"
 lazy_static = "1.4.0"
 log = "0.4.14"
-reqwest = { version = "0.11.4", features = ["rustls-tls"], default-features = false }
+reqwest = { version = "0.11.4", features = [
+    "rustls-tls",
+    "multipart",
+], default-features = false }
 serde = { version = "1.0.126", features = ["derive"] }
 sxd-document = "0.3.2"
 sxd-xpath = "0.4.2"
@@ -19,6 +22,7 @@ thiserror = "1.0.26"
 tokio = { version = "1.8.1", features = ["rt-multi-thread", "macros", "time"] }
 chrono = "0.4.19"
 regex = "1.5.4"
+uuid = { version = "0.8.2", features = ["v4"] }
 
 protos = { path = "../protos" }
 text = { path = "../text" }

@@ -142,6 +142,12 @@ message ErrorMessage {
   string detailed = 3;
 }
 
+message PostReplyVerbatim {
+  bool modify_append = 1;
+  string auth = 2;
+  string attach_url = 3;
+}
+
 message PostReplyAction {
   enum Operation {
     REPLY = 0;
@@ -151,11 +157,9 @@ message PostReplyAction {
     NEW = 4;
   }
   Operation operation = 1;
-  oneof id {
-    PostId post_id = 2;
-    ForumId forum_id = 3;
-  }
-  bool modify_append = 4;
+  PostId post_id = 2;
+  ForumId forum_id = 3;
+  PostReplyVerbatim verbatim = 4;
 }
 
 message Notification {
@@ -175,3 +179,9 @@ message Notification {
 }
 
 message BlockWord { string word = 1; }
+
+message PostAttachment {
+  string name = 1;
+  string url = 2;
+  string check = 3;
+}

@@ -60,7 +60,7 @@ struct PostEditorView: View {
     if let context = postReply.context {
       switch displayMode {
       case .plain:
-        ContentEditorView.build(subject: subjectBinding, content: contentBinding)
+        ContentEditorView.build(subject: subjectBinding, content: contentBinding, action: context.task.action)
           .id(context.task)
       case .preview:
         preview

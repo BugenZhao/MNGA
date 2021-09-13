@@ -1,12 +1,15 @@
 use crate::{
     attachment::extract_attachment,
     error::ServiceResult,
+    fetch::fetch_package_multipart,
     fetch_package,
     utils::{extract_kv, extract_node_rel, extract_nodes_rel, extract_string},
 };
 use cache::CACHE;
 use protos::{DataModel::*, Service::*, ToValue};
+use reqwest::multipart;
 use sxd_xpath::nodeset::Node;
+use uuid::Uuid;
 
 fn vote_response_key(id: &PostId) -> String {
     format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)
@@ -185,7 +188,7 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
             query.push(("comment", "1"));
         }
         if request.get_action().get_operation() == PostReplyAction_Operation::MODIFY
-            && request.get_action().get_modify_append()
+            && request.get_action().get_verbatim().get_modify_append()
         {
             query.push(("modify_append", "1"));
         }
@@ -219,21 +222,78 @@ pub async fn post_reply_fetch_content(
     let subject = extract_string(&package, "/root/subject")
         .ok()
         .filter(|s| !s.is_empty());
+
     let modify_append = !extract_string(&package, "/root/modify_append")
         .unwrap_or_default()
         .is_empty();
+    let auth = extract_string(&package, "/root/auth").unwrap_or_default();
+    let attach_url = extract_string(&package, "/root/attach_url").unwrap_or_default();
+    let verbatim = PostReplyVerbatim {
+        modify_append,
+        auth,
+        attach_url,
+        ..Default::default()
+    };
 
     Ok(PostReplyFetchContentResponse {
         content,
         _subject: subject.map(PostReplyFetchContentResponse_oneof__subject::subject),
-        modify_append,
+        verbatim: Some(verbatim).into(),
+        ..Default::default()
+    })
+}
+
+pub async fn upload_attachment(
+    mut request: UploadAttachmentRequest,
+) -> ServiceResult<UploadAttachmentResponse> {
+    let action = request.take_action();
+    let file = request.take_file();
+    let name = format!("{}.jpeg", Uuid::new_v4().to_string());
+
+    let query = vec![];
+
+    let form = multipart::Form::new()
+        .text("v2", "1")
+        .text("origin_domain", "ngabbs.com") // todo: original domain
+        .text("func", "upload")
+        .text("auth", action.get_verbatim().get_auth().to_owned())
+        .text("fid", action.get_forum_id().get_fid().to_owned())
+        .text("attachment_file1_img", "1")
+        .text("attachment_file1_dscp", name.clone())
+        .text("attachment_file1_url_utf8_name", name.clone())
+        .text("attachment_file1_watermark", "")
+        .text("attachment_file1_auto_size", "")
+        .part(
+            "attachment_file1",
+            multipart::Part::bytes(file)
+                .file_name(name.clone())
+                .mime_str(&"image/jpeg")
+                .unwrap(),
+        );
+
+    let package =
+        fetch_package_multipart(action.get_verbatim().get_attach_url(), query, form).await?;
+
+    let name = extract_string(&package, "/root/attachments")?;
+    let url = extract_string(&package, "/root/url")?;
+    let check = extract_string(&package, "/root/attachments_check")?;
+
+    let attachment = PostAttachment {
+        name,
+        url,
+        check,
+        ..Default::default()
+    };
+
+    Ok(UploadAttachmentResponse {
+        attachment: Some(attachment).into(),
         ..Default::default()
     })
 }
 
 #[cfg(test)]
 mod test {
-    use crate::forum::make_stid;
+    use crate::forum::{make_fid, make_stid};
 
     use super::*;
     use protos::DataModel::PostId;
@@ -272,7 +332,7 @@ mod test {
         let _response = post_reply(PostReplyRequest {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::REPLY,
-                id: PostReplyAction_oneof_id::post_id(PostId {
+                post_id: Some(PostId {
                     pid: "0".to_owned(),
                     tid: "27455825".to_owned(),
                     ..Default::default()
@@ -295,7 +355,7 @@ mod test {
         let _response = post_reply_fetch_content(PostReplyFetchContentRequest {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::QUOTE,
-                id: PostReplyAction_oneof_id::post_id(PostId {
+                post_id: Some(PostId {
                     pid: "0".to_owned(),
                     tid: "27455825".to_owned(),
                     ..Default::default()
@@ -317,16 +377,63 @@ mod test {
         let _response = post_reply(PostReplyRequest {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::NEW,
-                id: PostReplyAction_oneof_id::forum_id(make_stid("12689291".to_owned())).into(),
+                forum_id: Some(make_stid("12689291".to_owned())).into(),
                 ..Default::default()
             })
             .into(),
-            _subject: PostReplyRequest_oneof__subject::subject("测试发帖 from logic test".to_owned())
-                .into(),
+            _subject: PostReplyRequest_oneof__subject::subject(
+                "测试发帖 from logic test".to_owned(),
+            )
+            .into(),
             content: "测试内容 from logic test".to_owned(),
             ..Default::default()
         })
         .await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_upload_attachment() -> ServiceResult<()> {
+        let mut action = PostReplyAction {
+            operation: PostReplyAction_Operation::REPLY,
+            post_id: Some(PostId {
+                pid: "0".to_owned(),
+                tid: "28426407".to_owned(),
+                ..Default::default()
+            })
+            .into(),
+            forum_id: Some(make_fid("275".to_owned())).into(),
+            ..Default::default()
+        };
+
+        let fetch_req = PostReplyFetchContentRequest {
+            action: Some(action.clone()).into(),
+            ..Default::default()
+        };
+
+        let mut fetch_res = post_reply_fetch_content(fetch_req).await?;
+        action.set_verbatim(fetch_res.take_verbatim());
+
+        let file = reqwest::get(
+            "https://img.nga.178.com/attachments/mon_201904/12/-7Q5-gr04K2iT3cSw0-k0.jpg",
+        )
+        .await?
+        .bytes()
+        .await?;
+
+        let upload_req = UploadAttachmentRequest {
+            action: Some(action).into(),
+            file: file.to_vec(),
+            ..Default::default()
+        };
+
+        let upload_res = upload_attachment(upload_req).await?;
+        let attachment = upload_res.get_attachment();
+
+        println!("{:?}", attachment);
+        assert!(!attachment.get_url().is_empty());
 
         Ok(())
     }
