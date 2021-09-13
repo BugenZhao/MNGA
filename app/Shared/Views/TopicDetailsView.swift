@@ -27,7 +27,7 @@ struct TopicDetailsActionNavigationView: View {
 struct TopicDetailsView: View {
   typealias DataSource = PagingDataSource<TopicDetailsResponse, Post>
 
-  let topic: Topic
+  @State var topic: Topic
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @EnvironmentObject var activity: ActivityModel
@@ -97,14 +97,6 @@ struct TopicDetailsView: View {
     dataSource.items.contains(where: { $0.id != first?.id })
   }
 
-  private var latestTopic: Topic {
-    var latest = self.topic
-    if let newTopic = self.dataSource.latestResponse?.topic {
-      latest.subject = newTopic.subject
-    }
-    return latest
-  }
-
   @ViewBuilder
   var moreMenu: some View {
     Menu {
@@ -155,7 +147,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var headerSectionInner: some View {
-    TopicSubjectView(topic: latestTopic, lineLimit: nil)
+    TopicSubjectView(topic: topic, lineLimit: nil)
       .fixedSize(horizontal: false, vertical: true)
     if let first = self.first {
       buildRow(post: first)
@@ -283,7 +275,7 @@ struct TopicDetailsView: View {
     if !enableAuthorOnly {
       return NSLocalizedString("Author Only", comment: "")
     } else if prefs.showTopicSubject {
-      return latestTopic.subject.content
+      return topic.subject.content
     } else {
       return NSLocalizedString("Topic", comment: "")
     }
@@ -309,7 +301,7 @@ struct TopicDetailsView: View {
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
-      .onChange(of: dataSource.latestResponse, perform: self.preloadUsers(response:))
+      .onChange(of: dataSource.latestResponse, perform: self.onNewResponse(response:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
@@ -362,7 +354,14 @@ struct TopicDetailsView: View {
     }
   }
 
-  func preloadUsers(response: TopicDetailsResponse?) {
+  func onNewResponse(response: TopicDetailsResponse?) {
+    guard let response = response else { return }
+    let newTopic = response.topic
+    if newTopic.hasParentForum {
+      self.topic.parentForum = newTopic.parentForum
+    }
+    self.topic.authorID = newTopic.authorID
+    self.topic.subject = newTopic.subject
 //    if let response = response {
 //      DispatchQueue.main.async {
 //        for id in response.replies.map(\.authorID) {
