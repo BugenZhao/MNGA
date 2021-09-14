@@ -192,6 +192,8 @@
 		B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408326A30A8500D620B0 /* NotificationListView.swift */; };
 		B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408626A30C4900D620B0 /* NotificationRowView.swift */; };
 		B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2408626A30C4900D620B0 /* NotificationRowView.swift */; };
+		B4F9F98D26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F9F98C26F0CCA700D5ED1E /* PresendAttachmentsModel.swift */; };
+		B4F9F98E26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F9F98C26F0CCA700D5ED1E /* PresendAttachmentsModel.swift */; };
 		B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */; };
 		B4FBED8026A6D70F006390A3 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */; };
 		B4FBED8226A7163E006390A3 /* PreferencesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */; };
@@ -323,6 +325,7 @@
 		B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCombiner.swift; sourceTree = "<group>"; };
 		B4F2408326A30A8500D620B0 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
 		B4F2408626A30C4900D620B0 /* NotificationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRowView.swift; sourceTree = "<group>"; };
+		B4F9F98C26F0CCA700D5ED1E /* PresendAttachmentsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresendAttachmentsModel.swift; sourceTree = "<group>"; };
 		B4FBED7E26A6D70F006390A3 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesStorage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -411,6 +414,7 @@
 				B409252726D29FD900BCB666 /* OpenURLModel.swift */,
 				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
 				B444638A26A1981E006FA44D /* PostReplyModel.swift */,
+				B4F9F98C26F0CCA700D5ED1E /* PresendAttachmentsModel.swift */,
 				B43DED4B269C7C8B009C52F5 /* SearchModel.swift */,
 				B43DED60269EFAF4009C52F5 /* ToastModel.swift */,
 				B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */,
@@ -816,6 +820,7 @@
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
 				B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */,
 				B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */,
+				B4F9F98D26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */,
 				B4DD2BDD26A490960030ADD8 /* BlockedView.swift in Sources */,
 				B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */,
 				B409251C26D299E600BCB666 /* ContentButtonView.swift in Sources */,
@@ -865,6 +870,7 @@
 				B402308626EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B45A9E8C26A171720088F04D /* PostEditorView.swift in Sources */,
 				B4855B5A26D6B61100BC2680 /* ContentTextEditorView.swift in Sources */,
+				B4F9F98E26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */,
 				B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */,
 				B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */,
 				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,

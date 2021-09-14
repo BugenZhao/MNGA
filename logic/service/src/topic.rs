@@ -86,6 +86,8 @@ fn extract_topic(node: Node) -> Option<Topic> {
         .map(|s| s.get_topic_snapshot().get_replies_num())
         .map(Topic_oneof__replies_num_last_visit::replies_num_last_visit);
 
+    let fid = get!(map, "fid")?;
+
     let topic = Topic {
         id,
         subject: Some(subject).into(),
@@ -98,6 +100,7 @@ fn extract_topic(node: Node) -> Option<Topic> {
         _fav: fav,
         is_favored,
         _replies_num_last_visit: replies_num_last_visit,
+        fid,
         ..Default::default()
     };
 

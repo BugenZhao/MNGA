@@ -20,6 +20,8 @@ struct PostEditorView: View {
   @State var subject = nil as Subject?
   @State var spans = [Span]()
 
+  @StateObject var presendAttachments = PresendAttachmentsModel()
+
   var title: LocalizedStringKey {
     postReply.context?.task.action.title ?? "Editor"
   }
@@ -60,7 +62,7 @@ struct PostEditorView: View {
     if let context = postReply.context {
       switch displayMode {
       case .plain:
-        ContentEditorView.build(subject: subjectBinding, content: contentBinding, action: context.task.action)
+        ContentEditorView.build(context: $postReply.context ?? .dummy)
           .id(context.task)
       case .preview:
         preview
@@ -89,6 +91,7 @@ struct PostEditorView: View {
       inner
         .modifier(AlertToastModifier())
         .navigationBarTitle(title, displayMode: .inline)
+        .environmentObject(presendAttachments)
         .toolbar {
         ToolbarItem(placement: .confirmationAction) {
           switch displayMode {

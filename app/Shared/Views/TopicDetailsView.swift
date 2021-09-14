@@ -334,6 +334,9 @@ struct TopicDetailsView: View {
   func doReplyTopic() {
     self.postReply.show(action: .with {
       $0.operation = .reply
+      $0.forumID = .with { f in
+        f.fid = topic.fid
+      }
       $0.postID = .with {
         $0.tid = self.topic.id
         $0.pid = "0"

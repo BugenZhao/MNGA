@@ -29,7 +29,7 @@ class PostReplyModel: ObservableObject {
     var subject: String?
     var content: String?
     var attachments: [PostAttachment]
-    
+
     let seed = UUID()
 
     init(task: Task, subject: String? = nil, content: String? = nil) {

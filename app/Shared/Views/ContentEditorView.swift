@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SwiftUIX
+import AlertToast
 
 class ContentEditorModel: ObservableObject {
   enum Panel {
@@ -22,6 +23,9 @@ class ContentEditorModel: ObservableObject {
   }
   @Published var selected: NSRange
   @Published var text: String
+
+  @Published var image: Data? = nil
+  @Published var showingImagePicker = false
 
   private let action: PostReplyAction
 
@@ -50,18 +54,31 @@ class ContentEditorModel: ObservableObject {
   @objc func appendDel() {
     self.appendTag("del")
   }
+
+  @objc func showImagePicker() {
+    self.showingImagePicker = true
+  }
+
+  func insert(_ string: String) {
+    let range = Range(selected, in: text)!
+    text.replaceSubrange(range, with: string)
+    let newLocation = selected.location + (string as NSString).length
+    selected = NSRange(location: newLocation, length: 0)
+  }
 }
 
 struct ContentEditorView: View {
-  @Binding var subject: String?
-  @Binding var contentToCommit: String
+  @Binding var context: PostReplyModel.Context
 
   @StateObject var model: ContentEditorModel
   @StateObject var keyboard = Keyboard.main
 
-  static func build(subject: Binding<String?>, content: Binding<String>, action: PostReplyAction) -> Self {
-    let model = ContentEditorModel(initialText: content.wrappedValue, action: action)
-    return Self.init(subject: subject, contentToCommit: content, model: model)
+  @EnvironmentObject var presendAttachments: PresendAttachmentsModel
+
+  static func build(context binding: Binding<PostReplyModel.Context>) -> Self {
+    let context = binding.wrappedValue
+    let model = ContentEditorModel(initialText: context.content ?? "", action: context.task.action)
+    return Self.init(context: binding, model: model)
   }
 
   @ViewBuilder
@@ -80,9 +97,9 @@ struct ContentEditorView: View {
   var body: some View {
     VStack {
       List {
-        if subject != nil {
+        if context.subject != nil {
           Section(header: Text("Subject")) {
-            TextField("", text: $subject ?? "")
+            TextField("", text: $context.subject ?? "")
           }
         }
 
@@ -103,22 +120,49 @@ struct ContentEditorView: View {
       }
     }
       .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
-      .onChange(of: model.text) { text in contentToCommit = text }
+      .onChange(of: model.text) { text in context.content = text }
+      .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 1)) }
+      .onChange(of: model.image) { image in uploadImageAttachment(data: image) }
+      .toast(isPresenting: $model.image.isNotNil()) { AlertToast(type: .loading) }
+  }
+
+  func uploadImageAttachment(data: Data?) {
+    guard let data = data else { return }
+
+    logicCallAsync(.uploadAttachment(.with {
+      $0.action = context.task.action
+      $0.file = data
+    }), errorToastModel: ToastModel.alert)
+    { (response: UploadAttachmentResponse) in
+      let attachment = response.attachment
+      context.attachments.append(attachment)
+      presendAttachments.add(url: attachment.url, data: data)
+
+      model.insert("\n[img]./\(attachment.url)[/img]")
+      model.image = nil
+    } onError: { e in
+      model.image = nil
+    }
   }
 }
 
 struct PostContentEditorView_Previews: PreviewProvider {
   struct Preview: View {
-    @State var subject: String?
-    @State var content = ""
+    @State var context: PostReplyModel.Context
+
+    static func build(subject: String?) -> Self {
+      let context = PostReplyModel.Context.dummy
+      context.subject = subject
+      return Self.init(context: context)
+    }
 
     var body: some View {
-      ContentEditorView.build(subject: $subject, content: $content, action: .init())
+      ContentEditorView.build(context: $context)
     }
   }
 
   static var previews: some View {
-    Preview(subject: "Subject")
-    Preview(subject: nil)
+    Preview.build(subject: "Subject")
+    Preview.build(subject: nil)
   }
 }

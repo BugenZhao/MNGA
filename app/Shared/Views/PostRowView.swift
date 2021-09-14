@@ -222,6 +222,9 @@ struct PostRowView: View {
   func doQuote(model: PostReplyModel) {
     model.show(action: .with {
       $0.postID = self.post.id
+      $0.forumID = .with { f in
+        f.fid = post.fid
+      }
       $0.operation = .quote
     }, pageToReload: .last)
   }
@@ -229,6 +232,9 @@ struct PostRowView: View {
   func doComment(model: PostReplyModel) {
     model.show(action: .with {
       $0.postID = self.post.id
+      $0.forumID = .with { f in
+        f.fid = post.fid
+      }
       $0.operation = .comment
     }, pageToReload: .exact(Int(self.post.atPage)))
   }
@@ -236,6 +242,9 @@ struct PostRowView: View {
   func doEdit(model: PostReplyModel) {
     model.show(action: .with {
       $0.postID = self.post.id
+      $0.forumID = .with { f in
+        f.fid = post.fid
+      }
       $0.operation = .modify
     }, pageToReload: .exact(Int(self.post.atPage)))
   }

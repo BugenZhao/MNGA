@@ -17,7 +17,9 @@ struct ContentImageView: View {
 
   @Environment(\.inRealPost) var inRealPost
   @EnvironmentObject var viewingImage: ViewingImageModel
+
   @OptionalEnvironmentObject<AttachmentsModel> var attachmentsModel
+  @OptionalEnvironmentObject<PresendAttachmentsModel> var presendAttachmentsModel
 
   init(url: URL, onlyThumbs: Bool = false) {
     self.url = url
@@ -36,10 +38,16 @@ struct ContentImageView: View {
       if onlyThumbs {
         ContentButtonView(icon: "photo", title: Text("View Image"), inQuote: true) { self.showImage() }
       } else {
-        WebImage(url: url)
-          .resizable()
-          .indicator(.activity)
-          .scaledToFit()
+        Group {
+          if let model = presendAttachmentsModel, let image = model.image(for: url) {
+            Image(image: image)
+              .resizable()
+          } else {
+            WebImage(url: url)
+              .resizable()
+              .indicator(.activity)
+          }
+        } .scaledToFit()
           .clipShape(RoundedRectangle(cornerRadius: 8))
           .onTapGesture(perform: self.showImage)
       }

@@ -25,12 +25,13 @@ struct ContentTextEditorView: UIViewRepresentable {
     let flexButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
     let doneButton = UIBarButtonItem(image: UIImage(systemName: "keyboard.chevron.compact.down"), style: .done, target: self, action: #selector(textView.doneButtonTapped(button:)))
     let stickerButton = UIBarButtonItem(image: UIImage(systemName: "face.smiling"), style: .plain, target: self.model, action: #selector(ContentEditorModel.showSticker))
+    let imageButton = UIBarButtonItem(image: UIImage(systemName: "photo"), style: .plain, target: self.model, action: #selector(ContentEditorModel.showImagePicker))
     let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self.model, action: #selector(ContentEditorModel.appendBold))
     let delButton = UIBarButtonItem(image: UIImage(systemName: "strikethrough"), style: .plain, target: self.model, action: #selector(ContentEditorModel.appendDel))
     let sepButton = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
     sepButton.width = 12
 
-    toolbar.items = [stickerButton, sepButton, boldButton, delButton, flexButton, doneButton]
+    toolbar.items = [stickerButton, imageButton, sepButton, boldButton, delButton, flexButton, doneButton]
 
     // make the toolbar translucent with keyboard
     toolbar.isTranslucent = true

@@ -87,6 +87,8 @@ pub fn extract_post(node: Node) -> Option<Post> {
     })
     .unwrap_or_default();
 
+    let fid = get!(map, "fid")?;
+
     let post = Post {
         id: Some(post_id).into(),
         floor: get!(map, "lou", u32)?,
@@ -100,6 +102,7 @@ pub fn extract_post(node: Node) -> Option<Post> {
         device,
         alter_info: get!(map, "alterinfo").unwrap_or_default(),
         attachments: attachments.into(),
+        fid,
         ..Default::default()
     };
 
@@ -175,11 +178,26 @@ macro_rules! query_insert_id {
 pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
     let action = request.get_action().get_operation().to_value();
 
+    let attachments = request
+        .get_attachments()
+        .iter()
+        .map(|a| a.get_name())
+        .collect::<Vec<_>>()
+        .join("\t");
+    let attachments_check = request
+        .get_attachments()
+        .iter()
+        .map(|a| a.get_check())
+        .collect::<Vec<_>>()
+        .join("\t");
+
     let query = {
         let mut query = vec![
             ("action", action),
             ("step", "2"),
             ("post_content", request.get_content()),
+            ("attachments", &attachments),
+            ("attachments_check", &attachments_check),
         ];
         if request.has_subject() {
             query.push(("post_subject", request.get_subject()));

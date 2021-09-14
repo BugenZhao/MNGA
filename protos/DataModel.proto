@@ -20,6 +20,7 @@ message Topic {
   optional string fav = 11;
   bool is_favored = 12;
   optional uint32 replies_num_last_visit = 13;
+  string fid = 14;
 }
 
 message User {
@@ -57,6 +58,7 @@ message Post {
   string alter_info = 10;
   uint32 at_page = 11;
   repeated Attachment attachments = 13;
+  string fid = 14;
 }
 
 message Subforum {
@@ -74,7 +76,7 @@ message Category {
 }
 
 message ForumId {
-  oneof id {
+  oneof id { // todo: no oneof
     string fid = 1;
     string stid = 2;
   }
