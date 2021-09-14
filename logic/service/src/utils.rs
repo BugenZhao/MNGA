@@ -115,9 +115,7 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
 
     let frontend = extract_node(package, "/root/__MESSAGE", |n| {
         let pairs = extract_kv_pairs(n);
-        let code = pget!(pairs, 0)
-            .and_then(|c| c.parse::<i64>().ok())
-            .unwrap_or_default();
+        let code = pget!(pairs, 0).unwrap_or_default();
         let info = pget!(pairs, 1).unwrap_or_default();
 
         ErrorMessage {
@@ -129,15 +127,28 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
 
     let backend = extract_node(package, "/root/error", |n| {
         let pairs = extract_kv_pairs(n);
-        let info = pget!(pairs, 0).unwrap_or_default();
+        let info = pget!(pairs, 0);
 
-        ErrorMessage {
+        info.map(|info| ErrorMessage {
             info,
             ..Default::default()
-        }
-    })?; // todo: error code
+        })
+    })?
+    .flatten();
 
-    frontend.or(backend).map_or_else(
+    let backend_code = {
+        let code = extract_string(package, "/root/error_code")?;
+        if code.is_empty() {
+            None
+        } else {
+            Some(ErrorMessage {
+                code,
+                ..Default::default()
+            })
+        }
+    };
+
+    frontend.or(backend).or(backend_code).map_or_else(
         || Ok(()),
         |e| {
             if SUCCESS_MSGS.iter().any(|msg| e.info.contains(msg)) {

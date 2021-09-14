@@ -137,7 +137,7 @@ message TopicSnapshot {
 }
 
 message ErrorMessage {
-  int64 code = 1;
+  string code = 1;
   string info = 2;
   string detailed = 3;
 }
