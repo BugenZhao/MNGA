@@ -1,12 +1,18 @@
-# NGA App
+# MNGA
 
 [![Logic](https://github.com/BugenZhao/NGA/actions/workflows/logic.yaml/badge.svg)](https://github.com/BugenZhao/NGA/actions/workflows/logic.yaml)
 
+> **M**ake **N**GA **G**reat **A**gain.
+
 An NGA App in SwiftUI with cross-platform logic in Rust.
+
+## App Store & TestFlight
+
+###### Coming soon
 
 ## Features
 
-- Built with pure SwiftUI which provides awesome UX feelings
+- Built with SwiftUI which provides awesome UX feelings
 - High-performance logic layer energized by Rust (and can be ported to other platforms with ease, check [Android Examples](android/README.md))
 
 ## Screenshots
@@ -14,13 +20,13 @@ An NGA App in SwiftUI with cross-platform logic in Rust.
 <p align="middle">
   <img src="https://user-images.githubusercontent.com/25862682/126900256-1a8d23de-805f-498e-960f-be3d2304146b.PNG" width="32%" />
   <img src="https://user-images.githubusercontent.com/25862682/126900260-55949320-f6a9-4cab-a098-cc02edefdc1f.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/126900261-43c08a26-49f6-4bb1-abc3-a536845193a1.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/133466878-be4ac7a9-dde4-4c28-bed0-862681ca1ff8.PNG" width="32%" />
   <img src="https://user-images.githubusercontent.com/25862682/126900264-726e5878-a1e0-4f38-b64a-9e9d76bf3206.PNG" width="32%" />
   <img src="https://user-images.githubusercontent.com/25862682/126900258-37a988f7-1cf9-4273-a069-1c2714ac134c.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/126900262-b8bf59d2-d567-43e5-8a68-6148370da3fd.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/126900254-de643a1d-5c5d-48fb-ab8e-178d01f55aec.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/126900265-9a87b7c3-858d-403c-b0d6-38e3e18f4741.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/126900426-e89c314e-e4ec-4746-b014-f521e1547a03.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/133466845-2c65b772-485b-483e-8e30-f0d36c292510.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/133466841-047bef9a-b39f-4951-a9a6-6be14f8a7c35.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/133466833-c81aac7b-18f7-4238-8123-7f8445287563.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/133466824-47c28c8f-bcb3-4543-8a9e-c038ac66b13b.PNG" width="32%" />
   <img src="https://user-images.githubusercontent.com/25862682/126900266-4405a84b-e119-433f-be78-4ca37691fd8c.PNG"/>
 </p>
 
