@@ -91,9 +91,9 @@ peg::parser! {
             }
 
         rule divider() -> Span
-            = divider_tag() pt:plain_text() divider_tag() {
+            = divider_tag() pt:plain_text()? divider_tag() {
                 span_of!(divider(Span_Divider {
-                    text: pt.to_owned(),
+                    text: pt.unwrap_or_default().to_owned(),
                     ..Default::default()
                 }))
             }

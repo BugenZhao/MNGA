@@ -221,7 +221,9 @@ class ContentCombiner {
   private func visit(divider: Span.Divider) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.headline }, color: { _ in Color.accentColor })
     combiner.append(Spacer().height(8))
-    combiner.append(Text(divider.text))
+    if !divider.text.isEmpty {
+      combiner.append(Text(divider.text))
+    }
     combiner.append(Divider())
     let subview = combiner.build()
     self.append(subview)
