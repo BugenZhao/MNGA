@@ -51,7 +51,7 @@ impl Cache {
     }
 
     fn do_insert_msg<M: protos::Message>(&self, key: &str, msg: &M) -> CacheResult<Option<M>> {
-        log::info!("insert: key={}, msg={:?}", key, msg);
+        log::info!("insert: key={}", key);
         let key_bytes = key.as_bytes();
         let value = msg.write_to_bytes()?;
         let last = self.db.insert(key_bytes, value)?;
@@ -63,7 +63,11 @@ impl Cache {
         let key_bytes = key.as_bytes();
         let value = self.db.get(key_bytes)?;
         let value_msg = value.and_then(|ivec| M::parse_from_bytes(&ivec).ok());
-        log::info!("get: key={}, msg={:?}", key, value_msg);
+        log::info!(
+            "get: key={}, msg={}",
+            key,
+            if value_msg.is_some() { "Some" } else { "None" }
+        );
         Ok(value_msg)
     }
 

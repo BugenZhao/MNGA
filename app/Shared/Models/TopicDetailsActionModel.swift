@@ -15,6 +15,7 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var navigateToTid: String? = nil
   @Published var showUserProfile: User? = nil
   @Published var navigateToAuthorOnly: String? = nil
+  @Published var navigateToLocalMode: Bool = false
 
   private var replyTo = [PostId: PostId]()
 
@@ -54,5 +55,15 @@ extension EnvironmentValues {
   var enableShowReplyChain: Bool {
     get { self[EnableShowReplyChainKey.self] }
     set { self[EnableShowReplyChainKey.self] = newValue }
+  }
+}
+
+struct CurrentlyLocalModeKey: EnvironmentKey {
+  static let defaultValue: Bool = false
+}
+extension EnvironmentValues {
+  var currentlyLocalMode: Bool {
+    get { self[CurrentlyLocalModeKey.self] }
+    set { self[CurrentlyLocalModeKey.self] = newValue }
   }
 }

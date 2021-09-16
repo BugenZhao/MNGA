@@ -22,6 +22,19 @@ fn favor_response_key(topic_id: &str) -> String {
     format!("/favor_response/topic/{}", topic_id)
 }
 
+fn topic_details_response_key(request: &TopicDetailsRequest) -> Option<String> {
+    if request.get_post_id().is_empty() && request.get_author_id().is_empty() {
+        format!(
+            "/topic_details_response/topic/{}/page/{}",
+            request.get_topic_id(),
+            request.get_page()
+        )
+        .into()
+    } else {
+        None
+    }
+}
+
 fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
@@ -286,6 +299,20 @@ pub async fn get_hot_topic_list(
 pub async fn get_topic_details(
     request: TopicDetailsRequest,
 ) -> ServiceResult<TopicDetailsResponse> {
+    let key = topic_details_response_key(&request);
+
+    if request.get_local_cache() {
+        return key
+            .and_then(|key| CACHE.get_msg::<TopicDetailsResponse>(&key).ok())
+            .flatten()
+            .ok_or_else(|| {
+                ServiceError::Mnga(ErrorMessage {
+                    info: "No local cache found".to_owned(),
+                    ..Default::default()
+                })
+            });
+    }
+
     let package = fetch_package(
         "read.php",
         vec![
@@ -317,12 +344,17 @@ pub async fn get_topic_details(
 
     insert_topic_history(topic.clone()); // save history
 
-    Ok(TopicDetailsResponse {
+    let response = TopicDetailsResponse {
         topic: Some(topic).into(),
         replies: replies.into(),
         pages,
         ..Default::default()
-    })
+    };
+    if let Some(key) = key {
+        let _ = CACHE.insert_msg(&key, &response);
+    }
+
+    Ok(response)
 }
 
 pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavorResponse> {

@@ -14,6 +14,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let buildRequest: (_ page: Int) -> AsyncRequest.OneOf_Value
   private let onResponse: (_ response: Res) -> ([Item], Int?)
   private let id: KeyPath<Item, String>
+  private let finishOnError: Bool
 
   @Published var items = [Item]()
   @Published var itemToIndexAndPage = [String: (index: Int, page: Int)]()
@@ -32,11 +33,13 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   init(
     buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
     onResponse: @escaping (_ response: Res) -> ([Item], Int?),
-    id: KeyPath<Item, String>
+    id: KeyPath<Item, String>,
+    finishOnError: Bool = false
   ) {
     self.buildRequest = buildRequest
     self.onResponse = onResponse
     self.id = id
+    self.finishOnError = finishOnError
   }
 
   func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
@@ -85,6 +88,12 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
+  private func mayFinishOnError() {
+    if finishOnError {
+      self.totalPages = self.loadedPage
+    }
+  }
+
   func refresh(animated: Bool = false) {
     if self.isRefreshing || self.isLoading { return }
     self.dataFlowId = UUID()
@@ -114,6 +123,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
         self.isRefreshing = false
         self.isLoading = false
       }
+      self.mayFinishOnError()
     }
   }
 
@@ -149,6 +159,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       withAnimation {
         self.isLoading = false
       }
+      self.mayFinishOnError()
     }
   }
 
@@ -179,6 +190,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       withAnimation(when: self.items.isEmpty) {
         self.isLoading = false
       }
+      self.mayFinishOnError()
     }
   }
 }

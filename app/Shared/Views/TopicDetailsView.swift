@@ -30,6 +30,7 @@ struct TopicDetailsView: View {
   @State var topic: Topic
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
+  @Environment(\.currentlyLocalMode) var localMode
   @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var viewingImage: ViewingImageModel
 
@@ -43,12 +44,13 @@ struct TopicDetailsView: View {
 
   @State var isFavored: Bool
 
-  static func build(topic: Topic) -> Self {
+  static func build(topic: Topic, localMode: Bool = false) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
+          $0.localCache = localMode
           $0.page = UInt32(page)
         })
       },
@@ -57,10 +59,13 @@ struct TopicDetailsView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.floor.description
+      id: \.floor.description,
+      finishOnError: localMode
     )
 
     return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored)
+      .environment(\.enableAuthorOnly, !localMode)
+      .environment(\.currentlyLocalMode, localMode)
   }
 
   static func build(topic: Topic, only authorID: String) -> some View {
@@ -125,6 +130,11 @@ struct TopicDetailsView: View {
             Label("Author Only", systemImage: "person.fill")
           }
         }
+        if !localMode {
+          Button(action: { self.action.navigateToLocalMode = true }) {
+            Label("View Cached Topic", systemImage: "clock")
+          }
+        }
         Button(action: { self.dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
@@ -137,6 +147,11 @@ struct TopicDetailsView: View {
       Label("More", systemImage: "ellipsis.circle")
         .imageScale(.large)
     }
+  }
+
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
+    ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
   }
 
   @ViewBuilder
@@ -196,6 +211,11 @@ struct TopicDetailsView: View {
 
     let authorOnlyView = TopicDetailsView.build(topic: topic, only: self.action.navigateToAuthorOnly ?? .init())
     NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) { }
+
+    if !localMode {
+      let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
+      NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) { }
+    }
   }
 
   @ViewBuilder
@@ -272,7 +292,9 @@ struct TopicDetailsView: View {
   }
 
   var title: String {
-    if !enableAuthorOnly {
+    if localMode {
+      return NSLocalizedString("Topic (Cached)", comment: "")
+    } else if !enableAuthorOnly {
       return NSLocalizedString("Author Only", comment: "")
     } else if prefs.showTopicSubject {
       return topic.subject.content
@@ -297,7 +319,7 @@ struct TopicDetailsView: View {
       }
     }
       .navigationTitle(title)
-      .modifier(SingleItemToolbarModifier { moreMenu })
+      .toolbar { toolbar }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
