@@ -1,8 +1,5 @@
 mod attachment;
-#[cfg(test)]
-#[path = "auth_debug.rs"]
-mod auth;
-#[cfg(not(test))]
+
 mod auth;
 mod constants;
 mod dispatch;

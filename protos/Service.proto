@@ -81,6 +81,7 @@ message TopicDetailsRequest {
   string post_id = 4;
   string author_id = 5;
   uint32 page = 2;
+  bool local_cache = 6;
 }
 message TopicDetailsResponse {
   Topic topic = 1;

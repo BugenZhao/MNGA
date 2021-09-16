@@ -1,8 +1,8 @@
 use crate::{auth, error::ServiceResult, topic::extract_topic_subject, user::UserController};
 use protos::{DataModel::PostContent, Service::*};
 
-pub fn handle_configure(mut request: ConfigureRequest) -> ServiceResult<ConfigureResponse> {
-    config::set_config(request.take_config());
+pub fn handle_configure(request: ConfigureRequest) -> ServiceResult<ConfigureResponse> {
+    config::set_config(request.config.unwrap());
     Ok(ConfigureResponse::new())
 }
 

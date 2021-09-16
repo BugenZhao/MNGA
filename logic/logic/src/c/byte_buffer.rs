@@ -11,6 +11,7 @@ pub struct ByteBuffer {
 
 impl From<Vec<u8>> for ByteBuffer {
     fn from(v: Vec<u8>) -> Self {
+        // todo: use into_raw_parts when stable
         let ret = Self {
             ptr: v.as_ptr(),
             len: v.len(),

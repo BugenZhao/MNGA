@@ -32,7 +32,7 @@ lazy_static! {
 async fn do_fetch_package(
     api: &str,
     mut query: Vec<(&str, &str)>,
-    build_form: impl FnOnce(RequestBuilder) -> RequestBuilder,
+    add_form: impl FnOnce(RequestBuilder) -> RequestBuilder,
 ) -> ServiceResult<sxd_document::Package> {
     let url = Url::parse(api)
         .or_else(|_| Url::parse(&format!("{}/{}", URL_BASE, api)))
@@ -55,11 +55,11 @@ async fn do_fetch_package(
     #[cfg(not(test))]
     let client = &CLIENT;
 
-    let builder = build_form(client.post(url).query(&query));
-
+    let builder = add_form(client.post(url).query(&query));
     let response = builder.send().await?.text_with_charset("gb18030").await?;
+
     #[cfg(test)]
-    println!("{:?}", response);
+    println!("response: {:?}", response);
 
     let package = sxd_document::parser::parse(&response)?;
     let _ = extract_error(&package)?;
