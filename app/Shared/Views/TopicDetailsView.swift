@@ -149,11 +149,6 @@ struct TopicDetailsView: View {
     }
   }
 
-  @ToolbarContentBuilder
-  var toolbar: some ToolbarContent {
-    ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
-  }
-
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
     PostRowView(post: post, useContextMenu: !prefs.usePaginatedDetails, vote: votes.binding(for: post))
@@ -319,7 +314,7 @@ struct TopicDetailsView: View {
       }
     }
       .navigationTitle(title)
-      .toolbar { toolbar }
+      .modifier(SingleItemToolbarModifier { moreMenu })
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))

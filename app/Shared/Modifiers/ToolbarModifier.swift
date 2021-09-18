@@ -15,7 +15,7 @@ struct SingleItemToolbarModifier<M: View>: ViewModifier {
     content
     #if os(iOS)
       .toolbar {
-        ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug
+        ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug for iOS 14
         ToolbarItem(placement: .navigationBarTrailing, content: build)
       }
     #elseif os(macOS)
