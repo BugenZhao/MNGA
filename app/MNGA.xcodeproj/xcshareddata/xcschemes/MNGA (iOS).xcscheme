@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B4C024C726884FD700E53554"
-               BuildableName = "NGA.app"
-               BlueprintName = "NGA (iOS)"
-               ReferencedContainer = "container:NGA.xcodeproj">
+               BuildableName = "MNGA.app"
+               BlueprintName = "MNGA (iOS)"
+               ReferencedContainer = "container:MNGA.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -39,16 +39,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      enableGPUValidationMode = "1"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B4C024C726884FD700E53554"
-            BuildableName = "NGA.app"
-            BlueprintName = "NGA (iOS)"
-            ReferencedContainer = "container:NGA.xcodeproj">
+            BuildableName = "MNGA.app"
+            BlueprintName = "MNGA (iOS)"
+            ReferencedContainer = "container:MNGA.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -63,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B4C024C726884FD700E53554"
-            BuildableName = "NGA.app"
-            BlueprintName = "NGA (iOS)"
-            ReferencedContainer = "container:NGA.xcodeproj">
+            BuildableName = "MNGA.app"
+            BlueprintName = "MNGA (iOS)"
+            ReferencedContainer = "container:MNGA.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

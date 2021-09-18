@@ -50,13 +50,6 @@
 		B43DED61269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED62269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED63269F02CF009C52F5 /* HapticUtils.swift */; };
-		B43DEDAC269F0951009C52F5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B43DEDAB269F0951009C52F5 /* WidgetKit.framework */; platformFilter = maccatalyst; };
-		B43DEDAE269F0951009C52F5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B43DEDAD269F0951009C52F5 /* SwiftUI.framework */; platformFilter = maccatalyst; };
-		B43DEDB1269F0951009C52F5 /* NGAWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DEDB0269F0951009C52F5 /* NGAWidget.swift */; };
-		B43DEDB4269F0952009C52F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B43DEDB3269F0952009C52F5 /* Assets.xcassets */; };
-		B43DEDB6269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */; };
-		B43DEDB7269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */; };
-		B43DEDBA269F0952009C52F5 /* NGAWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B444638B26A1981E006FA44D /* PostReplyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B444638A26A1981E006FA44D /* PostReplyModel.swift */; };
 		B444638C26A1981E006FA44D /* PostReplyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B444638A26A1981E006FA44D /* PostReplyModel.swift */; };
 		B444639326A1B745006FA44D /* OptionalBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B444639226A1B745006FA44D /* OptionalBinding.swift */; };
@@ -200,16 +193,6 @@
 		B4FBED8326A7163E006390A3 /* PreferencesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		B43DEDB8269F0952009C52F5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B4C024BC26884FD600E53554 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B43DEDA9269F0951009C52F5;
-			remoteInfo = NGAWidgetExtension;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		B43DEDBC269F0952009C52F5 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -217,7 +200,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B43DEDBA269F0952009C52F5 /* NGAWidgetExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -246,14 +228,8 @@
 		B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMenuView.swift; sourceTree = "<group>"; };
 		B43DED60269EFAF4009C52F5 /* ToastModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModel.swift; sourceTree = "<group>"; };
 		B43DED63269F02CF009C52F5 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
-		B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NGAWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B43DEDAB269F0951009C52F5 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B43DEDAD269F0951009C52F5 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		B43DEDB0269F0951009C52F5 /* NGAWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NGAWidget.swift; sourceTree = "<group>"; };
-		B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = NGAWidget.intentdefinition; sourceTree = "<group>"; };
-		B43DEDB3269F0952009C52F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B43DEDB5269F0952009C52F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B43DEDBB269F0952009C52F5 /* NGAWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NGAWidgetExtension.entitlements; sourceTree = "<group>"; };
 		B444638A26A1981E006FA44D /* PostReplyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostReplyModel.swift; sourceTree = "<group>"; };
 		B444639226A1B745006FA44D /* OptionalBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalBinding.swift; sourceTree = "<group>"; };
 		B444639526A1C54A006FA44D /* Stickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stickers.swift; sourceTree = "<group>"; };
@@ -286,9 +262,9 @@
 		B4B3545E26C91DA00052FE80 /* UsersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersModel.swift; sourceTree = "<group>"; };
 		B4C024C226884FD600E53554 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B4C024C326884FD700E53554 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B4C024C826884FD700E53554 /* NGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4C024C826884FD700E53554 /* MNGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MNGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4C024CB26884FD700E53554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B4C024D026884FD700E53554 /* NGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4C024D026884FD700E53554 /* MNGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MNGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4C024D226884FD700E53554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B4C024D326884FD700E53554 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		B4C024E2268850AA00E53554 /* LogicCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogicCall.swift; sourceTree = "<group>"; };
@@ -320,7 +296,7 @@
 		B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicHistoryListView.swift; sourceTree = "<group>"; };
 		B4EB80E5269B13830014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
 		B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
-		B4EB80EB269B1B4F0014DDFA /* NGA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NGA.entitlements; sourceTree = "<group>"; };
+		B4EB80EB269B1B4F0014DDFA /* MNGA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MNGA.entitlements; sourceTree = "<group>"; };
 		B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogiccatalyst.a; path = ../out/libs/liblogiccatalyst.a; sourceTree = "<group>"; };
 		B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCombiner.swift; sourceTree = "<group>"; };
 		B4F2408326A30A8500D620B0 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
@@ -331,15 +307,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B43DEDA7269F0951009C52F5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B43DEDAE269F0951009C52F5 /* SwiftUI.framework in Frameworks */,
-				B43DEDAC269F0951009C52F5 /* WidgetKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B4C024C526884FD700E53554 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -384,17 +351,6 @@
 			path = Modifiers;
 			sourceTree = "<group>";
 		};
-		B43DEDAF269F0951009C52F5 /* NGAWidget */ = {
-			isa = PBXGroup;
-			children = (
-				B43DEDB0269F0951009C52F5 /* NGAWidget.swift */,
-				B43DEDB2269F0951009C52F5 /* NGAWidget.intentdefinition */,
-				B43DEDB3269F0952009C52F5 /* Assets.xcassets */,
-				B43DEDB5269F0952009C52F5 /* Info.plist */,
-			);
-			path = NGAWidget;
-			sourceTree = "<group>";
-		};
 		B45819C1268D820400999830 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -428,12 +384,10 @@
 		B4C024BB26884FD600E53554 = {
 			isa = PBXGroup;
 			children = (
-				B43DEDBB269F0952009C52F5 /* NGAWidgetExtension.entitlements */,
-				B4EB80EB269B1B4F0014DDFA /* NGA.entitlements */,
+				B4EB80EB269B1B4F0014DDFA /* MNGA.entitlements */,
 				B4C024C026884FD600E53554 /* Shared */,
 				B4C024CA26884FD700E53554 /* iOS */,
 				B4C024D126884FD700E53554 /* macOS */,
-				B43DEDAF269F0951009C52F5 /* NGAWidget */,
 				B4C024C926884FD700E53554 /* Products */,
 				B4C024EE268850F300E53554 /* Frameworks */,
 			);
@@ -459,9 +413,8 @@
 		B4C024C926884FD700E53554 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B4C024C826884FD700E53554 /* NGA.app */,
-				B4C024D026884FD700E53554 /* NGA.app */,
-				B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */,
+				B4C024C826884FD700E53554 /* MNGA.app */,
+				B4C024D026884FD700E53554 /* MNGA.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -607,26 +560,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B43DEDA9269F0951009C52F5 /* NGAWidgetExtension */ = {
+		B4C024C726884FD700E53554 /* MNGA (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B43DEDBF269F0952009C52F5 /* Build configuration list for PBXNativeTarget "NGAWidgetExtension" */;
-			buildPhases = (
-				B43DEDA6269F0951009C52F5 /* Sources */,
-				B43DEDA7269F0951009C52F5 /* Frameworks */,
-				B43DEDA8269F0951009C52F5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = NGAWidgetExtension;
-			productName = NGAWidgetExtension;
-			productReference = B43DEDAA269F0951009C52F5 /* NGAWidgetExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
-		B4C024C726884FD700E53554 /* NGA (iOS) */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B4C024DC26884FD700E53554 /* Build configuration list for PBXNativeTarget "NGA (iOS)" */;
+			buildConfigurationList = B4C024DC26884FD700E53554 /* Build configuration list for PBXNativeTarget "MNGA (iOS)" */;
 			buildPhases = (
 				B4C024C426884FD700E53554 /* Sources */,
 				B4C024C526884FD700E53554 /* Frameworks */,
@@ -636,9 +572,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				B43DEDB9269F0952009C52F5 /* PBXTargetDependency */,
 			);
-			name = "NGA (iOS)";
+			name = "MNGA (iOS)";
 			packageProductDependencies = (
 				B4C024EC268850E800E53554 /* SwiftProtobuf */,
 				B45819C6268D9B5600999830 /* SDWebImageSwiftUI */,
@@ -651,12 +586,12 @@
 				B409252526D29F6C00BCB666 /* BetterSafariView */,
 			);
 			productName = "NGA (iOS)";
-			productReference = B4C024C826884FD700E53554 /* NGA.app */;
+			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B4C024CF26884FD700E53554 /* NGA (macOS) */ = {
+		B4C024CF26884FD700E53554 /* MNGA (macOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B4C024DF26884FD700E53554 /* Build configuration list for PBXNativeTarget "NGA (macOS)" */;
+			buildConfigurationList = B4C024DF26884FD700E53554 /* Build configuration list for PBXNativeTarget "MNGA (macOS)" */;
 			buildPhases = (
 				B4C024CC26884FD700E53554 /* Sources */,
 				B4C024CD26884FD700E53554 /* Frameworks */,
@@ -666,7 +601,7 @@
 			);
 			dependencies = (
 			);
-			name = "NGA (macOS)";
+			name = "MNGA (macOS)";
 			packageProductDependencies = (
 				B4C024EF268850F300E53554 /* SwiftProtobuf */,
 				B45819C8268D9B6300999830 /* SDWebImageSwiftUI */,
@@ -676,7 +611,7 @@
 				B409CE6A269F3A6E00F617EC /* AlertToast */,
 			);
 			productName = "NGA (macOS)";
-			productReference = B4C024D026884FD700E53554 /* NGA.app */;
+			productReference = B4C024D026884FD700E53554 /* MNGA.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -688,9 +623,6 @@
 				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1300;
 				TargetAttributes = {
-					B43DEDA9269F0951009C52F5 = {
-						CreatedOnToolsVersion = 13.0;
-					};
 					B4C024C726884FD700E53554 = {
 						CreatedOnToolsVersion = 12.5;
 					};
@@ -699,7 +631,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B4C024BF26884FD600E53554 /* Build configuration list for PBXProject "NGA" */;
+			buildConfigurationList = B4C024BF26884FD600E53554 /* Build configuration list for PBXProject "MNGA" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -724,22 +656,13 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B4C024C726884FD700E53554 /* NGA (iOS) */,
-				B4C024CF26884FD700E53554 /* NGA (macOS) */,
-				B43DEDA9269F0951009C52F5 /* NGAWidgetExtension */,
+				B4C024C726884FD700E53554 /* MNGA (iOS) */,
+				B4C024CF26884FD700E53554 /* MNGA (macOS) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B43DEDA8269F0951009C52F5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B43DEDB4269F0952009C52F5 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B4C024C626884FD700E53554 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -761,15 +684,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B43DEDA6269F0951009C52F5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B43DEDB1269F0951009C52F5 /* NGAWidget.swift in Sources */,
-				B43DEDB6269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B4C024C426884FD700E53554 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -795,7 +709,6 @@
 				B409252226D29D2100BCB666 /* ContentImageView.swift in Sources */,
 				B475FD9E26D2B1B300109CEA /* AttachmentsModel.swift in Sources */,
 				B454F37826B1C2A4009C6B27 /* LoadingRowView.swift in Sources */,
-				B43DEDB7269F0952009C52F5 /* NGAWidget.intentdefinition in Sources */,
 				B4DBF612268979F70027233F /* TopicListView.swift in Sources */,
 				B43DED55269DE1E4009C52F5 /* CollapsedContentView.swift in Sources */,
 				B444639C26A1CC9F006FA44D /* ContentEditorView.swift in Sources */,
@@ -949,14 +862,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		B43DEDB9269F0952009C52F5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B43DEDA9269F0951009C52F5 /* NGAWidgetExtension */;
-			targetProxy = B43DEDB8269F0952009C52F5 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
 		B4DCF4532688F68400EC78A4 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
@@ -969,69 +874,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		B43DEDBD269F0952009C52F5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = NGAWidgetExtension.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AHDHW7HK24;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NGAWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NGAWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS.NGAWidget";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		B43DEDBE269F0952009C52F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = NGAWidgetExtension.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AHDHW7HK24;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NGAWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NGAWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS.NGAWidget";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		B4C024DA26884FD700E53554 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1158,13 +1000,12 @@
 		B4C024DD26884FD700E53554 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = NGA.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MNGA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AHDHW7HK24;
+				DEVELOPMENT_TEAM = 87F9J2DF6R;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
@@ -1173,8 +1014,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS";
-				PRODUCT_NAME = NGA;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bugenzhao.MNGA;
+				PRODUCT_NAME = MNGA;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1186,13 +1027,12 @@
 		B4C024DE26884FD700E53554 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = NGA.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MNGA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AHDHW7HK24;
+				DEVELOPMENT_TEAM = 87F9J2DF6R;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iOS/Info.plist;
@@ -1201,8 +1041,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-iOS";
-				PRODUCT_NAME = NGA;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bugenzhao.MNGA;
+				PRODUCT_NAME = MNGA;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1221,7 +1061,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = AHDHW7HK24;
+				DEVELOPMENT_TEAM = 87F9J2DF6R;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
@@ -1230,8 +1070,8 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-macOS";
-				PRODUCT_NAME = NGA;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bugenzhao.MNGA;
+				PRODUCT_NAME = MNGA;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -1246,7 +1086,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = AHDHW7HK24;
+				DEVELOPMENT_TEAM = 87F9J2DF6R;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = macOS/Info.plist;
@@ -1255,8 +1095,8 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bugenzhao.NGA-macOS";
-				PRODUCT_NAME = NGA;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bugenzhao.MNGA;
+				PRODUCT_NAME = MNGA;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
 			};
@@ -1265,16 +1105,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B43DEDBF269F0952009C52F5 /* Build configuration list for PBXNativeTarget "NGAWidgetExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B43DEDBD269F0952009C52F5 /* Debug */,
-				B43DEDBE269F0952009C52F5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B4C024BF26884FD600E53554 /* Build configuration list for PBXProject "NGA" */ = {
+		B4C024BF26884FD600E53554 /* Build configuration list for PBXProject "MNGA" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B4C024DA26884FD700E53554 /* Debug */,
@@ -1283,7 +1114,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B4C024DC26884FD700E53554 /* Build configuration list for PBXNativeTarget "NGA (iOS)" */ = {
+		B4C024DC26884FD700E53554 /* Build configuration list for PBXNativeTarget "MNGA (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B4C024DD26884FD700E53554 /* Debug */,
@@ -1292,7 +1123,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B4C024DF26884FD700E53554 /* Build configuration list for PBXNativeTarget "NGA (macOS)" */ = {
+		B4C024DF26884FD700E53554 /* Build configuration list for PBXNativeTarget "MNGA (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B4C024E026884FD700E53554 /* Debug */,
