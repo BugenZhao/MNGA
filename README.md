@@ -1,10 +1,15 @@
-# MNGA
+<h1 align="center">MNGA
 
 [![Logic](https://github.com/BugenZhao/NGA/actions/workflows/logic.yaml/badge.svg)](https://github.com/BugenZhao/NGA/actions/workflows/logic.yaml)
 
-> **M**ake **N**GA **G**reat **A**gain.
+<h3 align="center">An NGA App in SwiftUI with cross-platform logic in Rust.</h3>
 
-An NGA App in SwiftUI with cross-platform logic in Rust.
+<p align="center">
+<img src="assets/RoundedIcon.png" width="256"></img>
+</p>
+
+<h4 align="center">Make NGA Great Again.</h4>
+</h1>
 
 ## App Store & TestFlight
 
@@ -17,7 +22,7 @@ An NGA App in SwiftUI with cross-platform logic in Rust.
 
 ## Screenshots
 
-<p align="middle">
+<p align="center">
   <img src="https://user-images.githubusercontent.com/25862682/126900256-1a8d23de-805f-498e-960f-be3d2304146b.PNG" width="32%" />
   <img src="https://user-images.githubusercontent.com/25862682/126900260-55949320-f6a9-4cab-a098-cc02edefdc1f.PNG" width="32%" />
   <img src="https://user-images.githubusercontent.com/25862682/133466878-be4ac7a9-dde4-4c28-bed0-862681ca1ff8.PNG" width="32%" />
