@@ -11,8 +11,6 @@ import SwiftUI
 import WebView
 
 struct LoginView: View {
-  @Environment(\.presentationMode) var presentationMode
-
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var webViewStore: WebViewStore
 
@@ -68,7 +66,7 @@ struct LoginView: View {
   }
 
   func close() {
-    presentationMode.wrappedValue.dismiss()
+    authStorage.isSigning = false
   }
 }
 
@@ -82,7 +80,7 @@ fileprivate struct LoginPreviewView: View {
         Button(action: { authStorage.clearAuth() }) {
           Text("Show")
         }
-      } .sheet(isPresented: .constant(authStorage.shouldLogin), content: {
+      } .sheet(isPresented: $authStorage.isSigning, content: {
           LoginView()
         })
     }

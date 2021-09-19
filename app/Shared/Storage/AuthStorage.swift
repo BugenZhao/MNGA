@@ -11,6 +11,8 @@ import SwiftUI
 class AuthStorage: ObservableObject {
   static let shared = AuthStorage()
 
+  @Published var isSigning = false
+
   @AppStorage("authInfo") var authInfo = WrappedMessage(inner: AuthInfo()) {
     didSet {
       reAuth()
@@ -29,12 +31,13 @@ class AuthStorage: ObservableObject {
     let _: AuthResponse = try! logicCall(.auth(.with { $0.info = authInfo.inner }))
   }
 
-  var shouldLogin: Bool {
-    authInfo.inner.token.isEmpty
+  var signedIn: Bool {
+    !authInfo.inner.token.isEmpty
   }
 
   func setAuth(_ authInfo: AuthInfo) {
     self.authInfo.inner = authInfo
+    isSigning = false
   }
 
   func clearAuth() {

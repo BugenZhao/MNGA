@@ -5,16 +5,8 @@
 import Foundation
 import SwiftUI
 
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    return true
-  }
-}
-
 @main
 struct iOSNGAApp: App {
-  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-
   @StateObject var authStorage = AuthStorage.shared
 
   init() {
@@ -25,7 +17,8 @@ struct iOSNGAApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()
-        .sheet(isPresented: .constant(authStorage.shouldLogin)) { LoginView() }
+        .sheet(isPresented: $authStorage.isSigning) { LoginView() }
+        .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
     }
   }
 }

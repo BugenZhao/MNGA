@@ -29,7 +29,7 @@ struct UserMenuView: View {
 
   var body: some View {
     let uid = authStorage.authInfo.inner.uid
-    let shouldLogin = authStorage.shouldLogin
+    let signedIn = authStorage.signedIn
 
     Menu {
       Section {
@@ -44,7 +44,7 @@ struct UserMenuView: View {
         }
       }
       Section {
-        if !shouldLogin {
+        if signedIn {
           Menu {
             if let user = self.user {
               Label(user.id, systemImage: "number")
@@ -55,14 +55,14 @@ struct UserMenuView: View {
               }
               Label("\(user.postNum) Posts", systemImage: "text.bubble")
             }
-            Button(action: { authStorage.clearAuth() }) {
+            Button(action: { reSignIn() }) {
               Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
             }
           } label: {
             Label(user?.name ?? uid, systemImage: "person.fill")
           }
         } else {
-          Button(action: { authStorage.clearAuth() }) {
+          Button(action: { reSignIn() }) {
             Label("Sign In", systemImage: "person.crop.circle.badge.plus")
           }
         }
@@ -75,7 +75,7 @@ struct UserMenuView: View {
         }
       }
     } label: {
-      let icon = shouldLogin ? "person.crop.circle" : "person.crop.circle.fill"
+      let icon = signedIn ? "person.crop.circle.fill" : "person.crop.circle"
       Label("Me", systemImage: icon)
     }
       .imageScale(.large)
@@ -85,9 +85,15 @@ struct UserMenuView: View {
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
       .sheet(isPresented: $showSeparateAboutModal) { AboutView() }
   }
+  
+  func reSignIn() {
+    authStorage.clearAuth()
+    authStorage.isSigning = true
+  }
 
   func loadData() {
     let uid = authStorage.authInfo.inner.uid
+    if uid.isEmpty { return }
     logicCallAsync(.remoteUser(.with { $0.userID = uid })) { (response: RemoteUserResponse) in
       if response.hasUser {
         self.user = response.user

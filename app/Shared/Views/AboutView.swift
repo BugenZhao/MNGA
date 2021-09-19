@@ -82,7 +82,7 @@ struct AboutView: View {
           .foregroundColor(.secondary)
       }
     }
-      .navigationTitle("About & Support")
+      .navigationTitle("About & Feedback")
       .navigationBarTitleDisplayMode(.inline)
   }
 }
