@@ -5,5 +5,5 @@
 .build/
 
 target
-Cargo.lock
 .env
+**/xcuserdata/*.xcuserdatad
