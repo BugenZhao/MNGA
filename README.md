@@ -11,9 +11,9 @@
 <h4 align="center">Make NGA Great Again.</h4>
 </h1>
 
-## App Store & TestFlight
+## Get the App
 
-###### Coming soon
+[<img src="https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png" width="200" />](https://testflight.apple.com/join/w9duC4Du)
 
 ## Features
 
