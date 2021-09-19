@@ -46,6 +46,12 @@ struct PreferencesView: View {
           Label("Cache", systemImage: "internaldrive")
         }
       }
+      
+      Section(header: Text("Support")) {
+        NavigationLink(destination: AboutView()) {
+          Label("About & Feedback", systemImage: "hands.sparkles")
+        }
+      }
     } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
       .listStyle(.insetGrouped)
   }

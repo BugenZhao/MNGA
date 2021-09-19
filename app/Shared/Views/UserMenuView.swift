@@ -18,6 +18,7 @@ struct UserMenuView: View {
   @State var showFavorite: Bool = false
   @State var showNotifications: Bool = false
   @State var showPreferencesModal: Bool = false
+  @State var showSeparateAboutModal: Bool = false
 
   @ViewBuilder
   var navigationBackgrounds: some View {
@@ -69,6 +70,9 @@ struct UserMenuView: View {
         Button(action: { showPreferencesModal = true }) {
           Label("Preferences", systemImage: "gear")
         }
+        Button(action: { showSeparateAboutModal = true }) {
+          Label("About & Feedback", systemImage: "hands.sparkles")
+        }
       }
     } label: {
       let icon = shouldLogin ? "person.crop.circle" : "person.crop.circle.fill"
@@ -79,6 +83,7 @@ struct UserMenuView: View {
       .onChange(of: authStorage.authInfo) { _ in loadData() }
       .background { navigationBackgrounds }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
+      .sheet(isPresented: $showSeparateAboutModal) { AboutView() }
   }
 
   func loadData() {

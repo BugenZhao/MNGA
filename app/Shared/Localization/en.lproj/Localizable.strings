@@ -27,7 +27,7 @@
 "Sign Out" = "Sign Out";
 "Me" = "Me";
 "%u Posts" = "%u Posts";
-"Sign in to NGA" = "Sign in to NGA";
+"Sign in to NGA" = "Sign in to \"THE FORUM\"";
 "Subforums of %@" = "Subforums of %@";
 "Press and hold a subforum to mark it as favorite." = "Press and hold a subforum to mark it as favorite.";
 "History" = "History";
@@ -87,3 +87,6 @@
 "This Author Only" = "This Author Only";
 "Topic (Cached)" = "Topic (Cached)";
 "View Cached Topic" = "View Cached Topic";
+"About & Feedback" = "About & Feedback";
+"MNGA Description" = "MNGA is an open source iOS client for \"THE FORUM\", developed based on SwiftUI and Rust. If you've encountered some problems using MNGA App, or just want to request some new features, you may give feedback via GitHub Issues/PRs or email.";
+"Support" = "Support";

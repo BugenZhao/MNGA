@@ -27,7 +27,7 @@
 "Sign Out" = "退出登录";
 "Me" = "我";
 "%u Posts" = "%u 个帖子";
-"Sign in to NGA" = "登录到 NGA";
+"Sign in to NGA" = "登录到 泥潭";
 "Subforums of %@" = "%@ - 子版块";
 "Press and hold a subforum to mark it as favorite." = "长按子版块以收藏。";
 "History" = "浏览历史";
@@ -87,3 +87,6 @@
 "This Author Only" = "只看该作者";
 "Topic (Cached)" = "话题（缓存）";
 "View Cached Topic" = "查看话题缓存";
+"About & Feedback" = "关于 & 反馈";
+"MNGA Description" = "MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过 GitHub Issues / PRs 及邮件方式反馈。";
+"Support" = "支持";
