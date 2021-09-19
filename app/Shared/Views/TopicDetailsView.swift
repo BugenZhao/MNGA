@@ -33,11 +33,11 @@ struct TopicDetailsView: View {
   @Environment(\.currentlyLocalMode) var localMode
   @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var viewingImage: ViewingImageModel
+  @EnvironmentObject var postReply: PostReplyModel
 
   @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
   @StateObject var votes = VotesModel()
-  @StateObject var postReply = PostReplyModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
   @StateObject var alert = ToastModel.alert

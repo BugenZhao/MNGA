@@ -12,6 +12,7 @@ import BetterSafariView
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
   @StateObject var activity = ActivityModel()
+  @StateObject var postReply = PostReplyModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var openURL = OpenURLModel.shared
 
@@ -45,6 +46,7 @@ struct ContentView: View {
       .modifier(HudToastModifier())
       .environmentObject(viewingImage)
       .environmentObject(activity)
+      .environmentObject(postReply)
       .environment(\.useRedact, prefs.useRedact)
   }
 }

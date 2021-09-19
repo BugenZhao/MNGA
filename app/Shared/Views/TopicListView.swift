@@ -17,11 +17,11 @@ struct TopicListView: View {
   let forum: Forum
 
   @EnvironmentObject var activity: ActivityModel
+  @EnvironmentObject var postReply: PostReplyModel
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
   @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
-  @StateObject var postReply = PostReplyModel()
   @StateObject var favoriteForums = FavoriteForumsStorage.shared
 
   @State var currentShowingSubforum: Forum? = nil

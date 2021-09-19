@@ -12,7 +12,6 @@ import AlertToast
 struct HudToastModifier: ViewModifier {
   @StateObject var hud = ToastModel.hud
 
-
   func body(content: Content) -> some View {
     content
       .toast(isPresenting: $hud.message.isNotNil(), duration: 3, tapToDismiss: true) {

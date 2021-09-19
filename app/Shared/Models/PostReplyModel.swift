@@ -16,6 +16,18 @@ class PostReplyModel: ObservableObject {
   }
 
   struct Task: Equatable, Hashable {
+    static func == (lhs: Task, rhs: Task) -> Bool {
+      return lhs.action.operation == rhs.action.operation
+        && lhs.action.forumID == rhs.action.forumID
+        && lhs.action.postID == rhs.action.postID
+    }
+
+    func hash(into hasher: inout Hasher) {
+      self.action.operation.hash(into: &hasher)
+      self.action.forumID.hash(into: &hasher)
+      self.action.forumID.hash(into: &hasher)
+    }
+
     var action: PostReplyAction
     let pageToReload: PageToReload?
   }
@@ -44,12 +56,18 @@ class PostReplyModel: ObservableObject {
     }
   }
 
-  @Published var showEditor = false
+  @Published var showEditor = false {
+    willSet {
+      if showEditor == true, newValue == false, self.context != nil, self.sent == nil {
+        ToastModel.hud.message = .success("Draft Saved")
+      }
+    }
+  }
   @Published var context: Context? = nil
   @Published var isSending = false
 
   @Published var sent = nil as Context? {
-    didSet { DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.reset() } }
+    didSet { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.reset() } }
   }
 
   private var contexts = [Task: Context]()
@@ -81,8 +99,8 @@ class PostReplyModel: ObservableObject {
   func discardCurrentContext() {
     guard self.showEditor else { return }
 
+    self.reset()
     self.showEditor = false
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.reset() }
   }
 
   private func buildContext(with task: Task, ignoreError: Bool = false) {
@@ -118,8 +136,8 @@ class PostReplyModel: ObservableObject {
       $0.attachments = context.attachments
     }), errorToastModel: ToastModel.alert)
     { (response: PostReplyResponse) in
-      self.showEditor = false
       self.sent = context
+      self.showEditor = false
       #if os(iOS)
         HapticUtils.play(type: .success)
       #endif
