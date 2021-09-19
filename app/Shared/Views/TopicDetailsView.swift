@@ -91,7 +91,7 @@ struct TopicDetailsView: View {
   }
 
   private var first: Post? {
-    if let first = dataSource.items.first, first.authorID == topic.authorID {
+    if let first = dataSource.items.first, first.id.pid == "0" {
       return first
     } else {
       return nil
