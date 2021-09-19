@@ -1,0 +1,89 @@
+/* 
+  Localizable.strings
+  NGA
+
+  Created by Bugen Zhao on 6/28/21.
+  
+*/
+
+"Topics" = "Topics";
+"Topic" = "Topic";
+"Post" = "Post";
+"Replies" = "Replies";
+"Subforums" = "Subforums";
+"Refresh" = "Refresh";
+"Copy Raw Content" = "Copy Raw Content";
+"Reply" = "Reply";
+"Forums" = "Forums";
+"Latest Topics" = "Latest Topics";
+"Favorites" = "Favorites";
+"No Favorites" = "No Favorites";
+"Remove from Favorites" = "Remove from Favorites";
+"Mark as Favorite" = "Mark as Favorite";
+"Favorites Only" = "Favorites Only";
+"All Forums" = "All Forums";
+"Search Forums" = "Search Forums";
+"Sign In" = "Sign In";
+"Sign Out" = "Sign Out";
+"Me" = "Me";
+"%u Posts" = "%u Posts";
+"Sign in to NGA" = "Sign in to NGA";
+"Subforums of %@" = "Subforums of %@";
+"Press and hold a subforum to mark it as favorite." = "Press and hold a subforum to mark it as favorite.";
+"History" = "History";
+"Hot Topics" = "Hot Topics";
+"Last 24 hours" = "Last 24 hours";
+"Last week" = "Last week";
+"Last month" = "Last month";
+"Search History" = "Search History";
+"Select a forum in sidebar" = "Select a forum in sidebar";
+"Post by" = "Post by";
+"Filters" = "Filters";
+"Hot Replies" = "Hot Replies";
+"Collapsed Content" = "Collapsed Content";
+"Favorite Topics" = "Favorite Topics";
+"Error" = "Error";
+"Plain" = "Plain";
+"Preview" = "Preview";
+"Editor" = "Editor";
+"Send" = "Send";
+"Quote" = "Quote";
+"Edit" = "Edit";
+"Share" = "Share";
+"Notifications" = "Notifications";
+"replied to your post" = "replied to your post";
+"replied to your topic" = "replied to your topic";
+"Discard" = "Discard";
+"Subject" = "Subject";
+"Content" = "Content";
+"Comment" = "Comment";
+"Block Words" = "Block Words";
+"No Block Words" = "No Block Words";
+"New word" = "New word";
+"Preferences" = "Preferences";
+"Reading" = "Reading";
+"Show Signature" = "Show Signature";
+"Show Avatar" = "Show Avatar";
+"Collapsed Style" = "Collapsed Style";
+"Redact" = "Redact";
+"Hidden" = "Hidden";
+"Advanced" = "Advanced";
+"Cache" = "Cache";
+"Image Cache" = "Image Cache";
+"View Image" = "View Image";
+"Share As Image" = "Share As Image";
+"Page %lld" = "Page %lld";
+"Load This Page" = "Load This Page";
+"Use Paginated Details" = "Use Paginated Details";
+"View Video" = "View Video";
+"Always Use In-App Safari" = "Always Use In-App Safari";
+"Audio" = "Audio";
+"Show Topic Subject" = "Show Topic Subject";
+"Append" = "Append";
+"New Topic" = "New Topic";
+"View" = "View";
+"User Profile" = "User Profile";
+"Author Only" = "Author Only";
+"This Author Only" = "This Author Only";
+"Topic (Cached)" = "Topic (Cached)";
+"View Cached Topic" = "View Cached Topic";

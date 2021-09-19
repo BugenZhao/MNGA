@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B4C024CF26884FD700E53554"
-               BuildableName = "NGA.app"
+               BuildableName = "MNGA.app"
                BlueprintName = "MNGA (macOS)"
                ReferencedContainer = "container:MNGA.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B4C024CF26884FD700E53554"
-            BuildableName = "NGA.app"
+            BuildableName = "MNGA.app"
             BlueprintName = "MNGA (macOS)"
             ReferencedContainer = "container:MNGA.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B4C024CF26884FD700E53554"
-            BuildableName = "NGA.app"
+            BuildableName = "MNGA.app"
             BlueprintName = "MNGA (macOS)"
             ReferencedContainer = "container:MNGA.xcodeproj">
          </BuildableReference>
