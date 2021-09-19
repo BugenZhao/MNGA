@@ -121,7 +121,7 @@ struct ContentEditorView: View {
     }
       .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
       .onChange(of: model.text) { text in context.content = text }
-      .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 1)) }
+      .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 0.8)) }
       .onChange(of: model.image) { image in uploadImageAttachment(data: image) }
       .toast(isPresenting: $model.image.isNotNil()) { AlertToast(type: .loading) }
   }
