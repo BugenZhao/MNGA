@@ -7,3 +7,5 @@
 target
 .env
 **/xcuserdata/*.xcuserdatad
+
+GoogleService-Info.plist

@@ -4,6 +4,7 @@
 
 import Foundation
 import SwiftUI
+import Firebase
 
 @main
 struct iOSNGAApp: App {
@@ -11,6 +12,7 @@ struct iOSNGAApp: App {
 
   init() {
     logger.info("iOS init")
+    FirebaseApp.configure()
     initConf()
   }
 

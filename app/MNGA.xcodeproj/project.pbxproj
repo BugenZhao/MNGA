@@ -117,6 +117,8 @@
 		B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEFB26EC8735008C577B /* PostReplyChainView.swift */; };
 		B4B3545F26C91DA00052FE80 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3545E26C91DA00052FE80 /* UsersModel.swift */; };
 		B4B3546026C91DA00052FE80 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3545E26C91DA00052FE80 /* UsersModel.swift */; };
+		B4BDFAF326FC4F0D00318240 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4BDFAF226FC4F0D00318240 /* GoogleService-Info.plist */; };
+		B4BDFAF426FC4F0D00318240 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B4BDFAF226FC4F0D00318240 /* GoogleService-Info.plist */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D726884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D826884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
@@ -127,6 +129,7 @@
 		B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EF268850F300E53554 /* SwiftProtobuf */; };
 		B4C024F22688511400E53554 /* liblogicios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F12688510C00E53554 /* liblogicios.a */; platformFilter = ios; };
 		B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F32688511E00E53554 /* liblogicmacos.a */; };
+		B4D7774F26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		B4DBF608268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
 		B4DBF609268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
 		B4DBF60C2689799F0027233F /* PostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* PostRowView.swift */; };
@@ -264,6 +267,7 @@
 		B498FEFB26EC8735008C577B /* PostReplyChainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostReplyChainView.swift; sourceTree = "<group>"; };
 		B4B3545E26C91DA00052FE80 /* UsersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersModel.swift; sourceTree = "<group>"; };
 		B4B3859226F6E20800A48D8F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B4BDFAF226FC4F0D00318240 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B4C024C226884FD600E53554 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B4C024C326884FD700E53554 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B4C024C826884FD700E53554 /* MNGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MNGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -322,6 +326,7 @@
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
+				B4D7774F26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
 				B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */,
 				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
@@ -388,6 +393,7 @@
 		B4C024BB26884FD600E53554 = {
 			isa = PBXGroup;
 			children = (
+				B4BDFAF226FC4F0D00318240 /* GoogleService-Info.plist */,
 				B4EB80EB269B1B4F0014DDFA /* MNGA.entitlements */,
 				B4C024C026884FD600E53554 /* Shared */,
 				B4C024CA26884FD700E53554 /* iOS */,
@@ -589,6 +595,7 @@
 				B437B278269B09DC0092FF9E /* SwiftUIRefresh */,
 				B43DED5E269EFA5A009C52F5 /* AlertToast */,
 				B409252526D29F6C00BCB666 /* BetterSafariView */,
+				B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
@@ -656,6 +663,7 @@
 				B4920CE12690E65600762FC9 /* XCRemoteSwiftPackageReference "HalfASheet" */,
 				B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				B409252426D29F6C00BCB666 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
+				B4D7774D26FCC7F800594905 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -674,6 +682,7 @@
 			files = (
 				B4C024D826884FD700E53554 /* Assets.xcassets in Resources */,
 				B4DCF4502688F68400EC78A4 /* Localizable.strings in Resources */,
+				B4BDFAF326FC4F0D00318240 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -683,6 +692,7 @@
 			files = (
 				B4C024D926884FD700E53554 /* Assets.xcassets in Resources */,
 				B4DCF4512688F68400EC78A4 /* Localizable.strings in Resources */,
+				B4BDFAF426FC4F0D00318240 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1207,6 +1217,14 @@
 				minimumVersion = 1.17.0;
 			};
 		};
+		B4D7774D26FCC7F800594905 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.7.0;
+			};
+		};
 		B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kylehickinson/SwiftUI-WebView";
@@ -1282,6 +1300,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4D7774D26FCC7F800594905 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
 		};
 		B4E10715268DADEE006C1742 /* WebView */ = {
 			isa = XCSwiftPackageProductDependency;
