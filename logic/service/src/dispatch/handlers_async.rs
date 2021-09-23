@@ -5,7 +5,8 @@ use crate::{
     noti::fetch_notis,
     post::{post_reply, post_reply_fetch_content, post_vote, upload_attachment},
     topic::{
-        get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list, topic_favor,
+        get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list,
+        get_user_topic_list, topic_favor,
     },
     user::get_remote_user,
 };
@@ -87,4 +88,10 @@ pub async fn handle_upload_attachment(
     request: UploadAttachmentRequest,
 ) -> ServiceResult<UploadAttachmentResponse> {
     upload_attachment(request).await
+}
+
+pub async fn handle_user_topic_list(
+    request: UserTopicListRequest,
+) -> ServiceResult<UserTopicListResponse> {
+    get_user_topic_list(request).await
 }

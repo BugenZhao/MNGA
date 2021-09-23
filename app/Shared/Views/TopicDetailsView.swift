@@ -20,7 +20,7 @@ struct TopicDetailsActionNavigationView: View {
     let user = self.action.showUserProfile ?? .init()
 
     NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { }
-    NavigationLink(destination: UserProfileView(user: user), isActive: self.$action.showUserProfile.isNotNil()) { }
+    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) { }
   }
 }
 

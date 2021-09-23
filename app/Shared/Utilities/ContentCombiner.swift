@@ -502,7 +502,7 @@ class ContentCombiner {
 
     let tokens = plain.text.split(separator: "?").map(String.init)
     let duration = tokens.last { $0.contains("duration") }
-    var urlText = tokens.first!
+    guard var urlText = tokens.first else { return }
     if !urlText.contains("http") {
       urlText = Constants.URL.attachmentBase + urlText
     }

@@ -37,6 +37,7 @@ mod dispatch_async {
             post_reply(r) => r!(handle_post_reply(r)),
             fetch_notification(r) => r!(handle_fetch_notification(r)),
             upload_attachment(r) => r!(handle_upload_attachment(r)),
+            user_topic_list(r) => r!(handle_user_topic_list(r)),
         }
     }
 }

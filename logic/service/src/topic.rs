@@ -383,6 +383,32 @@ pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavor
     Ok(response)
 }
 
+pub async fn get_user_topic_list(
+    request: UserTopicListRequest,
+) -> ServiceResult<UserTopicListResponse> {
+    let package = fetch_package(
+        "thread.php",
+        vec![
+            ("authorid", &request.get_author_id()),
+            ("page", &request.page.to_string()),
+        ],
+        vec![],
+    )
+    .await?;
+
+    let topics = extract_nodes(&package, "/root/__T/item", |ns| {
+        ns.into_iter().filter_map(extract_topic).collect()
+    })?;
+
+    let pages = extract_pages(&package, "/root/__ROWS", "/root/__T__ROWS_PAGE", 35)?;
+
+    Ok(UserTopicListResponse {
+        topics: topics.into(),
+        pages,
+        ..Default::default()
+    })
+}
+
 #[cfg(test)]
 mod test {
     use super::{super::user::UserController, *};

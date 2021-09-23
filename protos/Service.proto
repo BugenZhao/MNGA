@@ -35,9 +35,7 @@ message ContentParseResponse {
 }
 
 message SubjectParseRequest { string raw = 1; }
-message SubjectParseResponse {
-  Subject subject = 1;
-}
+message SubjectParseResponse { Subject subject = 1; }
 
 //
 // async
@@ -60,6 +58,7 @@ message AsyncRequest {
     PostReplyRequest post_reply = 13;
     FetchNotificationRequest fetch_notification = 14;
     UploadAttachmentRequest upload_attachment = 15;
+    UserTopicListRequest user_topic_list = 16;
   }
 }
 
@@ -177,6 +176,13 @@ message UploadAttachmentRequest {
   PostReplyAction action = 1;
   bytes file = 2;
 }
-message UploadAttachmentResponse {
-  PostAttachment attachment = 1;
+message UploadAttachmentResponse { PostAttachment attachment = 1; }
+
+message UserTopicListRequest {
+  string author_id = 1;
+  uint32 page = 2;
+}
+message UserTopicListResponse {
+  repeated Topic topics = 1;
+  uint32 pages = 2;
 }

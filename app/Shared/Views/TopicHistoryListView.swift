@@ -52,6 +52,7 @@ struct TopicHistoryListView: View {
         )
       }
         .listStyle(GroupedListStyle())
+        .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
   }
 }
