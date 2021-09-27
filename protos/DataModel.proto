@@ -38,13 +38,13 @@ message PostId {
   string tid = 2;
 }
 
-message Post {
-  enum Device {
-    OTHER = 0;
-    APPLE = 1;
-    ANDROID = 2;
-  }
+enum Device {
+  APPLE = 0;
+  ANDROID = 1;
+  DESKTOP = 2;
+}
 
+message Post {
   PostId id = 6;
   uint32 floor = 1;
   string author_id = 2;
@@ -137,6 +137,7 @@ message Configuration { string document_dir_path = 1; }
 message AuthInfo {
   string uid = 1;
   string token = 2;
+  Device device = 3;
 }
 
 enum VoteState {

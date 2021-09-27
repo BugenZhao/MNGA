@@ -75,11 +75,11 @@ pub fn extract_post(node: Node) -> Option<Post> {
             .to_lowercase();
 
         if device.contains("android") {
-            Post_Device::ANDROID
+            Device::ANDROID
         } else if device.contains("ios") {
-            Post_Device::APPLE
+            Device::APPLE
         } else {
-            Post_Device::OTHER
+            Device::DESKTOP
         }
     };
 

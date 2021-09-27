@@ -66,7 +66,20 @@ extension VoteState {
   }
 }
 
-extension Post.Device {
+extension Device {
+  var description: LocalizedStringKey {
+    switch self {
+    case .apple:
+      return "iOS"
+    case .android:
+      return "Android"
+    case .desktop:
+      return "Desktop"
+    default:
+      return "Unknown"
+    }
+  }
+  
   var icon: String {
     switch self {
     case .apple:

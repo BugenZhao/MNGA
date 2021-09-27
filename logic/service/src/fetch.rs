@@ -1,25 +1,27 @@
 use std::time::Duration;
 
-use crate::{auth, constants::URL_BASE, error::ServiceResult, utils::extract_error};
-use lazy_static::lazy_static;
-use reqwest::{
-    header::{HeaderMap, HeaderValue},
-    multipart, Client, RequestBuilder, Url,
+use crate::{
+    auth,
+    constants::{ANDROID_UA, APPLE_UA, DESKTOP_UA, URL_BASE},
+    error::ServiceResult,
+    utils::extract_error,
 };
+use lazy_static::lazy_static;
+use protos::DataModel::Device;
+use reqwest::{multipart, Client, RequestBuilder, Url};
+
+fn device_ua() -> &'static str {
+    match auth::AUTH_INFO.read().unwrap().get_device() {
+        Device::DESKTOP => DESKTOP_UA,
+        Device::APPLE => APPLE_UA,
+        Device::ANDROID => ANDROID_UA,
+    }
+}
 
 fn build_client() -> Client {
     log::info!("build reqwest client");
-    let headers = {
-        let mut headers = HeaderMap::new();
-        headers.insert(
-            "X-User-Agent",
-            HeaderValue::from_static("NGA_skull/7.2.4(iPhone13,2;iOS 14.6)"),
-        );
-        headers
-    };
     Client::builder()
         .https_only(true)
-        .default_headers(headers)
         .timeout(Duration::from_secs(10))
         .build()
         .expect("failed to build reqwest client")
@@ -55,7 +57,11 @@ async fn do_fetch_package(
     #[cfg(not(test))]
     let client = &CLIENT;
 
-    let builder = add_form(client.post(url).query(&query));
+    let builder = client
+        .post(url)
+        .query(&query)
+        .header("X-User-Agent", device_ua());
+    let builder = add_form(builder);
     let response = builder.send().await?.text_with_charset("gb18030").await?;
 
     #[cfg(test)]
@@ -71,7 +77,7 @@ pub async fn fetch_package(
     query: Vec<(&str, &str)>,
     mut form: Vec<(&str, &str)>,
 ) -> ServiceResult<sxd_document::Package> {
-    let auth_info = auth::AUTH_INFO.lock().unwrap().clone();
+    let auth_info = auth::AUTH_INFO.read().unwrap().clone();
     let form = {
         form.push(("access_token", auth_info.get_token()));
         form.push(("access_uid", auth_info.get_uid()));
@@ -86,10 +92,10 @@ pub async fn fetch_package_multipart(
     query: Vec<(&str, &str)>,
     form: multipart::Form,
 ) -> ServiceResult<sxd_document::Package> {
-    let auth_info = auth::AUTH_INFO.lock().unwrap().clone();
+    let auth_info = auth::AUTH_INFO.read().unwrap().clone();
     let form = form
         .percent_encode_path_segment()
-        .text("access_token", auth_info.token)
+        .text("access_token", auth_info.token) // todo: really needed ?
         .text("access_uid", auth_info.uid);
 
     do_fetch_package(api, query, |b| b.multipart(form)).await

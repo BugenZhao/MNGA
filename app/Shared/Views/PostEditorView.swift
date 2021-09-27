@@ -25,6 +25,10 @@ struct PostEditorView: View {
   var title: LocalizedStringKey {
     postReply.context?.task.action.title ?? "Editor"
   }
+  
+  var device: Device {
+    AuthStorage.shared.authInfo.inner.device
+  }
 
   @ViewBuilder
   var picker: some View {
@@ -42,7 +46,17 @@ struct PostEditorView: View {
         if let subject = self.subject {
           TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
         }
-        PostContentView(spans: spans)
+
+        VStack(alignment: .leading) {
+          PostContentView(spans: spans)
+          HStack {
+            Spacer()
+            Image(systemName: device.icon)
+              .frame(width: 10)
+              .foregroundColor(.secondary)
+              .font(.footnote)
+          }
+        }
       }
     } .listStyle(GroupedListStyle())
       .onAppear { parseContent() }

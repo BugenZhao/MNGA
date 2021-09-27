@@ -1,13 +1,16 @@
 use lazy_static::lazy_static;
 use protos::DataModel::AuthInfo;
-use std::sync::Mutex;
+use std::sync::RwLock;
 
 #[cfg(test)]
 fn default_auth_info() -> AuthInfo {
+    use protos::DataModel::Device;
+
     dotenv::dotenv().ok();
     AuthInfo {
         uid: dotenv::var("AUTH_DEBUG_UID").unwrap_or("".to_owned()),
         token: dotenv::var("AUTH_DEBUG_TOKEN").unwrap_or("".to_owned()),
+        device: Device::APPLE,
         ..Default::default()
     }
 }
@@ -18,9 +21,9 @@ fn default_auth_info() -> AuthInfo {
 }
 
 lazy_static! {
-    pub static ref AUTH_INFO: Mutex<AuthInfo> = Mutex::new(default_auth_info());
+    pub static ref AUTH_INFO: RwLock<AuthInfo> = RwLock::new(default_auth_info());
 }
 
 pub fn set_auth(info: AuthInfo) {
-    *AUTH_INFO.lock().unwrap() = info;
+    *AUTH_INFO.write().unwrap() = info;
 }

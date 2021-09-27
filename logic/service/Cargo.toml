@@ -28,6 +28,7 @@ protos = { path = "../protos" }
 text = { path = "../text" }
 cache = { path = "../cache" }
 config = { path = "../config" }
+atomic = "0.5.0"
 
 [dev-dependencies]
 dotenv = "0.15.0"
