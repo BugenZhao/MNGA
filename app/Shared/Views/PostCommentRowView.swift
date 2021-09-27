@@ -26,7 +26,7 @@ struct PostCommentRowView: View {
   @ViewBuilder
   var content: some View {
     QuoteView(fullWidth: false) {
-      PostContentView(spans: Array(comment.content.spans[3...]), defaultFont: .subheadline) // ignore reply
+      PostContentView(spans: Array(comment.content.spans[3...]), defaultFont: .subheadline, initialInQuote: true) // ignore reply
       .equatable()
     }
   }

@@ -10,23 +10,26 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserProfileView: View {
-  typealias DataSource = PagingDataSource<UserTopicListResponse, Topic>
+  typealias TopicDataSource = PagingDataSource<UserTopicListResponse, Topic>
+  typealias PostDataSource = PagingDataSource<UserPostListResponse, TopicWithLightPost>
 
   enum Tab: LocalizedStringKey, CaseIterable {
     case topics = "Topics"
-    case replies = "Replies"
+    case posts = "Posts"
   }
 
   let user: User
 
-  @StateObject var dataSource: DataSource
+  @StateObject var topicDataSource: TopicDataSource
+  @StateObject var postDataSource: PostDataSource
   @State var tab = Tab.topics
 
   static func build(user: User) -> Self {
-    let dataSource = DataSource(
+    let topicDataSource = TopicDataSource(
       buildRequest: { page in
         return .userTopicList(UserTopicListRequest.with {
           $0.authorID = user.id
+          $0.page = UInt32(page)
         })
       },
       onResponse: { response in
@@ -36,7 +39,23 @@ struct UserProfileView: View {
       },
       id: \.id
     )
-    return Self.init(user: user, dataSource: dataSource)
+
+    let postDataSource = PostDataSource(
+      buildRequest: { page in
+        return .userPostList(UserPostListRequest.with {
+          $0.authorID = user.id
+          $0.page = UInt32(page)
+        })
+      },
+      onResponse: { response in
+        let items = response.tps
+        return (items, Int.max)
+      },
+      id: \.post.id.description,
+      finishOnError: true
+    )
+
+    return Self.init(user: user, topicDataSource: topicDataSource, postDataSource: postDataSource)
   }
 
   @ViewBuilder
@@ -44,19 +63,30 @@ struct UserProfileView: View {
     switch self.tab {
     case .topics:
       Section(header: Text("\(user.name)'s Topics")) {
-        if dataSource.items.isEmpty {
+        if topicDataSource.items.isEmpty {
           LoadingRowView()
-            .onAppear { dataSource.initialLoad() }
+            .onAppear { topicDataSource.initialLoad() }
         } else {
-          ForEach(dataSource.items, id: \.id) { topic in
+          ForEach(topicDataSource.items, id: \.id) { topic in
             NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
               TopicRowView(topic: topic)
-            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+            } .onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic) }
           }
         }
       }
-    case .replies:
-      Text("test")
+    case .posts:
+      Section(header: Text("\(user.name)'s Posts")) {
+        if postDataSource.items.isEmpty {
+          LoadingRowView()
+            .onAppear { postDataSource.initialLoad() }
+        } else {
+          ForEach(postDataSource.items, id: \.post.id) { tp in
+            NavigationLink(destination: TopicDetailsView.build(topic: tp.topic)) {
+              TopicPostRowView(topic: tp.topic, post: tp.post)
+            } .onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }
+          }
+        }
+      }
     }
   }
 
@@ -83,9 +113,8 @@ struct UserProfileView: View {
       .toolbar { picker }
     #if os(iOS)
       .listStyle(GroupedListStyle())
-        .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
-      .navigationTitle(user.name)
+    .navigationTitle(user.name)
       .navigationBarTitleDisplayMode(.inline)
   }
 }

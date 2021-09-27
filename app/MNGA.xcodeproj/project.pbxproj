@@ -129,6 +129,8 @@
 		B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EF268850F300E53554 /* SwiftProtobuf */; };
 		B4C024F22688511400E53554 /* liblogicios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F12688510C00E53554 /* liblogicios.a */; platformFilter = ios; };
 		B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F32688511E00E53554 /* liblogicmacos.a */; };
+		B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
+		B4D13B9D27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D7774F26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		B4DBF608268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
 		B4DBF609268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
@@ -278,6 +280,7 @@
 		B4C024E2268850AA00E53554 /* LogicCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogicCall.swift; sourceTree = "<group>"; };
 		B4C024F12688510C00E53554 /* liblogicios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicios.a; path = ../out/libs/liblogicios.a; sourceTree = "<group>"; };
 		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
+		B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicPostRowView.swift; sourceTree = "<group>"; };
 		B4DBF607268976470027233F /* DateFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatters.swift; sourceTree = "<group>"; };
 		B4DBF60B2689799F0027233F /* PostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRowView.swift; sourceTree = "<group>"; };
 		B4DBF60E268979C20027233F /* TopicDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailsView.swift; sourceTree = "<group>"; };
@@ -534,6 +537,7 @@
 				B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */,
 				B48709C4269AEA9F00E88E5A /* TopicListPlaceholderView.swift */,
 				B4DBF611268979F70027233F /* TopicListView.swift */,
+				B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */,
 				B4DBF61426897A170027233F /* TopicRowView.swift */,
 				B4920CD52690465100762FC9 /* TopicSubjectView.swift */,
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
@@ -776,6 +780,7 @@
 				B4DBF61526897A170027233F /* TopicRowView.swift in Sources */,
 				B4FBED8226A7163E006390A3 /* PreferencesStorage.swift in Sources */,
 				B43DED4F269C7D0B009C52F5 /* ForumSearchView.swift in Sources */,
+				B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */,
 				B4715CC526A413E00049D136 /* QuoteView.swift in Sources */,
 				B4715CCB26A480B60049D136 /* BlockWordsStorage.swift in Sources */,
 				B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */,
@@ -862,6 +867,7 @@
 				B4DBF61F268B8CD80027233F /* ForumListView.swift in Sources */,
 				B444638C26A1981E006FA44D /* PostReplyModel.swift in Sources */,
 				B4DCF44C2688E5CA00EC78A4 /* View+FirstAppear.swift in Sources */,
+				B4D13B9D27020A8C009506A2 /* TopicPostRowView.swift in Sources */,
 				B4E1071B268DADFF006C1742 /* LoginView.swift in Sources */,
 				B4C024D726884FD700E53554 /* ContentView.swift in Sources */,
 				B4E1071E268DC4D1006C1742 /* AuthStorage.swift in Sources */,

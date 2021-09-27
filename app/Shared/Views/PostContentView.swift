@@ -37,18 +37,20 @@ struct PostContentView: View, Equatable {
   let id: PostId?
   let defaultFont: Font
   let defaultColor: Color
+  let initialInQuote: Bool
 
-  init(spans: [Span], id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary) {
+  init(spans: [Span], id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     self.spans = spans
     self.id = id
     self.defaultFont = defaultFont
     self.defaultColor = defaultColor
+    self.initialInQuote = initialInQuote
   }
 
   @OptionalEnvironmentObject<TopicDetailsActionModel> var actionModel
 
   var body: some View {
-    let combiner = ContentCombiner(actionModel: actionModel, id: id, defaultFont: defaultFont, defaultColor: defaultColor)
+    let combiner = ContentCombiner(actionModel: actionModel, id: id, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)
     combiner.visit(spans: spans)
     return combiner.buildView().mayEnableTextSelection()
   }

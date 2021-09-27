@@ -8,8 +8,8 @@ message Subject {
 
 message Topic {
   string id = 1;
-  repeated string tags = 8 [deprecated = true];
-  string subject_content = 9 [deprecated = true];
+  repeated string tags = 8 [ deprecated = true ];
+  string subject_content = 9 [ deprecated = true ];
   Subject subject = 2;
   string author_id = 3;
   string author_name = 4;
@@ -59,6 +59,18 @@ message Post {
   uint32 at_page = 11;
   repeated Attachment attachments = 13;
   string fid = 14;
+}
+
+message LightPost {
+  PostId id = 1;
+  string author_id = 2;
+  PostContent content = 3;
+  uint64 post_date = 4;
+}
+
+message TopicWithLightPost {
+  Topic topic = 1;
+  LightPost post = 2;
 }
 
 message Subforum {

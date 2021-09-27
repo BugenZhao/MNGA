@@ -3,7 +3,8 @@ use crate::{
     error::ServiceResult,
     fetch::fetch_package_multipart,
     fetch_package,
-    utils::{extract_kv, extract_node_rel, extract_nodes_rel, extract_string},
+    topic::extract_topic,
+    utils::{extract_kv, extract_node_rel, extract_nodes, extract_nodes_rel, extract_string},
 };
 use cache::CACHE;
 use protos::{DataModel::*, Service::*, ToValue};
@@ -107,6 +108,43 @@ pub fn extract_post(node: Node) -> Option<Post> {
     };
 
     Some(post)
+}
+
+fn extract_light_post(node: Node) -> Option<LightPost> {
+    use super::macros::get;
+    let map = extract_kv(node);
+
+    let raw_content = get!(map, "content")?;
+    let content = extract_post_content(raw_content);
+
+    let post_id = PostId {
+        pid: get!(map, "pid")?,
+        tid: get!(map, "tid")?,
+        ..Default::default()
+    };
+
+    let post = LightPost {
+        id: Some(post_id).into(),
+        author_id: get!(map, "authorid")?,
+        content: Some(content).into(),
+        post_date: get!(map, "postdate", _).unwrap_or_default(),
+        ..Default::default()
+    };
+
+    Some(post)
+}
+
+fn extract_topic_with_light_post(node: Node) -> Option<TopicWithLightPost> {
+    let topic = extract_topic(node)?;
+    let post = extract_node_rel(node, "./__P", extract_light_post)
+        .unwrap_or_default()
+        .flatten()?;
+
+    Some(TopicWithLightPost {
+        topic: Some(topic).into(),
+        post: Some(post).into(),
+        ..Default::default()
+    })
 }
 
 pub fn extract_post_with_at_page(at_page: u32, node: Node) -> Option<Post> {
@@ -309,6 +347,32 @@ pub async fn upload_attachment(
     })
 }
 
+pub async fn get_user_post_list(
+    request: UserPostListRequest,
+) -> ServiceResult<UserPostListResponse> {
+    let package = fetch_package(
+        "thread.php",
+        vec![
+            ("searchpost", "1"),
+            ("authorid", &request.get_author_id()),
+            ("page", &request.page.to_string()),
+        ],
+        vec![],
+    )
+    .await?;
+
+    let tps = extract_nodes(&package, "/root/__T/item", |ns| {
+        ns.into_iter()
+            .filter_map(extract_topic_with_light_post)
+            .collect()
+    })?;
+
+    Ok(UserPostListResponse {
+        tps: tps.into(),
+        ..Default::default()
+    })
+}
+
 #[cfg(test)]
 mod test {
     use crate::forum::{make_fid, make_stid};
@@ -452,6 +516,20 @@ mod test {
 
         println!("{:?}", attachment);
         assert!(!attachment.get_url().is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_user_post_list() -> ServiceResult<()> {
+        let response = get_user_post_list(UserPostListRequest {
+            author_id: "23965969".to_owned(),
+            page: 1,
+            ..Default::default()
+        })
+        .await?;
+
+        assert!(!response.get_tps().is_empty());
 
         Ok(())
     }

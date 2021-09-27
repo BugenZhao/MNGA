@@ -13,10 +13,9 @@ struct QuoteView<Content>: View where Content: View {
   @ViewBuilder let build: () -> Content
 
   var body: some View {
-    HStack {
-      build()
-      if fullWidth { Spacer() }
-    } .padding(.small)
+    build()
+      .frame(maxWidth: fullWidth ? .infinity : nil, alignment: .topLeading)
+      .padding(.small)
       .background(
       RoundedRectangle(cornerRadius: 12)
       #if os(iOS)

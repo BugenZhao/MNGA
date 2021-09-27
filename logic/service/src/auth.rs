@@ -4,8 +4,6 @@ use std::sync::Mutex;
 
 #[cfg(test)]
 fn default_auth_info() -> AuthInfo {
-    use crate::constants;
-
     dotenv::dotenv().ok();
     AuthInfo {
         uid: dotenv::var("AUTH_DEBUG_UID").unwrap_or("".to_owned()),

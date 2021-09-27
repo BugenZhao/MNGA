@@ -59,6 +59,7 @@ message AsyncRequest {
     FetchNotificationRequest fetch_notification = 14;
     UploadAttachmentRequest upload_attachment = 15;
     UserTopicListRequest user_topic_list = 16;
+    UserPostListRequest user_post_list = 17;
   }
 }
 
@@ -186,3 +187,9 @@ message UserTopicListResponse {
   repeated Topic topics = 1;
   uint32 pages = 2;
 }
+
+message UserPostListRequest {
+  string author_id = 1;
+  uint32 page = 2;
+}
+message UserPostListResponse { repeated TopicWithLightPost tps = 1; }

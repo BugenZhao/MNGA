@@ -60,7 +60,7 @@ pub fn extract_topic_subject(raw: String) -> Subject {
     }
 }
 
-fn extract_topic(node: Node) -> Option<Topic> {
+pub fn extract_topic(node: Node) -> Option<Topic> {
     fn extract_fav(url: &str) -> Option<&str> {
         use lazy_static::lazy_static;
         use regex::Regex;

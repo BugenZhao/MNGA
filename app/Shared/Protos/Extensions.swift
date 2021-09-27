@@ -125,3 +125,9 @@ extension Post {
     return self.id.debugDescription + self.alterInfo
   }
 }
+
+extension PostId: CustomStringConvertible {
+  var description: String {
+    "\(self.tid), \(self.pid)"
+  }
+}

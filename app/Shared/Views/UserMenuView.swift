@@ -38,16 +38,16 @@ struct UserMenuView: View {
         Button(action: { showNotifications = true }) {
           Label("Notifications", systemImage: "bell.fill")
         }
+        if let _ = self.user {
+          Button(action: { showUserProfile = true }) {
+            Label("My Profile", systemImage: "person.fill")
+          }
+        }
         Button(action: { showFavorite = true }) {
           Label("Favorite Topics", systemImage: "bookmark.fill")
         }
         Button(action: { showHistory = true }) {
           Label("History", systemImage: "clock")
-        }
-        if let _ = self.user {
-          Button(action: { showUserProfile = true }) {
-            Label("User Profile", systemImage: "person.fill")
-          }
         }
       }
       Section {

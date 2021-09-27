@@ -91,12 +91,13 @@ class ContentCombiner {
     self.otherStylesModifier = otherStyles
   }
 
-  init(actionModel: TopicDetailsActionModel?, id: PostId?, defaultFont: Font, defaultColor: Color) {
+  init(actionModel: TopicDetailsActionModel?, id: PostId?, defaultFont: Font, defaultColor: Color, initialEnvs: [String: Any]? = nil) {
     self.parent = nil
     self.actionModel = actionModel
     self.fontModifier = { _ in defaultFont }
     self.colorModifier = { _ in defaultColor }
     self.otherStylesModifier = { $0 }
+    self.envs = initialEnvs ?? [:]
 
     self.selfId = id
   }

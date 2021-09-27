@@ -3,7 +3,9 @@ use crate::{
     forum::{get_forum_list, search_forum, set_subforum_filter},
     history::get_topic_history,
     noti::fetch_notis,
-    post::{post_reply, post_reply_fetch_content, post_vote, upload_attachment},
+    post::{
+        get_user_post_list, post_reply, post_reply_fetch_content, post_vote, upload_attachment,
+    },
     topic::{
         get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list,
         get_user_topic_list, topic_favor,
@@ -94,4 +96,10 @@ pub async fn handle_user_topic_list(
     request: UserTopicListRequest,
 ) -> ServiceResult<UserTopicListResponse> {
     get_user_topic_list(request).await
+}
+
+pub async fn handle_user_post_list(
+    request: UserPostListRequest,
+) -> ServiceResult<UserPostListResponse> {
+    get_user_post_list(request).await
 }
