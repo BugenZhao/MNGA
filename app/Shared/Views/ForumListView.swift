@@ -16,7 +16,8 @@ struct ForumListView: View {
   @State var categories = [Category]()
   @State var favoriteEditing = false
 
-  @Environment(\.editMode) var editMode
+  // HACK: do not use @Environment, which causes some sheets (like PostReplyView) popped unexpectedly
+  @State var editMode = EditMode.inactive
 
   @ViewBuilder
   func buildFavoriteSectionLink(_ forum: Forum) -> some View {
@@ -79,12 +80,12 @@ struct ForumListView: View {
 
   @ViewBuilder
   var filterMenu: some View {
-    if editMode?.wrappedValue == .active {
-      EditButton()
+    if editMode == .active {
+      EditButton().environment(\.editMode, $editMode)
     } else {
       Menu {
         Section {
-          Button(action: { withAnimation { editMode?.wrappedValue = EditMode.active } }) {
+          Button(action: { withAnimation { editMode = .active } }) {
             Text("Edit Favorites")
           }
         }
@@ -110,7 +111,7 @@ struct ForumListView: View {
       if favorites.filterMode == .all {
         allForumsSection
       }
-    }
+    } .environment(\.editMode, $editMode)
   }
 
   @ViewBuilder
