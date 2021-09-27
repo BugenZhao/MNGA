@@ -16,6 +16,8 @@ struct ForumListView: View {
   @State var categories = [Category]()
   @State var favoriteEditing = false
 
+  @Environment(\.editMode) var editMode
+
   @ViewBuilder
   func buildFavoriteSectionLink(_ forum: Forum) -> some View {
     NavigationLink(destination: TopicListView.build(forum: forum)) {
@@ -77,22 +79,28 @@ struct ForumListView: View {
 
   @ViewBuilder
   var filterMenu: some View {
-    Menu {
-      Section {
-        EditButton()
-      }
-
-      Section {
-        Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
-          ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-            Label(LocalizedStringKey(mode.rawValue), systemImage: mode.icon)
-              .tag(mode)
+    if editMode?.wrappedValue == .active {
+      EditButton()
+    } else {
+      Menu {
+        Section {
+          Button(action: { withAnimation { editMode?.wrappedValue = EditMode.active } }) {
+            Text("Edit Favorites")
           }
         }
-      }
-    } label: {
-      Label("Filters", systemImage: favorites.filterMode.filterIcon)
-    } .imageScale(.large)
+
+        Section {
+          Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
+            ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
+              Label(LocalizedStringKey(mode.rawValue), systemImage: mode.icon)
+                .tag(mode)
+            }
+          }
+        }
+      } label: {
+        Label("Filters", systemImage: favorites.filterMode.filterIcon)
+      } .imageScale(.large)
+    }
   }
 
   @ViewBuilder
