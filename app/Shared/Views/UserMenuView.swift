@@ -19,12 +19,14 @@ struct UserMenuView: View {
   @State var showNotifications: Bool = false
   @State var showPreferencesModal: Bool = false
   @State var showSeparateAboutModal: Bool = false
+  @State var showUserProfile: Bool = false
 
   @ViewBuilder
   var navigationBackgrounds: some View {
     NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { }
     NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { }
     NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { }
+    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { }
   }
 
   var body: some View {
@@ -42,24 +44,20 @@ struct UserMenuView: View {
         Button(action: { showHistory = true }) {
           Label("History", systemImage: "clock")
         }
+        if let _ = self.user {
+          Button(action: { showUserProfile = true }) {
+            Label("User Profile", systemImage: "person.fill")
+          }
+        }
       }
       Section {
         if signedIn {
           Menu {
-            if let user = self.user {
-              Label(user.id, systemImage: "number")
-              Label {
-                Text(Date(timeIntervalSince1970: TimeInterval(user.regDate)), style: .date)
-              } icon: {
-                Image(systemName: "calendar")
-              }
-              Label("\(user.postNum) Posts", systemImage: "text.bubble")
-            }
             Button(action: { reSignIn() }) {
               Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
             }
           } label: {
-            Label(user?.name ?? uid, systemImage: "person.fill")
+            Label(user?.name ?? uid, systemImage: "person")
           }
         } else {
           Button(action: { reSignIn() }) {
@@ -85,7 +83,7 @@ struct UserMenuView: View {
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
       .sheet(isPresented: $showSeparateAboutModal) { AboutView() }
   }
-  
+
   func reSignIn() {
     authStorage.clearAuth()
     authStorage.isSigning = true

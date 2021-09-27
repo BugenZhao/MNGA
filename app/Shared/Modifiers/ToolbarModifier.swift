@@ -27,20 +27,21 @@ struct SingleItemToolbarModifier<M: View>: ViewModifier {
 }
 
 struct DoubleItemsToolbarModifier<M1: View, M2: View>: ViewModifier {
-  let buildLeading: () -> M1
-  let buildTrailing: () -> M2
+  let firstPlacement: ToolbarItemPlacement
+  let buildFirst: () -> M1
+  let buildSecond: () -> M2
 
   func body(content: Content) -> some View {
     content
     #if os(iOS)
       .toolbar {
-        ToolbarItem(placement: .navigationBarLeading, content: buildLeading)
-        ToolbarItem(placement: .navigationBarTrailing, content: buildTrailing)
+        ToolbarItem(placement: firstPlacement, content: buildFirst)
+        ToolbarItem(placement: .navigationBarTrailing, content: buildSecond)
       }
     #elseif os(macOS)
       .toolbar {
-        ToolbarItem(content: buildLeading)
-        ToolbarItem(content: buildTrailing)
+        ToolbarItem(content: buildFirst)
+        ToolbarItem(content: buildSecond)
       }
     #endif
   }

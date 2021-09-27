@@ -103,6 +103,13 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  var progress: some View {
+    if dataSource.isLoading {
+      ProgressView()
+    }
+  }
+
+  @ViewBuilder
   var moreMenu: some View {
     Menu {
       Section {
@@ -314,7 +321,7 @@ struct TopicDetailsView: View {
       }
     }
       .navigationTitle(title)
-      .modifier(SingleItemToolbarModifier { moreMenu })
+      .modifier(DoubleItemsToolbarModifier(firstPlacement: .navigationBarTrailing, buildFirst: { progress }, buildSecond: { moreMenu }))
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))

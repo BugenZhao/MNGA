@@ -132,9 +132,9 @@ struct ForumListView: View {
     #if os(iOS)
       .navigationSearchBar { searchBar }
     #endif
-    .modifier(DoubleItemsToolbarModifier(
-      buildLeading: { UserMenuView() },
-      buildTrailing: { filterMenu }
+    .modifier(DoubleItemsToolbarModifier(firstPlacement: .navigationBarLeading,
+      buildFirst: { UserMenuView() },
+      buildSecond: { filterMenu }
       ))
   }
 
