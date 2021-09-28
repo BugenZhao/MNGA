@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import SwiftProtobuf
 import SwiftUI
+import SwiftUIRefresh
 
 class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let buildRequest: (_ page: Int) -> AsyncRequest.OneOf_Value
@@ -94,8 +95,8 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func refresh(animated: Bool = false) {
-    if self.isRefreshing || self.isLoading { return }
+  private func preRefresh() -> AsyncRequest.OneOf_Value? {
+    if self.isRefreshing || self.isLoading { return nil }
     self.dataFlowId = UUID()
 
     self.isLoading = true
@@ -105,25 +106,56 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
     let page = 1
     let request = buildRequest(page)
+    return request
+  }
+
+  private func onRefreshSuccess(response: Res, animated: Bool) {
+    self.latestResponse = response
+    let (newItems, newTotalPages) = self.onResponse(response)
+    logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
+
+    withAnimation(when: animated) {
+      self.replaceItems(newItems, page: 1)
+      self.isRefreshing = false
+      self.isLoading = false
+    }
+
+    self.totalPages = newTotalPages ?? self.totalPages
+    self.loadedPage += 1
+  }
+
+  private func onRefreshError(e: LogicError, animated: Bool) {
+    withAnimation(when: animated) {
+      self.isRefreshing = false
+      self.isLoading = false
+    }
+    self.mayFinishOnError()
+  }
+
+  func refresh(animated: Bool = false) {
+    guard let request = preRefresh() else { return }
+
     logicCallAsync(request) { (response: Res) in
-      self.latestResponse = response
-      let (newItems, newTotalPages) = self.onResponse(response)
-      logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
-
-      withAnimation(when: animated) {
-        self.replaceItems(newItems, page: page)
-        self.isRefreshing = false
-        self.isLoading = false
-      }
-
-      self.totalPages = newTotalPages ?? self.totalPages
-      self.loadedPage += 1
+      self.onRefreshSuccess(response: response, animated: animated)
     } onError: { e in
-      withAnimation(when: animated) {
-        self.isRefreshing = false
-        self.isLoading = false
+      self.onRefreshError(e: e, animated: animated)
+    }
+  }
+
+  @available(iOS 15.0, *)
+  func refreshAsync(animated: Bool = false) async {
+    let request = DispatchQueue.main.sync { preRefresh() }
+    guard let request = request else { return }
+
+    let response: Result<Res, LogicError> = await logicCallAsync(request)
+
+    DispatchQueue.main.async {
+      switch response {
+      case .success(let response):
+        self.onRefreshSuccess(response: response, animated: animated)
+      case .failure(let e):
+        self.onRefreshError(e: e, animated: animated)
       }
-      self.mayFinishOnError()
     }
   }
 
@@ -191,6 +223,21 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
         self.isLoading = false
       }
       self.mayFinishOnError()
+    }
+  }
+}
+
+extension View {
+  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>) -> some View {
+    Group {
+      if #available(iOS 15.0, *) {
+//        self.refreshable {
+//          await dataSource.refreshAsync()
+//        }
+        self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+      } else {
+        self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+      }
     }
   }
 }

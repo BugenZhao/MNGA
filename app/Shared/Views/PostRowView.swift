@@ -76,7 +76,7 @@ struct PostRowView: View {
     if !post.comments.isEmpty {
       Divider()
       HStack {
-        Spacer().frame(width: 6)
+        Spacer().frame(width: 6, height: 1)
         VStack {
           ForEach(post.comments, id: \.hashIdentifiable) { comment in
             PostCommentRowView(comment: comment)

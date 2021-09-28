@@ -81,7 +81,7 @@ struct UserMenuView: View {
       .onChange(of: authStorage.authInfo) { _ in loadData() }
       .background { navigationBackgrounds }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
-      .sheet(isPresented: $showSeparateAboutModal) { AboutView() }
+      .sheet(isPresented: $showSeparateAboutModal) { NavigationView { AboutView() } }
   }
 
   func reSignIn() {

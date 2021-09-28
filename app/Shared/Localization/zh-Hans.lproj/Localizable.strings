@@ -50,7 +50,7 @@
 "Quote" = "引用";
 "Edit" = "编辑";
 "Share" = "分享";
-"Notifications" = "通知 (Beta)";
+"Notifications" = "通知（Beta）";
 "replied to your post" = "回复了你的回复";
 "replied to your topic" = "回复了你的话题";
 "Discard" = "舍弃";
@@ -86,9 +86,9 @@
 "Author Only" = "只看作者";
 "This Author Only" = "只看该作者";
 "Topic (Cached)" = "话题（缓存）";
-"View Cached Topic" = "查看话题缓存";
+"View Cached Topic" = "查看本地缓存";
 "About & Feedback" = "关于 & 反馈";
-"MNGA Description" = "MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过 GitHub Issues / PRs 及邮件方式反馈。";
+"MNGA Description" = "MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以轻触上面的按钮以通过 GitHub Issues / PRs 及邮件方式反馈。";
 "Support" = "支持";
 "Success" = "完成";
 "Draft Saved" = "草稿已保存";

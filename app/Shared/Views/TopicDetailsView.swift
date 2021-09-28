@@ -424,10 +424,11 @@ struct TopicDetailsView: View {
         ForEach(latestReplies, id: \.id.pid) { post in
           Divider()
           buildRow(post: post, withId: false)
-        } .fixedSize(horizontal: false, vertical: true)
+        }
       }
     }
       .padding()
+      .fixedSize(horizontal: false, vertical: true)
       .background(.secondarySystemGroupedBackground)
       .frame(width: UIScreen.main.bounds.size.width)
       .environmentObject(action)

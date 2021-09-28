@@ -156,7 +156,7 @@ struct TopicListView: View {
         }
         #if os(iOS)
           .listStyle(GroupedListStyle())
-            .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+          .refreshable(dataSource: dataSource)
         #endif
       }
     }
