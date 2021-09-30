@@ -16,14 +16,7 @@ struct ForumIconView: View {
     let defaultIcon = Image("default_forum_icon")
       .resizable()
 
-    if let url = URL(string: iconURL) {
-      WebImage(url: url)
-        .resizable()
-        .placeholder(defaultIcon)
-        .frame(width: 28, height: 28)
-    } else {
-      defaultIcon
-        .frame(width: 28, height: 28)
-    }
+    WebOrAsyncImage(url: URL(string: iconURL), placeholder: defaultIcon)
+      .frame(width: 28, height: 28)
   }
 }

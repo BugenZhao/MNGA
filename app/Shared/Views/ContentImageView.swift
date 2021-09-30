@@ -41,9 +41,7 @@ struct ContentImageView: View {
             Image(image: image)
               .resizable()
           } else {
-            WebImage(url: url)
-              .resizable()
-              .indicator(.activity)
+            WebOrAsyncImage(url: url, placeholder: nil)
           }
         } .scaledToFit()
           .clipShape(RoundedRectangle(cornerRadius: 8))
