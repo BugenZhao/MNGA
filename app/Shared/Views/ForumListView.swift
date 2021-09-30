@@ -141,10 +141,10 @@ struct ForumListView: View {
     #if os(iOS)
       .navigationSearchBar { searchBar }
     #endif
-    .modifier(DoubleItemsToolbarModifier(firstPlacement: .navigationBarLeading,
-      buildFirst: { UserMenuView() },
-      buildSecond: { filterMenu }
-      ))
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
+      ToolbarItem(placement: .navigationBarTrailing) { filterMenu }
+    }
   }
 
   func loadData() {

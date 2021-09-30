@@ -321,7 +321,10 @@ struct TopicDetailsView: View {
       }
     }
       .navigationTitle(title)
-      .modifier(DoubleItemsToolbarModifier(firstPlacement: .navigationBarTrailing, buildFirst: { progress }, buildSecond: { moreMenu }))
+      .toolbarWithFix {
+        ToolbarItem(placement: .navigationBarTrailing) { progress }
+        ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+      }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
