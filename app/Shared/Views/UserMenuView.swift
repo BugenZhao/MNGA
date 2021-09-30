@@ -73,8 +73,12 @@ struct UserMenuView: View {
         }
       }
     } label: {
-      let icon = signedIn ? "person.crop.circle.fill" : "person.crop.circle"
-      Label("Me", systemImage: icon)
+      let icon = Image(systemName: signedIn ? "person.crop.circle.fill" : "person.crop.circle")
+        .resizable()
+      WebOrAsyncImage(url: URL(string: user?.avatarURL ?? ""), placeholder: icon)
+        .clipShape(Circle())
+        .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
+        .frame(width: 24, height: 24)
     }
       .imageScale(.large)
       .onAppear { loadData() }
