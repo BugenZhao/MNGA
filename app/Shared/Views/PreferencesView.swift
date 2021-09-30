@@ -34,6 +34,9 @@ struct PreferencesView: View {
         } label: {
           Label("Collapsed Style", systemImage: "eye.slash")
         }
+        Toggle(isOn: $pref.usePaginatedDetails) {
+          Label("Use Paginated Details", systemImage: "square.stack")
+        }
         Toggle(isOn: $pref.useInAppSafari) {
           Label("Always Use In-App Safari", systemImage: "safari")
         }
@@ -50,9 +53,6 @@ struct PreferencesView: View {
       }
 
       Section(header: Text("Advanced")) {
-        Toggle(isOn: $pref.usePaginatedDetails) {
-          Label("Use Paginated Details", systemImage: "square.stack")
-        }
         NavigationLink(destination: CacheView()) {
           Label("Cache", systemImage: "internaldrive")
         }

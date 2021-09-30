@@ -21,7 +21,7 @@ struct PostReplyChainView: View {
 
   @ViewBuilder
   func buildRow(post: Post) -> some View {
-    PostRowView(post: post, useContextMenu: !prefs.usePaginatedDetails, vote: votes.binding(for: post))
+    PostRowView(post: post, useContextMenu: true, vote: votes.binding(for: post))
   }
 
   var body: some View {

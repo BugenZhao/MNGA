@@ -28,6 +28,8 @@
 		B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B412F707268DFC4600EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F706268DFC4600EB0614 /* Logging */; };
 		B412F709268DFC4F00EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F708268DFC4F00EB0614 /* Logging */; };
+		B413D67E2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */; };
+		B413D67F2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */; };
 		B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B437B278269B09DC0092FF9E /* SwiftUIRefresh */; };
 		B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
 		B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
@@ -224,6 +226,7 @@
 		B409252126D29D2100BCB666 /* ContentImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentImageView.swift; sourceTree = "<group>"; };
 		B409252726D29FD900BCB666 /* OpenURLModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenURLModel.swift; sourceTree = "<group>"; };
 		B409CE6C26A0920C00F617EC /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
+		B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebOrAsyncImage.swift; sourceTree = "<group>"; };
 		B437B27B269B0E190092FF9E /* ToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModifier.swift; sourceTree = "<group>"; };
 		B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeTextView.swift; sourceTree = "<group>"; };
 		B43DED48269C5F78009C52F5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -543,6 +546,7 @@
 				B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */,
 				B402308126EBB72C0077D3AA /* UserProfileView.swift */,
 				B402308426EBBA7A0077D3AA /* UserView.swift */,
+				B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -719,6 +723,7 @@
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4715CCE26A481FF0049D136 /* BlockWordListView.swift in Sources */,
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
+				B413D67E2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */,
 				B4DF95AB26CADD830081ECBB /* View+RedactedIf.swift in Sources */,
 				B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
 				B4DF95AE26CADF5D0081ECBB /* ForumIconView.swift in Sources */,
@@ -803,6 +808,7 @@
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
 				B402308626EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B45A9E8C26A171720088F04D /* PostEditorView.swift in Sources */,
+				B413D67F2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */,
 				B4855B5A26D6B61100BC2680 /* ContentTextEditorView.swift in Sources */,
 				B4F9F98E26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */,
 				B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */,

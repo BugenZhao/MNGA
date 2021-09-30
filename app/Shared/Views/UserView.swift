@@ -60,13 +60,7 @@ struct UserView: View {
     let placeholder = Image(systemName: "person.circle.fill")
       .resizable()
 
-    if pref.showAvatar, let url = avatarURL {
-      WebImage(url: url)
-        .resizable()
-        .placeholder(placeholder)
-    } else {
-      placeholder
-    }
+    WebOrAsyncImage(url: pref.showAvatar ? avatarURL : nil, placeholder: placeholder)
   }
 
   @ViewBuilder

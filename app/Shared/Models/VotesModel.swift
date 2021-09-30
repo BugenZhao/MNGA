@@ -11,6 +11,8 @@ import SwiftUI
 
 class VotesModel: ObservableObject {
   typealias Vote = (state: VoteState, delta: Int32)
+  
+  // todo: check performance cost here
   @Published private var votes = [PostId: Vote]()
 
   func binding(for post: Post) -> Binding<Vote> {

@@ -10,8 +10,9 @@ import SwiftUI
 
 class UsersModel: ObservableObject {
   static let shared = UsersModel()
-  
-  @Published private var users = [String: User?]()
+
+  // CAVEATS: should not be @Published here, may lead to bad performance
+  private var users = [String: User?]()
 
   func localUser(id: String) -> User? {
     if self.users[id] == nil {

@@ -29,9 +29,7 @@ struct ContentImageView: View {
 
   var body: some View {
     if isOpenSourceStickers {
-      WebImage(url: url)
-        .resizable()
-        .indicator(.activity)
+      WebOrAsyncImage(url: url, placeholder: nil)
         .aspectRatio(contentMode: .fit)
         .frame(width: 50, height: 50)
     } else {

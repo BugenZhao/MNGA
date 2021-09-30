@@ -158,7 +158,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    PostRowView(post: post, useContextMenu: !prefs.usePaginatedDetails, vote: votes.binding(for: post))
+    PostRowView(post: post, useContextMenu: true, vote: votes.binding(for: post))
       .id((withId ? "" : "dummy") + post.id.pid)
   }
 
@@ -268,6 +268,41 @@ struct TopicDetailsView: View {
         let loadTrigger = Text("").onAppear { dataSource.loadMore(after: 0.3) }
         Section(header: Text("Page \(nextPage)"), footer: loadTrigger) {
           // BUGEN'S HACK:
+          LoadingRowView()
+        } .id(nextPage)
+      }
+    }
+  }
+
+  @available(*, deprecated, message: "This is just a workaround")
+  @ViewBuilder
+  var listStackMain: some View {
+    List {
+      headerSection
+      listStackHotRepliesSection
+      listStackAllRepliesSections
+    }
+    #if os(iOS)
+      .listStyle(GroupedListStyle())
+    #endif
+  }
+
+  @ViewBuilder
+  var paginatedAllRepliesSectionsNew: some View {
+    if shouldShowReplies {
+      ForEach(dataSource.pagedItems, id: \.page) { pair in
+        Section(header: Text("Page \(pair.page)")) {
+          let items = pair.items.filter { $0.id != first?.id }
+          ForEach(items, id: \.id.pid) { post in
+            buildRow(post: post)
+          }
+        }
+      }
+
+      if let nextPage = dataSource.nextPage {
+        let loadTrigger = Text("").onAppear { dataSource.loadMore() }
+        Section(header: Text("Page \(nextPage)"), footer: loadTrigger) {
+          // BUGEN'S HACK:
           // the first view of this section will unexpectedly call `onAppear(_:)`
           // even if we are scrolling the previous section.
           // While the next ones won't, this can not be a solution since displaying
@@ -276,17 +311,17 @@ struct TopicDetailsView: View {
           // Note that the `.id(_:)` on this section is necessary, or the `onAppear`
           // trigger can not be triggered again.
           LoadingRowView()
-        } .id(nextPage)
+        } .id("page\(nextPage)")
       }
     }
   }
 
   @ViewBuilder
-  var listStackMain: some View {
+  var paginatedMain: some View {
     List {
       headerSection
-      listStackHotRepliesSection
-      listStackAllRepliesSections
+      hotRepliesSection
+      paginatedAllRepliesSectionsNew
     }
     #if os(iOS)
       .listStyle(GroupedListStyle())
@@ -307,24 +342,19 @@ struct TopicDetailsView: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      ScrollViewReader { proxy in
-        Group {
-          if prefs.usePaginatedDetails {
-            listStackMain
-          } else {
-            listMain
-          }
-        } .environmentObject(action)
-          .onReceive(action.$scrollToPid) { pid in
-          withAnimation { proxy.scrollTo(pid) }
+      Group {
+        if prefs.usePaginatedDetails {
+          paginatedMain
+        } else {
+          listMain
         }
-      }
+      } .environmentObject(action)
     }
       .navigationTitle(title)
       .toolbarWithFix {
-        ToolbarItem(placement: .navigationBarTrailing) { progress }
-        ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
-      }
+      ToolbarItem(placement: .navigationBarTrailing) { progress }
+      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+    }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))

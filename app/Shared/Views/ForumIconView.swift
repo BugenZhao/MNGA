@@ -14,6 +14,7 @@ struct ForumIconView: View {
 
   var body: some View {
     let defaultIcon = Image("default_forum_icon")
+      .resizable()
 
     if let url = URL(string: iconURL) {
       WebImage(url: url)
@@ -22,7 +23,6 @@ struct ForumIconView: View {
         .frame(width: 28, height: 28)
     } else {
       defaultIcon
-        .resizable()
         .frame(width: 28, height: 28)
     }
   }
