@@ -53,6 +53,9 @@ struct PreferencesView: View {
       }
 
       Section(header: Text("Advanced")) {
+        Toggle(isOn: $pref.imageViewerEnableZoom) {
+          Label("Enable Zoom for Image Viewer", systemImage: "arrow.up.left.and.arrow.down.right")
+        }
         NavigationLink(destination: CacheView()) {
           Label("Cache", systemImage: "internaldrive")
         }

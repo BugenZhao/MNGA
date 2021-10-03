@@ -15,7 +15,6 @@
 		B402308626EBBA7A0077D3AA /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308426EBBA7A0077D3AA /* UserView.swift */; };
 		B402308826EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */; };
 		B402308926EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */; };
-		B409251A26D2810F00BCB666 /* ImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251926D2810F00BCB666 /* ImageViewer.swift */; };
 		B409251C26D299E600BCB666 /* ContentButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251B26D299E600BCB666 /* ContentButtonView.swift */; };
 		B409251D26D299E600BCB666 /* ContentButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251B26D299E600BCB666 /* ContentButtonView.swift */; };
 		B409252226D29D2100BCB666 /* ContentImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409252126D29D2100BCB666 /* ContentImageView.swift */; };
@@ -135,6 +134,9 @@
 		B4CF7E7F2709DBF500E7C374 /* CellContextMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */; };
 		B4CF7E842709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
 		B4CF7E852709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
+		B4CF7E872709F58400E7C374 /* ZoomableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E862709F58400E7C374 /* ZoomableScrollView.swift */; };
+		B4CF7E882709F58400E7C374 /* ZoomableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E862709F58400E7C374 /* ZoomableScrollView.swift */; };
+		B4CF7E892709F63600E7C374 /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E5269B13830014DDFA /* ImageOverlay.swift */; };
 		B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D13B9D27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D7774F26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -225,7 +227,6 @@
 		B402308126EBB72C0077D3AA /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
 		B402308426EBBA7A0077D3AA /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailsActionModel.swift; sourceTree = "<group>"; };
-		B409251926D2810F00BCB666 /* ImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewer.swift; sourceTree = "<group>"; };
 		B409251B26D299E600BCB666 /* ContentButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentButtonView.swift; sourceTree = "<group>"; };
 		B409252126D29D2100BCB666 /* ContentImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentImageView.swift; sourceTree = "<group>"; };
 		B409252726D29FD900BCB666 /* OpenURLModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenURLModel.swift; sourceTree = "<group>"; };
@@ -289,6 +290,7 @@
 		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
 		B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellContextMenuModifier.swift; sourceTree = "<group>"; };
 		B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayBuilder.swift; sourceTree = "<group>"; };
+		B4CF7E862709F58400E7C374 /* ZoomableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableScrollView.swift; sourceTree = "<group>"; };
 		B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicPostRowView.swift; sourceTree = "<group>"; };
 		B4DBF607268976470027233F /* DateFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatters.swift; sourceTree = "<group>"; };
 		B4DBF60B2689799F0027233F /* PostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRowView.swift; sourceTree = "<group>"; };
@@ -527,6 +529,7 @@
 				B48B0C4526932CC70067794F /* ForumRowView.swift */,
 				B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */,
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
+				B4EB80E5269B13830014DDFA /* ImageOverlay.swift */,
 				B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */,
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
 				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
@@ -555,6 +558,7 @@
 				B402308126EBB72C0077D3AA /* UserProfileView.swift */,
 				B402308426EBBA7A0077D3AA /* UserView.swift */,
 				B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */,
+				B4CF7E862709F58400E7C374 /* ZoomableScrollView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -570,8 +574,6 @@
 		B4EB80E4269B13780014DDFA /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B4EB80E5269B13830014DDFA /* ImageOverlay.swift */,
-				B409251926D2810F00BCB666 /* ImageViewer.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -759,7 +761,6 @@
 				B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B444638B26A1981E006FA44D /* PostReplyModel.swift in Sources */,
-				B409251A26D2810F00BCB666 /* ImageViewer.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
@@ -781,6 +782,7 @@
 				B4DCF43C26885DD700EC78A4 /* Service.pb.swift in Sources */,
 				B4855B5926D6B61100BC2680 /* ContentTextEditorView.swift in Sources */,
 				B4E10723268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
+				B4CF7E872709F58400E7C374 /* ZoomableScrollView.swift in Sources */,
 				B409CE6D26A0920C00F617EC /* ToastModifier.swift in Sources */,
 				B43DED61269EFAF4009C52F5 /* ToastModel.swift in Sources */,
 				B45819C3268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
@@ -821,6 +823,7 @@
 				B413D67F2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */,
 				B4855B5A26D6B61100BC2680 /* ContentTextEditorView.swift in Sources */,
 				B4F9F98E26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */,
+				B4CF7E882709F58400E7C374 /* ZoomableScrollView.swift in Sources */,
 				B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */,
 				B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */,
 				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,
@@ -861,6 +864,7 @@
 				B4FBED8026A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4715CC926A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B4DBF61C268A20A90027233F /* PostContentView.swift in Sources */,
+				B4CF7E892709F63600E7C374 /* ImageOverlay.swift in Sources */,
 				B402308326EBB72C0077D3AA /* UserProfileView.swift in Sources */,
 				B44463A326A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B4DBF61926897C520027233F /* Misc.swift in Sources */,

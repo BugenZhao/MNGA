@@ -12,7 +12,10 @@ import SwiftUIX
 import SDWebImageSwiftUI
 
 class ViewingImageModel: ObservableObject {
-  @Published var view: AnyView?
+  @Published var view: AnyView? {
+    didSet { self.id = UUID() }
+  }
+  @Published var id: UUID?
   @Published var imageData: Data?
 
   func show(image: PlatformImage) {
