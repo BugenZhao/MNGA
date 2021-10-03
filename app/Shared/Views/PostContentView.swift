@@ -13,7 +13,8 @@ extension View {
   func mayEnableTextSelection() -> some View {
     Group {
       if #available(iOS 15.0, *) {
-        self.textSelection(.enabled)
+//        self.textSelection(.enabled)
+        self
       } else {
         self
       }
@@ -32,14 +33,14 @@ extension EnvironmentValues {
   }
 }
 
-struct PostContentView: View, Equatable {
-  let spans: [Span]
+struct PostContentView<S: Sequence & Equatable>: View, Equatable where S.Element == Span {
+  let spans: S
   let id: PostId?
   let defaultFont: Font
   let defaultColor: Color
   let initialInQuote: Bool
 
-  init(spans: [Span], id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  init(spans: S, id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     self.spans = spans
     self.id = id
     self.defaultFont = defaultFont

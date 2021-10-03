@@ -131,6 +131,10 @@
 		B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EF268850F300E53554 /* SwiftProtobuf */; };
 		B4C024F22688511400E53554 /* liblogicios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F12688510C00E53554 /* liblogicios.a */; platformFilter = ios; };
 		B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F32688511E00E53554 /* liblogicmacos.a */; };
+		B4CF7E7E2709DBF500E7C374 /* CellContextMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */; };
+		B4CF7E7F2709DBF500E7C374 /* CellContextMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */; };
+		B4CF7E842709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
+		B4CF7E852709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
 		B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D13B9D27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D7774F26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -283,6 +287,8 @@
 		B4C024E2268850AA00E53554 /* LogicCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogicCall.swift; sourceTree = "<group>"; };
 		B4C024F12688510C00E53554 /* liblogicios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicios.a; path = ../out/libs/liblogicios.a; sourceTree = "<group>"; };
 		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
+		B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellContextMenuModifier.swift; sourceTree = "<group>"; };
+		B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayBuilder.swift; sourceTree = "<group>"; };
 		B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicPostRowView.swift; sourceTree = "<group>"; };
 		B4DBF607268976470027233F /* DateFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatters.swift; sourceTree = "<group>"; };
 		B4DBF60B2689799F0027233F /* PostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRowView.swift; sourceTree = "<group>"; };
@@ -362,6 +368,7 @@
 			children = (
 				B437B27B269B0E190092FF9E /* ToolbarModifier.swift */,
 				B409CE6C26A0920C00F617EC /* ToastModifier.swift */,
+				B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -471,6 +478,7 @@
 		B4DBF6062689762E0027233F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */,
 				B4E1071F268DD215006C1742 /* AuthedPreview.swift */,
 				B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */,
 				B43DED48269C5F78009C52F5 /* Constants.swift */,
@@ -738,11 +746,13 @@
 				B444639C26A1CC9F006FA44D /* ContentEditorView.swift in Sources */,
 				B4C024E5268850AA00E53554 /* LogicCall.swift in Sources */,
 				B4DF95A826CAC20D0081ECBB /* Snapshot.swift in Sources */,
+				B4CF7E7E2709DBF500E7C374 /* CellContextMenuModifier.swift in Sources */,
 				B43DED58269ED5EB009C52F5 /* FavoriteTopicListView.swift in Sources */,
 				B43DED4C269C7C8B009C52F5 /* SearchModel.swift in Sources */,
 				B44463A226A1ED2A006FA44D /* ActivityModel.swift in Sources */,
 				B4715CC826A41F000049D136 /* PostRowUserView.swift in Sources */,
 				B498FEFC26EC8735008C577B /* PostReplyChainView.swift in Sources */,
+				B4CF7E842709E38500E7C374 /* ArrayBuilder.swift in Sources */,
 				B444639F26A1D745006FA44D /* StickerImageView.swift in Sources */,
 				B402308226EBB72C0077D3AA /* UserProfileView.swift in Sources */,
 				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
@@ -820,6 +830,7 @@
 				B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */,
 				B48B0C4E2694D4FF0067794F /* ViewingImageModel.swift in Sources */,
 				B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */,
+				B4CF7E852709E38500E7C374 /* ArrayBuilder.swift in Sources */,
 				B402308926EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */,
 				B4E2BDD02691B0030080C790 /* InitConf.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
@@ -840,6 +851,7 @@
 				B409252326D29D2100BCB666 /* ContentImageView.swift in Sources */,
 				B4DDFD9D26B1B602004FFB17 /* CacheView.swift in Sources */,
 				B4B3546026C91DA00052FE80 /* UsersModel.swift in Sources */,
+				B4CF7E7F2709DBF500E7C374 /* CellContextMenuModifier.swift in Sources */,
 				B4EB80F0269B2C090014DDFA /* ContentCombiner.swift in Sources */,
 				B475FD9F26D2B1B300109CEA /* AttachmentsModel.swift in Sources */,
 				B444639D26A1CC9F006FA44D /* ContentEditorView.swift in Sources */,
