@@ -42,15 +42,19 @@ fileprivate class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
 // BUGEN'S HACK:
 // This modifier is intended to improve the scrolling performance on list cells with context menu
 struct CellContextMenuModifier: ViewModifier {
-  private let delegate: MenuDelegate
+  @State private var delegate: MenuDelegate  // stored since `interaction` holds a weak ref
+  @State var interaction: UIContextMenuInteraction // stored as `State` to avoid add multiple times
 
   init(actions: [CellAction]) {
-    self.delegate = MenuDelegate(actions: actions)
+    let delegate = MenuDelegate(actions: actions)
+    let interaction = UIContextMenuInteraction(delegate: delegate)
+    self.delegate = delegate
+    self.interaction = interaction
   }
 
   func body(content: Content) -> some View {
     content.introspectTableViewCell { cell in
-      let interaction = UIContextMenuInteraction(delegate: delegate)
+      if cell.interactions.contains(where: { ($0 as? UIContextMenuInteraction)?.delegate != nil }) { return }
       cell.addInteraction(interaction)
     }
   }
