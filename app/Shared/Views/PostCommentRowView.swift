@@ -23,10 +23,19 @@ struct PostCommentRowView: View {
     }
   }
 
+  var realSpans: ArraySlice<Span> {
+    let spans = comment.content.spans
+    if spans.count > 3 {
+      return spans.dropFirst(3)
+    } else {
+      return spans[...]
+    }
+  }
+
   @ViewBuilder
   var content: some View {
     QuoteView(fullWidth: false) {
-      PostContentView(spans: Array(comment.content.spans[3...]), defaultFont: .subheadline, initialInQuote: true) // ignore reply
+      PostContentView(spans: realSpans, defaultFont: .subheadline, initialInQuote: true) // ignore reply
       .equatable()
     }
   }
