@@ -11,7 +11,6 @@ import SwiftUIX
 
 struct PostRowView: View {
   let post: Post
-  let useContextMenu: Bool
 
   @Binding var vote: VotesModel.Vote
 
@@ -42,15 +41,7 @@ struct PostRowView: View {
     HStack {
       PostRowUserView(post: post)
       Spacer()
-
-      if useContextMenu {
-        floor
-      } else {
-        Menu(content: { menu }) {
-          floor
-          Image(systemName: "ellipsis")
-        }
-      }
+      floor
     }
   }
 
@@ -130,61 +121,71 @@ struct PostRowView: View {
       .equatable()
   }
 
-  @ViewBuilder
-  var menu: some View {
-    Section {
-      Label("#\(post.id.pid)", systemImage: "number")
-    }
-    Section {
-      Button(action: { copyContent(post.content.raw) }) {
-        Label("Copy Raw Content", systemImage: "doc.on.doc")
-      }
-    }
+  @ArrayBuilder<CellAction>
+  var menuActions: [CellAction] {
+    CellAction(title: "Copy Raw Content", systemImage: "doc.on.doc") { copyContent(post.content.raw) }
     if let model = postReply {
-      Section {
-        Button(action: { doQuote(model: model) }) {
-          Label("Quote", systemImage: "quote.bubble")
-        }
-        Button(action: { doComment(model: model) }) {
-          Label("Comment", systemImage: "tag")
-        }
-        if authStorage.authInfo.inner.uid == post.authorID {
-          Button(action: { doEdit(model: model) }) {
-            Label("Edit", systemImage: "pencil")
-          }
-        }
+      CellAction(title: "Quote", systemImage: "quote.bubble") { doQuote(model: model) }
+      CellAction(title: "Comment", systemImage: "tag") { doComment(model: model) }
+      if authStorage.authInfo.inner.uid == post.authorID {
+        CellAction(title: "Edit", systemImage: "pencil") { doEdit(model: model) }
       }
     }
-    if let action = action {
-      Section {
-        if enableAuthorOnly {
-          Button(action: { action.navigateToAuthorOnly = post.authorID }) {
-            Label("This Author Only", systemImage: "person")
-          }
-        }
-      }
+    if let action = action, enableAuthorOnly {
+      CellAction(title: "This Author Only", systemImage: "person") { action.navigateToAuthorOnly = post.authorID }
     }
   }
 
+//  @ViewBuilder
+//  var menu: some View {
+//    Section {
+//      Label("#\(post.id.pid)", systemImage: "number")
+//    }
+//    Section {
+//      Button(action: { copyContent(post.content.raw) }) {
+//        Label("Copy Raw Content", systemImage: "doc.on.doc")
+//      }
+//    }
+//    if let model = postReply {
+//      Section {
+//        Button(action: { doQuote(model: model) }) {
+//          Label("Quote", systemImage: "quote.bubble")
+//        }
+//        Button(action: { doComment(model: model) }) {
+//          Label("Comment", systemImage: "tag")
+//        }
+//        if authStorage.authInfo.inner.uid == post.authorID {
+//          Button(action: { doEdit(model: model) }) {
+//            Label("Edit", systemImage: "pencil")
+//          }
+//        }
+//      }
+//    }
+//    if let action = action {
+//      Section {
+//        if enableAuthorOnly {
+//          Button(action: { action.navigateToAuthorOnly = post.authorID }) {
+//            Label("This Author Only", systemImage: "person")
+//          }
+//        }
+//      }
+//    }
+//  }
+
   var body: some View {
-    let view = VStack(alignment: .leading, spacing: 10) {
+    VStack(alignment: .leading, spacing: 10) {
       header
       content
       footer
       comments
       signature
     } .padding(.vertical, 4)
+      .cellContextMenu(actions: menuActions)
+    //    .contextMenu { menu }
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-
-    Group {
-      if useContextMenu {
-        view.contextMenu { menu }
-      } else {
-        view
-      }
-    } .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
+    .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
       .environmentObject(attachments)
   }
 

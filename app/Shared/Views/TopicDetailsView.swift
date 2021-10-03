@@ -158,7 +158,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    PostRowView(post: post, useContextMenu: true, vote: votes.binding(for: post))
+    PostRowView(post: post, vote: votes.binding(for: post))
       .id((withId ? "" : "dummy") + post.id.pid)
   }
 
