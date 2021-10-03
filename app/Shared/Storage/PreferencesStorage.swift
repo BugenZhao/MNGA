@@ -18,4 +18,5 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("useRedactNew") var useRedact = false
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = true
   @AppStorage("useInAppSafari") var useInAppSafari = true
+  @AppStorage("imageViewerEnableZoom") var imageViewerEnableZoom = true
 }
