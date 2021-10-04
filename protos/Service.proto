@@ -73,6 +73,7 @@ message TopicListRequest {
   uint32 page = 2;
   bool sort_subforums = 4;
   Order order = 5;
+  bool recommended_only = 6;
 }
 message TopicListResponse {
   Forum forum = 4;

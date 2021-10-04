@@ -19,4 +19,5 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = true
   @AppStorage("useInAppSafari") var useInAppSafari = true
   @AppStorage("imageViewerEnableZoom") var imageViewerEnableZoom = true
+  @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
 }

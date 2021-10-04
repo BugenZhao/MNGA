@@ -59,6 +59,13 @@ struct PreferencesView: View {
         NavigationLink(destination: CacheView()) {
           Label("Cache", systemImage: "internaldrive")
         }
+        Picker(selection: $pref.defaultTopicListOrder) {
+          ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
+            Label(order.description, systemImage: order.icon).tag(order)
+          }
+        } label: {
+          Label("Default Topic List Order", systemImage: "arrow.up.arrow.down")
+        }
       }
 
       Section(header: Text("Support")) {

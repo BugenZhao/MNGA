@@ -199,6 +199,14 @@ pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicLis
             },
             ("page", &request.page.to_string()),
             ("order_by", request.get_order().to_value()),
+            (
+                "recommend",
+                if request.get_recommended_only() {
+                    "1"
+                } else {
+                    ""
+                },
+            ),
         ],
         vec![],
     )

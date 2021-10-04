@@ -26,8 +26,9 @@ struct TopicListView: View {
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
   @State var showingHotTopics = false
+  @State var showingRecommendedTopics = false
   @State var userActivityIsActive = true
-  @State var order = TopicListRequest.Order.lastPost
+  @State var order = PreferencesStorage.shared.defaultTopicListOrder
 
   var dataSource: DataSource {
     switch order {
@@ -37,7 +38,7 @@ struct TopicListView: View {
     }
   }
 
-  static func build(forum: Forum) -> Self {
+  static func build(forum: Forum, defaultOrder: TopicListRequest.Order = .lastPost) -> Self {
     let dataSourceLastPost = DataSource(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
@@ -68,7 +69,12 @@ struct TopicListView: View {
       },
       id: \.id
     )
-    return Self.init(forum: forum, dataSourceLastPost: dataSourceLastPost, dataSourcePostDate: dataSourcePostDate)
+    return Self.init(
+      forum: forum,
+      dataSourceLastPost: dataSourceLastPost,
+      dataSourcePostDate: dataSourcePostDate,
+      order: defaultOrder
+    )
   }
 
   func newTopic() {
@@ -104,6 +110,9 @@ struct TopicListView: View {
         }
         Button(action: { showingHotTopics = true }) {
           Label("Hot Topics", systemImage: "flame")
+        }
+        Button(action: { showingRecommendedTopics = true }) {
+          Label("Recommended Topics", systemImage: "hand.thumbsup")
         }
         if let subforums = dataSource.latestResponse?.subforums,
           !subforums.isEmpty {
@@ -164,9 +173,9 @@ struct TopicListView: View {
   }
 
   @ViewBuilder
-  var hotTopics: some View {
-    let destination = HotTopicListView.build(forum: forum)
-    NavigationLink(destination: destination, isActive: $showingHotTopics) { }
+  var goodTopics: some View {
+    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { }
+    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { }
   }
 
   @ViewBuilder
@@ -191,14 +200,14 @@ struct TopicListView: View {
         }
         #if os(iOS)
           .listStyle(GroupedListStyle())
-          .refreshable(dataSource: dataSource)
-          .id(order)
+            .refreshable(dataSource: dataSource)
+            .id(order)
         #endif
       }
     }
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
-      .background { subforum; hotTopics }
+      .background { subforum; goodTopics }
       .navigationTitle(forum.name)
       .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) { icon }
