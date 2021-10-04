@@ -175,6 +175,7 @@ struct PostRowView: View {
       comments
       signature
     } .padding(.vertical, 4)
+      .fixedSize(horizontal: false, vertical: true)
       .cellContextMenu(actions: menuActions)
     //    .contextMenu { menu }
     #if os(iOS)
