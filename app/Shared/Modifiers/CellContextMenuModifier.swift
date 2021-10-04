@@ -12,56 +12,65 @@ struct CellAction {
   let title: String
   let systemImage: String
   let callback: () -> Void
+
+  static var separator = nil as CellAction?
 }
 
 fileprivate class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
-  let actions: [CellAction]
+  let actions: [CellAction?]
 
-  init(actions: [CellAction]) {
+  init(actions: [CellAction?]) {
     self.actions = actions
   }
 
   func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-    let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-      let children = self.actions.map { action in
-        UIAction(
+    UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+      let actions = self.actions.map { action -> UIMenuElement? in
+        guard let action = action else { return nil }
+        return UIAction(
           title: NSLocalizedString(action.title, comment: ""),
           image: UIImage(systemName: action.systemImage),
-          identifier: nil,
-          attributes: []) { _ in
-          action.callback()
+          handler: { _ in action.callback() }
+        )
+      }
+
+      let children = actions.split(separator: nil).enumerated().flatMap { (i, actions) -> [UIMenuElement] in
+        let actions = actions.compactMap { $0 }
+        if i == 0 {
+          return actions
+        } else {
+          return [UIMenu(options: .displayInline, children: actions)]
         }
       }
 
       return UIMenu(children: children)
     }
-    return configuration
   }
 }
 
 // BUGEN'S HACK:
 // This modifier is intended to improve the scrolling performance on list cells with context menu
 struct CellContextMenuModifier: ViewModifier {
-  @State private var delegate: MenuDelegate  // stored since `interaction` holds a weak ref
-  @State var interaction: UIContextMenuInteraction // stored as `State` to avoid add multiple times
+  private let delegate: MenuDelegate
+  private let interaction: UIContextMenuInteraction
 
-  init(actions: [CellAction]) {
-    let delegate = MenuDelegate(actions: actions)
-    let interaction = UIContextMenuInteraction(delegate: delegate)
-    self.delegate = delegate
-    self.interaction = interaction
+  init(actions: [CellAction?]) {
+    // CAVEATS: do not store `delegate` as @State or only add the interaction once,
+    //          since the partial applied `self` (SwiftUI View) in callbacks may be stale after rebuilt
+    self.delegate = MenuDelegate(actions: actions)
+    self.interaction = UIContextMenuInteraction(delegate: self.delegate)
   }
 
   func body(content: Content) -> some View {
     content.introspectTableViewCell { cell in
-      if cell.interactions.contains(where: { ($0 as? UIContextMenuInteraction)?.delegate != nil }) { return }
+      cell.interactions.removeAll()
       cell.addInteraction(interaction)
     }
   }
 }
 
 extension View {
-  func cellContextMenu(actions: [CellAction]) -> some View {
+  func cellContextMenu(actions: [CellAction?]) -> some View {
     self.modifier(CellContextMenuModifier(actions: actions))
   }
 }

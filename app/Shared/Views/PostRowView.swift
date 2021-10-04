@@ -121,10 +121,11 @@ struct PostRowView: View {
       .equatable()
   }
 
-  @ArrayBuilder<CellAction>
-  var menuActions: [CellAction] {
+  @ArrayBuilder<CellAction?>
+  var menuActions: [CellAction?] {
     CellAction(title: "Copy Raw Content", systemImage: "doc.on.doc") { copyContent(post.content.raw) }
     if let model = postReply {
+      CellAction.separator
       CellAction(title: "Quote", systemImage: "quote.bubble") { doQuote(model: model) }
       CellAction(title: "Comment", systemImage: "tag") { doComment(model: model) }
       if authStorage.authInfo.inner.uid == post.authorID {
@@ -132,6 +133,7 @@ struct PostRowView: View {
       }
     }
     if let action = action, enableAuthorOnly {
+      CellAction.separator
       CellAction(title: "This Author Only", systemImage: "person") { action.navigateToAuthorOnly = post.authorID }
     }
   }
