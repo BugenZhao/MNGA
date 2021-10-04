@@ -130,7 +130,7 @@ class ContentCombiner {
     var text: Text = text
       .font(overridenFont ?? self.font)
       .foregroundColor(overridenColor ?? self.color)
-  
+
     if otherStyles.contains(.underline) {
       text = text.underline()
     }
@@ -231,8 +231,6 @@ class ContentCombiner {
       self.visit(sticker: sticker)
     case .tagged(let tagged):
       self.visit(tagged: tagged)
-    case .divider(let divider):
-      self.visit(divider: divider)
     }
   }
 
@@ -246,11 +244,11 @@ class ContentCombiner {
     self.append(text)
   }
 
-  private func visit(divider: Span.Divider) {
+  private func visit(divider: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.headline }, color: { _ in Color.accentColor })
-    combiner.append(Spacer().height(8))
-    if !divider.text.isEmpty {
-      combiner.append(Text(divider.text))
+    if !divider.spans.isEmpty {
+      combiner.append(Spacer().height(6))
+      combiner.visit(spans: divider.spans)
     }
     combiner.append(Divider())
     let subview = combiner.build()
@@ -277,6 +275,8 @@ class ContentCombiner {
 
   private func visit(tagged: Span.Tagged) {
     switch tagged.tag {
+    case "_divider":
+      self.visit(divider: tagged)
     case "img":
       self.visit(image: tagged)
     case "quote":
@@ -414,19 +414,19 @@ class ContentCombiner {
 
   private func visit(url: Span.Tagged) {
     let urlString: String?
-    let displayString: String
 
-    let innerString = url.spans.first?.plain.text
+    let combiner = ContentCombiner(parent: self, font: { _ in .footnote }, color: { _ in .accentColor })
+    combiner.visit(spans: url.spans)
+    let innerView = url.spans.isEmpty ? nil : combiner.buildView().eraseToAnyView()
+
     if let u = url.attributes.first {
       urlString = u
-      displayString = innerString ?? "Link"
     } else {
-      urlString = innerString
-      displayString = innerString ?? "Link"
+      urlString = url.spans.first?.plain.text
     }
 
     if let urlString = urlString {
-      let link = ContentButtonView(icon: "link", title: Text(displayString), inQuote: inQuote) {
+      let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
         if let url = URL(string: urlString) {
           if url.lastPathComponent == "read.php",
             let tid = extractQueryParams(query: url.query ?? "", param: "tid") {

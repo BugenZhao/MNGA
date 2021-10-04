@@ -9,18 +9,20 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-struct ContentButtonView: View {
+struct ContentButtonView<T: View>: View {
   let icon: String
-  let title: Text
+  let title: T
   let inQuote: Bool
   let action: () -> Void
 
   var body: some View {
     Button(action: action) {
-      (Text(Image(systemName: icon)) + Text(" ") + title)
-        .lineLimit(1)
+      HStack {
+        Image(systemName: icon)
+        title
+      } .foregroundColor(.accentColor)
         .font(.footnote)
-        .foregroundColor(.accentColor)
+        .lineLimit(3)
         .padding(.small)
         .background(
         RoundedRectangle(cornerRadius: 12)

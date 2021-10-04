@@ -91,9 +91,10 @@ peg::parser! {
             }
 
         rule divider() -> Span
-            = divider_tag() pt:plain_text()? divider_tag() {
-                span_of!(divider(Span_Divider {
-                    text: pt.unwrap_or_default().to_owned(),
+            = divider_tag() s:(span()*) divider_tag() {
+                span_of!(tagged(Span_Tagged {
+                    tag: "_divider".to_owned(),
+                    spans: s.into(),
                     ..Default::default()
                 }))
             }
@@ -242,9 +243,15 @@ Hello world
 
     #[test]
     fn test_divider() {
-        let text = r#"[s:a2:doge][s:a2:doge]<br/>===2021-09-08 21:36===<br/>帖子超过修改时限，在此提交的内容将被增加至原帖，如需修改原帖请联系版主<br/>===2021-09-08 21:59===<br/>追加编辑中"#;
-        let r = do_parse_content(text).unwrap();
-        println!("{:#?}", r);
+        let texts = [
+            r#"======"#,
+            r#"===2021-09-08 21:36==="#,
+            r#"===[size=150%][color=blue]前言[/color][/size]==="#,
+        ];
+        for text in texts {
+            let r = do_parse_content(text).unwrap();
+            println!("{:#?}", r);
+        }
     }
 
     #[test]

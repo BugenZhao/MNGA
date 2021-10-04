@@ -110,14 +110,12 @@ message Span {
     repeated string attributes = 2;
     repeated Span spans = 3;
   }
-  message Divider { string text = 1; }
 
   oneof value {
     Plain plain = 1;
     BreakLine break_line = 2;
     Sticker sticker = 3;
     Tagged tagged = 4;
-    Divider divider = 5;
   }
 }
 
