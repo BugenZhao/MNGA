@@ -26,7 +26,7 @@ struct PostCommentRowView: View {
   var realSpans: ArraySlice<Span> {
     let spans = comment.content.spans
     if spans.count > 3 {
-      return spans.dropFirst(3)
+      return spans.dropFirst(3) // ignore reply
     } else {
       return spans[...]
     }
@@ -35,8 +35,8 @@ struct PostCommentRowView: View {
   @ViewBuilder
   var content: some View {
     QuoteView(fullWidth: false) {
-      PostContentView(spans: realSpans, defaultFont: .subheadline, initialInQuote: true) // ignore reply
-      .equatable()
+      PostContentView(spans: realSpans, defaultFont: .subheadline, initialInQuote: true)
+        .equatable()
     }
   }
 

@@ -18,7 +18,7 @@ struct PostEditorView: View {
   @State var displayMode = DisplayMode.plain
 
   @State var subject = nil as Subject?
-  @State var spans = [Span]()
+  @State var parsedContent = PostContent()
 
   @StateObject var presendAttachments = PresendAttachmentsModel()
 
@@ -48,7 +48,7 @@ struct PostEditorView: View {
         }
 
         VStack(alignment: .leading) {
-          PostContentView(spans: spans)
+          PostContentView(content: parsedContent)
           HStack {
             Spacer()
             Image(systemName: device.icon)
@@ -90,7 +90,7 @@ struct PostEditorView: View {
     DispatchQueue.global(qos: .userInitiated).async {
       let content = (postReply.context?.content ?? "").replacingOccurrences(of: "\n", with: "<br/>")
       let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = content }))
-      self.spans = response?.content.spans ?? []
+      self.parsedContent = response?.content ?? .init()
     }
     if let subject = postReply.context?.subject {
       DispatchQueue.global(qos: .userInitiated).async {

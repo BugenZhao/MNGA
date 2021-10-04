@@ -106,8 +106,8 @@ struct UserProfileView: View {
     List {
       Section(header: Text("User Profile")) {
         UserView(user: user, style: .huge)
-        if let spans = user.signature.spans, !spans.isEmpty {
-          UserSignatureView(spans: spans, font: .callout, color: .primary)
+        if let sig = user.signature, !sig.spans.isEmpty {
+          UserSignatureView(content: sig, font: .callout, color: .primary)
         }
       }
 

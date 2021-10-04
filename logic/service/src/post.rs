@@ -10,6 +10,7 @@ use cache::CACHE;
 use protos::{DataModel::*, Service::*, ToValue};
 use reqwest::multipart;
 use sxd_xpath::nodeset::Node;
+use text::error::ParseError;
 use uuid::Uuid;
 
 fn vote_response_key(id: &PostId) -> String {
@@ -17,18 +18,25 @@ fn vote_response_key(id: &PostId) -> String {
 }
 
 pub fn extract_post_content(raw: String) -> PostContent {
-    let spans = text::parse_content(&raw).unwrap_or_else(|_| {
-        vec![Span {
-            value: Some(Span_oneof_value::plain(Span_Plain {
-                text: raw.clone(), // todo: extract plain text
+    let (spans, error) = match text::parse_content(&raw) {
+        Ok(spans) => (spans, None),
+        Err(ParseError::Content(error)) => {
+            let fallback_spans = vec![Span {
+                value: Some(Span_oneof_value::plain(Span_Plain {
+                    text: raw.clone(), // todo: extract plain text
+                    ..Default::default()
+                })),
                 ..Default::default()
-            })),
-            ..Default::default()
-        }]
-    });
+            }];
+            (fallback_spans, Some(error))
+        }
+        Err(_) => unreachable!(),
+    };
+
     PostContent {
         spans: spans.into(),
         raw,
+        error: error.unwrap_or_default(),
         ..Default::default()
     }
 }

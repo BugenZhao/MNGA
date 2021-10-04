@@ -10,7 +10,14 @@ import SwiftUI
 
 struct QuoteView<Content>: View where Content: View {
   let fullWidth: Bool
-  @ViewBuilder let build: () -> Content
+  let background: Color
+  let build: () -> Content
+
+  init(fullWidth: Bool, background: Color = .systemGroupedBackground, @ViewBuilder build: @escaping () -> Content) {
+    self.fullWidth = fullWidth
+    self.background = background
+    self.build = build
+  }
 
   var body: some View {
     build()
@@ -19,7 +26,7 @@ struct QuoteView<Content>: View where Content: View {
       .background(
       RoundedRectangle(cornerRadius: 12)
       #if os(iOS)
-        .fill(Color.systemGroupedBackground)
+        .fill(background)
       #endif
     )
   }

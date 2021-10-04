@@ -51,7 +51,7 @@ peg::parser! {
         rule well_tagged() -> Span
             = st:start_tag() s:(span()*) ct:close_tag() {?
                 let (start_tag, attributes) = st;
-                if start_tag != ct { return Err("mismatched close tag"); }
+                if start_tag != ct { return Err("matched close tag"); }
                 let attributes = attributes.into_iter().map(|s| s.to_owned()).collect();
 
                 Ok(span_of!(tagged(Span_Tagged {
@@ -115,7 +115,8 @@ peg::parser! {
 }
 
 pub fn do_parse_content(text: &str) -> ParseResult<Vec<Span>> {
-    content_parser::content(text).map_err(|e| ParseError::Content(e.to_string()))
+    content_parser::content(text)
+        .map_err(|e: peg::error::ParseError<_>| ParseError::Content(e.to_string()))
 }
 
 #[cfg(test)]

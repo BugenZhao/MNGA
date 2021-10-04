@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SwiftUIX
+import Colorful
 
 extension View {
   func mayEnableTextSelection() -> some View {
@@ -35,13 +36,15 @@ extension EnvironmentValues {
 
 struct PostContentView<S: Sequence & Equatable>: View, Equatable where S.Element == Span {
   let spans: S
+  let error: String?
   let id: PostId?
   let defaultFont: Font
   let defaultColor: Color
   let initialInQuote: Bool
 
-  init(spans: S, id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  init(spans: S, error: String? = nil, id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     self.spans = spans
+    self.error = error
     self.id = id
     self.defaultFont = defaultFont
     self.defaultColor = defaultColor
@@ -50,14 +53,41 @@ struct PostContentView<S: Sequence & Equatable>: View, Equatable where S.Element
 
   @OptionalEnvironmentObject<TopicDetailsActionModel> var actionModel
 
-  var body: some View {
+  var main: some View {
     let combiner = ContentCombiner(actionModel: actionModel, id: id, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)
     combiner.visit(spans: spans)
     return combiner.buildView().mayEnableTextSelection()
   }
 
+  var body: some View {
+    VStack(alignment: .leading) {
+      if let error = error, !error.isEmpty {
+        QuoteView(fullWidth: true) {
+          Text("Bad or Unsupported Post Content Format")
+            .bold()
+          + Text("\n") +
+          Text(error)
+            .font(.system(.footnote, design: .monospaced))
+        } .font(.footnote)
+          .foregroundColor(.orangeRed)
+      }
+      main
+    } .fixedSize(horizontal: false, vertical: true)
+  }
+
   static func == (lhs: PostContentView, rhs: PostContentView) -> Bool {
     return lhs.spans == rhs.spans
+  }
+}
+
+extension PostContentView where S == [Span] {
+  init(content: PostContent, id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+    self.spans = content.spans
+    self.error = content.error
+    self.id = id
+    self.defaultFont = defaultFont
+    self.defaultColor = defaultColor
+    self.initialInQuote = initialInQuote
   }
 }
 
@@ -118,7 +148,7 @@ struct PostContentView_Previews: PreviewProvider {
     }
 
     List {
-      PostContentView(spans: spans + [image])
+      PostContentView(spans: spans + [image], error: "Test error")
     }
     #if os(iOS)
       .listStyle(GroupedListStyle())

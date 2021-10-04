@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct UserSignatureView: View {
-  let spans: [Span]
+  let content: PostContent
   let font: Font
   let color: Color
 
@@ -18,7 +18,7 @@ struct UserSignatureView: View {
       Image(systemName: "signature")
         .foregroundColor(.accentColor)
         .imageScale(.small)
-      PostContentView(spans: spans, defaultFont: font, defaultColor: color)
+      PostContentView(content: content, defaultFont: font, defaultColor: color)
         .equatable()
         .environment(\.useRedact, false)
     }

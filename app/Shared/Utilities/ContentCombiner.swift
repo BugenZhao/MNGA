@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SwiftUIX
+import Colorful
 
 class ContentCombiner {
   enum Subview {
@@ -18,13 +19,36 @@ class ContentCombiner {
 
   struct OtherStyles: OptionSet {
     let rawValue: Int
+
     static let underline = Self(rawValue: 1 << 0)
+    static let strikethrough = Self(rawValue: 1 << 1)
   }
 
   static private let palette: [String: Color] = [
-    "red": .red,
-    "green": .green,
-    "blue": .blue,
+    "skyblue": .skyBlue,
+    "royalblue": .royalBlue,
+    "blue": .init(hex: 0x0066bb),
+    "darkblue": .darkBlue,
+    "orange": .init(hex: 0xa06700),
+    "orangered": .orangeRed,
+    "crimson": .crimson,
+    "red": .init(hex: 0xdd0000),
+    "firebrick": .fireBrick,
+    "darkred": .darkRed,
+    "green": .init(hex: 0x3d9f0e),
+    "limegreen": .limeGreen,
+    "seagreen": .seaGreen,
+    "teal": .init(hex: 0x008080),
+    "deeppink": .deepPink,
+    "tomato": .tomato,
+    "coral": .coral,
+    "purple": .init(hex: 0x800080),
+    "indigo": .init(hex: 0x4b0082),
+    "burlywood": .burleywood,
+    "sandybrown": .sandyBrown,
+    "chocolate": .chocolate,
+    "sienna": .sienna,
+    "silver": .init(hex: 0x888888),
   ]
 
   private let parent: ContentCombiner?
@@ -106,9 +130,12 @@ class ContentCombiner {
     var text: Text = text
       .font(overridenFont ?? self.font)
       .foregroundColor(overridenColor ?? self.color)
-
+  
     if otherStyles.contains(.underline) {
       text = text.underline()
+    }
+    if otherStyles.contains(.strikethrough) {
+      text = text.strikethrough()
     }
 
     return text
@@ -432,7 +459,7 @@ class ContentCombiner {
   }
 
   private func visit(deleted: Span.Tagged) {
-    let combiner = ContentCombiner(parent: self, color: { _ in Color.tertiaryLabel })
+    let combiner = ContentCombiner(parent: self, otherStyles: { $0.union(.strikethrough) })
     combiner.visit(spans: deleted.spans)
     self.append(combiner.build())
   }

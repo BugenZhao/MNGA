@@ -102,15 +102,15 @@ struct PostRowView: View {
 
   @ViewBuilder
   var signature: some View {
-    if pref.showSignature, let sigSpans = user?.signature.spans, !sigSpans.isEmpty {
+    if pref.showSignature, let sig = user?.signature, !sig.spans.isEmpty {
       Divider()
-      UserSignatureView(spans: sigSpans, font: .subheadline, color: .secondary)
+      UserSignatureView(content: sig, font: .subheadline, color: .secondary)
     }
   }
 
   @ViewBuilder
   var content: some View {
-    PostContentView(spans: post.content.spans, id: post.id)
+    PostContentView(content: post.content, id: post.id)
       .equatable()
   }
 

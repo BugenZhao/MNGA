@@ -139,6 +139,7 @@
 		B4CF7E892709F63600E7C374 /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E5269B13830014DDFA /* ImageOverlay.swift */; };
 		B4CF7E8B270AAF4500E7C374 /* UserSignatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E8A270AAF4500E7C374 /* UserSignatureView.swift */; };
 		B4CF7E8C270AAF4500E7C374 /* UserSignatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E8A270AAF4500E7C374 /* UserSignatureView.swift */; };
+		B4CF7E8F270AE04A00E7C374 /* Colorful in Frameworks */ = {isa = PBXBuildFile; productRef = B4CF7E8E270AE04A00E7C374 /* Colorful */; };
 		B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D13B9D27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D7774F26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -341,6 +342,7 @@
 				B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */,
 				B409252626D29F6C00BCB666 /* BetterSafariView in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
+				B4CF7E8F270AE04A00E7C374 /* Colorful in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
 				B4D7774F26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
@@ -618,6 +620,7 @@
 				B43DED5E269EFA5A009C52F5 /* AlertToast */,
 				B409252526D29F6C00BCB666 /* BetterSafariView */,
 				B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */,
+				B4CF7E8E270AE04A00E7C374 /* Colorful */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
@@ -686,6 +689,7 @@
 				B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				B409252426D29F6C00BCB666 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				B4D7774D26FCC7F800594905 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -1251,6 +1255,14 @@
 				minimumVersion = 1.17.0;
 			};
 		};
+		B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/chackle/Colorful";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		B4D7774D26FCC7F800594905 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -1334,6 +1346,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
 			productName = SwiftProtobuf;
+		};
+		B4CF7E8E270AE04A00E7C374 /* Colorful */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */;
+			productName = Colorful;
 		};
 		B4D7774E26FCC7F800594905 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
 			isa = XCSwiftPackageProductDependency;

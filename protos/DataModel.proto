@@ -124,6 +124,7 @@ message Span {
 message PostContent {
   repeated Span spans = 1;
   string raw = 2;
+  string error = 3;
 }
 
 message Attachment {
