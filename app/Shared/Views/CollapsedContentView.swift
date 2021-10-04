@@ -29,33 +29,42 @@ struct CollapsedContentView<Content: View>: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      Button(action: { withAnimation(.spring()) { self.collapsed.toggle() } }) {
+      Button(action: { self.collapsed.toggle() }) {
         HStack {
-          Image(systemName: self.collapsed ? "eye.slash" : "eye.fill")
+          Image(systemName: self.collapsed ? "chevron.down" : "chevron.up")
           Text(self.title)
         } .padding(.bottom, 1)
           .foregroundColor(.accentColor)
           .font(.subheadline.bold())
       } .buttonStyle(PlainButtonStyle())
 
-      if useRedact {
-        self.content()
-          .redacted(if: self.collapsed)
-          .allowsHitTesting(!self.collapsed)
-      } else {
-        if !self.collapsed {
+      Group {
+        if useRedact {
           self.content()
+            .redacted(if: self.collapsed)
+            .allowsHitTesting(!self.collapsed)
+        } else {
+          if !self.collapsed {
+            self.content()
+          }
         }
       }
-    }
+    } .fixedSize(horizontal: false, vertical: true)
   }
 }
 
 
 struct CollapsedContentView_Previews: PreviewProvider {
   static var previews: some View {
-    CollapsedContentView(title: "Title") {
-      PostContentView_Previews.previews
-    }
+    List {
+      ForEach(1...10, id: \.self) { i in
+        VStack(alignment: .leading) {
+          Text(String(repeating: "Content \(i) ", count: 20))
+          CollapsedContentView(title: "Title") {
+            Text(String(repeating: "Collapsed \(i) ", count: 20))
+          }
+        } .fixedSize(horizontal: false, vertical: true)
+      }
+    } .environment(\.useRedact, false)
   }
 }
