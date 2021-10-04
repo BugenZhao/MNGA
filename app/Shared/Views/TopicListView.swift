@@ -9,11 +9,9 @@ import Foundation
 import SwiftUI
 import SDWebImageSwiftUI
 
-#if os(iOS)
-  import SwiftUIRefresh
-#endif
-
 struct TopicListView: View {
+  typealias DataSource = PagingDataSource<TopicListResponse, Topic>
+
   let forum: Forum
 
   @EnvironmentObject var activity: ActivityModel
@@ -21,20 +19,31 @@ struct TopicListView: View {
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
-  @StateObject var dataSource: PagingDataSource<TopicListResponse, Topic>
+  @StateObject var dataSourceLastPost: DataSource
+  @StateObject var dataSourcePostDate: DataSource
   @StateObject var favoriteForums = FavoriteForumsStorage.shared
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
   @State var showingHotTopics = false
   @State var userActivityIsActive = true
+  @State var order = TopicListRequest.Order.lastPost
+
+  var dataSource: DataSource {
+    switch order {
+    case .lastPost: return dataSourceLastPost
+    case .postDate: return dataSourcePostDate
+    default: return dataSourceLastPost
+    }
+  }
 
   static func build(forum: Forum) -> Self {
-    let dataSource = PagingDataSource<TopicListResponse, Topic>(
+    let dataSourceLastPost = DataSource(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
           $0.id = forum.id
           $0.page = UInt32(page)
+          $0.order = .lastPost
         })
       },
       onResponse: { response in
@@ -44,7 +53,22 @@ struct TopicListView: View {
       },
       id: \.id
     )
-    return Self.init(forum: forum, dataSource: dataSource)
+    let dataSourcePostDate = DataSource(
+      buildRequest: { page in
+        return .topicList(TopicListRequest.with {
+          $0.id = forum.id
+          $0.page = UInt32(page)
+          $0.order = .postDate
+        })
+      },
+      onResponse: { response in
+        let items = response.topics
+        let pages = response.pages
+        return (items, Int(pages))
+      },
+      id: \.id
+    )
+    return Self.init(forum: forum, dataSourceLastPost: dataSourceLastPost, dataSourcePostDate: dataSourcePostDate)
   }
 
   func newTopic() {
@@ -53,7 +77,7 @@ struct TopicListView: View {
       $0.forumID = self.forum.id
     }, pageToReload: nil)
   }
-  
+
   var isFavorite: Bool {
     favoriteForums.isFavorite(id: forum.id)
   }
@@ -62,18 +86,22 @@ struct TopicListView: View {
   var moreMenu: some View {
     Menu {
       Section {
-        Button(action: { favoriteForums.toggleFavorite(forum: forum) }) {
-          Label(
-            isFavorite ? "Remove from Favorites" : "Mark as Favorite",
-            systemImage: isFavorite ? "star.slash.fill" : "star"
-          )
-        }
         Button(action: { self.newTopic() }) {
           Label("New Topic", systemImage: "plus.circle")
         }
       }
 
       Section {
+        Menu {
+          Picker(selection: $order.animation(), label: Text("Order")) {
+            ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
+              Label(order.description, systemImage: order.icon)
+                .tag(order)
+            }
+          }
+        } label: {
+          Label("Order by", systemImage: order.icon)
+        }
         Button(action: { showingHotTopics = true }) {
           Label("Hot Topics", systemImage: "flame")
         }
@@ -92,6 +120,12 @@ struct TopicListView: View {
       }
 
       Section {
+        Button(action: { favoriteForums.toggleFavorite(forum: forum) }) {
+          Label(
+            isFavorite ? "Remove from Favorites" : "Mark as Favorite",
+            systemImage: isFavorite ? "star.slash.fill" : "star"
+          )
+        }
         #if os(macOS)
           Button(action: { dataSource.refresh() }) {
             Label("Refresh", systemImage: "arrow.clockwise")
@@ -144,12 +178,13 @@ struct TopicListView: View {
     Group {
       if dataSource.items.isEmpty {
         ProgressView()
+          .onAppear { dataSource.initialLoad() }
       } else {
         List {
-          Section(header: Text("Latest Topics")) {
+          Section(header: Text(order.latestTopicsDescription)) {
             ForEach(dataSource.items, id: \.id) { topic in
               NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-                TopicRowView(topic: topic)
+                TopicRowView(topic: topic, useTopicPostDate: order == .postDate)
               } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
             }
           }
@@ -157,6 +192,7 @@ struct TopicListView: View {
         #if os(iOS)
           .listStyle(GroupedListStyle())
           .refreshable(dataSource: dataSource)
+          .id(order)
         #endif
       }
     }
@@ -168,7 +204,7 @@ struct TopicListView: View {
       ToolbarItem(placement: .navigationBarTrailing) { icon }
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
     }
-      .onAppear { dataSource.initialLoad(); userActivityIsActive = true; selectedForum.inner = forum }
+      .onAppear { userActivityIsActive = true; selectedForum.inner = forum }
       .onDisappear {
       // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping
       // userActivityIsActive = false

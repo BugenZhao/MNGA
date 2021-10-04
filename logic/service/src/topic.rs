@@ -14,7 +14,7 @@ use crate::{
 use cache::CACHE;
 use chrono::{Duration, Utc};
 use futures::TryFutureExt;
-use protos::{DataModel::*, Service::*};
+use protos::{DataModel::*, Service::*, ToValue};
 use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
@@ -188,7 +188,7 @@ pub async fn get_favorite_topic_list(
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
-    let id = request.id.unwrap();
+    let id = request.get_id();
     let package = fetch_package(
         "thread.php",
         vec![
@@ -198,6 +198,7 @@ pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicLis
                 ("fid", id.get_fid())
             },
             ("page", &request.page.to_string()),
+            ("order_by", request.get_order().to_value()),
         ],
         vec![],
     )

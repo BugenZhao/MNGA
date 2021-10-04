@@ -64,9 +64,15 @@ message AsyncRequest {
 }
 
 message TopicListRequest {
+  enum Order {
+    LAST_POST = 0;
+    POST_DATE = 1;
+  }
+
   ForumId id = 1;
   uint32 page = 2;
   bool sort_subforums = 4;
+  Order order = 5;
 }
 message TopicListResponse {
   Forum forum = 4;

@@ -102,3 +102,8 @@
 "Desktop" = "桌面";
 "Enable Zoom for Image Viewer" = "为图片查看器启用缩放";
 "Options here are experimental or unstable." = "这些选项是实验性或不稳定的。";
+"Order by" = "排序方式";
+"Last Reply" = "最后回复";
+"Topic Post" = "话题发表";
+"Latest Topics by Last Reply Date" = "最新回复的话题";
+"Latest Topics by Topic Post Date" = "最新发表的话题";

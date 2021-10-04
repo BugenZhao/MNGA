@@ -47,10 +47,12 @@ struct RepliesNumView: View {
 
 struct TopicRowView: View {
   let topic: Topic
+  let useTopicPostDate: Bool
   let dimmedSubject: Bool
 
-  init(topic: Topic, dimmedSubject: Bool = true) {
+  init(topic: Topic, useTopicPostDate: Bool = false, dimmedSubject: Bool = true) {
     self.topic = topic
+    self.useTopicPostDate = useTopicPostDate
     self.dimmedSubject = dimmedSubject
   }
 
@@ -71,7 +73,7 @@ struct TopicRowView: View {
           Text(topic.authorName)
         }
         Spacer()
-        DateTimeTextView.build(timestamp: topic.lastPostDate, switchable: false)
+        DateTimeTextView.build(timestamp: useTopicPostDate ? topic.postDate : topic.lastPostDate, switchable: false)
       } .foregroundColor(.secondary)
         .font(.footnote)
     } .padding(.vertical, 4)

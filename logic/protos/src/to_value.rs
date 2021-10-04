@@ -1,4 +1,7 @@
-use crate::{DataModel::PostReplyAction_Operation, Service::PostVoteRequest_Operation};
+use crate::{
+    DataModel::PostReplyAction_Operation,
+    Service::{PostVoteRequest_Operation, TopicListRequest_Order},
+};
 
 pub trait ToValue {
     fn to_value(&self) -> &'static str;
@@ -21,6 +24,15 @@ impl ToValue for PostReplyAction_Operation {
             PostReplyAction_Operation::MODIFY => "modify",
             PostReplyAction_Operation::COMMENT => "reply",
             PostReplyAction_Operation::NEW => "new",
+        }
+    }
+}
+
+impl ToValue for TopicListRequest_Order {
+    fn to_value(&self) -> &'static str {
+        match self {
+            TopicListRequest_Order::LAST_POST => "",
+            TopicListRequest_Order::POST_DATE => "postdatedesc",
         }
     }
 }

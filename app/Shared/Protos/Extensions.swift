@@ -36,7 +36,7 @@ extension HotTopicListRequest.DateRange {
       return ""
     }
   }
-  
+
   var icon: String {
     switch self {
     case .day:
@@ -79,7 +79,7 @@ extension Device {
       return "Unknown"
     }
   }
-  
+
   var icon: String {
     switch self {
     case .apple:
@@ -120,7 +120,7 @@ extension Notification.TypeEnum {
       return "questionmark.circle"
     }
   }
-  
+
   var description: LocalizedStringKey {
     switch self {
     case .replyPost:
@@ -142,5 +142,40 @@ extension Post {
 extension PostId: CustomStringConvertible {
   var description: String {
     "\(self.tid), \(self.pid)"
+  }
+}
+
+extension TopicListRequest.Order {
+  var description: LocalizedStringKey {
+    switch self {
+    case .lastPost:
+      return "Last Reply"
+    case .postDate:
+      return "Topic Post"
+    default:
+      return ""
+    }
+  }
+
+  var latestTopicsDescription: LocalizedStringKey {
+    switch self {
+    case .lastPost:
+      return "Latest Topics by Last Reply Date"
+    case .postDate:
+      return "Latest Topics by Topic Post Date"
+    default:
+      return ""
+    }
+  }
+
+  var icon: String {
+    switch self {
+    case .lastPost:
+      return "p.circle"
+    case .postDate:
+      return "t.circle"
+    default:
+      return ""
+    }
   }
 }
