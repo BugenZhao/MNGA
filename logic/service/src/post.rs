@@ -23,7 +23,7 @@ pub fn extract_post_content(raw: String) -> PostContent {
         Err(ParseError::Content(error)) => {
             let fallback_spans = vec![Span {
                 value: Some(Span_oneof_value::plain(Span_Plain {
-                    text: raw.clone(), // todo: extract plain text
+                    text: raw.replace("<br/>", "\n"), // todo: extract plain text
                     ..Default::default()
                 })),
                 ..Default::default()

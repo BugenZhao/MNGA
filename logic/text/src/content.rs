@@ -34,7 +34,7 @@ peg::parser! {
         rule sticker_name() -> &'input str
             = $( (!right_bracket() any_char())+ )
         rule attribute() -> &'input str
-            = $( (!(right_bracket() / comma()) any_char())* )
+            = $( (!(left_bracket() / right_bracket() / comma()) any_char())* )
         rule attributes() -> Vec<&'input str>
             = equal() ts:(attribute() ** comma()) { ts }
 
@@ -51,7 +51,7 @@ peg::parser! {
         rule well_tagged() -> Span
             = st:start_tag() s:(span()*) ct:close_tag() {?
                 let (start_tag, attributes) = st;
-                if start_tag != ct { return Err("matched close tag"); }
+                if !start_tag.contains(ct) { return Err("matched close tag"); }
                 let attributes = attributes.into_iter().map(|s| s.to_owned()).collect();
 
                 Ok(span_of!(tagged(Span_Tagged {
@@ -243,6 +243,65 @@ Hello world
     #[test]
     fn test_divider() {
         let text = r#"[s:a2:doge][s:a2:doge]<br/>===2021-09-08 21:36===<br/>帖子超过修改时限，在此提交的内容将被增加至原帖，如需修改原帖请联系版主<br/>===2021-09-08 21:59===<br/>追加编辑中"#;
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_table_td1_td() {
+        let text = r#"
+===字体颜色===
+<br/>[table]<br/>
+[tr]<br/>
+[td1][align=center][size=120%][b]颜 色 名[/b][/size][/align][/td]<br/>
+[td1][align=center][size=120%][b]范 本[/b][/size][/align][/td]<br/>
+[td1][align=center][size=120%][b]粗 体 范 本[/b][/size][/align][/td]<br/>
+[td1][align=center][size=120%][b]备 注[/b][/size][/align][/td]
+[/tr]<br/>
+
+[tr]<br/>
+[td][align=center]默认颜色[/align][/td]<br/>
+[td][align=center]默认颜色(无需代码)[/align][/td]<br/>
+[td][align=center][b]默认颜色[/b][/align][/td]<br/>
+[td][/td]
+[/tr]<br/>
+
+[tr]<br/>
+[td][align=center]skyblue[/align][/td]<br/>
+[td][align=center][color=skyblue]skyblue 天蓝色[/color][/align][/td]<br/>
+[td][b][align=center][color=skyblue]skyblue 天蓝色[/color][/align][/b][/td]<br/>
+[td][/td]
+[/tr]<br/>
+
+[/table]"#;
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_verbatim_workaround() {
+        let text = r#"
+[*]文字网址超链接：[url=
+[size=100%]
+网址]
+[/size]
+文字[/url
+[size=100%]
+]
+[/size]
+
+[*]字体大小：
+[size=100%]
+[
+[/size]
+[size=100%]
+size=百分比]
+[/size]
+文字[
+[size=100%]
+/size]
+[/size]
+"#;
         let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }
