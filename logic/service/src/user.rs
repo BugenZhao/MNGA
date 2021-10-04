@@ -48,7 +48,9 @@ pub fn extract_user_and_cache(node: Node) -> Option<User> {
     use super::macros::get;
     let map = extract_kv(node);
 
-    let raw_signature = get!(map, "signature").unwrap_or_default();
+    let raw_signature = get!(map, "signature")
+        .or_else(|| get!(map, "sign"))
+        .unwrap_or_default();
     let signature = extract_post_content(raw_signature);
 
     let user = User {
