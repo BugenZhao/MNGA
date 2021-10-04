@@ -37,7 +37,7 @@ struct PostReplyChainView: View {
         }
       }
     } .navigationTitle("Replies")
-      .background { TopicDetailsActionNavigationView(action: action) }
+      .background { TopicDetailsActionBasicNavigationView(action: action) }
       .environmentObject(action)
       .environment(\.enableShowReplyChain, false)
     #if os(iOS)

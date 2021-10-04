@@ -104,14 +104,7 @@ struct PostRowView: View {
   var signature: some View {
     if pref.showSignature, let sigSpans = user?.signature.spans, !sigSpans.isEmpty {
       Divider()
-      HStack(alignment: .top) {
-        Image(systemName: "signature")
-          .foregroundColor(.accentColor)
-          .imageScale(.small)
-        PostContentView(spans: sigSpans, defaultFont: .subheadline, defaultColor: .secondary)
-          .equatable()
-          .environment(\.useRedact, false)
-      }
+      UserSignatureView(spans: sigSpans, font: .subheadline, color: .secondary)
     }
   }
 

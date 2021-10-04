@@ -10,7 +10,7 @@ import SwiftUI
 import SwiftUIX
 import SwiftUIRefresh
 
-struct TopicDetailsActionNavigationView: View {
+struct TopicDetailsActionBasicNavigationView: View {
   @ObservedObject var action: TopicDetailsActionModel
 
   var body: some View {
@@ -206,7 +206,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var navigation: some View {
-    TopicDetailsActionNavigationView(action: action)
+    TopicDetailsActionBasicNavigationView(action: action)
 
     let showingChain = self.action.showingReplyChain ?? .init()
     NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) { }

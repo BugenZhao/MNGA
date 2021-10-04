@@ -124,7 +124,7 @@ struct UserView: View {
             }
             HStack(spacing: 2) {
               Image(systemName: "flag")
-              Text("\(user?.fame ?? 0)")
+              Text("\((user?.fame ?? 0) / 10)")
                 .redacted(if: badUser)
             } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
 

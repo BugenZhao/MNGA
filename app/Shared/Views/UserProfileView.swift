@@ -24,6 +24,8 @@ struct UserProfileView: View {
   @StateObject var postDataSource: PostDataSource
   @State var tab = Tab.topics
 
+  @StateObject var action = TopicDetailsActionModel() // for signature only, needs refactoring
+
   static func build(user: User) -> Self {
     let topicDataSource = TopicDataSource(
       buildRequest: { page in
@@ -62,11 +64,11 @@ struct UserProfileView: View {
   var list: some View {
     switch self.tab {
     case .topics:
-      Section(header: Text("\(user.name)'s Topics")) {
-        if topicDataSource.items.isEmpty {
-          LoadingRowView()
-            .onAppear { topicDataSource.initialLoad() }
-        } else {
+      if topicDataSource.items.isEmpty {
+        LoadingRowView()
+          .onAppear { topicDataSource.initialLoad() }
+      } else {
+        Section(header: Text("\(user.name)'s Topics")) {
           ForEach(topicDataSource.items, id: \.id) { topic in
             NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
               TopicRowView(topic: topic)
@@ -75,11 +77,11 @@ struct UserProfileView: View {
         }
       }
     case .posts:
-      Section(header: Text("\(user.name)'s Posts")) {
-        if postDataSource.items.isEmpty {
-          LoadingRowView()
-            .onAppear { postDataSource.initialLoad() }
-        } else {
+      if postDataSource.items.isEmpty {
+        LoadingRowView()
+          .onAppear { postDataSource.initialLoad() }
+      } else {
+        Section(header: Text("\(user.name)'s Posts")) {
           ForEach(postDataSource.items, id: \.post.id) { tp in
             NavigationLink(destination: TopicDetailsView.build(topic: tp.topic)) {
               TopicPostRowView(topic: tp.topic, post: tp.post)
@@ -104,6 +106,9 @@ struct UserProfileView: View {
     List {
       Section(header: Text("User Profile")) {
         UserView(user: user, style: .huge)
+        if let spans = user.signature.spans, !spans.isEmpty {
+          UserSignatureView(spans: spans, font: .callout, color: .primary)
+        }
       }
 
       if !user.id.isEmpty {
@@ -111,6 +116,8 @@ struct UserProfileView: View {
       }
     }
       .toolbar { picker }
+      .environmentObject(action)
+      .background { TopicDetailsActionBasicNavigationView(action: action) }
     #if os(iOS)
       .listStyle(GroupedListStyle())
     #endif
