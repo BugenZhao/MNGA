@@ -42,6 +42,18 @@ struct PostRowView: View {
       PostRowUserView(post: post)
       Spacer()
       floor
+      if #available(iOS 15.0, *) {
+        Menu(content: { menu }) {
+          Image(systemName: "ellipsis.circle.fill")
+            .symbolRenderingMode(.hierarchical)
+            .imageScale(.large)
+        }
+      } else {
+        Menu(content: { menu }) {
+          Image(systemName: "ellipsis")
+            .imageScale(.large)
+        }
+      }
     }
   }
 
@@ -135,24 +147,20 @@ struct PostRowView: View {
   var menu: some View {
     Section {
       Button(action: { copyContent(post.content.raw) }) {
-//        Label("Copy Raw Content", systemImage: "doc.on.doc")
-        Text("Copy Raw Content")
+        Label("Copy Raw Content", systemImage: "doc.on.doc")
       }
     }
     if let model = postReply {
       Section {
         Button(action: { doQuote(model: model) }) {
-//          Label("Quote", systemImage: "quote.bubble")
-          Text("Quote")
+          Label("Quote", systemImage: "quote.bubble")
         }
         Button(action: { doComment(model: model) }) {
-//          Label("Comment", systemImage: "tag")
-          Text("Comment")
+          Label("Comment", systemImage: "tag")
         }
         if authStorage.authInfo.inner.uid == post.authorID {
           Button(action: { doEdit(model: model) }) {
-//            Label("Edit", systemImage: "pencil")
-            Text("Edit")
+            Label("Edit", systemImage: "pencil")
           }
         }
       }
@@ -161,8 +169,7 @@ struct PostRowView: View {
       Section {
         if enableAuthorOnly {
           Button(action: { action.navigateToAuthorOnly = post.authorID }) {
-//            Label("This Author Only", systemImage: "person")
-            Text("This Author Only")
+            Label("This Author Only", systemImage: "person")
           }
         }
       }
@@ -178,7 +185,7 @@ struct PostRowView: View {
       signature
     } .padding(.vertical, 4)
       .fixedSize(horizontal: false, vertical: true)
-      .contextMenu { menu }
+//      .contextMenu { menu }
 //      .cellContextMenu(actions: menuActions)
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
