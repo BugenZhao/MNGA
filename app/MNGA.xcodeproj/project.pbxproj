@@ -376,9 +376,9 @@
 		B437B27A269B0DE10092FF9E /* Modifiers */ = {
 			isa = PBXGroup;
 			children = (
-				B437B27B269B0E190092FF9E /* ToolbarModifier.swift */,
-				B409CE6C26A0920C00F617EC /* ToastModifier.swift */,
 				B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */,
+				B409CE6C26A0920C00F617EC /* ToastModifier.swift */,
+				B437B27B269B0E190092FF9E /* ToolbarModifier.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";

@@ -114,58 +114,60 @@ struct PostRowView: View {
       .equatable()
   }
 
-  @ArrayBuilder<CellAction?>
-  var menuActions: [CellAction?] {
-    CellAction(title: "Copy Raw Content", systemImage: "doc.on.doc") { copyContent(post.content.raw) }
-    if let model = postReply {
-      CellAction.separator
-      CellAction(title: "Quote", systemImage: "quote.bubble") { doQuote(model: model) }
-      CellAction(title: "Comment", systemImage: "tag") { doComment(model: model) }
-      if authStorage.authInfo.inner.uid == post.authorID {
-        CellAction(title: "Edit", systemImage: "pencil") { doEdit(model: model) }
-      }
-    }
-    if let action = action, enableAuthorOnly {
-      CellAction.separator
-      CellAction(title: "This Author Only", systemImage: "person") { action.navigateToAuthorOnly = post.authorID }
-    }
-  }
-
-//  @ViewBuilder
-//  var menu: some View {
-//    Section {
-//      Label("#\(post.id.pid)", systemImage: "number")
-//    }
-//    Section {
-//      Button(action: { copyContent(post.content.raw) }) {
-//        Label("Copy Raw Content", systemImage: "doc.on.doc")
-//      }
-//    }
+//  @ArrayBuilder<CellAction?>
+//  var menuActions: [CellAction?] {
+//    CellAction(title: self.post.content.raw, systemImage: "doc.on.doc") { copyContent(post.content.raw) }
 //    if let model = postReply {
-//      Section {
-//        Button(action: { doQuote(model: model) }) {
-//          Label("Quote", systemImage: "quote.bubble")
-//        }
-//        Button(action: { doComment(model: model) }) {
-//          Label("Comment", systemImage: "tag")
-//        }
-//        if authStorage.authInfo.inner.uid == post.authorID {
-//          Button(action: { doEdit(model: model) }) {
-//            Label("Edit", systemImage: "pencil")
-//          }
-//        }
+//      CellAction.separator
+//      CellAction(title: "Quote", systemImage: "quote.bubble") { doQuote(model: model) }
+//      CellAction(title: "Comment", systemImage: "tag") { doComment(model: model) }
+//      if authStorage.authInfo.inner.uid == post.authorID {
+//        CellAction(title: "Edit", systemImage: "pencil") { doEdit(model: model) }
 //      }
 //    }
-//    if let action = action {
-//      Section {
-//        if enableAuthorOnly {
-//          Button(action: { action.navigateToAuthorOnly = post.authorID }) {
-//            Label("This Author Only", systemImage: "person")
-//          }
-//        }
-//      }
+//    if let action = action, enableAuthorOnly {
+//      CellAction.separator
+//      CellAction(title: "This Author Only", systemImage: "person") { action.navigateToAuthorOnly = post.authorID }
 //    }
 //  }
+
+  @ViewBuilder
+  var menu: some View {
+    Section {
+      Button(action: { copyContent(post.content.raw) }) {
+//        Label("Copy Raw Content", systemImage: "doc.on.doc")
+        Text("Copy Raw Content")
+      }
+    }
+    if let model = postReply {
+      Section {
+        Button(action: { doQuote(model: model) }) {
+//          Label("Quote", systemImage: "quote.bubble")
+          Text("Quote")
+        }
+        Button(action: { doComment(model: model) }) {
+//          Label("Comment", systemImage: "tag")
+          Text("Comment")
+        }
+        if authStorage.authInfo.inner.uid == post.authorID {
+          Button(action: { doEdit(model: model) }) {
+//            Label("Edit", systemImage: "pencil")
+            Text("Edit")
+          }
+        }
+      }
+    }
+    if let action = action {
+      Section {
+        if enableAuthorOnly {
+          Button(action: { action.navigateToAuthorOnly = post.authorID }) {
+//            Label("This Author Only", systemImage: "person")
+            Text("This Author Only")
+          }
+        }
+      }
+    }
+  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -176,8 +178,8 @@ struct PostRowView: View {
       signature
     } .padding(.vertical, 4)
       .fixedSize(horizontal: false, vertical: true)
-      .cellContextMenu(actions: menuActions)
-    //    .contextMenu { menu }
+      .contextMenu { menu }
+//      .cellContextMenu(actions: menuActions)
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif

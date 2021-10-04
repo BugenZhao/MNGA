@@ -50,6 +50,8 @@ fileprivate class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
 
 // BUGEN'S HACK:
 // This modifier is intended to improve the scrolling performance on list cells with context menu
+//
+// BUGGY, DO NOT USE
 struct CellContextMenuModifier: ViewModifier {
   private let delegate: MenuDelegate
   private let interaction: UIContextMenuInteraction
