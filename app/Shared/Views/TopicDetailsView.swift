@@ -44,6 +44,10 @@ struct TopicDetailsView: View {
 
   @State var isFavored: Bool
 
+  static func build(id: String) -> some View {
+    Self.build(topic: .with { $0.id = id })
+  }
+
   static func build(topic: Topic, localMode: Bool = false) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
@@ -113,12 +117,6 @@ struct TopicDetailsView: View {
   var moreMenu: some View {
     Menu {
       Section {
-        Button(action: { toggleFavor() }) {
-          Label(
-            isFavored ? "Remove from Favorites" : "Mark as Favorite",
-            systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
-          )
-        }
         Button(action: { self.doReplyTopic() }) {
           Label("Reply", systemImage: "arrowshape.turn.up.left")
         }
@@ -141,6 +139,14 @@ struct TopicDetailsView: View {
           Button(action: { self.action.navigateToLocalMode = true }) {
             Label("View Cached Topic", systemImage: "clock")
           }
+        }
+      }
+      Section {
+        Button(action: { toggleFavor() }) {
+          Label(
+            isFavored ? "Remove from Favorites" : "Mark as Favorite",
+            systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
+          )
         }
         Button(action: { self.dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")

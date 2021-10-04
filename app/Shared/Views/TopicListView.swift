@@ -27,6 +27,7 @@ struct TopicListView: View {
   @State var showingSubforumsModal = false
   @State var showingHotTopics = false
   @State var showingRecommendedTopics = false
+  @State var showingToppedTopic = false
   @State var userActivityIsActive = true
   @State var order = PreferencesStorage.shared.defaultTopicListOrder
 
@@ -88,6 +89,11 @@ struct TopicListView: View {
     favoriteForums.isFavorite(id: forum.id)
   }
 
+  var toppedTopicID: String? {
+    let id = dataSource.latestResponse?.forum.toppedTopicID ?? forum.toppedTopicID
+    return id.isEmpty ? nil : id
+  }
+
   @ViewBuilder
   var moreMenu: some View {
     Menu {
@@ -117,7 +123,12 @@ struct TopicListView: View {
         if let subforums = dataSource.latestResponse?.subforums,
           !subforums.isEmpty {
           Button(action: { showingSubforumsModal = true }) {
-            Label("Subforums", systemImage: "line.horizontal.3.decrease.circle")
+            Label("Subforums (\(subforums.count))", systemImage: "list.triangle")
+          }
+        }
+        if let _ = toppedTopicID {
+          Button(action: { showingToppedTopic = true }) {
+            Label("Topped Topic", systemImage: "arrow.up.to.line")
           }
         }
       }
@@ -173,9 +184,10 @@ struct TopicListView: View {
   }
 
   @ViewBuilder
-  var goodTopics: some View {
+  var navigations: some View {
     NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { }
     NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { }
+    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { }
   }
 
   @ViewBuilder
@@ -207,7 +219,7 @@ struct TopicListView: View {
     }
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
-      .background { subforum; goodTopics }
+      .background { subforum; navigations }
       .navigationTitle(forum.name)
       .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) { icon }

@@ -2,13 +2,12 @@ use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
     fetch_package,
-    forum::{make_fid, make_stid},
+    forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
     post::extract_post_with_at_page,
     user::extract_user_and_cache,
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
-        extract_string,
     },
 };
 use cache::CACHE;
@@ -246,17 +245,12 @@ pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicLis
         subforums
     };
 
-    let fid = extract_string(&package, "/root/__F/fid")?;
-    let id = make_fid(fid);
-
-    let forum = Forum {
-        id: Some(id).into(),
-        name: extract_string(&package, "/root/__F/name")?,
-        ..Default::default()
-    };
+    let forum = extract_node(&package, "/root/__F", extract_forum)
+        .unwrap_or_default()
+        .flatten();
 
     Ok(TopicListResponse {
-        forum: Some(forum).into(),
+        forum: forum.into(),
         topics: topics.into(),
         pages,
         subforums: subforums.into(),
@@ -433,6 +427,7 @@ mod test {
         .await?;
 
         println!("response: {:?}", response);
+        println!("forum: {:#?}", response.get_forum());
 
         assert!(!response.get_topics().is_empty());
 

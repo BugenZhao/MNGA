@@ -10,7 +10,7 @@
 "Topic" = "话题";
 "Post" = "帖子";
 "Replies" = "回复";
-"Subforums" = "子板块";
+"Subforums (%lld)" = "子版块 (%lld)";
 "Refresh" = "刷新";
 "Copy Raw Content" = "拷贝原始内容";
 "Reply" = "回复";
@@ -110,3 +110,4 @@
 "Bad or Unsupported Post Content Format" = "不规范或尚未支持的帖子格式";
 "Default Topic List Order" = "默认话题列表排序方式";
 "Recommended Topics" = "推荐话题";
+"Topped Topic" = "版头";

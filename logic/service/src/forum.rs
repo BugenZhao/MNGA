@@ -27,7 +27,7 @@ pub fn make_stid(id: String) -> ForumId {
     }
 }
 
-fn extract_forum(node: Node) -> Option<Forum> {
+pub fn extract_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
 
@@ -44,6 +44,7 @@ fn extract_forum(node: Node) -> Option<Forum> {
         name: get!(map, "name")?,
         info: get!(map, "info").unwrap_or_default(),
         icon_url,
+        topped_topic_id: get!(map, "topped_topic").unwrap_or_default(),
         ..Default::default()
     };
 

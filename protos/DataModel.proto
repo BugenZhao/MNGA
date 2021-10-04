@@ -99,6 +99,7 @@ message Forum {
   string name = 2;
   string info = 3;
   string icon_url = 4;
+  string topped_topic_id = 5;
 }
 
 message Span {
