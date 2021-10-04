@@ -221,7 +221,7 @@ struct TopicListView: View {
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { subforum; navigations }
       .navigationTitle(forum.name)
-      .toolbar {
+      .toolbarWithFix {
       ToolbarItem(placement: .navigationBarTrailing) { icon }
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
     }

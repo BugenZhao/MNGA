@@ -115,7 +115,7 @@ struct UserProfileView: View {
         list
       }
     }
-      .toolbar { picker }
+      .toolbarWithFix { picker }
       .environmentObject(action)
       .background { TopicDetailsActionBasicNavigationView(action: action) }
     #if os(iOS)
