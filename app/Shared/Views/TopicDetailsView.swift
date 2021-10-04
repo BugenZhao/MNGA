@@ -122,14 +122,6 @@ struct TopicDetailsView: View {
         }
       }
       Section {
-        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
-          Label("Share", systemImage: "square.and.arrow.up")
-        }
-        Button(action: self.shareAsImage) {
-          Label("Share As Image", systemImage: "text.below.photo")
-        }
-      }
-      Section {
         if enableAuthorOnly {
           Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
             Label("Author Only", systemImage: "person.fill")
@@ -139,6 +131,14 @@ struct TopicDetailsView: View {
           Button(action: { self.action.navigateToLocalMode = true }) {
             Label("View Cached Topic", systemImage: "clock")
           }
+        }
+      }
+      Section {
+        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
+          Label("Share", systemImage: "square.and.arrow.up")
+        }
+        Button(action: self.shareAsImage) {
+          Label("Share As Image", systemImage: "text.below.photo")
         }
       }
       Section {

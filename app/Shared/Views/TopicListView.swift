@@ -120,12 +120,6 @@ struct TopicListView: View {
         Button(action: { showingRecommendedTopics = true }) {
           Label("Recommended Topics", systemImage: "hand.thumbsup")
         }
-        if let subforums = dataSource.latestResponse?.subforums,
-          !subforums.isEmpty {
-          Button(action: { showingSubforumsModal = true }) {
-            Label("Subforums (\(subforums.count))", systemImage: "list.triangle")
-          }
-        }
         if let _ = toppedTopicID {
           Button(action: { showingToppedTopic = true }) {
             Label("Topped Topic", systemImage: "arrow.up.to.line")
@@ -140,6 +134,12 @@ struct TopicListView: View {
       }
 
       Section {
+        if let subforums = dataSource.latestResponse?.subforums,
+          !subforums.isEmpty {
+          Button(action: { showingSubforumsModal = true }) {
+            Label("Subforums (\(subforums.count))", systemImage: "list.triangle")
+          }
+        }
         Button(action: { favoriteForums.toggleFavorite(forum: forum) }) {
           Label(
             isFavorite ? "Remove from Favorites" : "Mark as Favorite",
