@@ -37,9 +37,11 @@ peg::parser! {
             = $( (!(left_bracket() / right_bracket() / comma()) any_char())* )
         rule attributes() -> Vec<&'input str>
             = equal() ts:(attribute() ** comma()) { ts }
+        rule space_sep_attrs()  // ignored "[td rowspan=2 colspan=3]"
+            = " " ( (!("=") attribute()) ** " " )
 
         rule start_tag() -> (&'input str, Vec<&'input str>)
-            = left_bracket() t:token() a:attributes()? right_bracket() {
+            = left_bracket() t:token() a:attributes()? space_sep_attrs()? right_bracket() {
                 (t, a.unwrap_or_default())
             }
         rule close_tag() -> &'input str
@@ -51,7 +53,7 @@ peg::parser! {
         rule well_tagged() -> Span
             = st:start_tag() s:(span()*) ct:close_tag() {?
                 let (start_tag, attributes) = st;
-                if !start_tag.contains(ct) { return Err("matched close tag"); }
+                // if !start_tag.contains(ct) { return Err("matched close tag"); } // todo: add a flag for this check
                 let attributes = attributes.into_iter().map(|s| s.to_owned()).collect();
 
                 Ok(span_of!(tagged(Span_Tagged {
@@ -91,7 +93,7 @@ peg::parser! {
             }
 
         rule divider() -> Span
-            = divider_tag() s:(span()*) divider_tag() {
+            = divider_tag() s:(non_divider_span()*) divider_tag() {
                 span_of!(tagged(Span_Tagged {
                     tag: "_divider".to_owned(),
                     spans: s.into(),
@@ -107,11 +109,15 @@ peg::parser! {
                 }))
             }
 
+        rule rich() -> Span
+            = tagged() / sticker() / br()
+        rule non_divider_span() -> Span
+            = rich() / plain()  // todo: any better way?
         rule span() -> Span
-            = s:(tagged() / sticker() / br() / divider() / plain()) { s }
+            = rich() / divider() / plain()
 
         pub rule content() -> Vec<Span>
-            = ss:(span())* { ss }
+            = (span())*
     }
 }
 
@@ -309,6 +315,22 @@ size=百分比]
 /size]
 [/size]
 "#;
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_genshin_mismatched_close_tag() {
+        let text = r#"
+        [table]<br/>[tr]<br/>[td20][b][align=center][color=red][size=130%]版务公告[/size][/color][/align][/b][/td]<br/>[td rowspan=2 colspan=3][size=0]原神Logo[/size][align=center][size=0]原神Logo[/size][img]./mon_202008/22/-10yuu8Q5-9lsxKeT8S2s-28.png[/img]<br/>[color=silver]将军长生不灭，幕府锁国之期亦无尽头。<br/>追求&#39;永恒&#39;之神，在世人眼中见到了怎样的永恒?[/color][/align][/td]<br/>[td20][align=center][color=tomato][b][size=130%]同人创作[/size][/b][/color][/align][/td][/tr]<br/>[tr]<br/>[td][align=center][url=/read.php?tid=28339827][color=red][b]本版版规[/b][/color][/url][url=/read.php?tid=28339799][color=red][b]版务公告&amp;疑问意见反馈[/b][/color][/url]<br/>[url=/read.php?tid=28318948][color=red][b]版面活动[/b][/color][/url][url=/read.php?tid=28340190][color=red][b]申精/补分/打捞[/b][/color][/url]<br/>[url=/read.php?tid=24523685][color=red][b]发帖指南[/b][/color][/url][url=/read.php?tid=28339854][color=red][b]徽章兑换[/b][/color][/url][url=/read.php?tid=23326940][color=red][b]手机版版头[/b][/color][/url]<br/>[url=/read.php?tid=28339752][color=red]晒欧[/color][/url] [url=/read.php?tid=23345797][color=red]沉船[/color][/url] [url=/read.php?tid=27214494][color=red]水楼[/color][/url][/align][/td]<br/>[td][align=center][url=/read.php?tid=23849966][color=tomato][b]万文集舍藏书楼[/b][/color][/url][url=/read.php?tid=25749503][color=tomato][b]万文集舍图楼汇总索引[/b][/color][/url]<br/>[url=/read.php?tid=23604117][color=tomato][b]考据与同人创作汇总[/b][/color][/url][url=/read.php?tid=24924337][color=tomato][b]安科贴合集整理[/b][/color][/url]<br/>[url=/read.php?tid=25157962][color=tomato]人像拍摄的心得和技巧[/color][/url][url=/read.php?tid=24827770][color=tomato]龙脊雪山观光摄影[/color][/url][/align][/td][/tr]<br/>[tr]<br/>[td][align=center][color=blue][b][size=130%]数值计算[/size][/b][/color][/align][/td]<br/>[td rowspan=2 colspan=3][size=0%]版图 + 轮播角色图[/size][align=center][size=0%]版图 + 轮播角色图[/size][randomblock][url=/read.php?tid=28281857][img]./mon_202109/21/-10yuu8Qj7t-6vtlK1sT3cSj6-8w.jpg.medium.jpg[/img][/url][/randomblock]<br/>[randomblock][url=/read.php?tid=28281857][img]./mon_202109/21/-10yuu8Qj7t-aijxK1lT3cSj6-8w.jpg.medium.jpg[/img][/url][/randomblock]<br/>[randomblock][url=/read.php?tid=28281857][img]./mon_202108/30/-10yuu8Q176-384kK1kT3cSj6-8w.jpg.medium.jpg[/img][/url][/randomblock]<br/>[/align][/td]<br/>[td][align=center][color=chocolate][b][size=130%]攻略心得[/size][/b][/color][/align][/td][/tr]<br/>[tr]<br/>[td][align=center][url=/read.php?tid=23435445][color=blue][b]伤害数值计算与机制汇总[/b][/color][/url][url=/read.php?tid=24362520][color=blue][b]原神工具汇总[/b][/color][/url]<br/>[url=/read.php?tid=25564438][color=blue][b]《伤害乘区论》[/b][/color][/url][url=/read.php?tid=26824486][color=blue][b]《韧性力学》[/b][/color][/url]<br/>[url=/read.php?tid=24400590][color=blue][b]《高等元素论》[/b][/color][/url][url=/read.php?tid=25681266][color=blue][b]《高等元素论(附录)》[/b][/color][/url]<br/>[url=/read.php?tid=26794498][color=blue]《元素附着论》[/color][/url][url=/read.php?tid=23836189][color=blue]全角色施加元素附着时间[/color][/url]<br/>[url=/read.php?tid=23850775][color=blue]《扩散反应手册》[/color][/url][url=/read.php?tid=26932608][color=blue]《元素能量学》[/color][/url]<br/>[url=/read.php?tid=25127442][color=blue]《普通破盾学》[/color][/url][url=/read.php?tid=25537580][color=blue]《普通破盾学》续[/color][/url]<br/>[url=/read.php?tid=26432895][color=blue][b]圣遗物胚子评分[/b][/color][/url][url=/read.php?tid=25463257][color=blue]《圣遗物体力价值论》[/color][/url]<br/>[url=/read.php?tid=24270728][color=blue]《圣遗物数值学导论》[/color][/url][url=/read.php?tid=23576382][color=blue]圣遗物机制详解[/color][/url]<br/>[url=/read.php?tid=27431452][color=blue]原神人物技能倍率成长模型及分类[/color][/url][/align][/td]<br/>[td][align=center][url=/read.php?tid=24448426][color=chocolate][b]深境螺旋攻略合集[/b][/color][/url][url=/read.php?tid=26887673][color=chocolate][b]家园及钓鱼攻略合集[/b][/color][/url]<br/>[url=/read.php?tid=23367930][color=chocolate]风神瞳(蒙德)位置[/color][/url][url=/read.php?tid=23368056][color=chocolate]岩神瞳(璃月)位置[/color][/url]<br/>[url=/read.php?tid=24785827][color=chocolate]绯红玉髓(雪山)位置[/color][/url][url=/read.php?tid=27699709][color=chocolate]雷神瞳(稻妻)位置[/color][/url]<br/><br/>[url=/read.php?tid=23603640][color=chocolate][b]原神角色评测汇总[/b][/color][/url]<br/>[url=/read.php?tid=27703615][color=chocolate]神里绫华[/color][/url][url=/read.php?tid=27418170][color=chocolate]枫原万叶[/color][/url][url=/read.php?tid=26833730][color=chocolate]优菈[/color][/url]<br/>[url=/read.php?tid=26478064][color=chocolate]公子双火[/color][/url][url=/read.php?tid=25634102][color=chocolate]北斗双雷[/color][/url][url=/read.php?tid=28355228][color=chocolate]雷电将军[/color][/url]<br/>[url=/read.php?tid=25783438][color=chocolate]胡桃[/color][/url][url=/read.php?tid=26055894][color=chocolate]凯亚[/color][/url][url=/read.php?tid=24846473][color=chocolate]阿贝多[/color][/url][url=/read.php?tid=26380918][color=chocolate]辛焱[/color][/url]<br/>[url=/read.php?tid=27035535][color=chocolate]可莉[/color][/url][url=/read.php?tid=25411130][color=chocolate]魈[/color][/url][url=/read.php?tid=23591717][color=chocolate]雷泽[/color][/url][/align][/td][/tr]<br/>[tr]<br/>[td][align=center][b][color=purple][size=120%]冒险团笔记[/size][/color][/b][/align][/td]<br/>[td 20][align=center][b][color=green][size=120%]萌新攻略[/size][/color][/b][/align][/td]<br/>[td 20][align=center][b][color=darkblue][size=120%]日常推荐[/size][/color][/b][/align][/td]<br/>[td 20][align=center][b][color=royalblue][size=120%]猫尾酒馆[/size][/color][/b][/align][/td]<br/>[td][align=center][b][color=teal][size=120%]提瓦特大使馆[/size][/color][/b][/align][/td][/tr]<br/>[tr]<br/>[td][align=center][url=/read.php?tid=25843014][color=purple][b]全角色收益曲线、圣遗物推荐、参考面板[/b][/color][/url]<br/>[url=/read.php?tid=24079044][color=purple]抗性表及系数公式，详解各种增伤机制[/color][/url]<br/>[url=/read.php?tid=23642993&amp;amp;_ff=650][color=purple]每日挖矿路线推荐[/color][/url][url=/read.php?tid=23802190][color=purple]圣遗物评分体系[/color][/url]<br/>[url=/read.php?tid=23954929][color=purple]特殊副本&amp;支线任务攻略合集[/color][/url]<br/>[url=/read.php?tid=23882825][color=purple]书籍收集方式大全[/color][/url][url=/read.php?tid=23443257][color=purple]地图商人货物汇总[/color][/url][/align][/td]<br/>[td][align=center][url=/read.php?tid=26987864][color=green][b]原神基础游戏内容攻略整理分类[/b][/color][/url]<br/>[url=/read.php?tid=27859119][b][color=green]全角色圣遗物及武器搭配简述[/color][/b][/url]<br/>[url=/read.php?tid=25501812][color=green]泥潭交流手册[/color][/url][url=/read.php?tid=23359469][color=green]好友招募楼[/color][/url]<br/>[url=/read.php?tid=25870592][color=green]常规配队思路与位置思考[/color][/url]<br/>[url=/read.php?tid=28026734][color=green]原神抽卡概率工具表(仅供参考)[/color][/url][/align][/td]<br/>[td][align=center][url=/read.php?tid=27875210][color=darkblue][b]2.1圣遗物狗粮效率采集[/b][/color][/url]<br/>[url=/read.php?tid=28073645][color=darkblue][b]2.0版本精锻矿石刷新机制[/b][/color][/url]<br/>[url=/read.php?tid=23416874][color=darkblue]蒙德璃月刷怪路线[/color][/url][url=/read.php?tid=23464645][color=darkblue]挖矿机制及路线推荐[/color][/url]<br/>[url=/read.php?tid=24192272][color=darkblue]武器/人物突破 素材周常表[/color][/url]<br/>[url=/read.php?tid=23885052][color=darkblue]全特产采集[/color][/url][url=/read.php?tid=25273468][color=darkblue]懒人材料收集指南[/color][/url][/align][/td]<br/>[td][align=center][url=/read.php?tid=27730366][color=royalblue][b]2.0版本攻略汇总[/b][/color][/url][url=/read.php?tid=28472375][color=royalblue][b]2.1新版本攻略汇总[/b][/color][/url]<br/>[url=/read.php?tid=28391158][color=royalblue][b]原神2.1版本完美白嫖[/b][/color][/url]<br/>[url=/read.php?tid=28321485][color=royalblue][b]五精鱼叉快速获取攻略[/b][/color][/url]<br/>[url=/read.php?tid=28315777][color=royalblue][b]天云草实路线(目前180个)[/b][/color][/url]<br/>[url=/read.php?tid=27716986][color=royalblue]野伏众(刀镡)路线[/color][/url][url=/read.php?tid=27703526][color=royalblue]绯樱绣球路线[/color][/url]<br/>[/align][/td]<br/>[td][align=center][url=https://genshin.pub/][color=teal][b]今日素材本[/b][/color][/url][url=/read.php?tid=27152962][color=teal][b]Maid每日事项工具[/b][/color][/url]<br/>[url=https://weibo.com/u/7502751416][color=teal][b]NGA原神版微博[/b][/color][/url]<br/>[url=https://bbs.mihoyo.com/ys/obc/?bbs_presentation_style=no_header][color=teal][b]原神观测枢wiki[/b][/color][/url][url=https://wiki.biligame.com/ys/?curid=252][color=teal][b]原神地图工具[/b][/color][/url]<br/>[url=/read.php?tid=22869555][color=teal][b]攻略组招募丨加入冒险团[/b][/color][/url][/align][/td][/tr]<br/>[/table]<br/>[align=center][color=silver]Olah! 亲爱的旅行者们: 发帖请阅读[url=/read.php?tid=27917162][b]本版版规[/b][/url]，善用版头、精华区以及搜索功能; 发帖时请选择正确的版块，[b]错版会被锁隐并可能导致处罚[/b]。更多说明请看[url=/read.php?tid=24523685][b]发帖指南[/b][/url]。请勿讨论/宣传初始号，[b]严禁任何RMT(现金交易)行为[/b] [/align]<br/>[align=center]新交流一群518490267；交流二群684070156；新交流三群965556146；挖矿一群1156668308；挖矿二群912599725；挖矿3群: 546256232(已满) 审核反馈群：850950799(禁止聊天，仅用于加精过审申请)[/color][/align]
+"#;
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_too_many_divider() {
+        let text = &"======".repeat(10000).to_string();
         let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }
