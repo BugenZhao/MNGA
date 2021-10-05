@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "ac|计划通.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ac|计划通@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

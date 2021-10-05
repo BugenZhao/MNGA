@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "ac|喘.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ac|喘@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

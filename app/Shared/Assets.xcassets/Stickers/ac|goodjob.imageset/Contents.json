@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "ac|goodjob.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ac|goodjob@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
