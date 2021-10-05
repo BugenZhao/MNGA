@@ -5,9 +5,9 @@ OUT_LIBS = out/libs
 OUT_LIBS_ANDROID = out/libs/jniLibs
 OUT_INCLUDE = out/include
 
-release: swift-pb logic-release
+ios-release: swift-pb logic-release
 
-debug: swift-pb logic-debug
+ios-debug: swift-pb logic-debug
 
 swift-pb:
 	@echo ">>>>> Swift PB"
@@ -17,8 +17,8 @@ logic-release: logic-release-ios logic-bindings
 
 logic-release-macos:
 	@echo ">>>>> Logic macOS"
-	${CARGO} build --release
-	cp ${TARGET}/release/liblogic.a ${OUT_LIBS}/liblogicmacos.a
+	${CARGO} lipo --release --targets aarch64-apple-darwin x86_64-apple-darwin
+	cp ${TARGET}/universal/release/liblogic.a ${OUT_LIBS}/liblogicmacos.a
 
 logic-release-ios:
 	@echo ">>>>> Logic iOS"
