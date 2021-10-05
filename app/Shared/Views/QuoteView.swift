@@ -23,11 +23,6 @@ struct QuoteView<Content>: View where Content: View {
     build()
       .frame(maxWidth: fullWidth ? .infinity : nil, alignment: .topLeading)
       .padding(.small)
-      .background(
-      RoundedRectangle(cornerRadius: 12)
-      #if os(iOS)
-        .fill(background)
-      #endif
-    )
+      .background(RoundedRectangle(cornerRadius: 12).fill(background))
   }
 }

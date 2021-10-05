@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 import SwiftUIX
-import SwiftUIRefresh
 
 struct TopicDetailsActionBasicNavigationView: View {
   @ObservedObject var action: TopicDetailsActionModel
@@ -19,8 +18,8 @@ struct TopicDetailsActionBasicNavigationView: View {
     }
     let user = self.action.showUserProfile ?? .init()
 
-    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { }
-    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) { }
+    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { } .hidden()
+    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) { } .hidden()
   }
 }
 
@@ -215,14 +214,14 @@ struct TopicDetailsView: View {
     TopicDetailsActionBasicNavigationView(action: action)
 
     let showingChain = self.action.showingReplyChain ?? .init()
-    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) { }
+    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) { } .hidden()
 
     let authorOnlyView = TopicDetailsView.build(topic: topic, only: self.action.navigateToAuthorOnly ?? .init())
-    NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) { }
+    NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) { } .hidden()
 
     if !localMode {
       let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
-      NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) { }
+      NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) { } .hidden()
     }
   }
 
@@ -233,9 +232,6 @@ struct TopicDetailsView: View {
       hotRepliesSection
       allRepliesSection
     }
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
-    #endif
   }
 
   @ViewBuilder
@@ -288,9 +284,6 @@ struct TopicDetailsView: View {
       listStackHotRepliesSection
       listStackAllRepliesSections
     }
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
-    #endif
   }
 
   @ViewBuilder
@@ -329,9 +322,6 @@ struct TopicDetailsView: View {
       hotRepliesSection
       paginatedAllRepliesSectionsNew
     }
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
-    #endif
   }
 
   var title: String {
@@ -354,12 +344,14 @@ struct TopicDetailsView: View {
         } else {
           listMain
         }
-      } .environmentObject(action)
+      }
+        .mayGroupedListStyle()
+        .environmentObject(action)
     }
       .navigationTitle(title)
       .toolbarWithFix {
-      ToolbarItem(placement: .navigationBarTrailing) { progress }
-      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+      ToolbarItem(placement: .mayNavigationBarTrailing) { progress }
+      ToolbarItem(placement: .mayNavigationBarTrailing) { moreMenu }
     }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
@@ -369,7 +361,6 @@ struct TopicDetailsView: View {
       .onAppear { dataSource.initialLoad() }
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
-//      .pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
     #endif
     .userActivity(Constants.Activity.openTopic) { activity in
       if let url = URL(string: webpageURL) {
@@ -468,8 +459,7 @@ struct TopicDetailsView: View {
     }
       .padding()
       .fixedSize(horizontal: false, vertical: true)
-      .background(.secondarySystemGroupedBackground)
-      .frame(width: UIScreen.main.bounds.size.width)
+      .frame(width: Screen.main.bounds.size.width)
       .environmentObject(action)
       .environmentObject(postReply)
   }

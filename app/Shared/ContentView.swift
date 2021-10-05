@@ -15,6 +15,7 @@ struct ContentView: View {
   @StateObject var postReply = PostReplyModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var openURL = OpenURLModel.shared
+  @StateObject var authStorage = AuthStorage.shared
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
@@ -39,7 +40,11 @@ struct ContentView: View {
         }
       }
     } .overlay { ImageOverlay() }
+      .sheet(isPresented: $authStorage.isSigning) { LoginView() }
+      .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
+    #if os(iOS)
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
+    #endif
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })

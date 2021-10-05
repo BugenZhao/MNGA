@@ -9,7 +9,10 @@ import Foundation
 import Combine
 import SwiftProtobuf
 import SwiftUI
+
+#if os(iOS)
 import SwiftUIRefresh
+#endif
 
 class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let buildRequest: (_ page: Int) -> AsyncRequest.OneOf_Value
@@ -142,22 +145,24 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  @available(iOS 15.0, *)
-  func refreshAsync(animated: Bool = false) async {
-    let request = DispatchQueue.main.sync { preRefresh() }
-    guard let request = request else { return }
+  #if os(iOS)
+    @available(iOS 15.0, *)
+    func refreshAsync(animated: Bool = false) async {
+      let request = DispatchQueue.main.sync { preRefresh() }
+      guard let request = request else { return }
 
-    let response: Result<Res, LogicError> = await logicCallAsync(request)
+      let response: Result<Res, LogicError> = await logicCallAsync(request)
 
-    DispatchQueue.main.async {
-      switch response {
-      case .success(let response):
-        self.onRefreshSuccess(response: response, animated: animated)
-      case .failure(let e):
-        self.onRefreshError(e: e, animated: animated)
+      DispatchQueue.main.async {
+        switch response {
+        case .success(let response):
+          self.onRefreshSuccess(response: response, animated: animated)
+        case .failure(let e):
+          self.onRefreshError(e: e, animated: animated)
+        }
       }
     }
-  }
+  #endif
 
   func initialLoad() {
     if self.loadedPage == 0 {
@@ -229,15 +234,19 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
 extension View {
   func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>) -> some View {
-    Group {
-      if #available(iOS 15.0, *) {
+    #if canImport(SwiftUIRefresh)
+      Group {
+        if #available(iOS 15.0, *) {
 //        self.refreshable {
 //          await dataSource.refreshAsync()
 //        }
-        self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
-      } else {
-        self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+          self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+        } else {
+          self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+        }
       }
-    }
+    #else
+      self
+    #endif
   }
 }

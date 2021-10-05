@@ -119,18 +119,20 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
   }
 }
 
-@available(iOS 15.0.0, *)
-func logicCallAsync<Response: SwiftProtobuf.Message>(
-  _ requestValue: AsyncRequest.OneOf_Value,
-  requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
-  errorToastModel: ToastModel? = ToastModel.hud
-) async -> Result<Response, LogicError> {
-  return await withCheckedContinuation { (continuation: CheckedContinuation<Result<Response, LogicError>, Never>) in
-    logicCallAsync(requestValue, requestDispatchQueue: requestDispatchQueue, errorToastModel: errorToastModel)
-    { (res: Response) in
-      continuation.resume(returning: .success(res))
-    } onError: { err in
-      continuation.resume(returning: .failure(err))
+#if os(iOS)
+  @available(iOS 15.0, *)
+  func logicCallAsync<Response: SwiftProtobuf.Message>(
+    _ requestValue: AsyncRequest.OneOf_Value,
+    requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
+    errorToastModel: ToastModel? = ToastModel.hud
+  ) async -> Result<Response, LogicError> {
+    return await withCheckedContinuation { (continuation: CheckedContinuation<Result<Response, LogicError>, Never>) in
+      logicCallAsync(requestValue, requestDispatchQueue: requestDispatchQueue, errorToastModel: errorToastModel)
+      { (res: Response) in
+        continuation.resume(returning: .success(res))
+      } onError: { err in
+        continuation.resume(returning: .failure(err))
+      }
     }
   }
-}
+#endif

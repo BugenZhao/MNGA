@@ -43,6 +43,8 @@ struct TopicHistoryListView: View {
       }
     } .navigationTitle("History")
       .onAppear { dataSource.initialLoad() }
+      .refreshable(dataSource: dataSource)
+      .mayGroupedListStyle()
     #if os(iOS)
       .navigationSearchBar {
         SearchBar(
@@ -51,8 +53,6 @@ struct TopicHistoryListView: View {
           isEditing: $isSearching.animation()
         )
       }
-        .listStyle(GroupedListStyle())
-        .refreshable(dataSource: dataSource)
     #endif
   }
 }

@@ -45,10 +45,8 @@ struct FavoriteTopicListView: View {
     }
       .navigationTitle("Favorite Topics")
       .onAppear { dataSource.initialLoad() }
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
       .refreshable(dataSource: dataSource)
-    #endif
+      .mayGroupedListStyle()
   }
 
   func deleteFavorites(at indexSet: IndexSet) {

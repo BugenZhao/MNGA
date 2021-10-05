@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "ac|凌乱.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ac|凌乱@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

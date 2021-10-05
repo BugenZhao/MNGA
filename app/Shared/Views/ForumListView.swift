@@ -16,8 +16,10 @@ struct ForumListView: View {
   @State var categories = [Category]()
   @State var favoriteEditing = false
 
-  // HACK: do not use @Environment, which causes some sheets (like PostReplyView) popped unexpectedly
-  @State var editMode = EditMode.inactive
+  #if os(iOS)
+    // HACK: do not use @Environment, which causes some sheets (like PostReplyView) popped unexpectedly
+    @State var editMode = EditMode.inactive
+  #endif
 
   @ViewBuilder
   func buildFavoriteSectionLink(_ forum: Forum) -> some View {
@@ -78,30 +80,45 @@ struct ForumListView: View {
     }
   }
 
+  func setEditModeActive() {
+    #if os(iOS)
+      withAnimation { editMode = .active }
+    #endif
+  }
+
   @ViewBuilder
   var filterMenu: some View {
-    if editMode == .active {
-      EditButton().environment(\.editMode, $editMode)
-    } else {
-      Menu {
-        Section {
-          Button(action: { withAnimation { editMode = .active } }) {
-            Text("Edit Favorites")
-          }
+    Menu {
+      Section {
+        Button(action: { setEditModeActive() }) {
+          Text("Edit Favorites")
         }
+      }
 
-        Section {
-          Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
-            ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-              Label(LocalizedStringKey(mode.rawValue), systemImage: mode.icon)
-                .tag(mode)
-            }
+      Section {
+        Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
+          ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
+            Label(LocalizedStringKey(mode.rawValue), systemImage: mode.icon)
+              .tag(mode)
           }
         }
-      } label: {
-        Label("Filters", systemImage: favorites.filterMode.filterIcon)
-      } .imageScale(.large)
-    }
+      }
+    } label: {
+      Label("Filters", systemImage: favorites.filterMode.filterIcon)
+    } .imageScale(.large)
+  }
+
+  @ViewBuilder
+  var filter: some View {
+    #if os(iOS)
+      if editMode == .active {
+        EditButton().environment(\.editMode, $editMode)
+      } else {
+        filterMenu
+      }
+    #else
+      filterMenu
+    #endif
   }
 
   @ViewBuilder
@@ -111,7 +128,10 @@ struct ForumListView: View {
       if favorites.filterMode == .all {
         allForumsSection
       }
-    } .environment(\.editMode, $editMode)
+    }
+    #if os(iOS)
+      .environment(\.editMode, $editMode)
+    #endif
   }
 
   @ViewBuilder
@@ -120,17 +140,17 @@ struct ForumListView: View {
       .environmentObject(self.searchModel)
   }
 
-  var searchBar: SearchBar {
-    SearchBar(
-      NSLocalizedString("Search Forums", comment: ""),
-      text: $searchModel.text,
-      isEditing: $searchModel.isEditing.animation(),
-      onCommit: { searchModel.commitFlag += 1 }
-    )
-    #if os(iOS)
-      .onCancel { DispatchQueue.main.async { withAnimation { searchModel.text.removeAll() } } }
-    #endif
-  }
+  #if os(iOS)
+    var searchBar: SearchBar {
+      SearchBar(
+        NSLocalizedString("Search Forums", comment: ""),
+        text: $searchModel.text,
+        isEditing: $searchModel.isEditing.animation(),
+        onCommit: { searchModel.commitFlag += 1 }
+      )
+        .onCancel { DispatchQueue.main.async { withAnimation { searchModel.text.removeAll() } } }
+    }
+  #endif
 
   var body: some View {
     VStack {
@@ -142,8 +162,8 @@ struct ForumListView: View {
       .navigationSearchBar { searchBar }
     #endif
     .toolbar {
-      ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
-      ToolbarItem(placement: .navigationBarTrailing) { filterMenu }
+      ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }
+      ToolbarItem(placement: .mayNavigationBarTrailing) { filter }
     }
   }
 

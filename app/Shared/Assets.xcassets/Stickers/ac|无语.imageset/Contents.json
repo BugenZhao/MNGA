@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "ac|无语.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ac|无语@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

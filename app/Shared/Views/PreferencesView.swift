@@ -28,11 +28,9 @@ struct PreferencesView: View {
         Toggle(isOn: $pref.showAvatar) {
           Label("Show Avatar", systemImage: "person.circle")
         }
-        Picker(selection: $pref.useRedact) {
+        Picker(selection: $pref.useRedact, label: Label("Collapsed Style", systemImage: "eye.slash")) {
           Text("Redact").tag(true)
           Text("Hidden").tag(false)
-        } label: {
-          Label("Collapsed Style", systemImage: "eye.slash")
         }
         Toggle(isOn: $pref.usePaginatedDetails) {
           Label("Use Paginated Details", systemImage: "square.stack")
@@ -43,12 +41,10 @@ struct PreferencesView: View {
       }
 
       Section(header: Text("Posting")) {
-        Picker(selection: $auth.authInfo.inner.device) {
+        Picker(selection: $auth.authInfo.inner.device, label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
           ForEach(Device.allCases, id: \.hashIdentifiable) { device in
             Label(device.description, systemImage: device.icon).tag(device)
           }
-        } label: {
-          Label("Device Identity", systemImage: "ipad.and.iphone")
         }
       }
 
@@ -59,12 +55,10 @@ struct PreferencesView: View {
         NavigationLink(destination: CacheView()) {
           Label("Cache", systemImage: "internaldrive")
         }
-        Picker(selection: $pref.defaultTopicListOrder) {
+        Picker(selection: $pref.defaultTopicListOrder, label: Label("Default Topic List Order", systemImage: "arrow.up.arrow.down")) {
           ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
             Label(order.description, systemImage: order.icon).tag(order)
           }
-        } label: {
-          Label("Default Topic List Order", systemImage: "arrow.up.arrow.down")
         }
       }
 
@@ -74,7 +68,7 @@ struct PreferencesView: View {
         }
       }
     } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
-      .listStyle(.insetGrouped)
+      .mayInsetGroupedListStyle()
   }
 
   var body: some View {

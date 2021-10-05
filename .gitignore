@@ -6,6 +6,8 @@
 
 target
 .env
-**/xcuserdata/*.xcuserdatad
+app/MNGA.xcodeproj/**/xcuserdata/*.xcuserdatad/
 
 GoogleService-Info.plist
+
+.DS_Store

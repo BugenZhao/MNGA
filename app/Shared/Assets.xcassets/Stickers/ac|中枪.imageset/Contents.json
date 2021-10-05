@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "ac|中枪.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "ac|中枪@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

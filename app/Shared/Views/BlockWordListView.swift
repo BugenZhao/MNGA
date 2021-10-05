@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Introspect
 
 struct BlockWordListView: View {
   @StateObject var storage = BlockWordsStorage.shared
@@ -25,11 +26,13 @@ struct BlockWordListView: View {
       if newWord != nil {
         HStack {
           TextField(LocalizedStringKey("New word"), text: ($newWord ?? .init()).word, onCommit: self.commitNewWord)
+          #if os(iOS)
             .introspectTextField {
-            if self.newWord?.word.isEmpty == true {
-              $0.becomeFirstResponder()
+              if self.newWord?.word.isEmpty == true {
+                $0.becomeFirstResponder()
+              }
             }
-          }
+          #endif
           Image(systemName: "pencil").foregroundColor(.secondary)
         }
       }
@@ -61,8 +64,8 @@ struct BlockWordListView: View {
       } else {
         list
       }
-    } .listStyle(.insetGrouped)
-      .toolbarWithFix { ToolbarItem(placement: .navigationBarTrailing) { addButton } }
+    } .mayInsetGroupedListStyle()
+      .toolbarWithFix { ToolbarItem(placement: .mayNavigationBarTrailing) { addButton } }
       .navigationTitle("Block Words")
   }
 }

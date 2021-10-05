@@ -23,15 +23,27 @@ struct UserMenuView: View {
 
   @ViewBuilder
   var navigationBackgrounds: some View {
-    NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { }
-    NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { }
-    NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { }
-    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { }
+    NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { } .hidden()
+    NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { } .hidden()
+    NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { } .hidden()
+    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
+  }
+  
+  @ViewBuilder
+  var icon: some View {
+    let icon = Image(systemName: authStorage.signedIn ? "person.crop.circle.fill" : "person.crop.circle")
+    #if os(iOS)
+      WebOrAsyncImage(url: URL(string: user?.avatarURL ?? ""), placeholder: icon.resizable())
+        .clipShape(Circle())
+        .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
+        .frame(width: 24, height: 24)
+    #else
+      icon
+    #endif
   }
 
   var body: some View {
     let uid = authStorage.authInfo.inner.uid
-    let signedIn = authStorage.signedIn
 
     Menu {
       Section {
@@ -51,7 +63,7 @@ struct UserMenuView: View {
         }
       }
       Section {
-        if signedIn {
+        if authStorage.signedIn {
           Menu {
             Button(action: { reSignIn() }) {
               Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
@@ -73,12 +85,7 @@ struct UserMenuView: View {
         }
       }
     } label: {
-      let icon = Image(systemName: signedIn ? "person.crop.circle.fill" : "person.crop.circle")
-        .resizable()
-      WebOrAsyncImage(url: URL(string: user?.avatarURL ?? ""), placeholder: icon)
-        .clipShape(Circle())
-        .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
-        .frame(width: 24, height: 24)
+      icon
     }
       .imageScale(.large)
       .onAppear { loadData() }

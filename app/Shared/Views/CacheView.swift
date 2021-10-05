@@ -33,7 +33,7 @@ struct CacheRowView: View {
 
 struct CacheView: View {
   @State var imageSize = nil as UInt?
-  
+
   @ViewBuilder
   var list: some View {
     List {
@@ -41,7 +41,9 @@ struct CacheView: View {
         self.imageSize = nil
         SDImageCache.shared.clearDisk {
           loadImageSize()
-          HapticUtils.play(type: .success)
+          #if os(iOS)
+            HapticUtils.play(type: .success)
+          #endif
         }
       } .onAppear { if imageSize == nil { loadImageSize() } }
     }
@@ -49,10 +51,10 @@ struct CacheView: View {
 
   var body: some View {
     list
-      .listStyle(.insetGrouped)
+      .mayInsetGroupedListStyle()
       .navigationTitle("Cache")
   }
-  
+
   func loadImageSize() {
     SDImageCache.shared.calculateSize { fileCount, totalSize in
       self.imageSize = totalSize

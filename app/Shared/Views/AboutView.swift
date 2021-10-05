@@ -100,11 +100,10 @@ struct AboutView: View {
           .frame(minHeight: geometry.size.height)
       }
     }
-      .navigationTitle("About & Feedback")
-      .navigationBarTitleDisplayMode(.inline)
+      .navigationTitleInline(key: "About & Feedback")
       .toolbarWithFix {
         ToolbarItem(placement: .status) { footer }
-        ToolbarItem(placement: .navigationBarTrailing) { shareButton }
+        ToolbarItem(placement: .mayNavigationBarTrailing) { shareButton }
       }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])

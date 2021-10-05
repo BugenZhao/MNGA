@@ -37,11 +37,8 @@ struct PostRowView: View {
   }
 
   @ViewBuilder
-  var header: some View {
-    HStack {
-      PostRowUserView(post: post)
-      Spacer()
-      floor
+  var menuButton: some View {
+    #if os(iOS)
       if #available(iOS 15.0, *) {
         Menu(content: { menu }) {
           Image(systemName: "ellipsis.circle.fill")
@@ -54,6 +51,16 @@ struct PostRowView: View {
             .imageScale(.large)
         }
       }
+    #endif
+  }
+
+  @ViewBuilder
+  var header: some View {
+    HStack {
+      PostRowUserView(post: post)
+      Spacer()
+      floor
+      menuButton
     }
   }
 
@@ -97,7 +104,7 @@ struct PostRowView: View {
         Image(systemName: vote.state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
           .foregroundColor(vote.state == .up ? .accentColor : .secondary)
           .frame(height: 24)
-      } .buttonStyle(.plain)
+      } .buttonStyle(PlainButtonStyle())
 
       let font = Font.subheadline.monospacedDigit()
       Text("\(max(Int32(post.score) + vote.delta, 0))")
@@ -108,7 +115,7 @@ struct PostRowView: View {
         Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
           .foregroundColor(vote.state == .down ? .accentColor : .secondary)
           .frame(height: 24)
-      } .buttonStyle(.plain)
+      } .buttonStyle(PlainButtonStyle())
     }
   }
 
@@ -128,7 +135,7 @@ struct PostRowView: View {
 
 //  @ArrayBuilder<CellAction?>
 //  var menuActions: [CellAction?] {
-//    CellAction(title: self.post.content.raw, systemImage: "doc.on.doc") { copyContent(post.content.raw) }
+//    CellAction(title: self.post.content.raw, systemImage: "doc.on.doc") { copyToPasteboard(post.content.raw) }
 //    if let model = postReply {
 //      CellAction.separator
 //      CellAction(title: "Quote", systemImage: "quote.bubble") { doQuote(model: model) }
@@ -146,7 +153,7 @@ struct PostRowView: View {
   @ViewBuilder
   var menu: some View {
     Section {
-      Button(action: { copyContent(post.content.raw) }) {
+      Button(action: { copyToPasteboard(post.content.raw) }) {
         Label("Copy Raw Content", systemImage: "doc.on.doc")
       }
     }
@@ -185,24 +192,16 @@ struct PostRowView: View {
       signature
     } .padding(.vertical, 4)
       .fixedSize(horizontal: false, vertical: true)
-//      .contextMenu { menu }
-//      .cellContextMenu(actions: menuActions)
+    #if os(macOS)
+      .contextMenu { menu }
+    #endif
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
+      .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
       .environmentObject(attachments)
   }
 
-  func copyContent(_ content: String) {
-    #if os(iOS)
-      UIPasteboard.general.string = content
-    #elseif os(macOS)
-      let pb = NSPasteboard.general
-      pb.clearContents()
-      pb.writeObjects([content as NSString])
-    #endif
-  }
 
   func doVote(_ operation: PostVoteRequest.Operation) {
     logicCallAsync(.postVote(.with {

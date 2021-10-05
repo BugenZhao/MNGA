@@ -93,12 +93,12 @@ struct UserProfileView: View {
   }
 
   var picker: some ToolbarContent {
-    ToolbarItem(placement: .bottomBar) {
+    ToolbarItem(placement: .mayBottomBar) {
       Picker("Tab", selection: $tab.animation()) {
         ForEach(Tab.allCases, id: \.hashIdentifiable) {
           Text($0.rawValue).tag($0)
         }
-      } .pickerStyle(.segmented)
+      } .pickerStyle(SegmentedPickerStyle())
     }
   }
 
@@ -118,10 +118,7 @@ struct UserProfileView: View {
       .toolbarWithFix { picker }
       .environmentObject(action)
       .background { TopicDetailsActionBasicNavigationView(action: action) }
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
-    #endif
-    .navigationTitle(user.name)
-      .navigationBarTitleDisplayMode(.inline)
+      .mayGroupedListStyle()
+      .navigationTitleInline(string: user.name)
   }
 }
