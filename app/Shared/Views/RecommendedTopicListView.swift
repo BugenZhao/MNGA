@@ -49,9 +49,7 @@ struct RecommendedTopicListView: View {
             } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
           }
         }
-        #if os(iOS)
-          .listStyle(GroupedListStyle())
-        #endif
+          .mayGroupedListStyle()
       }
     } .navigationTitle("Recommended Topics")
   }

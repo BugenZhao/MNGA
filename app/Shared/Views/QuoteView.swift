@@ -13,7 +13,15 @@ struct QuoteView<Content>: View where Content: View {
   let background: Color
   let build: () -> Content
 
-  init(fullWidth: Bool, background: Color = .systemGroupedBackground, @ViewBuilder build: @escaping () -> Content) {
+  static var defaultBackground: Color {
+    #if os(iOS)
+      Color.systemGroupedBackground
+    #else
+      Color.white
+    #endif
+  }
+
+  init(fullWidth: Bool, background: Color = Self.defaultBackground, @ViewBuilder build: @escaping () -> Content) {
     self.fullWidth = fullWidth
     self.background = background
     self.build = build
@@ -23,11 +31,6 @@ struct QuoteView<Content>: View where Content: View {
     build()
       .frame(maxWidth: fullWidth ? .infinity : nil, alignment: .topLeading)
       .padding(.small)
-      .background(
-      RoundedRectangle(cornerRadius: 12)
-      #if os(iOS)
-        .fill(background)
-      #endif
-    )
+      .background(RoundedRectangle(cornerRadius: 12).fill(background))
   }
 }

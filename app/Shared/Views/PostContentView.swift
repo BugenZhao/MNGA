@@ -65,8 +65,8 @@ struct PostContentView<S: Sequence & Equatable>: View, Equatable where S.Element
         QuoteView(fullWidth: true) {
           Text("Bad or Unsupported Post Content Format")
             .bold()
-          + Text("\n") +
-          Text(error)
+            + Text("\n") +
+            Text(error)
             .font(.system(.footnote, design: .monospaced))
         } .font(.footnote)
           .foregroundColor(.orangeRed)
@@ -150,9 +150,7 @@ struct PostContentView_Previews: PreviewProvider {
     List {
       PostContentView(spans: spans + [image], error: "Test error")
     }
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
-    #endif
-    .preferredColorScheme(.dark)
+      .mayGroupedListStyle()
+      .preferredColorScheme(.dark)
   }
 }

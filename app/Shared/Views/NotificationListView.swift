@@ -42,10 +42,8 @@ struct NotificationListView: View {
       }
     } .navigationTitle("Notifications")
       .onAppear { dataSource.initialLoad() }
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
+      .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
-    #endif
   }
 }
 

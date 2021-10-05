@@ -30,6 +30,6 @@ struct ContentButtonView<T: View>: View {
           .fill(inQuote ? Color.secondarySystemGroupedBackground : Color.systemGroupedBackground)
         #endif
       )
-    } .buttonStyle(.plain)
+    } .buttonStyle(PlainButtonStyle())
   }
 }

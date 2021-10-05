@@ -25,7 +25,7 @@ struct QuoteUserView: View {
             Image(systemName: "chevron.right")
           } .font(.callout)
             .foregroundColor(.secondary)
-        } .buttonStyle(.plain)
+        } .buttonStyle(PlainButtonStyle())
       }
     }
   }

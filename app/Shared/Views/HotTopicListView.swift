@@ -49,10 +49,7 @@ struct HotTopicListInnerView: View {
               }
             }
           }
-        }
-        #if os(iOS)
-          .listStyle(GroupedListStyle())
-        #endif
+        } .mayGroupedListStyle()
       }
     } .onAppear { dataSource.initialLoad() }
   }
@@ -90,6 +87,6 @@ struct HotTopicListView: View {
     HotTopicListInnerView.build(forum: forum, range: range)
       .id(range)
       .navigationTitle("Hot Topics")
-      .toolbarWithFix { ToolbarItem(placement: .navigationBarTrailing) { rangeMenu } }
+      .toolbarWithFix { ToolbarItem(placement: .mayNavigationBarTrailing) { rangeMenu } }
   }
 }

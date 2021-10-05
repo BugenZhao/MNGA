@@ -68,11 +68,11 @@ struct UserView: View {
     if let user = self.user, let action = self.action {
       Button(action: { action.showUserProfile = user }) {
         avatarInner
-      } .buttonStyle(.plain)
+      } .buttonStyle(PlainButtonStyle())
     } else if style == .huge, let url = avatarURL {
       Button(action: { viewingImage.show(url: url) }) {
         avatarInner
-      } .buttonStyle(.plain)
+      } .buttonStyle(PlainButtonStyle())
     } else {
       avatarInner
     }

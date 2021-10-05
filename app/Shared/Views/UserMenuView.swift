@@ -23,10 +23,10 @@ struct UserMenuView: View {
 
   @ViewBuilder
   var navigationBackgrounds: some View {
-    NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { }
-    NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { }
-    NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { }
-    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { }
+    NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { } .hidden()
+    NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { } .hidden()
+    NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { } .hidden()
+    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
   }
 
   var body: some View {

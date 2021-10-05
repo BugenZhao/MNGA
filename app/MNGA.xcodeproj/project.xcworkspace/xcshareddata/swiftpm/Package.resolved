@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "Colorful",
+        "repositoryURL": "https://github.com/chackle/Colorful",
+        "state": {
+          "branch": null,
+          "revision": "660a531e68e02d67878f11d1e9b119a3087f5eee",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "Firebase",
         "repositoryURL": "https://github.com/firebase/firebase-ios-sdk",
         "state": {
@@ -195,8 +204,8 @@
         "repositoryURL": "https://github.com/SwiftUIX/SwiftUIX",
         "state": {
           "branch": null,
-          "revision": "6aa1b4ec2e0d3e5cfc7494c84519402a16dd1316",
-          "version": "0.0.8"
+          "revision": "ac4959d321d2fbf6b66720426ef0716b6865ddd8",
+          "version": "0.1.0"
         }
       }
     ]

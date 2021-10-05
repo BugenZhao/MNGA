@@ -40,9 +40,7 @@ struct PostReplyChainView: View {
       .background { TopicDetailsActionBasicNavigationView(action: action) }
       .environmentObject(action)
       .environment(\.enableShowReplyChain, false)
-    #if os(iOS)
-      .listStyle(GroupedListStyle())
-    #endif
+      .mayGroupedListStyle()
   }
 
   func loadRemotePost(id: PostId) {

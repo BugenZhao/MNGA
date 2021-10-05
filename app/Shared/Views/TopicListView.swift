@@ -179,15 +179,15 @@ struct TopicListView: View {
   @ViewBuilder
   var subforum: some View {
     let destination = TopicListView.build(forum: self.currentShowingSubforum ?? Forum())
-    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
-    NavigationLink(destination: EmptyView()) { } // hack: unexpected pop
+    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { } .hidden()
+    NavigationLink(destination: EmptyView()) { } .hidden() // hack: unexpected pop
   }
 
   @ViewBuilder
   var navigations: some View {
-    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { }
-    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { }
-    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { }
+    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { } .hidden()
+    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { } .hidden()
+    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { } .hidden()
   }
 
   @ViewBuilder
@@ -210,11 +210,9 @@ struct TopicListView: View {
             }
           }
         }
-        #if os(iOS)
-          .listStyle(GroupedListStyle())
-            .refreshable(dataSource: dataSource)
-            .id(order)
-        #endif
+          .refreshable(dataSource: dataSource)
+          .mayGroupedListStyle()
+          .id(order)
       }
     }
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
@@ -222,8 +220,8 @@ struct TopicListView: View {
       .background { subforum; navigations }
       .navigationTitle(forum.name)
       .toolbarWithFix {
-      ToolbarItem(placement: .navigationBarTrailing) { icon }
-      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+      ToolbarItem(placement: .mayNavigationBarTrailing) { icon }
+      ToolbarItem(placement: .mayNavigationBarTrailing) { moreMenu }
     }
       .onAppear { userActivityIsActive = true; selectedForum.inner = forum }
       .onDisappear {

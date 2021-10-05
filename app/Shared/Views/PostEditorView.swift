@@ -36,7 +36,7 @@ struct PostEditorView: View {
       ForEach(DisplayMode.allCases, id: \.rawValue) {
         Text(LocalizedStringKey($0.rawValue)).tag($0)
       }
-    } .pickerStyle(.segmented)
+    } .pickerStyle(SegmentedPickerStyle())
   }
 
   @ViewBuilder
@@ -58,7 +58,7 @@ struct PostEditorView: View {
           }
         }
       }
-    } .listStyle(GroupedListStyle())
+    } .mayGroupedListStyle()
       .onAppear { parseContent() }
       .environment(\.inRealPost, false)
   }
@@ -104,7 +104,7 @@ struct PostEditorView: View {
     NavigationView {
       inner
         .modifier(AlertToastModifier())
-        .navigationBarTitle(title, displayMode: .inline)
+        .navigationTitleInline(key: title)
         .environmentObject(presendAttachments)
         .toolbar {
         ToolbarItem(placement: .confirmationAction) {
@@ -128,7 +128,7 @@ struct PostEditorView: View {
             Text("Discard").foregroundColor(.red)
           }
         }
-        ToolbarItem(placement: .bottomBar) {
+        ToolbarItem(placement: .mayBottomBar) {
           picker
         }
       }
