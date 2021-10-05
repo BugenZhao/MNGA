@@ -7,7 +7,7 @@
 <h3 align="center">A refreshing NGA Forum App in SwiftUI.</h3>
 
 <p align="center">
-<img src="assets/RoundedIcon.png" width="256"></img>
+<img src="app/Shared/Assets.xcassets/RoundedIcon.imageset/RoundedIcon-Mac.png" width="256"></img>
 </p>
 
 <h4 align="center">Make NGA Great Again.</h4>

@@ -12,6 +12,15 @@
       "filename" : "RoundedIcon-2.png",
       "idiom" : "universal",
       "scale" : "3x"
+    },
+    {
+      "idiom" : "mac",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "RoundedIcon-Mac.png",
+      "idiom" : "mac",
+      "scale" : "2x"
     }
   ],
   "info" : {
