@@ -51,11 +51,6 @@ struct PostRowView: View {
             .imageScale(.large)
         }
       }
-    #else
-      Menu(content: { menu }) {
-        Image(systemName: "ellipsis")
-          .imageScale(.large)
-      }
     #endif
   }
 
@@ -197,10 +192,13 @@ struct PostRowView: View {
       signature
     } .padding(.vertical, 4)
       .fixedSize(horizontal: false, vertical: true)
+    #if os(macOS)
+      .contextMenu { menu }
+    #endif
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
+      .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
       .environmentObject(attachments)
   }
 

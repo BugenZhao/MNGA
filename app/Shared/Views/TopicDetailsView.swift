@@ -231,7 +231,7 @@ struct TopicDetailsView: View {
       headerSection
       hotRepliesSection
       allRepliesSection
-    } .mayGroupedListStyle()
+    }
   }
 
   @ViewBuilder
@@ -283,7 +283,7 @@ struct TopicDetailsView: View {
       headerSection
       listStackHotRepliesSection
       listStackAllRepliesSections
-    } .mayGroupedListStyle()
+    }
   }
 
   @ViewBuilder
@@ -321,7 +321,7 @@ struct TopicDetailsView: View {
       headerSection
       hotRepliesSection
       paginatedAllRepliesSectionsNew
-    } .mayGroupedListStyle()
+    }
   }
 
   var title: String {
@@ -344,7 +344,9 @@ struct TopicDetailsView: View {
         } else {
           listMain
         }
-      } .environmentObject(action)
+      }
+        .mayGroupedListStyle()
+        .environmentObject(action)
     }
       .navigationTitle(title)
       .toolbarWithFix {

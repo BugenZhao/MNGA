@@ -36,7 +36,7 @@ extension View {
       self.navigationTitle(title)
     #endif
   }
-  
+
   func navigationTitleInline(key title: LocalizedStringKey) -> some View {
     #if os(iOS)
       self.navigationBarTitle(title, displayMode: .inline)
@@ -52,7 +52,7 @@ extension View {
       self.navigationTitle(title)
     #endif
   }
-  
+
   func navigationTitleLarge(key title: LocalizedStringKey) -> some View {
     #if os(iOS)
       self.navigationBarTitle(title, displayMode: .large)
@@ -81,11 +81,19 @@ extension ToolbarItemPlacement {
     #endif
   }
 
+  static var mayNavigationBarLeadingOrAction: Self {
+    #if os(iOS)
+      Self.navigationBarLeading
+    #else
+      Self.primaryAction
+    #endif
+  }
+
   static var mayNavigationBarTrailing: Self {
     #if os(iOS)
       Self.navigationBarTrailing
     #else
-      Self.navigation
+      Self.primaryAction
     #endif
   }
 
@@ -97,3 +105,15 @@ extension ToolbarItemPlacement {
     #endif
   }
 }
+
+#if os(macOS)
+  extension Color {
+    static var secondarySystemGroupedBackground: Self {
+      Color(NSColor.textBackgroundColor)
+    }
+
+    static var systemGroupedBackground: Self {
+      Color(NSColor.windowBackgroundColor)
+    }
+  }
+#endif

@@ -162,7 +162,7 @@ struct ForumListView: View {
       .navigationSearchBar { searchBar }
     #endif
     .toolbar {
-      ToolbarItem(placement: .mayNavigationBarLeading) { UserMenuView() }
+      ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }
       ToolbarItem(placement: .mayNavigationBarTrailing) { filter }
     }
   }

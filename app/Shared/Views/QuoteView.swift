@@ -13,15 +13,7 @@ struct QuoteView<Content>: View where Content: View {
   let background: Color
   let build: () -> Content
 
-  static var defaultBackground: Color {
-    #if os(iOS)
-      Color.systemGroupedBackground
-    #else
-      Color.white
-    #endif
-  }
-
-  init(fullWidth: Bool, background: Color = Self.defaultBackground, @ViewBuilder build: @escaping () -> Content) {
+  init(fullWidth: Bool, background: Color = .systemGroupedBackground, @ViewBuilder build: @escaping () -> Content) {
     self.fullWidth = fullWidth
     self.background = background
     self.build = build

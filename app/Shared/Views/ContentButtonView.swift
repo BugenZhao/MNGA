@@ -26,9 +26,7 @@ struct ContentButtonView<T: View>: View {
         .padding(.small)
         .background(
         RoundedRectangle(cornerRadius: 12)
-        #if os(iOS)
           .fill(inQuote ? Color.secondarySystemGroupedBackground : Color.systemGroupedBackground)
-        #endif
       )
     } .buttonStyle(PlainButtonStyle())
   }

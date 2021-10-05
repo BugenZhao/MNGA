@@ -7,10 +7,7 @@
 
 import Foundation
 import SwiftUI
-
-#if os(iOS)
-  import Introspect
-#endif
+import Introspect
 
 struct BlockWordListView: View {
   @StateObject var storage = BlockWordsStorage.shared
@@ -29,7 +26,7 @@ struct BlockWordListView: View {
       if newWord != nil {
         HStack {
           TextField(LocalizedStringKey("New word"), text: ($newWord ?? .init()).word, onCommit: self.commitNewWord)
-          #if canImport(Introspect)
+          #if os(iOS)
             .introspectTextField {
               if self.newWord?.word.isEmpty == true {
                 $0.becomeFirstResponder()

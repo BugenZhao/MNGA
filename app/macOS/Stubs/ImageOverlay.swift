@@ -12,6 +12,8 @@ struct ImageOverlay: View {
   @EnvironmentObject var model: ViewingImageModel
 
   var body: some View {
-    Text("A Stub Here")
+    if let view = model.view {
+      view
+    }
   }
 }
