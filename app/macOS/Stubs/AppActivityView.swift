@@ -12,6 +12,6 @@ struct AppActivityView: View {
   let activityItems: [Any]
   
   var body: some View {
-    Text("Stub")
+    DismissableStubView()
   }
 }

@@ -36,7 +36,8 @@
 "Last week" = "最近一周";
 "Last month" = "最近一个月";
 "Search History" = "搜索历史";
-"Select a forum in sidebar" = "在边栏中选择一个版块";
+"Select a Forum in Sidebar" = "在边栏中选择一个版块";
+"Select a Topic" = "选择一个话题";
 "Post by" = "发表自";
 "Filters" = "过滤";
 "Hot Replies" = "热门回复";
@@ -111,3 +112,5 @@
 "Default Topic List Order" = "默认话题列表排序方式";
 "Recommended Topics" = "推荐话题";
 "Topped Topic" = "版头";
+"Copy" = "拷贝";
+"Open in Browser" = "在浏览器中打开";

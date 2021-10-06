@@ -153,7 +153,7 @@ struct PostRowView: View {
   @ViewBuilder
   var menu: some View {
     Section {
-      Button(action: { copyToPasteboard(post.content.raw) }) {
+      Button(action: { copyToPasteboard(string: post.content.raw) }) {
         Label("Copy Raw Content", systemImage: "doc.on.doc")
       }
     }

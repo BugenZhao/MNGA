@@ -91,7 +91,6 @@ struct ContentEditorView: View {
     StickerInputView(text: $model.text, selected: $model.selected)
       .background(.secondarySystemGroupedBackground)
       .frame(maxHeight: 240)
-    EmptyView()
   }
 
   var body: some View {

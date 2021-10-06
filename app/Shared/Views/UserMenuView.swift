@@ -28,7 +28,7 @@ struct UserMenuView: View {
     NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { } .hidden()
     NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
   }
-  
+
   @ViewBuilder
   var icon: some View {
     let icon = Image(systemName: authStorage.signedIn ? "person.crop.circle.fill" : "person.crop.circle")
@@ -76,10 +76,11 @@ struct UserMenuView: View {
             Label("Sign In", systemImage: "person.crop.circle.badge.plus")
           }
         }
-
-        Button(action: { showPreferencesModal = true }) {
-          Label("Preferences", systemImage: "gear")
-        }
+        #if os(iOS)
+          Button(action: { showPreferencesModal = true }) {
+            Label("Preferences", systemImage: "gear")
+          }
+        #endif
         Button(action: { showSeparateAboutModal = true }) {
           Label("About & Feedback", systemImage: "hands.sparkles")
         }

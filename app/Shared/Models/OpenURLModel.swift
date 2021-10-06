@@ -10,20 +10,20 @@ import SwiftUIX
 
 class OpenURLModel: ObservableObject {
   static let shared = OpenURLModel()
-  
+
   @Published var inAppURL: URL?
 
   private let prefs = PreferencesStorage.shared
 
   func open(url: URL, inApp: Bool? = nil) {
-    if inApp ?? prefs.useInAppSafari {
-      self.inAppURL = url
-    } else {
-      #if os(iOS)
+    #if os(iOS)
+      if inApp ?? prefs.useInAppSafari {
+        self.inAppURL = url
+      } else {
         UIApplication.shared.open(url)
-      #elseif os(macOS)
-        NSWorkspace.shared.open(url)
-      #endif
-    }
+      }
+    #else // ignore inApp option
+      NSWorkspace.shared.open(url)
+    #endif
   }
 }

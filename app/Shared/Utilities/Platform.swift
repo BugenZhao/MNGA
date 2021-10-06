@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 extension View {
   func mayGroupedListStyle() -> some View {
@@ -62,13 +63,33 @@ extension View {
   }
 }
 
-func copyToPasteboard(_ content: String) {
+func copyToPasteboard(_ content: Any) {
+  if let text = content as? String {
+    copyToPasteboard(string: text)
+  } else if let url = content as? URL {
+    copyToPasteboard(string: url.absoluteString)
+  } else if let image = content as? AppKitOrUIKitImage {
+    copyToPasteboard(image: image)
+  }
+}
+
+func copyToPasteboard(string: String) {
   #if os(iOS)
-    UIPasteboard.general.string = content
+    UIPasteboard.general.string = string
   #elseif os(macOS)
     let pb = NSPasteboard.general
     pb.clearContents()
-    pb.writeObjects([content as NSString])
+    pb.writeObjects([string as NSString])
+  #endif
+}
+
+func copyToPasteboard(image: AppKitOrUIKitImage) {
+  #if os(iOS)
+    UIPasteboard.general.image = image
+  #elseif os(macOS)
+    let pb = NSPasteboard.general
+    pb.clearContents()
+    pb.writeObjects([image])
   #endif
 }
 
@@ -93,7 +114,7 @@ extension ToolbarItemPlacement {
     #if os(iOS)
       Self.navigationBarTrailing
     #else
-      Self.primaryAction
+      Self.automatic
     #endif
   }
 

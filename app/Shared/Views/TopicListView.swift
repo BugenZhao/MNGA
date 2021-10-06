@@ -93,15 +93,22 @@ struct TopicListView: View {
     let id = dataSource.latestResponse?.forum.toppedTopicID ?? forum.toppedTopicID
     return id.isEmpty ? nil : id
   }
+  
+  @ViewBuilder
+  var newTopicButton: some View {
+    Button(action: { self.newTopic() }) {
+      Label("New Topic", systemImage: "square.and.pencil")
+    }
+  }
 
   @ViewBuilder
   var moreMenu: some View {
     Menu {
+      #if os(iOS)
       Section {
-        Button(action: { self.newTopic() }) {
-          Label("New Topic", systemImage: "plus.circle")
-        }
+        newTopicButton
       }
+      #endif
 
       Section {
         Menu {
@@ -195,6 +202,19 @@ struct TopicListView: View {
     ForumIconView(iconURL: forum.iconURL)
   }
 
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
+    #if os(iOS)
+      ToolbarItem(placement: .navigationBarTrailing) { icon }
+      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+    #elseif os(macOS)
+      ToolbarItemGroup {
+        newTopicButton
+        moreMenu
+      }
+    #endif
+  }
+
   var body: some View {
     Group {
       if dataSource.items.isEmpty {
@@ -219,10 +239,7 @@ struct TopicListView: View {
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { subforum; navigations }
       .navigationTitle(forum.name)
-      .toolbarWithFix {
-      ToolbarItem(placement: .mayNavigationBarTrailing) { icon }
-      ToolbarItem(placement: .mayNavigationBarTrailing) { moreMenu }
-    }
+      .toolbarWithFix { toolbar }
       .onAppear { userActivityIsActive = true; selectedForum.inner = forum }
       .onDisappear {
       // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping

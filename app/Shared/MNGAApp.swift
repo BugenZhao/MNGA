@@ -16,5 +16,11 @@ struct MNGAApp: App {
     WindowGroup {
       ContentView()
     }
+
+    #if os(macOS)
+      Settings {
+        PreferencesInnerView()
+      }
+    #endif
   }
 }

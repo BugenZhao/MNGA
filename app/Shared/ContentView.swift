@@ -29,7 +29,7 @@ struct ContentView: View {
           } else {
             TopicListPlaceholderView()
           }
-          EmptyView()
+          TopicDetailsPlaceholderView()
         }
       } else {
         NavigationView {

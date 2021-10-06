@@ -23,7 +23,6 @@ class ContentEditorModel: ObservableObject {
   }
 }
 
-
 struct ContentEditorView: View {
   @Binding var context: PostReplyModel.Context
 
@@ -38,6 +37,23 @@ struct ContentEditorView: View {
   }
 
   var body: some View {
-    Text("Stub")
+    VStack(alignment: .leading) {
+      if context.subject != nil {
+        Text("Subject").font(.headline)
+        TextField("", text: $context.subject ?? "")
+      }
+
+      Text("Content").font(.headline)
+      TextEditor(text: $context.content ?? "")
+        .scrollDisabled(true)
+        .font(.callout)
+        .frame(minHeight: 250)
+
+//      Spacer()
+//      StickerInputView(text: $model.text, selected: $model.selected)
+//        .background(.secondarySystemGroupedBackground)
+//        .frame(maxHeight: 240)
+    }
+      .onChange(of: model.text) { text in context.content = text }
   }
 }

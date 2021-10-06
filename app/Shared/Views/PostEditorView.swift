@@ -8,11 +8,13 @@
 import Foundation
 import SwiftUI
 
-struct PostEditorView: View {
+struct PostEditorInnerView: View {
   enum DisplayMode: String, CaseIterable {
     case plain = "Plain"
     case preview = "Preview"
   }
+
+  @Environment(\.presentationMode) var presentation
 
   @EnvironmentObject var postReply: PostReplyModel
   @State var displayMode = DisplayMode.plain
@@ -25,7 +27,7 @@ struct PostEditorView: View {
   var title: LocalizedStringKey {
     postReply.context?.task.action.title ?? "Editor"
   }
-  
+
   var device: Device {
     AuthStorage.shared.authInfo.inner.device
   }
@@ -40,23 +42,28 @@ struct PostEditorView: View {
   }
 
   @ViewBuilder
+  var previewInner: some View {
+    if let subject = self.subject {
+      TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
+    }
+
+    VStack(alignment: .leading) {
+      PostContentView(content: parsedContent)
+      HStack {
+        Spacer()
+        Image(systemName: device.icon)
+          .frame(width: 10)
+          .foregroundColor(.secondary)
+          .font(.footnote)
+      }
+    }
+  }
+
+  @ViewBuilder
   var preview: some View {
     List {
       Section(header: Text("Preview")) {
-        if let subject = self.subject {
-          TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
-        }
-
-        VStack(alignment: .leading) {
-          PostContentView(content: parsedContent)
-          HStack {
-            Spacer()
-            Image(systemName: device.icon)
-              .frame(width: 10)
-              .foregroundColor(.secondary)
-              .font(.footnote)
-          }
-        }
+        previewInner
       }
     } .mayGroupedListStyle()
       .onAppear { parseContent() }
@@ -100,8 +107,40 @@ struct PostEditorView: View {
     }
   }
 
-  var body: some View {
-    NavigationView {
+  @ViewBuilder
+  var sendButton: some View {
+    Button(action: { doSend() }) {
+      if postReply.isSending {
+        ProgressView()
+      } else {
+        Text("Send")
+      }
+    }
+  }
+
+  @ViewBuilder
+  var previewButton: some View {
+    Button(action: { withAnimation { displayMode = .preview } }) {
+      Text("Preview")
+    }
+  }
+
+  @ViewBuilder
+  var cancelButton: some View {
+    Button(action: { self.presentation.dismiss() }) {
+      Text("Cancel")
+    }
+  }
+
+  @ViewBuilder
+  var discardButton: some View {
+    Button(action: { self.postReply.discardCurrentContext() }) {
+      Text("Discard").foregroundColor(.red)
+    }
+  }
+
+  #if os(iOS)
+    var body: some View {
       inner
         .modifier(AlertToastModifier())
         .navigationTitleInline(key: title)
@@ -109,37 +148,58 @@ struct PostEditorView: View {
         .toolbar {
         ToolbarItem(placement: .confirmationAction) {
           switch displayMode {
-          case .plain:
-            Button(action: { withAnimation { displayMode = .preview } }) {
-              Text("Preview")
-            }
-          case .preview:
-            Button(action: { doSend() }) {
-              if postReply.isSending {
-                ProgressView()
-              } else {
-                Text("Send")
-              }
-            }
+          case .plain: previewButton
+          case .preview: sendButton
           }
         }
-        ToolbarItem(placement: .cancellationAction) {
-          Button(action: { self.postReply.discardCurrentContext() }) {
-            Text("Discard").foregroundColor(.red)
-          }
-        }
-        ToolbarItem(placement: .mayBottomBar) {
-          picker
-        }
+        ToolbarItem(placement: .cancellationAction) { discardButton }
+        ToolbarItem(placement: .bottomBar) { picker }
       }
     }
-  }
+  #elseif os(macOS)
+    var body: some View {
+      if let context = postReply.context {
+        VStack {
+          HStack {
+            ContentEditorView.build(context: $postReply.context ?? .dummy)
+              .id(context.task)
+            Divider()
+            preview
+              .onChange(of: context.subject) { _ in parseContent() }
+              .onChange(of: context.content) { _ in parseContent() }
+          }
+          Divider()
+          HStack {
+            discardButton
+            Spacer()
+            cancelButton.keyboardShortcut(.cancelAction)
+            sendButton.keyboardShortcut(.defaultAction)
+          }
+        }
+      } else {
+        ProgressView()
+      }
+    }
+  #endif
 
   func doSend() {
     self.postReply.send()
   }
 }
 
+struct PostEditorView: View {
+  var body: some View {
+    #if os(iOS)
+      NavigationView {
+        PostEditorInnerView()
+      }
+    #else
+      PostEditorInnerView()
+        .padding()
+        .frame(width: 800, height: 600)
+    #endif
+  }
+}
 
 struct PostEditorView_Previews: PreviewProvider {
   struct Preview: View {

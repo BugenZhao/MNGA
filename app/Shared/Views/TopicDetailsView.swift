@@ -113,13 +113,31 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  var replyButton: some View {
+    Button(action: { self.doReplyTopic() }) {
+      Label("Reply", systemImage: "arrowshape.turn.up.left")
+    }
+  }
+
+  @ViewBuilder
+  var favoriteButton: some View {
+    Button(action: { toggleFavor() }) {
+      Label(
+        isFavored ? "Remove from Favorites" : "Mark as Favorite",
+        systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
+      )
+    }
+  }
+
+  @ViewBuilder
   var moreMenu: some View {
     Menu {
-      Section {
-        Button(action: { self.doReplyTopic() }) {
-          Label("Reply", systemImage: "arrowshape.turn.up.left")
+      #if os(iOS)
+        Section {
+          replyButton
         }
-      }
+      #endif
+
       Section {
         if enableAuthorOnly {
           Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
@@ -132,21 +150,22 @@ struct TopicDetailsView: View {
           }
         }
       }
+
+      #if os(iOS)
+        Section {
+          Button(action: { self.activity.put(webpageURL) }) {
+            Label("Share", systemImage: "square.and.arrow.up")
+          }
+          Button(action: self.shareAsImage) {
+            Label("Share As Image", systemImage: "text.below.photo")
+          }
+        }
+      #endif
+
       Section {
-        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
-          Label("Share", systemImage: "square.and.arrow.up")
-        }
-        Button(action: self.shareAsImage) {
-          Label("Share As Image", systemImage: "text.below.photo")
-        }
-      }
-      Section {
-        Button(action: { toggleFavor() }) {
-          Label(
-            isFavored ? "Remove from Favorites" : "Mark as Favorite",
-            systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
-          )
-        }
+        #if os(iOS)
+          favoriteButton
+        #endif
         Button(action: { self.dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
@@ -336,6 +355,22 @@ struct TopicDetailsView: View {
     }
   }
 
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
+    #if os(iOS)
+      ToolbarItem(placement: .navigationBarTrailing) { progress }
+      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+    #elseif os(macOS)
+      ToolbarItemGroup {
+        replyButton
+        Spacer()
+        favoriteButton
+        moreMenu
+        ShareMenu(items: [webpageURL as Any])
+      }
+    #endif
+  }
+
   var body: some View {
     VStack(alignment: .leading) {
       Group {
@@ -348,29 +383,19 @@ struct TopicDetailsView: View {
         .mayGroupedListStyle()
         .environmentObject(action)
     }
-      .navigationTitle(title)
-      .toolbarWithFix {
-      ToolbarItem(placement: .mayNavigationBarTrailing) { progress }
-      ToolbarItem(placement: .mayNavigationBarTrailing) { moreMenu }
-    }
+      .navigationTitleInline(string: title)
+      .toolbarWithFix { toolbar }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
       .onChange(of: dataSource.latestResponse, perform: self.onNewResponse(response:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
-    #if os(iOS)
-      .navigationBarTitleDisplayMode(.inline)
-    #endif
-    .userActivity(Constants.Activity.openTopic) { activity in
-      if let url = URL(string: webpageURL) {
-        activity.webpageURL = url
-      }
-    }
+      .userActivity(Constants.Activity.openTopic) { $0.webpageURL = webpageURL }
   }
 
-  var webpageURL: String {
-    "\(Constants.URL.base)/read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : "")
+  var webpageURL: URL? {
+    URL(string: "\(Constants.URL.base)/read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : ""))
   }
 
   func toggleFavor() {
@@ -434,8 +459,6 @@ struct TopicDetailsView: View {
       headerSectionInner
 
       if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
-        Spacer()
-          .height(20)
         Text("Hot Replies")
           .font(.footnote)
           .foregroundColor(.secondary)
@@ -446,8 +469,6 @@ struct TopicDetailsView: View {
       } else if let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5),
         !latestReplies.isEmpty
       {
-        Spacer()
-          .height(20)
         Text("Replies")
           .font(.footnote)
           .foregroundColor(.secondary)
@@ -460,6 +481,7 @@ struct TopicDetailsView: View {
       .padding()
       .fixedSize(horizontal: false, vertical: true)
       .frame(width: Screen.main.bounds.size.width)
+      .background(.secondarySystemGroupedBackground)
       .environmentObject(action)
       .environmentObject(postReply)
   }
