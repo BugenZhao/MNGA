@@ -9,7 +9,7 @@ import SwiftUI
 struct MNGAApp: App {
   init() {
     logger.info("MNGA Init")
-    initConf()
+    logicInitialConfigure()
   }
 
   var body: some Scene {
