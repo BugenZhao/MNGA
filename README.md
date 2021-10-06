@@ -18,6 +18,8 @@
   <br/>
   [<img src="https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png" width="250" />](https://testflight.apple.com/join/w9duC4Du)
 
+- Or build the project yourself, check instructions below.
+
 ## Features
 
 - Built with SwiftUI which provides awesome UX feelings for **multiple platforms** like iOS, iPadOS and macOS
@@ -42,13 +44,13 @@
 ### iPadOS
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/126900266-4405a84b-e119-433f-be78-4ca37691fd8c.PNG" width="96%"/>
+  <img src="https://user-images.githubusercontent.com/25862682/136158984-cee02ee8-c3d2-4bb6-a302-6fcb2a219c57.PNG" width="96%"/>
 </p>
 
 ### macOS
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/136044689-3855d27d-67d5-4342-b8c8-b7decb6cf7b3.png" width="100%"/>
+  <img src="https://user-images.githubusercontent.com/25862682/136158065-d6df1506-6192-4360-9d96-d850126ae339.png" width="100%"/>
 </p>
 
 ## Build the Project
@@ -68,8 +70,11 @@
    ```bash
    $ brew install swift-protobuf
    $ cargo install cargo-lipo
+
    $ rustup target add aarch64-apple-ios
-   $ rustup target add x86_64-apple-ios  # Intel Macs only
+   $ rustup target add x86_64-apple-ios     # Simulator target for Intel
+   $ rustup target add aarch64-apple-darwin # macOS target for Apple Silicon
+   $ rustup target add x86_64-apple-darwin  # macOS target for Intel
    ```
 
 3. Clone the repository and run at the project root:
@@ -77,7 +82,8 @@
    克隆仓库到本地，在项目的根目录，运行
 
    ```bash
-   $ make release
+   $ make ios-release
+   $ make macos-release
    ```
 
    You'll find a `.a` archive and its header under `out/`
@@ -86,7 +92,7 @@
 
 4. Open the Xcode project `app/NGA.xcodeproj`. Run the app after you set the correct Apple ID.
 
-打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置签名 Apple ID 后，编译运行
+   打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置签名 Apple ID 后，编译运行 MNGA。
 
 ## Statements
 

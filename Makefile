@@ -5,15 +5,12 @@ OUT_LIBS = out/libs
 OUT_LIBS_ANDROID = out/libs/jniLibs
 OUT_INCLUDE = out/include
 
-ios-release: swift-pb logic-release
-
-ios-debug: swift-pb logic-debug
+ios-release: swift-pb logic-release-ios logic-bindings
+macos-release: swift-pb logic-release-macos logic-bindings
 
 swift-pb:
 	@echo ">>>>> Swift PB"
 	protoc --swift_out=app/Shared/Protos/ -I protos/ protos/*.proto
-
-logic-release: logic-release-ios logic-bindings
 
 logic-release-macos:
 	@echo ">>>>> Logic macOS"
@@ -29,8 +26,6 @@ logic-release-catalyst:
 	@echo ">>>>> Logic Catalyst"
 	${XARGO} build --target x86_64-apple-ios-macabi --release
 	cp ${TARGET}/x86_64-apple-ios-macabi/release/liblogic.a ${OUT_LIBS}/liblogiccatalyst.a
-
-logic-debug: logic-debug-ios logic-bindings
 
 logic-debug-macos:
 	@echo ">>>>> Logic macOS"
