@@ -25,6 +25,15 @@ class IntentHandler: INExtension, ConfigurationIntentHandling {
 
 extension Forum {
   var widgetForum: WidgetForum {
-    WidgetForum(identifier: self.idDescription, display: self.name, subtitle: self.info, image: nil)
+    let wf = WidgetForum(
+      identifier: self.idDescription,
+      display: self.name,
+      subtitle: self.info,
+      image: nil
+    )
+    wf.fid = self.id.fid
+    wf.stid = self.id.stid
+    wf.iconURL = self.iconURL
+    return wf
   }
 }

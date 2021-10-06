@@ -103,7 +103,7 @@
 			<key>INTypeDisplayNameID</key>
 			<string>N5Mo7U</string>
 			<key>INTypeLastPropertyTag</key>
-			<integer>99</integer>
+			<integer>102</integer>
 			<key>INTypeName</key>
 			<string>WidgetForum</string>
 			<key>INTypeProperties</key>
@@ -157,6 +157,48 @@
 					<integer>4</integer>
 					<key>INTypePropertyType</key>
 					<string>SpeakableString</string>
+				</dict>
+				<dict>
+					<key>INTypePropertyDisplayName</key>
+					<string>Forum ID</string>
+					<key>INTypePropertyDisplayNameID</key>
+					<string>so11EN</string>
+					<key>INTypePropertyDisplayPriority</key>
+					<integer>5</integer>
+					<key>INTypePropertyName</key>
+					<string>fid</string>
+					<key>INTypePropertyTag</key>
+					<integer>100</integer>
+					<key>INTypePropertyType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INTypePropertyDisplayName</key>
+					<string>St ID</string>
+					<key>INTypePropertyDisplayNameID</key>
+					<string>YC9iCy</string>
+					<key>INTypePropertyDisplayPriority</key>
+					<integer>6</integer>
+					<key>INTypePropertyName</key>
+					<string>stid</string>
+					<key>INTypePropertyTag</key>
+					<integer>101</integer>
+					<key>INTypePropertyType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INTypePropertyDisplayName</key>
+					<string>Icon URL</string>
+					<key>INTypePropertyDisplayNameID</key>
+					<string>AMUzQ7</string>
+					<key>INTypePropertyDisplayPriority</key>
+					<integer>7</integer>
+					<key>INTypePropertyName</key>
+					<string>iconURL</string>
+					<key>INTypePropertyTag</key>
+					<integer>102</integer>
+					<key>INTypePropertyType</key>
+					<string>String</string>
 				</dict>
 			</array>
 		</dict>

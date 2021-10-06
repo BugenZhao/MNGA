@@ -278,14 +278,21 @@ pub async fn get_hot_topic_list(
                 page,
                 ..Default::default()
             };
-            get_topic_list(request).map_ok(|r| r.topics.into_vec())
+            get_topic_list(request).map_ok(|r| (r.topics.into_vec(), r.forum))
         })
         .collect::<Vec<_>>();
     let responses = futures::future::join_all(futures).await;
 
+    let forum = responses
+        .iter()
+        .filter_map(|r| r.as_ref().ok())
+        .next()
+        .map(|p| p.1.to_owned())
+        .unwrap_or_default();
+
     let mut topics = responses
         .into_iter()
-        .filter_map(|ts| ts.ok())
+        .filter_map(|r| r.ok().map(|p| p.0))
         .flatten()
         .filter(|t| t.get_post_date() > start_timestamp)
         .collect::<Vec<_>>();
@@ -295,6 +302,7 @@ pub async fn get_hot_topic_list(
 
     Ok(HotTopicListResponse {
         topics: topics.into(),
+        forum,
         ..Default::default()
     })
 }

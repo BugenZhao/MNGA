@@ -43,7 +43,6 @@
 		B409CE6D26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B40DC66D270DB9B2002DC8A1 /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B40DC648270DB8B3002DC8A1 /* Intents.framework */; platformFilter = maccatalyst; };
-		B40DC670270DB9B2002DC8A1 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC66F270DB9B2002DC8A1 /* IntentHandler.swift */; };
 		B40DC674270DB9B2002DC8A1 /* Widget Intents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B40DC66C270DB9B2002DC8A1 /* Widget Intents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B40DC679270DBA19002DC8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC678270DBA19002DC8A1 /* SwiftProtobuf */; };
 		B40DC67B270DBA2B002DC8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC67A270DBA2B002DC8A1 /* SwiftProtobuf */; };
@@ -68,6 +67,18 @@
 		B40DC6AD270DD33C002DC8A1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED48269C5F78009C52F5 /* Constants.swift */; };
 		B40DC6AE270DD33C002DC8A1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED48269C5F78009C52F5 /* Constants.swift */; };
 		B40DC6AF270DDB90002DC8A1 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
+		B40DC6B1270DDED1002DC8A1 /* HotTopicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC6B0270DDED1002DC8A1 /* HotTopicsView.swift */; };
+		B40DC6B2270DE8F4002DC8A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
+		B40DC6B4270DED7E002DC8A1 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC6B3270DED7E002DC8A1 /* SDWebImageSwiftUI */; };
+		B40DC6B5270DEDD4002DC8A1 /* WebOrAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */; };
+		B40DC6B6270DEDDC002DC8A1 /* ForumIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DF95AD26CADF5D0081ECBB /* ForumIconView.swift */; };
+		B40DC6B9270DF7A8002DC8A1 /* RepliesNumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */; };
+		B40DC6BA270DF7A8002DC8A1 /* RepliesNumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */; };
+		B40DC6BB270DF7A8002DC8A1 /* RepliesNumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */; };
+		B40DC6BC270DF8C2002DC8A1 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
+		B40DC6BD270DF8D0002DC8A1 /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
+		B40DC6BE270DFBB3002DC8A1 /* TopicSubjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4920CD52690465100762FC9 /* TopicSubjectView.swift */; };
+		B40DC6C0270E01AE002DC8A1 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC66F270DB9B2002DC8A1 /* IntentHandler.swift */; };
 		B412F707268DFC4600EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F706268DFC4600EB0614 /* Logging */; };
 		B412F709268DFC4F00EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F708268DFC4F00EB0614 /* Logging */; };
 		B413D67E2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */; };
@@ -305,6 +316,8 @@
 		B40DC699270DC7C6002DC8A1 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		B40DC6AB270DD1F7002DC8A1 /* MNGA Widget Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "MNGA Widget Extension.entitlements"; path = "MNGA Widget Extension/MNGA Widget Extension.entitlements"; sourceTree = "<group>"; };
 		B40DC6AC270DD206002DC8A1 /* Widget Intents.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Widget Intents.entitlements"; sourceTree = "<group>"; };
+		B40DC6B0270DDED1002DC8A1 /* HotTopicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotTopicsView.swift; sourceTree = "<group>"; };
+		B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepliesNumView.swift; sourceTree = "<group>"; };
 		B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebOrAsyncImage.swift; sourceTree = "<group>"; };
 		B437B27B269B0E190092FF9E /* ToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModifier.swift; sourceTree = "<group>"; };
 		B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeTextView.swift; sourceTree = "<group>"; };
@@ -407,6 +420,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B40DC6B4270DED7E002DC8A1 /* SDWebImageSwiftUI in Frameworks */,
 				B404C4FA270D9EBA00FF1743 /* SwiftUI.framework in Frameworks */,
 				B404C4F9270D9EBA00FF1743 /* WidgetKit.framework in Frameworks */,
 				B40DC6A2270DC7F7002DC8A1 /* Logging in Frameworks */,
@@ -518,6 +532,7 @@
 				B404C4FE270D9EBB00FF1743 /* MNGA_Widget.intentdefinition */,
 				B404C4FF270D9EBC00FF1743 /* Assets.xcassets */,
 				B404C501270D9EBC00FF1743 /* Info.plist */,
+				B40DC6B0270DDED1002DC8A1 /* HotTopicsView.swift */,
 			);
 			path = "MNGA Widget";
 			sourceTree = "<group>";
@@ -739,6 +754,7 @@
 				B4CF7E8A270AAF4500E7C374 /* UserSignatureView.swift */,
 				B402308426EBBA7A0077D3AA /* UserView.swift */,
 				B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */,
+				B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -770,6 +786,7 @@
 			packageProductDependencies = (
 				B40DC678270DBA19002DC8A1 /* SwiftProtobuf */,
 				B40DC6A1270DC7F7002DC8A1 /* Logging */,
+				B40DC6B3270DED7E002DC8A1 /* SDWebImageSwiftUI */,
 			);
 			productName = "MNGA WidgetExtension";
 			productReference = B404C4F8270D9EBA00FF1743 /* MNGA Widget Extension.appex */;
@@ -917,6 +934,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B40DC6B2270DE8F4002DC8A1 /* Assets.xcassets in Resources */,
 				B404C500270D9EBC00FF1743 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -955,7 +973,14 @@
 			files = (
 				B40DC693270DC5FC002DC8A1 /* BasicLogicCall.swift in Sources */,
 				B40DC68F270DC5F7002DC8A1 /* Service.pb.swift in Sources */,
+				B40DC6B5270DEDD4002DC8A1 /* WebOrAsyncImage.swift in Sources */,
+				B40DC6B6270DEDDC002DC8A1 /* ForumIconView.swift in Sources */,
+				B40DC6B1270DDED1002DC8A1 /* HotTopicsView.swift in Sources */,
 				B404C4FD270D9EBB00FF1743 /* MNGA_Widget.swift in Sources */,
+				B40DC6BD270DF8D0002DC8A1 /* DateFormatters.swift in Sources */,
+				B40DC6BC270DF8C2002DC8A1 /* DateTimeTextView.swift in Sources */,
+				B40DC6BB270DF7A8002DC8A1 /* RepliesNumView.swift in Sources */,
+				B40DC6BE270DFBB3002DC8A1 /* TopicSubjectView.swift in Sources */,
 				B40DC68E270DC5F1002DC8A1 /* Extensions.swift in Sources */,
 				B40DC69D270DC7D0002DC8A1 /* Logger.swift in Sources */,
 				B404C502270D9EBC00FF1743 /* MNGA_Widget.intentdefinition in Sources */,
@@ -969,12 +994,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B40DC690270DC5F7002DC8A1 /* Service.pb.swift in Sources */,
-				B40DC670270DB9B2002DC8A1 /* IntentHandler.swift in Sources */,
 				B40DC68D270DC5F1002DC8A1 /* Extensions.swift in Sources */,
 				B40DC69E270DC7D0002DC8A1 /* Logger.swift in Sources */,
 				B40DC680270DBACD002DC8A1 /* MNGA_Widget.intentdefinition in Sources */,
 				B40DC692270DC5FA002DC8A1 /* DataModel.pb.swift in Sources */,
 				B40DC6AE270DD33C002DC8A1 /* Constants.swift in Sources */,
+				B40DC6C0270E01AE002DC8A1 /* IntentHandler.swift in Sources */,
 				B40DC6AF270DDB90002DC8A1 /* Message+RawRepresentable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1067,6 +1092,7 @@
 				B4715CC526A413E00049D136 /* QuoteView.swift in Sources */,
 				B4715CCB26A480B60049D136 /* BlockWordsStorage.swift in Sources */,
 				B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */,
+				B40DC6B9270DF7A8002DC8A1 /* RepliesNumView.swift in Sources */,
 				B4DCF4482688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF608268976470027233F /* DateFormatters.swift in Sources */,
 				375E675E5D65ECFBF0231735 /* MNGAApp.swift in Sources */,
@@ -1104,6 +1130,7 @@
 				B4CF7E8C270AAF4500E7C374 /* UserSignatureView.swift in Sources */,
 				B409252926D29FD900BCB666 /* OpenURLModel.swift in Sources */,
 				B4715CC626A413E00049D136 /* QuoteView.swift in Sources */,
+				B40DC6BA270DF7A8002DC8A1 /* RepliesNumView.swift in Sources */,
 				B4DD2BDE26A490960030ADD8 /* BlockedView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */,
@@ -1734,6 +1761,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
+		};
+		B40DC6B3270DED7E002DC8A1 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 		B412F706268DFC4600EB0614 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
