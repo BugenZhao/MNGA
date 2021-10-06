@@ -10,7 +10,7 @@ macos-release: swift-pb logic-release-macos logic-bindings
 
 swift-pb:
 	@echo ">>>>> Swift PB"
-	protoc --swift_out=app/Shared/Protos/ -I protos/ protos/*.proto
+	protoc --swift_out=app/Shared/Protos/ --swift_opt=Visibility=Public -I protos/ protos/*.proto
 
 logic-release-macos:
 	@echo ">>>>> Logic macOS"
