@@ -18,8 +18,12 @@ func logicInitialConfigure() {
   }))
 }
 
-struct LogicError: Error {
+struct LogicError: Error, LocalizedError {
   public let error: String
+
+  var errorDescription: String? {
+    return error
+  }
 }
 
 private func extractByteBuffer(_ bb: ByteBuffer) -> (Data?, LogicError?) {

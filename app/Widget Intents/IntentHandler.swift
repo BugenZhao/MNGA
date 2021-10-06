@@ -8,23 +8,17 @@
 import Intents
 
 class IntentHandler: INExtension, ConfigurationIntentHandling {
-  override init() {
-    super.init()
-    logicInitialConfigure()
+  var groupStore: UserDefaults {
+    UserDefaults(suiteName: Constants.Key.groupStore)!
   }
 
   func provideForumOptionsCollection(for intent: ConfigurationIntent, with completion: @escaping (INObjectCollection<WidgetForum>?, Error?) -> Void) {
-    basicLogicCallAsync(.forumList(.init())) { (response: ForumListResponse) in
-      let forums = response.categories.flatMap { $0.forums }
-      let items = forums.map(\.widgetForum)
-      completion(INObjectCollection(items: items), nil)
-    }
+    let forums = [Forum](readFrom: groupStore, forKey: Constants.Key.favoriteForums) ?? []
+    let items = forums.map(\.widgetForum)
+    completion(INObjectCollection(items: items), nil)
   }
 
   override func handler(for intent: INIntent) -> Any {
-    // This is the default implementation.  If you want different objects to handle different intents,
-    // you can override this and return the handler you want for that particular intent.
-
     return self
   }
 }
