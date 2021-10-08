@@ -20,7 +20,7 @@ struct WebOrAsyncImage: View {
 //        })
     } else {
       if let url = url {
-        let image = WebImage(url: url).resizable()
+        let image = WebImage(url: url, options: .allowInvalidSSLCertificates).resizable()
         if let p = placeholder {
           image.placeholder(p)
         } else {
