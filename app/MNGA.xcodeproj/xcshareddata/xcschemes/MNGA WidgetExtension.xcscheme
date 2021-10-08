@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B404C4F7270D9EBA00FF1743"
-               BuildableName = "MNGA WidgetExtension.appex"
+               BuildableName = "MNGA Widget Extension.appex"
                BlueprintName = "MNGA Widget Extension"
                ReferencedContainer = "container:MNGA.xcodeproj">
             </BuildableReference>
@@ -63,7 +63,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B404C4F7270D9EBA00FF1743"
-            BuildableName = "MNGA WidgetExtension.appex"
+            BuildableName = "MNGA Widget Extension.appex"
             BlueprintName = "MNGA Widget Extension"
             ReferencedContainer = "container:MNGA.xcodeproj">
          </BuildableReference>

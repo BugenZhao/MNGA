@@ -31,7 +31,6 @@
 		B404C500270D9EBC00FF1743 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B404C4FF270D9EBC00FF1743 /* Assets.xcassets */; };
 		B404C502270D9EBC00FF1743 /* MNGA_Widget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B404C4FE270D9EBB00FF1743 /* MNGA_Widget.intentdefinition */; };
 		B404C503270D9EBC00FF1743 /* MNGA_Widget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B404C4FE270D9EBB00FF1743 /* MNGA_Widget.intentdefinition */; };
-		B404C506270D9EBC00FF1743 /* MNGA Widget Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B404C4F8270D9EBA00FF1743 /* MNGA Widget Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B409251C26D299E600BCB666 /* ContentButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251B26D299E600BCB666 /* ContentButtonView.swift */; };
 		B409251D26D299E600BCB666 /* ContentButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409251B26D299E600BCB666 /* ContentButtonView.swift */; };
 		B409252226D29D2100BCB666 /* ContentImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409252126D29D2100BCB666 /* ContentImageView.swift */; };
@@ -43,7 +42,6 @@
 		B409CE6D26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B40DC66D270DB9B2002DC8A1 /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B40DC648270DB8B3002DC8A1 /* Intents.framework */; platformFilter = maccatalyst; };
-		B40DC674270DB9B2002DC8A1 /* Widget Intents.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B40DC66C270DB9B2002DC8A1 /* Widget Intents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B40DC679270DBA19002DC8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC678270DBA19002DC8A1 /* SwiftProtobuf */; };
 		B40DC67B270DBA2B002DC8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC67A270DBA2B002DC8A1 /* SwiftProtobuf */; };
 		B40DC680270DBACD002DC8A1 /* MNGA_Widget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B404C4FE270D9EBB00FF1743 /* MNGA_Widget.intentdefinition */; };
@@ -255,23 +253,6 @@
 		B4FBED8326A7163E006390A3 /* PreferencesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FBED8126A7163E006390A3 /* PreferencesStorage.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		B404C504270D9EBC00FF1743 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B4C024BC26884FD600E53554 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B404C4F7270D9EBA00FF1743;
-			remoteInfo = "MNGA WidgetExtension";
-		};
-		B40DC672270DB9B2002DC8A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B4C024BC26884FD600E53554 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B40DC66B270DB9B2002DC8A1;
-			remoteInfo = "Widget Intents";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		B43DEDBC269F0952009C52F5 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -279,8 +260,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B404C506270D9EBC00FF1743 /* MNGA Widget Extension.appex in Embed App Extensions */,
-				B40DC674270DB9B2002DC8A1 /* Widget Intents.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -825,8 +804,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B404C505270D9EBC00FF1743 /* PBXTargetDependency */,
-				B40DC673270DB9B2002DC8A1 /* PBXTargetDependency */,
 			);
 			name = "MNGA (iOS)";
 			packageProductDependencies = (
@@ -1204,19 +1181,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		B404C505270D9EBC00FF1743 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B404C4F7270D9EBA00FF1743 /* MNGA Widget Extension */;
-			targetProxy = B404C504270D9EBC00FF1743 /* PBXContainerItemProxy */;
-		};
-		B40DC673270DB9B2002DC8A1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B40DC66B270DB9B2002DC8A1 /* Widget Intents */;
-			targetProxy = B40DC672270DB9B2002DC8A1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B4DCF4532688F68400EC78A4 /* Localizable.strings */ = {
