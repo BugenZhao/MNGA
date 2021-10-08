@@ -25,7 +25,7 @@ struct TopicSubjectView: View {
       if topic.isFavored {
         Image(systemName: "bookmark")
       }
-    } .font(.footnote, weight: .bold)
+    } .font(.footnote.bold())
   }
   
   // for compatibility

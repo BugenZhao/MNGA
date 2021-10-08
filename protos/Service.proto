@@ -141,7 +141,10 @@ message HotTopicListRequest {
   optional uint32 fetch_page_limit = 3;
   optional uint64 limit = 4;
 }
-message HotTopicListResponse { repeated Topic topics = 1; }
+message HotTopicListResponse {
+  repeated Topic topics = 1;
+  Forum forum = 2;
+}
 
 message ForumSearchRequest { string key = 1; }
 message ForumSearchResponse { repeated Forum forums = 1; }

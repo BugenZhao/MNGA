@@ -7,13 +7,6 @@
 
 import Foundation
 import SwiftUI
-import Logging
-
-let logger: Logger = {
-  var logger = Logger(label: "App")
-  logger.logLevel = .info
-  return logger
-}();
 
 public func withAnimation<Result>(_ animation: Animation? = .default, when condition: Bool, _ body: () throws -> Result) rethrows -> Result {
   if condition {

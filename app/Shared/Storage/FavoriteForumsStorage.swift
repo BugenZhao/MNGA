@@ -10,7 +10,16 @@ import SwiftUI
 
 class FavoriteForumsStorage: ObservableObject {
   static let shared = FavoriteForumsStorage()
-  
+
+  init() {
+    if !oldFavoriteForums.isEmpty && favoriteForums.isEmpty {
+      favoriteForums = oldFavoriteForums
+      oldFavoriteForums.removeAll()
+    }
+  }
+
+  static private let groupStore = UserDefaults.init(suiteName: Constants.Key.groupStore)!
+
   enum FilterMode: String, CaseIterable {
     case favoritesOnly = "Favorites Only"
     case all = "All Forums"
@@ -34,7 +43,9 @@ class FavoriteForumsStorage: ObservableObject {
     }
   }
 
-  @AppStorage("favoriteForums") var favoriteForums = [Forum]()
+  @AppStorage("favoriteForums") private var oldFavoriteForums = [Forum]()
+
+  @AppStorage(Constants.Key.favoriteForums, store: groupStore) var favoriteForums = [Forum]()
   @AppStorage("showAll") var filterMode = FilterMode.all
 
   func isFavorite(id: ForumId) -> Bool {

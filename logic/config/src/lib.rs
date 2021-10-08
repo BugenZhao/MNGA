@@ -29,6 +29,11 @@ pub fn set_config(config: DataModel::Configuration) {
         cache_path,
         test_path,
     };
-    log::info!("{:#?}", conf);
-    CONF.set(conf).expect("failed to set configuration");
+
+    match CONF.set(conf) {
+        Ok(_) => {}
+        Err(_) => {
+            log::warn!("failed to set configuration, maybe already set?")
+        }
+    }
 }

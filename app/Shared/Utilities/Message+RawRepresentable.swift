@@ -57,6 +57,12 @@ extension WrappedMessage: RawRepresentable {
 }
 
 extension WrappedMessage: Equatable {
-  
+
 }
 
+extension RawRepresentable where RawValue == String {
+  init?(readFrom userDefaults: UserDefaults, forKey defaultName: String) {
+    let string = userDefaults.string(forKey: defaultName) ?? ""
+    self.init(rawValue: string)
+  }
+}

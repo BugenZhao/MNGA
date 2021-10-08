@@ -140,7 +140,7 @@ extension Post {
 }
 
 extension PostId: CustomStringConvertible {
-  var description: String {
+  public var description: String {
     "\(self.tid), \(self.pid)"
   }
 }

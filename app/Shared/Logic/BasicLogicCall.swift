@@ -8,8 +8,22 @@
 import Foundation
 import SwiftProtobuf
 
-struct LogicError: Error {
+func logicInitialConfigure() {
+  let configuration = Configuration.with { c in
+    c.documentDirPath = FileManager.default.urls(for: .documentDirectory, in: . userDomainMask)[0].path
+  }
+
+  let _: ConfigureResponse = try! logicCall(.configure(.with {
+    $0.config = configuration
+  }))
+}
+
+struct LogicError: Error, LocalizedError {
   public let error: String
+
+  var errorDescription: String? {
+    return error
+  }
 }
 
 private func extractByteBuffer(_ bb: ByteBuffer) -> (Data?, LogicError?) {
@@ -82,20 +96,23 @@ private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: B
   dataCallback.run(resData, resError)
 }
 
-func logicCallAsync<Response: SwiftProtobuf.Message>(
+func basicLogicCallAsync<Response: SwiftProtobuf.Message>(
   _ requestValue: AsyncRequest.OneOf_Value,
   requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
-  errorToastModel: ToastModel? = ToastModel.hud,
   onSuccess: @escaping (Response) -> Void,
   onError: @escaping (LogicError) -> Void = { _ in }
 ) {
   requestDispatchQueue.async {
     let request = AsyncRequest.with { $0.value = requestValue }
-    let errorCallback = { (e: LogicError) in
-      logger.error("logicCallAsync: \(e)")
-      if let tm = errorToastModel { tm.message = .error(e.error) }
-      onError(e)
+
+    let reqData: Data
+    do {
+      reqData = try request.serializedData()
+    } catch {
+      onError(LogicError(error: "Protobuf: serialize request failed"))
+      return
     }
+
     let dataCallback = WrappedDataCallback(
       callback: { (resData: Data) in
         do {
@@ -103,36 +120,17 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
           onSuccess(res)
         } catch {
           let e = LogicError(error: "\(type(of: error)): \(error)")
-          errorCallback(e)
+          onError(e)
         }
       },
-      errorCallback: errorCallback
+      errorCallback: onError
     )
     let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()
     let rustCallback = Callback(user_data: dataCallbackPtr, callback: byteBufferCallback)
 
-    let reqData = try! request.serializedData()
     reqData.withUnsafeBytes { ptr -> Void in
       let ptr = ptr.bindMemory(to: UInt8.self).baseAddress
       rust_call_async(ptr, UInt(reqData.count), rustCallback)
     }
   }
 }
-
-#if os(iOS)
-  @available(iOS 15.0, *)
-  func logicCallAsync<Response: SwiftProtobuf.Message>(
-    _ requestValue: AsyncRequest.OneOf_Value,
-    requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
-    errorToastModel: ToastModel? = ToastModel.hud
-  ) async -> Result<Response, LogicError> {
-    return await withCheckedContinuation { (continuation: CheckedContinuation<Result<Response, LogicError>, Never>) in
-      logicCallAsync(requestValue, requestDispatchQueue: requestDispatchQueue, errorToastModel: errorToastModel)
-      { (res: Response) in
-        continuation.resume(returning: .success(res))
-      } onError: { err in
-        continuation.resume(returning: .failure(err))
-      }
-    }
-  }
-#endif
