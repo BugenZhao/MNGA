@@ -453,47 +453,44 @@ struct TopicDetailsView: View {
 //    }
   }
 
-  @ViewBuilder
   var screenshotView: some View {
-    VStack(alignment: .leading) {
-      headerSectionInner
+    typealias ShotData = (title: LocalizedStringKey, replies: ArraySlice<Post>)
 
-      if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
-        Text("Hot Replies")
-          .font(.footnote)
-          .foregroundColor(.secondary)
-        ForEach(hotReplies, id: \.id.pid) { post in
-          Divider()
-          buildRow(post: post, withId: false)
-        }
-      } else if let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5),
-        !latestReplies.isEmpty
-      {
-        Text("Replies")
-          .font(.footnote)
-          .foregroundColor(.secondary)
-        ForEach(latestReplies, id: \.id.pid) { post in
-          Divider()
-          buildRow(post: post, withId: false)
+    let shot: ShotData
+    if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
+      shot = (title: "Hot Replies", replies: hotReplies[...])
+    } else {
+      let topReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5)
+      shot = (title: "Replies", replies: topReplies)
+    }
+
+    return VStack(alignment: .leading, spacing: 16) {
+      SharedFromMNGAView()
+      headerSectionInner
+      if !shot.replies.isEmpty {
+        VStack(alignment: .leading) {
+          Text(shot.title)
+            .font(.footnote)
+            .foregroundColor(.secondary)
+          ForEach(shot.replies, id: \.id.pid) { post in
+            Divider()
+            buildRow(post: post, withId: false)
+          }
         }
       }
     }
       .padding()
       .fixedSize(horizontal: false, vertical: true)
-      .frame(width: Screen.main.bounds.size.width)
+      .frame(width: min(Screen.main.bounds.size.width, 600))
       .background(.secondarySystemGroupedBackground)
       .environmentObject(action)
       .environmentObject(postReply)
   }
 
   func shareAsImage() {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
       let image = screenshotView.snapshot()
-      if image.size == .zero {
-        self.alert.message = .error(NSLocalizedString("Contents are too large to take a screenshot.", comment: ""))
-      } else {
-        viewingImage.show(image: image)
-      }
+      viewingImage.show(image: image)
     }
   }
 }

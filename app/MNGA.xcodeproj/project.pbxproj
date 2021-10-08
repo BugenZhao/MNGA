@@ -118,6 +118,8 @@
 		B44463A326A1ED2A006FA44D /* ActivityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B44463A126A1ED2A006FA44D /* ActivityModel.swift */; };
 		B447BC1026F7033200BCC2E8 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B447BC0F26F7033200BCC2E8 /* AboutView.swift */; };
 		B447BC1126F7033200BCC2E8 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B447BC0F26F7033200BCC2E8 /* AboutView.swift */; };
+		B44823C5271095BF001E591F /* SharedFromMNGAView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B44823C4271095BF001E591F /* SharedFromMNGAView.swift */; };
+		B44823C6271095BF001E591F /* SharedFromMNGAView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B44823C4271095BF001E591F /* SharedFromMNGAView.swift */; };
 		B454F37826B1C2A4009C6B27 /* LoadingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */; };
 		B454F37926B1C2A4009C6B27 /* LoadingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */; };
 		B45819BC268D7D7200999830 /* Message+RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */; };
@@ -319,6 +321,7 @@
 		B444639E26A1D745006FA44D /* StickerImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerImageView.swift; sourceTree = "<group>"; };
 		B44463A126A1ED2A006FA44D /* ActivityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityModel.swift; sourceTree = "<group>"; };
 		B447BC0F26F7033200BCC2E8 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		B44823C4271095BF001E591F /* SharedFromMNGAView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedFromMNGAView.swift; sourceTree = "<group>"; };
 		B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingRowView.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* Message+RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RawRepresentable.swift"; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
@@ -705,6 +708,7 @@
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
 				B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */,
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
+				B48709C4269AEA9F00E88E5A /* NavigationPlaceholders.swift */,
 				B4F2408326A30A8500D620B0 /* NotificationListView.swift */,
 				B4F2408626A30C4900D620B0 /* NotificationRowView.swift */,
 				B4715CD026A48A930049D136 /* PlaceholderView.swift */,
@@ -718,12 +722,13 @@
 				B498FEF826EC7938008C577B /* QuoteUserView.swift */,
 				B4715CC426A413E00049D136 /* QuoteView.swift */,
 				B4CF7E90270B2A8C00E7C374 /* RecommendedTopicListView.swift */,
+				B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */,
+				B44823C4271095BF001E591F /* SharedFromMNGAView.swift */,
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
 				B4DBF60E268979C20027233F /* TopicDetailsView.swift */,
 				B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */,
-				B48709C4269AEA9F00E88E5A /* NavigationPlaceholders.swift */,
 				B4DBF611268979F70027233F /* TopicListView.swift */,
 				B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */,
 				B4DBF61426897A170027233F /* TopicRowView.swift */,
@@ -733,7 +738,6 @@
 				B4CF7E8A270AAF4500E7C374 /* UserSignatureView.swift */,
 				B402308426EBBA7A0077D3AA /* UserView.swift */,
 				B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */,
-				B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1061,6 +1065,7 @@
 				B4E1071A268DADFF006C1742 /* LoginView.swift in Sources */,
 				B4C024D626884FD700E53554 /* ContentView.swift in Sources */,
 				B4E1071D268DC4D1006C1742 /* AuthStorage.swift in Sources */,
+				B44823C5271095BF001E591F /* SharedFromMNGAView.swift in Sources */,
 				B45A9E8B26A171720088F04D /* PostEditorView.swift in Sources */,
 				B4DBF61526897A170027233F /* TopicRowView.swift in Sources */,
 				B4FBED8226A7163E006390A3 /* PreferencesStorage.swift in Sources */,
@@ -1095,6 +1100,7 @@
 				B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */,
 				B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */,
 				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,
+				B44823C6271095BF001E591F /* SharedFromMNGAView.swift in Sources */,
 				B4715CCC26A480B60049D136 /* BlockWordsStorage.swift in Sources */,
 				B444639426A1B745006FA44D /* OptionalBinding.swift in Sources */,
 				B4715CCF26A481FF0049D136 /* BlockWordListView.swift in Sources */,
