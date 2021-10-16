@@ -2,6 +2,7 @@ use crate::{
     error::ServiceResult,
     forum::{get_forum_list, search_forum, set_subforum_filter},
     history::get_topic_history,
+    msg::get_short_msg_list,
     noti::fetch_notis,
     post::{
         get_user_post_list, post_reply, post_reply_fetch_content, post_vote, upload_attachment,
@@ -102,4 +103,10 @@ pub async fn handle_user_post_list(
     request: UserPostListRequest,
 ) -> ServiceResult<UserPostListResponse> {
     get_user_post_list(request).await
+}
+
+pub async fn handle_short_message_list(
+    request: ShortMessageListRequest,
+) -> ServiceResult<ShortMessageListResponse> {
+    get_short_msg_list(request).await
 }

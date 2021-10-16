@@ -8,6 +8,7 @@ mod fetch;
 mod forum;
 mod history;
 mod macros;
+mod msg;
 mod noti;
 mod post;
 mod topic;

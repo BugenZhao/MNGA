@@ -17,6 +17,7 @@ struct UserMenuView: View {
   @State var showHistory: Bool = false
   @State var showFavorite: Bool = false
   @State var showNotifications: Bool = false
+  @State var showShortMessages: Bool = false
   @State var showPreferencesModal: Bool = false
   @State var showSeparateAboutModal: Bool = false
   @State var showUserProfile: Bool = false
@@ -26,6 +27,7 @@ struct UserMenuView: View {
     NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { } .hidden()
     NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { } .hidden()
     NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { } .hidden()
+    NavigationLink(destination: ShortMessageListView.build(), isActive: $showShortMessages) { } .hidden()
     NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
   }
 
@@ -46,16 +48,23 @@ struct UserMenuView: View {
     let uid = authStorage.authInfo.inner.uid
 
     Menu {
+      if let _ = self.user {
+        Section {
+          Button(action: { showNotifications = true }) {
+            Label("Notifications", systemImage: "bell")
+          }
+          Button(action: { showShortMessages = true }) {
+            Label("Short Messages", systemImage: "message")
+          }
+        }
+      }
       Section {
         if let _ = self.user {
           Button(action: { showUserProfile = true }) {
             Label("My Profile", systemImage: "person.fill")
           }
-          Button(action: { showNotifications = true }) {
-            Label("Notifications", systemImage: "bell.fill")
-          }
           Button(action: { showFavorite = true }) {
-            Label("Favorite Topics", systemImage: "bookmark.fill")
+            Label("Favorite Topics", systemImage: "bookmark")
           }
         }
         Button(action: { showHistory = true }) {

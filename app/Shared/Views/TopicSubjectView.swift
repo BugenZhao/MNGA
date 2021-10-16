@@ -8,6 +8,17 @@
 import Foundation
 import SwiftUI
 
+struct TopicSubjectContentInnerView: View {
+  let content: String
+  let lineLimit: Int?
+
+  var body: some View {
+    Text(content)
+      .font(.headline)
+      .lineLimit(lineLimit)
+  }
+}
+
 struct TopicSubjectView: View {
   let topic: Topic
   let lineLimit: Int?
@@ -27,7 +38,7 @@ struct TopicSubjectView: View {
       }
     } .font(.footnote.bold())
   }
-  
+
   // for compatibility
   var tags: [String] {
     topic.subject.tags.isEmpty ? topic.tags : topic.subject.tags
@@ -59,9 +70,7 @@ struct TopicSubjectView: View {
           .lineLimit(1)
       }
 
-      Text(content)
-        .font(.headline)
-        .lineLimit(lineLimit)
+      TopicSubjectContentInnerView(content: content, lineLimit: lineLimit)
     }
   }
 }

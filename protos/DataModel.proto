@@ -200,3 +200,13 @@ message PostAttachment {
   string url = 2;
   string check = 3;
 }
+
+message ShortMessage {
+  string id = 1;
+  string subject = 2;
+  string from_id = 3;
+  string from_name = 4;
+  uint64 post_date = 5;
+  uint64 last_post_date = 6;
+  uint32 post_num = 7;
+}

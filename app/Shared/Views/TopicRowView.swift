@@ -8,6 +8,34 @@
 import Foundation
 import SwiftUI
 
+struct TopicLikeRowInnerView<S: View>: View {
+  let subjectView: () -> S
+  let num: UInt32
+  let lastNum: UInt32?
+  let name: String
+  let date: UInt64
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack {
+        subjectView()
+        Spacer()
+        RepliesNumView(num: num, lastNum: lastNum)
+      }
+
+      HStack {
+        HStack(alignment: .center) {
+          Image(systemName: "person")
+          Text(name)
+        }
+        Spacer()
+        DateTimeTextView.build(timestamp: date, switchable: false)
+      } .foregroundColor(.secondary)
+        .font(.footnote)
+    } .padding(.vertical, 4)
+  }
+}
+
 struct TopicRowView: View {
   let topic: Topic
   let useTopicPostDate: Bool
@@ -19,27 +47,16 @@ struct TopicRowView: View {
     self.dimmedSubject = dimmedSubject
   }
 
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      HStack {
-        BlockedView(content: topic.subject.full, revealOnTap: false) {
-          TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: true)
-            .foregroundColor(dimmedSubject && topic.hasRepliesNumLastVisit ? .secondary : nil)
-        }
-        Spacer()
-        RepliesNumView(num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil)
-      }
+  @ViewBuilder
+  var subject: some View {
+    BlockedView(content: topic.subject.full, revealOnTap: false) {
+      TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: true)
+        .foregroundColor(dimmedSubject && topic.hasRepliesNumLastVisit ? .secondary : nil)
+    }
+  }
 
-      HStack {
-        HStack(alignment: .center) {
-          Image(systemName: "person")
-          Text(topic.authorName)
-        }
-        Spacer()
-        DateTimeTextView.build(timestamp: useTopicPostDate ? topic.postDate : topic.lastPostDate, switchable: false)
-      } .foregroundColor(.secondary)
-        .font(.footnote)
-    } .padding(.vertical, 4)
+  var body: some View {
+    TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, name: topic.authorName, date: useTopicPostDate ? topic.postDate : topic.lastPostDate)
   }
 }
 

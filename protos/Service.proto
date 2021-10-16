@@ -60,6 +60,7 @@ message AsyncRequest {
     UploadAttachmentRequest upload_attachment = 15;
     UserTopicListRequest user_topic_list = 16;
     UserPostListRequest user_post_list = 17;
+    ShortMessageListRequest short_message_list = 18;
   }
 }
 
@@ -203,3 +204,9 @@ message UserPostListRequest {
   uint32 page = 2;
 }
 message UserPostListResponse { repeated TopicWithLightPost tps = 1; }
+
+message ShortMessageListRequest { uint32 page = 1; }
+message ShortMessageListResponse {
+  repeated ShortMessage messages = 1;
+  uint32 pages = 2;
+}
