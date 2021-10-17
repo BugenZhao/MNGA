@@ -47,7 +47,11 @@ pub async fn get_short_msg_list(
         ns.into_iter().filter_map(extract_short_msg).collect()
     })?;
 
-    let pages = u32::MAX;
+    let pages = if messages.is_empty() {
+        request.page
+    } else {
+        u32::MAX
+    };
 
     Ok(ShortMessageListResponse {
         messages: messages.into(),

@@ -22,11 +22,15 @@ pub enum ServiceError {
     #[error(transparent)]
     XmlParse(#[from] sxd_document::parser::Error),
     #[error(transparent)]
+    JsonParse(#[from] serde_json::Error),
+    #[error(transparent)]
     XPath(#[from] sxd_xpath::Error),
     #[error(transparent)]
     Cache(#[from] cache::CacheError),
     #[error(transparent)]
     Parse(#[from] text::error::ParseError),
+    #[error(transparent)]
+    UrlParse(#[from] url::ParseError),
 
     #[error("panic: {0}")]
     Panic(String),

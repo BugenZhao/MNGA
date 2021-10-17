@@ -1,86 +1,101 @@
-use std::cmp::Reverse;
+use std::{cmp::Reverse, collections::HashMap};
 
 use protos::{
     DataModel::{Notification, Notification_Type, PostId, User},
     Service::{FetchNotificationRequest, FetchNotificationResponse},
 };
-use sxd_xpath::nodeset::Node;
+use serde_json::Value;
 
-use crate::{
-    error::ServiceResult,
-    fetch::fetch_package,
-    utils::{extract_kv_pairs, extract_nodes, extract_string},
-};
+use crate::{error::ServiceResult, fetch::fetch_json_value};
 
-static NOTI_PREFIX: &str = "/noti";
+static NOTI_PREFIX: &str = "/noti_v2";
 fn noti_key(noti: &Notification) -> String {
     format!("{}/{}", NOTI_PREFIX, noti.timestamp)
 }
 
-fn extract_noti(node: Node) -> Option<Notification> {
-    use super::macros::pget;
-    let pairs = extract_kv_pairs(node);
+fn extract_noti(value: &Value) -> Option<Notification> {
+    use super::macros::get;
+    let kvs = value
+        .as_object()
+        .cloned()
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(k, v)| {
+            (
+                k,
+                v.as_str().map_or_else(|| v.to_string(), |s| s.to_owned()),
+            )
+        })
+        .collect::<HashMap<_, _>>();
 
-    let noti_type = pget!(pairs, 1, i32).map(|t| match t {
+    let noti_type = get!(kvs, "0", i32).map(|t| match t {
         1 => Notification_Type::REPLY_TOPIC,
         2 => Notification_Type::REPLY_POST,
         _ => Notification_Type::UNKNOWN,
     })?;
 
     let other_user = User {
-        id: pget!(pairs, 2)?,
-        name: pget!(pairs, pairs.len() - 3)?,
+        id: get!(kvs, "1")?,
+        name: get!(kvs, "2")?,
         ..Default::default()
     };
 
-    let topic_id = pget!(pairs, pairs.len() - 7).unwrap_or_default();
-
-    // todo
+    let topic_id = get!(kvs, "6").unwrap_or_default();
     let post_id = PostId {
         tid: topic_id.clone(),
-        pid: "0".to_owned(),
+        pid: get!(kvs, "8").unwrap_or_else(|| "0".to_owned()),
+        ..Default::default()
+    };
+    let other_post_id = PostId {
+        tid: topic_id.clone(),
+        pid: get!(kvs, "7").unwrap_or_else(|| "0".to_owned()),
         ..Default::default()
     };
 
-    Some(Notification {
+    let noti = Notification {
         field_type: noti_type,
         other_user: Some(other_user).into(),
-        topic_subject: pget!(pairs, pairs.len() - 1)?,
-        timestamp: pget!(pairs, 0, u64)?,
-        page: pget!(pairs, pairs.len() - 5, u32).unwrap_or_default(),
-        post_id: Some(post_id.clone()).into(), // todo
-        other_post_id: Some(post_id).into(),   // todo
+        post_id: Some(post_id).into(),
+        other_post_id: Some(other_post_id).into(),
+        topic_subject: get!(kvs, "5")?,
+        timestamp: get!(kvs, "9", _)?,
+        page: get!(kvs, "10", _).unwrap_or(1),
+        read: false,
         ..Default::default()
-    })
+    };
+
+    Some(noti)
 }
 
 pub async fn fetch_notis(
     _request: FetchNotificationRequest,
 ) -> ServiceResult<FetchNotificationResponse> {
-    let package = fetch_package(
+    let value = fetch_json_value(
         "nuke.php",
         vec![("__lib", "noti"), ("__act", "get_all")],
         vec![],
     )
     .await?;
 
-    let unread_count = extract_string(&package, "/root/data/item[1]/unread")
-        .ok()
-        .and_then(|s| s.parse::<u32>().ok())
+    let unread_count = value
+        .pointer("0/unread")
+        .and_then(|v| v.as_u64())
         .unwrap_or_default();
 
-    let notis = extract_nodes(&package, "/root/data/item[1]/item/item", |ns| {
-        ns.into_iter()
-            .filter_map(|node| {
-                extract_noti(node).map(|mut noti| {
-                    noti.read = unread_count == 0;
-                    noti
+    let notis = value
+        .pointer("/0/0")
+        .and_then(|v| v.as_array())
+        .map(|vs| {
+            vs.iter()
+                .filter_map(|v| {
+                    extract_noti(v).map(|mut noti| {
+                        noti.read = unread_count == 0;
+                        noti
+                    })
                 })
-            })
-            .collect()
-    })
-    .ok()
-    .unwrap_or_default();
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
 
     notis.into_iter().for_each(|noti| {
         let _ = cache::CACHE.insert_msg(&noti_key(&noti), &noti);
