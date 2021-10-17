@@ -41,7 +41,7 @@ message ContentParseResponse {
 message SubjectParseRequest { string raw = 1; }
 message SubjectParseResponse { Subject subject = 1; }
 
-message MarkNotificationReadRequest { string id = 1; }
+message MarkNotificationReadRequest { repeated string ids = 1; }
 message MarkNotificationReadResponse {}
 
 //

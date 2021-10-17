@@ -20,8 +20,16 @@ struct NotificationRowView: View {
 
       HStack {
         HStack(alignment: .center) {
-          Image(systemName: "person")
-          Text(noti.otherUser.name)
+          switch noti.type {
+          case .replyPost, .replyTopic:
+            Image(systemName: "person")
+            Text(noti.otherUser.name)
+          case .vote:
+            Image(systemName: "doc.richtext")
+            Text("Your post")
+          default:
+            EmptyView()
+          }
         }
         Text(noti.type.description)
         Spacer()
@@ -38,7 +46,7 @@ struct NotificationRowView_Previews: PreviewProvider {
     NotificationRowView(noti: .with {
       $0.type = .replyTopic
       $0.otherUser = .with { u in u.name = "Bugen" }
-      $0.topicSubject = .with { s in s.content = "何方道友在西安渡劫？"}
+      $0.topicSubject = .with { s in s.content = "何方道友在西安渡劫？" }
       $0.timestamp = UInt64(Date().timeIntervalSince1970 - 60)
     }) .background(.primary.opacity(0.1)).padding()
   }

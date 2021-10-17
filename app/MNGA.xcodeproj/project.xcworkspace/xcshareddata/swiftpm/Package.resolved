@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "CombineExt",
+        "repositoryURL": "https://github.com/CombineCommunity/CombineExt",
+        "state": {
+          "branch": null,
+          "revision": "0880829102152185190064fd17847a7c681d2127",
+          "version": "1.5.1"
+        }
+      },
+      {
         "package": "SDWebImage",
         "repositoryURL": "https://github.com/SDWebImage/SDWebImage.git",
         "state": {
@@ -62,6 +71,15 @@
           "branch": null,
           "revision": "1f62db409f2c9b0223a3f68567b4a01333aae778",
           "version": "1.17.0"
+        }
+      },
+      {
+        "package": "Introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "state": {
+          "branch": null,
+          "revision": "2e09be8af614401bc9f87d40093ec19ce56ccaf2",
+          "version": "0.1.3"
         }
       },
       {

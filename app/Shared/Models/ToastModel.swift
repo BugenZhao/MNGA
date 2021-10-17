@@ -17,6 +17,7 @@ class ToastModel: ObservableObject {
   enum Message {
     case success(String)
     case error(String)
+    case notification(Int)
   }
 
   @Published var message: Message? = nil {
@@ -28,6 +29,8 @@ class ToastModel: ObservableObject {
             HapticUtils.play(type: .success)
           case .error(_):
             HapticUtils.play(type: .error)
+          case .notification(_):
+            break
           }
         #endif
       }
@@ -45,6 +48,8 @@ extension ToastModel.Message {
       return AlertToast(displayMode: displayMode, type: .complete(.green), title: NSLocalizedString("Success", comment: ""), subTitle: msg)
     case .error(let msg):
       return AlertToast(displayMode: displayMode, type: .error(.red), title: NSLocalizedString("Error", comment: ""), subTitle: msg)
+    case .notification(let newCount):
+      return AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: NSLocalizedString("Notifications", comment: ""), subTitle: String.localizedStringWithFormat(NSLocalizedString("%lld new unread notifications", comment: ""), newCount))
     }
   }
 }

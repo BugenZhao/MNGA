@@ -85,6 +85,9 @@
 		B412F709268DFC4F00EB0614 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B412F708268DFC4F00EB0614 /* Logging */; };
 		B413D67E2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */; };
 		B413D67F2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */; };
+		B41BC0D9271C617C00DD05F2 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */; };
+		B41BC0DA271C617C00DD05F2 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */; };
+		B41BC0DD271C7E5D00DD05F2 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = B41BC0DC271C7E5D00DD05F2 /* CombineExt */; };
 		B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B437B278269B09DC0092FF9E /* SwiftUIRefresh */; };
 		B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
 		B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
@@ -304,6 +307,7 @@
 		B40F1532271AC3E3004CAB86 /* ShortMessageRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortMessageRowView.swift; sourceTree = "<group>"; };
 		B40F1535271AC60F004CAB86 /* ShortMessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortMessageListView.swift; sourceTree = "<group>"; };
 		B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebOrAsyncImage.swift; sourceTree = "<group>"; };
+		B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
 		B437B27B269B0E190092FF9E /* ToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModifier.swift; sourceTree = "<group>"; };
 		B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeTextView.swift; sourceTree = "<group>"; };
 		B43DED48269C5F78009C52F5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -432,6 +436,7 @@
 				B43DED5F269EFA5A009C52F5 /* AlertToast in Frameworks */,
 				B4EB80ED269B1B800014DDFA /* liblogiccatalyst.a in Frameworks */,
 				B409252626D29F6C00BCB666 /* BetterSafariView in Frameworks */,
+				B41BC0DD271C7E5D00DD05F2 /* CombineExt in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
 				B4CF7E8F270AE04A00E7C374 /* Colorful in Frameworks */,
 				B4C024F22688511400E53554 /* liblogicios.a in Frameworks */,
@@ -566,6 +571,7 @@
 			children = (
 				B44463A126A1ED2A006FA44D /* ActivityModel.swift */,
 				B475FD9D26D2B1B300109CEA /* AttachmentsModel.swift */,
+				B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */,
 				B409252726D29FD900BCB666 /* OpenURLModel.swift */,
 				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
 				B444638A26A1981E006FA44D /* PostReplyModel.swift */,
@@ -824,6 +830,7 @@
 				B43DED5E269EFA5A009C52F5 /* AlertToast */,
 				B409252526D29F6C00BCB666 /* BetterSafariView */,
 				B4CF7E8E270AE04A00E7C374 /* Colorful */,
+				B41BC0DC271C7E5D00DD05F2 /* CombineExt */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
@@ -901,6 +908,7 @@
 				B409252426D29F6C00BCB666 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */,
 				B404C4A6270C8E1000FF1743 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -1035,6 +1043,7 @@
 				B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B444638B26A1981E006FA44D /* PostReplyModel.swift in Sources */,
+				B41BC0D9271C617C00DD05F2 /* NotificationModel.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
@@ -1113,6 +1122,7 @@
 				B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */,
 				B4CF7E852709E38500E7C374 /* ArrayBuilder.swift in Sources */,
 				B402308926EBBC5C0077D3AA /* TopicDetailsActionModel.swift in Sources */,
+				B41BC0DA271C617C00DD05F2 /* NotificationModel.swift in Sources */,
 				B4DBF610268979C20027233F /* TopicDetailsView.swift in Sources */,
 				B4CF7E8C270AAF4500E7C374 /* UserSignatureView.swift in Sources */,
 				B409252926D29FD900BCB666 /* OpenURLModel.swift in Sources */,
@@ -1634,6 +1644,14 @@
 				minimumVersion = 1.4.2;
 			};
 		};
+		B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CombineCommunity/CombineExt";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/elai950/AlertToast.git";
@@ -1752,6 +1770,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
+		};
+		B41BC0DC271C7E5D00DD05F2 /* CombineExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */;
+			productName = CombineExt;
 		};
 		B437B278269B09DC0092FF9E /* SwiftUIRefresh */ = {
 			isa = XCSwiftPackageProductDependency;

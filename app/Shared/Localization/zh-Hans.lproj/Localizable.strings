@@ -51,9 +51,12 @@
 "Quote" = "引用";
 "Edit" = "编辑";
 "Share" = "分享";
-"Notifications" = "通知（Beta）";
+"Notifications" = "通知";
+"Notifications (%lld)" = "通知（%lld）";
 "replied to your post" = "回复了你的回复";
 "replied to your topic" = "回复了你的话题";
+"Your post" = "你的回复";
+"received 10 more votes" = "收获了 10 个评价";
 "Discard" = "舍弃";
 "Subject" = "主题";
 "Content" = "内容";
@@ -115,3 +118,4 @@
 "Copy" = "拷贝";
 "Open in Browser" = "在浏览器中打开";
 "Short Messages" = "短消息";
+"%lld new unread notifications" = "%lld 个新的未读通知";

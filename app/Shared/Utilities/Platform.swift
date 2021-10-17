@@ -138,3 +138,25 @@ extension ToolbarItemPlacement {
     }
   }
 #endif
+
+extension View {
+  @inlinable func maySymbolRenderingModeHierarchical() -> some View {
+    Group {
+      if #available(iOS 15.0, *) {
+        self.symbolRenderingMode(.hierarchical)
+      } else {
+        self
+      }
+    }
+  }
+  
+  @inlinable func maySymbolRenderingModeMulticolor() -> some View {
+    Group {
+      if #available(iOS 15.0, *) {
+        self.symbolRenderingMode(.multicolor)
+      } else {
+        self
+      }
+    }
+  }
+}

@@ -10,46 +10,51 @@ import SwiftUI
 import SwiftUIX
 
 struct NotificationListView: View {
-  typealias DataSource = PagingDataSource<FetchNotificationResponse, Notification>
+  typealias DataSource = NotificationDataSource
 
-  @StateObject var dataSource: DataSource
-
-  static func build() -> Self {
-    let dataSource = DataSource.init(
-      buildRequest: { _ in
-        return .fetchNotification(.with { _ in })
-      },
-      onResponse: { response in
-        let items = response.notis
-        return (items, 1)
-      },
-      id: \.hashIdentifiable.description
-    )
-
-    return Self(dataSource: dataSource)
-  }
+  @ObservedObject var dataSource: DataSource
 
   @ViewBuilder
   func buildLink(for notification: Notification) -> some View {
     NavigationLink(destination: {
       TopicDetailsView.build(topic: notification.asTopic)
         .onAppear {
-        let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.id = notification.id }))
+        let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] }))
       }
     }) {
       NotificationRowView(noti: notification)
     }
   }
 
+  @ViewBuilder
+  var markAllAsReadButton: some View {
+    Button(action: { markAllAsRead() }) {
+      Label("Mark All as Read", systemImage: "checkmark.circle")
+    } .disabled(dataSource.unreadCount == 0)
+  }
+
+  func markAllAsRead() {
+    DispatchQueue.global(qos: .background).async {
+      let request = SyncRequest.OneOf_Value.markNotiRead(.with { n in
+        n.ids = dataSource.items.map { $0.id }
+      })
+      let _: MarkNotificationReadResponse? = try? logicCall(request)
+      DispatchQueue.main.async {
+        dataSource.refresh(animated: true)
+      }
+    }
+  }
+
   var body: some View {
     List {
-      ForEach(dataSource.items, id: \.hashIdentifiable) { notification in
+      ForEach(dataSource.items, id: \.id) { notification in
         buildLink(for: notification)
       }
-    } .navigationTitle("Notifications")
+    } .navigationTitle(dataSource.title)
       .onAppear { dataSource.initialLoad() }
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
+      .toolbarWithFix { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }
   }
 }
 

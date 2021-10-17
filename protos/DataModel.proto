@@ -182,6 +182,7 @@ message Notification {
     UNKNOWN = 0;
     REPLY_POST = 1;
     REPLY_TOPIC = 2;
+    VOTE = 17;
   }
   string id = 9;
   Type type = 1;

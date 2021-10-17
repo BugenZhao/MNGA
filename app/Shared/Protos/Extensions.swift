@@ -125,6 +125,8 @@ extension Notification.TypeEnum {
     switch self {
     case .replyPost, .replyTopic:
       return "arrowshape.turn.up.left"
+    case .vote:
+      return "hand.thumbsup"
     case .unknown, .UNRECOGNIZED(_):
       return "questionmark.circle"
     }
@@ -136,6 +138,8 @@ extension Notification.TypeEnum {
       return "replied to your post"
     case .replyTopic:
       return "replied to your topic"
+    case .vote:
+      return "received 10 more votes"
     case .unknown, .UNRECOGNIZED(_):
       return ""
     }

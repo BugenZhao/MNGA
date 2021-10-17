@@ -25,6 +25,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   @Published var isLoading = false
   @Published var isRefreshing = false
   @Published var latestResponse: Res?
+  @Published var refreshedTimes = 0
 
   private var loadedPage = 0
   private var totalPages = 1
@@ -125,6 +126,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
     self.totalPages = newTotalPages ?? self.totalPages
     self.loadedPage += 1
+    self.refreshedTimes += 1
   }
 
   private func onRefreshError(e: LogicError, animated: Bool) {
@@ -167,6 +169,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   func initialLoad() {
     if self.loadedPage == 0 {
       loadMore()
+      refreshedTimes += 1
     }
   }
 

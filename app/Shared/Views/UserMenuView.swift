@@ -10,6 +10,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserMenuView: View {
+  @StateObject var notification = NotificationModel()
   @StateObject var authStorage = AuthStorage.shared
 
   @State var user: User? = nil
@@ -26,7 +27,7 @@ struct UserMenuView: View {
   var navigationBackgrounds: some View {
     NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { } .hidden()
     NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { } .hidden()
-    NavigationLink(destination: NotificationListView.build(), isActive: $showNotifications) { } .hidden()
+    NavigationLink(destination: NotificationListView(dataSource: notification.dataSource), isActive: $showNotifications) { } .hidden()
     NavigationLink(destination: ShortMessageListView.build(), isActive: $showShortMessages) { } .hidden()
     NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
   }
@@ -44,15 +45,21 @@ struct UserMenuView: View {
     #endif
   }
 
-  var body: some View {
+  @ViewBuilder
+  var notificationButton: some View {
+    Button(action: { showNotifications = true }) {
+      Label(notification.dataSource.title, systemImage: notification.dataSource.unreadCount > 0 ? "bell.badge.fill" : "bell")
+    } .maySymbolRenderingModeHierarchical()
+  }
+
+  @ViewBuilder
+  var menu: some View {
     let uid = authStorage.authInfo.inner.uid
 
     Menu {
       if let _ = self.user {
         Section {
-          Button(action: { showNotifications = true }) {
-            Label("Notifications", systemImage: "bell")
-          }
+          notificationButton
           Button(action: { showShortMessages = true }) {
             Label("Short Messages", systemImage: "message")
           }
@@ -96,9 +103,18 @@ struct UserMenuView: View {
       }
     } label: {
       icon
+    } .imageScale(.large)
+  }
+
+  var body: some View {
+    HStack {
+      menu
+      if notification.dataSource.unreadCount > 0 {
+        notificationButton
+      }
     }
-      .imageScale(.large)
       .onAppear { loadData() }
+      .onAppear { notification.objectWillChange.send() }
       .onChange(of: authStorage.authInfo) { _ in loadData() }
       .background { navigationBackgrounds }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }

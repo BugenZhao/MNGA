@@ -2,6 +2,7 @@ use std::{cmp::Reverse, collections::HashMap};
 
 use protos::{
     DataModel::{Notification, Notification_Type, PostId, User},
+    ProtobufEnum,
     Service::{
         FetchNotificationRequest, FetchNotificationResponse, MarkNotificationReadRequest,
         MarkNotificationReadResponse,
@@ -31,15 +32,13 @@ fn extract_noti(value: &Value) -> Option<Notification> {
         })
         .collect::<HashMap<_, _>>();
 
-    let noti_type = get!(kvs, "0", i32).map(|t| match t {
-        1 => Notification_Type::REPLY_TOPIC,
-        2 => Notification_Type::REPLY_POST,
-        _ => Notification_Type::UNKNOWN,
-    })?;
+    let noti_type = get!(kvs, "0", i32)
+        .and_then(Notification_Type::from_i32)
+        .unwrap_or(Notification_Type::UNKNOWN);
 
     let other_user = User {
-        id: get!(kvs, "1")?,
-        name: get!(kvs, "2")?,
+        id: get!(kvs, "1").unwrap_or_default(),
+        name: get!(kvs, "2").unwrap_or_default(),
         ..Default::default()
     };
 
@@ -97,15 +96,19 @@ pub async fn fetch_notis(
     //     .and_then(|v| v.as_u64())
     //     .unwrap_or_default();
 
-    let notis = value
-        .pointer("/0/0")
-        .and_then(|v| v.as_array())
-        .map(|vs| {
-            vs.iter()
-                .filter_map(|v| extract_noti(v))
-                .collect::<Vec<_>>()
-        })
-        .unwrap_or_default();
+    let notis = {
+        let mut notis = vec![];
+        for pointer in ["/0/0", "/0/1", "/0/2"] {
+            let iter = value
+                .pointer(pointer)
+                .and_then(|v| v.as_array())
+                .map(|vs| vs.iter().filter_map(|v| extract_noti(v)));
+            if let Some(iter) = iter {
+                notis.extend(iter);
+            }
+        }
+        notis
+    };
 
     notis.into_iter().for_each(|noti| {
         let key = noti_key(noti.get_id());
@@ -136,10 +139,15 @@ pub async fn fetch_notis(
 pub fn mark_noti_read(
     request: MarkNotificationReadRequest,
 ) -> ServiceResult<MarkNotificationReadResponse> {
-    let key = noti_key(request.get_id());
-    let _ = cache::CACHE.mutate_msg(&key, |noti: &mut Notification| {
-        noti.set_read(true);
-    });
+    request
+        .ids
+        .iter()
+        .map(|id| noti_key(id.as_str()))
+        .for_each(|key| {
+            let _ = cache::CACHE.mutate_msg(&key, |noti: &mut Notification| {
+                noti.set_read(true);
+            });
+        });
 
     Ok(Default::default())
 }
@@ -159,7 +167,7 @@ mod test {
         if let Some(noti) = response.get_notis().first() {
             let id = noti.get_id();
             mark_noti_read(MarkNotificationReadRequest {
-                id: id.to_owned(),
+                ids: vec![id.to_owned()].into(),
                 ..Default::default()
             })?;
 
