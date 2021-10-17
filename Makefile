@@ -8,6 +8,11 @@ OUT_INCLUDE = out/include
 ios-release: swift-pb logic-release-ios logic-bindings
 macos-release: swift-pb logic-release-macos logic-bindings
 
+sim-debug: swift-pb logic-bindings
+	@echo ">>>>> Logic Simulator"
+	${CARGO} build --target x86_64-apple-ios
+	cp ${TARGET}/x86_64-apple-ios/debug/liblogic.a ${OUT_LIBS}/liblogicios.a
+
 swift-pb:
 	@echo ">>>>> Swift PB"
 	protoc --swift_out=app/Shared/Protos/ --swift_opt=Visibility=Public -I protos/ protos/*.proto
