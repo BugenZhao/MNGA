@@ -2,15 +2,18 @@ use std::{cmp::Reverse, collections::HashMap};
 
 use protos::{
     DataModel::{Notification, Notification_Type, PostId, User},
-    Service::{FetchNotificationRequest, FetchNotificationResponse},
+    Service::{
+        FetchNotificationRequest, FetchNotificationResponse, MarkNotificationReadRequest,
+        MarkNotificationReadResponse,
+    },
 };
 use serde_json::Value;
 
-use crate::{error::ServiceResult, fetch::fetch_json_value};
+use crate::{error::ServiceResult, fetch::fetch_json_value, topic::extract_topic_subject};
 
 static NOTI_PREFIX: &str = "/noti_v2";
-fn noti_key(noti: &Notification) -> String {
-    format!("{}/{}", NOTI_PREFIX, noti.timestamp)
+fn noti_key(id: &str) -> String {
+    format!("{}/{}", NOTI_PREFIX, id)
 }
 
 fn extract_noti(value: &Value) -> Option<Notification> {
@@ -52,13 +55,25 @@ fn extract_noti(value: &Value) -> Option<Notification> {
         ..Default::default()
     };
 
+    let timestamp = get!(kvs, "9", _)?;
+    let id = format!(
+        "{}-{}-{}-{}",
+        timestamp,
+        noti_type as i32,
+        other_post_id.get_tid(),
+        other_post_id.get_pid()
+    );
+
+    let topic_subject = extract_topic_subject(get!(kvs, "5")?);
+
     let noti = Notification {
+        id,
         field_type: noti_type,
         other_user: Some(other_user).into(),
         post_id: Some(post_id).into(),
         other_post_id: Some(other_post_id).into(),
-        topic_subject: get!(kvs, "5")?,
-        timestamp: get!(kvs, "9", _)?,
+        topic_subject: Some(topic_subject).into(),
+        timestamp,
         page: get!(kvs, "10", _).unwrap_or(1),
         read: false,
         ..Default::default()
@@ -77,28 +92,31 @@ pub async fn fetch_notis(
     )
     .await?;
 
-    let unread_count = value
-        .pointer("0/unread")
-        .and_then(|v| v.as_u64())
-        .unwrap_or_default();
+    // let unread_count = value
+    //     .pointer("0/unread")
+    //     .and_then(|v| v.as_u64())
+    //     .unwrap_or_default();
 
     let notis = value
         .pointer("/0/0")
         .and_then(|v| v.as_array())
         .map(|vs| {
             vs.iter()
-                .filter_map(|v| {
-                    extract_noti(v).map(|mut noti| {
-                        noti.read = unread_count == 0;
-                        noti
-                    })
-                })
+                .filter_map(|v| extract_noti(v))
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default();
 
     notis.into_iter().for_each(|noti| {
-        let _ = cache::CACHE.insert_msg(&noti_key(&noti), &noti);
+        let key = noti_key(noti.get_id());
+        let not_exist = cache::CACHE
+            .get_msg::<Notification>(&key)
+            .ok()
+            .flatten()
+            .is_none();
+        if not_exist {
+            let _ = cache::CACHE.insert_msg(&key, &noti);
+        }
     });
 
     let notis = {
@@ -115,15 +133,46 @@ pub async fn fetch_notis(
     })
 }
 
+pub fn mark_noti_read(
+    request: MarkNotificationReadRequest,
+) -> ServiceResult<MarkNotificationReadResponse> {
+    let key = noti_key(request.get_id());
+    let _ = cache::CACHE.mutate_msg(&key, |noti: &mut Notification| {
+        noti.set_read(true);
+    });
+
+    Ok(Default::default())
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[tokio::test]
-    async fn test_fetch_notis() -> ServiceResult<()> {
+    async fn test_notis() -> ServiceResult<()> {
         let response = fetch_notis(FetchNotificationRequest::new()).await?;
-
         println!("response: {:?}", response);
+
+        let all_unread = response.get_notis().iter().all(|noti| !noti.read);
+        assert!(all_unread);
+
+        if let Some(noti) = response.get_notis().first() {
+            let id = noti.get_id();
+            mark_noti_read(MarkNotificationReadRequest {
+                id: id.to_owned(),
+                ..Default::default()
+            })?;
+
+            let new_response = fetch_notis(FetchNotificationRequest::new()).await?;
+            let marked = new_response
+                .get_notis()
+                .iter()
+                .find(|noti| noti.id == id)
+                .unwrap()
+                .read
+                == true;
+            assert!(marked);
+        }
 
         Ok(())
     }

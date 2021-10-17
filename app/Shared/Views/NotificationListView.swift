@@ -29,16 +29,22 @@ struct NotificationListView: View {
     return Self(dataSource: dataSource)
   }
 
+  @ViewBuilder
+  func buildLink(for notification: Notification) -> some View {
+    NavigationLink(destination: {
+      TopicDetailsView.build(topic: notification.asTopic)
+        .onAppear {
+        let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.id = notification.id }))
+      }
+    }) {
+      NotificationRowView(noti: notification)
+    }
+  }
+
   var body: some View {
     List {
       ForEach(dataSource.items, id: \.hashIdentifiable) { notification in
-        let topic = Topic.with {
-          $0.id = notification.otherPostID.tid
-          $0.subject = try! logicCall(.subjectParse(.with { r in r.raw = notification.topicSubject }))
-        }
-        NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-          NotificationRowView(noti: notification)
-        }
+        buildLink(for: notification)
       }
     } .navigationTitle("Notifications")
       .onAppear { dataSource.initialLoad() }

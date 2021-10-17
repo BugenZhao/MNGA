@@ -15,11 +15,8 @@ struct NotificationRowView: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         Image(systemName: noti.type.icon)
-        Text(noti.topicSubject)
-          .font(.headline)
-          .lineLimit(2)
-          .foregroundColor(noti.read ? .secondary : .primary)
-      }
+        TopicSubjectView(topic: noti.asTopic, showIndicators: false)
+      } .foregroundColor(noti.read ? .secondary : .primary)
 
       HStack {
         HStack(alignment: .center) {
@@ -41,7 +38,7 @@ struct NotificationRowView_Previews: PreviewProvider {
     NotificationRowView(noti: .with {
       $0.type = .replyTopic
       $0.otherUser = .with { u in u.name = "Bugen" }
-      $0.topicSubject = "何方道友在西安渡劫？"
+      $0.topicSubject = .with { s in s.content = "何方道友在西安渡劫？"}
       $0.timestamp = UInt64(Date().timeIntervalSince1970 - 60)
     }) .background(.primary.opacity(0.1)).padding()
   }

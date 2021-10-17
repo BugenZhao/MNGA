@@ -71,6 +71,25 @@ impl Cache {
         Ok(value_msg)
     }
 
+    fn do_mutate_msg<M: protos::Message>(
+        &self,
+        key: &str,
+        mutate: impl FnOnce(&mut M),
+    ) -> CacheResult<Option<M>> {
+        let key_bytes = key.as_bytes();
+        let value = self.db.get(key_bytes)?;
+        let mut value_msg = value.and_then(|ivec| M::parse_from_bytes(&ivec).ok());
+
+        if let Some(msg) = value_msg.as_mut() {
+            mutate(msg);
+            let value = msg.write_to_bytes()?;
+            self.db.insert(key_bytes, value)?;
+            log::info!("mutate: key={}", key);
+        }
+
+        Ok(value_msg)
+    }
+
     fn do_scan_msg<M: protos::Message>(&self, prefix: &str) -> impl Iterator<Item = M> {
         self.db
             .scan_prefix(prefix)
@@ -93,6 +112,18 @@ impl Cache {
             self.do_get_msg(key)
         } else {
             tokio::task::block_in_place(move || self.do_get_msg(key))
+        }
+    }
+
+    pub fn mutate_msg<M: protos::Message>(
+        &self,
+        key: &str,
+        mutate: impl FnOnce(&mut M),
+    ) -> CacheResult<Option<M>> {
+        if self.is_test {
+            self.do_mutate_msg(key, mutate)
+        } else {
+            tokio::task::block_in_place(move || self.do_mutate_msg(key, mutate))
         }
     }
 

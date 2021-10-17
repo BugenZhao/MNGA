@@ -111,6 +111,15 @@ extension PostReplyAction {
   }
 }
 
+extension Notification {
+  var asTopic: Topic {
+    .with {
+      $0.id = self.otherPostID.tid
+      $0.subject = self.topicSubject
+    }
+  }
+}
+
 extension Notification.TypeEnum {
   var icon: String {
     switch self {

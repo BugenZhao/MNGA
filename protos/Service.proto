@@ -14,10 +14,14 @@ message SyncRequest {
     AuthRequest auth = 3;
     ContentParseRequest content_parse = 4;
     SubjectParseRequest subject_parse = 5;
+    MarkNotificationReadRequest mark_noti_read = 6;
   }
 }
 
-message ConfigureRequest { Configuration config = 1; }
+message ConfigureRequest {
+  Configuration config = 1;
+  bool debug = 2;
+}
 message ConfigureResponse { optional string error = 1; }
 
 message LocalUserRequest { string user_id = 1; }
@@ -36,6 +40,9 @@ message ContentParseResponse {
 
 message SubjectParseRequest { string raw = 1; }
 message SubjectParseResponse { Subject subject = 1; }
+
+message MarkNotificationReadRequest { string id = 1; }
+message MarkNotificationReadResponse {}
 
 //
 // async

@@ -183,11 +183,12 @@ message Notification {
     REPLY_POST = 1;
     REPLY_TOPIC = 2;
   }
+  string id = 9;
   Type type = 1;
   User other_user = 2;
   PostId post_id = 3;
   PostId other_post_id = 4;
-  string topic_subject = 5;
+  Subject topic_subject = 5;
   uint64 timestamp = 6;
   uint32 page = 7;
   bool read = 8;

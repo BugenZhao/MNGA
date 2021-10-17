@@ -15,6 +15,10 @@ func logicInitialConfigure() {
 
   let _: ConfigureResponse = try! logicCall(.configure(.with {
     $0.config = configuration
+    // this will clear the cache if we start from simulator
+    #if targetEnvironment(simulator)
+      $0.debug = true
+    #endif
   }))
 }
 

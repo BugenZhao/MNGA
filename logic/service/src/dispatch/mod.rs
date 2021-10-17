@@ -66,6 +66,7 @@ mod dispatch_sync {
             auth(r) => r!(handle_auth(r)),
             content_parse(r) => r!(handle_content_parse(r)),
             subject_parse(r) => r!(handle_subject_parse(r)),
+            mark_noti_read(r) => r!(handle_mark_noti_read(r)),
         }
     }
 }

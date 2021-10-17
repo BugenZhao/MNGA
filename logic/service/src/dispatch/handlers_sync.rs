@@ -1,8 +1,16 @@
-use crate::{auth, error::ServiceResult, topic::extract_topic_subject, user::UserController};
+use crate::{
+    auth, error::ServiceResult, noti::mark_noti_read, topic::extract_topic_subject,
+    user::UserController,
+};
+use log::info;
 use protos::{DataModel::PostContent, Service::*};
 
 pub fn handle_configure(request: ConfigureRequest) -> ServiceResult<ConfigureResponse> {
     config::set_config(request.config.unwrap());
+    if request.debug {
+        cache::CACHE.clear().expect("failed to clear the cache");
+        info!("cleared the cache");
+    }
     Ok(ConfigureResponse::new())
 }
 
@@ -44,4 +52,10 @@ pub fn handle_subject_parse(request: SubjectParseRequest) -> ServiceResult<Subje
         subject: Some(subject).into(),
         ..Default::default()
     })
+}
+
+pub fn handle_mark_noti_read(
+    request: MarkNotificationReadRequest,
+) -> ServiceResult<MarkNotificationReadResponse> {
+    mark_noti_read(request)
 }
