@@ -95,7 +95,7 @@ struct UserProfileView: View {
   var picker: some ToolbarContent {
     ToolbarItem(placement: .mayBottomBar) {
       Picker("Tab", selection: $tab.animation()) {
-        ForEach(Tab.allCases, id: \.hashIdentifiable) {
+        ForEach(Tab.allCases, id: \.self) {
           Text($0.rawValue).tag($0)
         }
       } .pickerStyle(SegmentedPickerStyle())

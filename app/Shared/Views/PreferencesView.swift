@@ -38,7 +38,7 @@ struct PreferencesInnerView: View {
   @ViewBuilder
   var posting: some View {
     Picker(selection: $auth.authInfo.inner.device, label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
-      ForEach(Device.allCases, id: \.hashIdentifiable) { device in
+      ForEach(Device.allCases, id: \.self) { device in
         Label(device.description, systemImage: device.icon).tag(device)
       }
     }

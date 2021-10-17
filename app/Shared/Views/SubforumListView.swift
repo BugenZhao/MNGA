@@ -53,7 +53,7 @@ struct SubforumListView: View {
   var body: some View {
     List {
       Section(footer: Text("Press and hold a subforum to mark it as favorite.")) {
-        ForEach(subforums, id: \.hashIdentifiable) { subforum in
+        ForEach(subforums, id: \.forum.idDescription) { subforum in
           buildLink(subforum)
         }
       }

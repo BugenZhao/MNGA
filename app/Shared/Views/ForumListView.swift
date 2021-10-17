@@ -52,7 +52,7 @@ struct ForumListView: View {
           Spacer()
         }
       } else {
-        ForEach(favorites.favoriteForums, id: \.hashIdentifiable) { forum in
+        ForEach(favorites.favoriteForums, id: \.idDescription) { forum in
           buildFavoriteSectionLink(forum)
         } .onDelete { offsets in
           favorites.favoriteForums.remove(atOffsets: offsets)
@@ -71,7 +71,7 @@ struct ForumListView: View {
       } else {
         ForEach(categories, id: \.id) { category in
           Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
-            ForEach(category.forums, id: \.hashIdentifiable) { forum in
+            ForEach(category.forums, id: \.idDescription) { forum in
               buildNormalLink(forum)
             }
           }

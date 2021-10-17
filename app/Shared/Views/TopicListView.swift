@@ -93,7 +93,7 @@ struct TopicListView: View {
     let id = dataSource.latestResponse?.forum.toppedTopicID ?? forum.toppedTopicID
     return id.isEmpty ? nil : id
   }
-  
+
   @ViewBuilder
   var newTopicButton: some View {
     Button(action: { self.newTopic() }) {
@@ -105,9 +105,9 @@ struct TopicListView: View {
   var moreMenu: some View {
     Menu {
       #if os(iOS)
-      Section {
-        newTopicButton
-      }
+        Section {
+          newTopicButton
+        }
       #endif
 
       Section {
@@ -224,7 +224,7 @@ struct TopicListView: View {
         List {
           Section(header: Text(order.latestTopicsDescription)) {
             ForEach(dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
+              NavigationLink(destination: { TopicDetailsView.build(topic: topic) }) {
                 TopicRowView(topic: topic, useTopicPostDate: order == .postDate)
               } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
             }
@@ -241,7 +241,7 @@ struct TopicListView: View {
       .navigationTitle(forum.name)
       .toolbarWithFix { toolbar }
       .onAppear { userActivityIsActive = true; selectedForum.inner = forum }
-      .onDisappear {
+    .onDisappear {
       // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping
       // userActivityIsActive = false
     }

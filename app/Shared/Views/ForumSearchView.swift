@@ -29,7 +29,7 @@ struct ForumSearchView: View {
 
   var body: some View {
     List {
-      ForEach(model.results, id: \.hashIdentifiable) { forum in
+      ForEach(model.results, id: \.idDescription) { forum in
         buildLink(forum)
       }
     } .onReceive(model.$commitFlag) { _ in self.doSearch() }

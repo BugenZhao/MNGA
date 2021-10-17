@@ -36,7 +36,7 @@ struct FavoriteTopicListView: View {
 
   var body: some View {
     List {
-      ForEach(dataSource.items, id: \.hashIdentifiable) { topic in
+      ForEach(dataSource.items, id: \.id) { topic in
         NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
           TopicRowView(topic: topic, dimmedSubject: false)
             .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }

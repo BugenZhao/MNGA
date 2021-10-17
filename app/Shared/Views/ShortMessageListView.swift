@@ -23,7 +23,7 @@ struct ShortMessageListView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.hashIdentifiable.description
+      id: \.id
     )
 
     return Self(dataSource: dataSource)
@@ -31,7 +31,7 @@ struct ShortMessageListView: View {
 
   var body: some View {
     List {
-      ForEach(dataSource.items, id: \.hashIdentifiable) { message in
+      ForEach(dataSource.items, id: \.id) { message in
         NavigationLink(destination: Text("233")) {
           ShortMessageRowView(message: message)
         } .onAppear { dataSource.loadMoreIfNeeded(currentItem: message) }
