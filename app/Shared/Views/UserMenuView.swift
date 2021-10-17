@@ -114,7 +114,8 @@ struct UserMenuView: View {
       }
     }
       .onAppear { loadData() }
-      .onAppear { notification.objectWillChange.send() }
+      .onAppear { notification.showing = true }
+      .onDisappear { notification.showing = false }
       .onChange(of: authStorage.authInfo) { _ in loadData() }
       .background { navigationBackgrounds }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
