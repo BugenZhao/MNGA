@@ -88,6 +88,10 @@
 		B41BC0D9271C617C00DD05F2 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */; };
 		B41BC0DA271C617C00DD05F2 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */; };
 		B41BC0DD271C7E5D00DD05F2 /* CombineExt in Frameworks */ = {isa = PBXBuildFile; productRef = B41BC0DC271C7E5D00DD05F2 /* CombineExt */; };
+		B41BC0E2271DD23500DD05F2 /* ShortMessagePostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0E1271DD23500DD05F2 /* ShortMessagePostRowView.swift */; };
+		B41BC0E3271DD23500DD05F2 /* ShortMessagePostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0E1271DD23500DD05F2 /* ShortMessagePostRowView.swift */; };
+		B41BC0E5271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */; };
+		B41BC0E6271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */; };
 		B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B437B278269B09DC0092FF9E /* SwiftUIRefresh */; };
 		B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
 		B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
@@ -308,6 +312,8 @@
 		B40F1535271AC60F004CAB86 /* ShortMessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortMessageListView.swift; sourceTree = "<group>"; };
 		B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebOrAsyncImage.swift; sourceTree = "<group>"; };
 		B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
+		B41BC0E1271DD23500DD05F2 /* ShortMessagePostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortMessagePostRowView.swift; sourceTree = "<group>"; };
+		B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortMessageDetailsView.swift; sourceTree = "<group>"; };
 		B437B27B269B0E190092FF9E /* ToolbarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarModifier.swift; sourceTree = "<group>"; };
 		B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeTextView.swift; sourceTree = "<group>"; };
 		B43DED48269C5F78009C52F5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -732,7 +738,9 @@
 				B4715CC426A413E00049D136 /* QuoteView.swift */,
 				B4CF7E90270B2A8C00E7C374 /* RecommendedTopicListView.swift */,
 				B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */,
+				B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */,
 				B40F1535271AC60F004CAB86 /* ShortMessageListView.swift */,
+				B41BC0E1271DD23500DD05F2 /* ShortMessagePostRowView.swift */,
 				B40F1532271AC3E3004CAB86 /* ShortMessageRowView.swift */,
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
@@ -1047,8 +1055,10 @@
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
+				B41BC0E5271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B40F1533271AC3E3004CAB86 /* ShortMessageRowView.swift in Sources */,
+				B41BC0E2271DD23500DD05F2 /* ShortMessagePostRowView.swift in Sources */,
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
 				B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */,
 				B4920CDF2690A98200762FC9 /* SubforumListView.swift in Sources */,
@@ -1110,6 +1120,7 @@
 				B402308626EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B45A9E8C26A171720088F04D /* PostEditorView.swift in Sources */,
 				B413D67F2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */,
+				B41BC0E3271DD23500DD05F2 /* ShortMessagePostRowView.swift in Sources */,
 				B4F9F98E26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */,
 				B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */,
 				B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */,
@@ -1199,6 +1210,7 @@
 				B4DBF609268976470027233F /* DateFormatters.swift in Sources */,
 				B43DED4A269C5F78009C52F5 /* Constants.swift in Sources */,
 				B4CF7E92270B2A8D00E7C374 /* RecommendedTopicListView.swift in Sources */,
+				B41BC0E6271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

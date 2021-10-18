@@ -212,3 +212,11 @@ message ShortMessage {
   uint64 last_post_date = 6;
   uint32 post_num = 7;
 }
+
+message ShortMessagePost {
+  string id = 1;
+  string author_id = 2;
+  string subject = 3;
+  PostContent content = 4;
+  uint64 post_date = 5;
+}

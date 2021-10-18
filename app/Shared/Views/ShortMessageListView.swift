@@ -32,7 +32,7 @@ struct ShortMessageListView: View {
   var body: some View {
     List {
       ForEach(dataSource.items, id: \.id) { message in
-        NavigationLink(destination: Text("233")) {
+        NavigationLink(destination: { ShortMessageDetailsView.build(mid: message.id) }) {
           ShortMessageRowView(message: message)
         } .onAppear { dataSource.loadMoreIfNeeded(currentItem: message) }
       }
@@ -42,5 +42,3 @@ struct ShortMessageListView: View {
       .refreshable(dataSource: dataSource)
   }
 }
-
-
