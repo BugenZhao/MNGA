@@ -69,6 +69,7 @@ message AsyncRequest {
     UserPostListRequest user_post_list = 17;
     ShortMessageListRequest short_message_list = 18;
     ShortMessageDetailsRequest short_message_details = 19;
+    ShortMessagePostRequest short_message_post = 20;
   }
 }
 
@@ -227,3 +228,11 @@ message ShortMessageDetailsResponse {
   repeated ShortMessagePost posts = 1;
   uint32 pages = 2;
 }
+
+message ShortMessagePostRequest {
+  ShortMessagePostAction action = 1;
+  string content = 2;
+  string subject = 3;
+  repeated string to = 4;
+}
+message ShortMessagePostResponse {}

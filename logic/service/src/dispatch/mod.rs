@@ -41,6 +41,7 @@ mod dispatch_async {
             user_post_list(r) => r!(handle_user_post_list(r)),
             short_message_list(r) => r!(handle_short_message_list(r)),
             short_message_details(r) => r!(handle_short_message_details(r)),
+            short_message_post(r) => r!(handle_short_message_post(r)),
         }
     }
 }

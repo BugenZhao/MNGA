@@ -2,8 +2,9 @@ use protos::{
     DataModel::{ShortMessage, ShortMessagePost},
     Service::{
         ShortMessageDetailsRequest, ShortMessageDetailsResponse, ShortMessageListRequest,
-        ShortMessageListResponse,
+        ShortMessageListResponse, ShortMessagePostRequest, ShortMessagePostResponse,
     },
+    ToValue,
 };
 use sxd_xpath::nodeset::Node;
 
@@ -126,8 +127,33 @@ pub async fn get_short_msg_details(
     Ok(response)
 }
 
+pub async fn post_short_msg(
+    request: ShortMessagePostRequest,
+) -> ServiceResult<ShortMessagePostResponse> {
+    let to = request.get_to().join(" ");
+
+    let _package = fetch_package(
+        "nuke.php",
+        vec![
+            ("__lib", "message"),
+            ("__act", "message"),
+            ("act", request.get_action().get_operation().to_value()),
+            ("subject", request.get_subject()),
+            ("content", request.get_content()),
+            ("to", to.as_str()),
+            ("mid", request.get_action().get_mid()),
+        ],
+        vec![],
+    )
+    .await?;
+
+    Ok(Default::default())
+}
+
 #[cfg(test)]
 mod test {
+    use protos::DataModel::{ShortMessagePostAction, ShortMessagePostAction_Operation};
+
     use super::*;
 
     #[tokio::test]
@@ -148,6 +174,50 @@ mod test {
         let response = get_short_msg_details(ShortMessageDetailsRequest {
             id: "3473951".to_owned(),
             page: 1,
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        Ok(())
+    }
+
+    #[ignore]
+    #[tokio::test]
+    async fn test_post_new_short_msg() -> ServiceResult<()> {
+        let action = ShortMessagePostAction {
+            operation: ShortMessagePostAction_Operation::NEW,
+            ..Default::default()
+        };
+
+        let response = post_short_msg(ShortMessagePostRequest {
+            action: Some(action).into(),
+            content: "Test Content".to_owned(),
+            subject: "Test Short Message from Logic Test".to_owned(),
+            to: vec!["yricky".to_owned()].into(),
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        Ok(())
+    }
+
+    #[ignore]
+    #[tokio::test]
+    async fn test_reply_short_msg() -> ServiceResult<()> {
+        let action = ShortMessagePostAction {
+            operation: ShortMessagePostAction_Operation::REPLY,
+            mid: "3501275".to_owned(),
+            ..Default::default()
+        };
+
+        let response = post_short_msg(ShortMessagePostRequest {
+            action: Some(action).into(),
+            content: "Test Reply Content".to_owned(),
+            subject: "Test Reply Short Message from Logic Test".to_owned(),
             ..Default::default()
         })
         .await?;

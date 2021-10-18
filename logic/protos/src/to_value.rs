@@ -1,5 +1,5 @@
 use crate::{
-    DataModel::PostReplyAction_Operation,
+    DataModel::{PostReplyAction_Operation, ShortMessagePostAction_Operation},
     Service::{PostVoteRequest_Operation, TopicListRequest_Order},
 };
 
@@ -33,6 +33,15 @@ impl ToValue for TopicListRequest_Order {
         match self {
             TopicListRequest_Order::LAST_POST => "",
             TopicListRequest_Order::POST_DATE => "postdatedesc",
+        }
+    }
+}
+
+impl ToValue for ShortMessagePostAction_Operation {
+    fn to_value(&self) -> &'static str {
+        match self {
+            ShortMessagePostAction_Operation::REPLY => "reply",
+            ShortMessagePostAction_Operation::NEW => "new",
         }
     }
 }

@@ -220,3 +220,12 @@ message ShortMessagePost {
   PostContent content = 4;
   uint64 post_date = 5;
 }
+
+message ShortMessagePostAction {
+  enum Operation {
+    REPLY = 0;
+    NEW = 1;
+  }
+  Operation operation = 1;
+  string mid = 2;
+}
