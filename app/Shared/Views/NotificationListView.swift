@@ -17,7 +17,7 @@ struct NotificationListView: View {
   @ViewBuilder
   func buildLink(for notification: Notification) -> some View {
     NavigationLink(destination: {
-      TopicDetailsView.build(topic: notification.asTopic)
+      TopicDetailsView.build(onlyPost: notification.otherPostID)
         .onAppear {
         let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] }))
       }

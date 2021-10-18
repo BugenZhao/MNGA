@@ -25,7 +25,7 @@ struct NotificationRowView: View {
             Image(systemName: "person")
             Text(noti.otherUser.name)
           case .vote:
-            Image(systemName: "doc.richtext")
+            Image(systemName: "text.bubble")
             Text("Your post")
           default:
             EmptyView()

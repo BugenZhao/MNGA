@@ -180,8 +180,8 @@ message PostReplyAction {
 message Notification {
   enum Type {
     UNKNOWN = 0;
-    REPLY_POST = 1;
-    REPLY_TOPIC = 2;
+    REPLY_TOPIC = 1;
+    REPLY_POST = 2;
     VOTE = 17;
   }
   string id = 9;

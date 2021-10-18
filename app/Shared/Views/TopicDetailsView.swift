@@ -43,16 +43,24 @@ struct TopicDetailsView: View {
 
   @State var isFavored: Bool
 
+  let onlyPost: Bool
+
   static func build(id: String) -> some View {
     Self.build(topic: .with { $0.id = id })
   }
 
-  static func build(topic: Topic, localMode: Bool = false) -> some View {
+  static func build(onlyPost: PostId) -> some View {
+    let topic = Topic.with { $0.id = onlyPost.tid }
+    return Self.build(topic: topic, onlyPost: onlyPost)
+  }
+
+  static func build(topic: Topic, localMode: Bool = false, onlyPost: PostId? = nil) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
+          if let pid = onlyPost?.pid { $0.postID = pid }
           $0.localCache = localMode
           $0.page = UInt32(page)
         })
@@ -66,7 +74,7 @@ struct TopicDetailsView: View {
       finishOnError: localMode
     )
 
-    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored)
+    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost != nil)
       .environment(\.enableAuthorOnly, !localMode)
       .environment(\.currentlyLocalMode, localMode)
   }
@@ -89,7 +97,7 @@ struct TopicDetailsView: View {
       id: \.floor.description
     )
 
-    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored)
+    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: false)
       .environment(\.enableAuthorOnly, false)
   }
 
@@ -177,6 +185,17 @@ struct TopicDetailsView: View {
     } label: {
       Label("More", systemImage: "ellipsis.circle")
         .imageScale(.large)
+    }
+  }
+
+  @ViewBuilder
+  var menu: some View {
+    if onlyPost {
+      Button(action: { action.navigateToTid = topic.id }) {
+        Label("See Full Topic", systemImage: "doc.richtext")
+      }
+    } else {
+      moreMenu
     }
   }
 
@@ -348,6 +367,8 @@ struct TopicDetailsView: View {
       return NSLocalizedString("Topic (Cached)", comment: "")
     } else if !enableAuthorOnly {
       return NSLocalizedString("Author Only", comment: "")
+    } else if onlyPost {
+      return NSLocalizedString("Reply", comment: "")
     } else if prefs.showTopicSubject {
       return topic.subject.content
     } else {
@@ -359,13 +380,13 @@ struct TopicDetailsView: View {
   var toolbar: some ToolbarContent {
     #if os(iOS)
       ToolbarItem(placement: .navigationBarTrailing) { progress }
-      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+      ToolbarItem(placement: .navigationBarTrailing) { menu }
     #elseif os(macOS)
       ToolbarItemGroup {
         replyButton
         Spacer()
         favoriteButton
-        moreMenu
+        menu
         ShareMenu(items: [webpageURL as Any])
       }
     #endif
@@ -374,7 +395,7 @@ struct TopicDetailsView: View {
   var body: some View {
     VStack(alignment: .leading) {
       Group {
-        if prefs.usePaginatedDetails {
+        if prefs.usePaginatedDetails && !onlyPost {
           paginatedMain
         } else {
           listMain
