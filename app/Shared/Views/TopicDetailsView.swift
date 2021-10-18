@@ -249,8 +249,6 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var navigation: some View {
-    TopicDetailsActionBasicNavigationView(action: action)
-
     let showingChain = self.action.showingReplyChain ?? .init()
     NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) { } .hidden()
 
@@ -402,7 +400,7 @@ struct TopicDetailsView: View {
         }
       }
         .mayGroupedListStyle()
-        .environmentObject(action)
+        .withTopicDetailsAction(action: action)
     }
       .navigationTitleInline(string: title)
       .toolbarWithFix { toolbar }
@@ -503,7 +501,7 @@ struct TopicDetailsView: View {
       .fixedSize(horizontal: false, vertical: true)
       .frame(width: Screen.main.bounds.size.width)
       .background(.secondarySystemGroupedBackground)
-      .environmentObject(action)
+      .withTopicDetailsAction(action: action)
       .environmentObject(postReply)
   }
 

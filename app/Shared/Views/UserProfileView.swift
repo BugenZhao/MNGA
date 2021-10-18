@@ -24,8 +24,6 @@ struct UserProfileView: View {
   @StateObject var postDataSource: PostDataSource
   @State var tab = Tab.topics
 
-  @StateObject var action = TopicDetailsActionModel() // for signature only, needs refactoring
-
   static func build(user: User) -> Self {
     let topicDataSource = TopicDataSource(
       buildRequest: { page in
@@ -116,9 +114,8 @@ struct UserProfileView: View {
       }
     }
       .toolbarWithFix { picker }
-      .environmentObject(action)
-      .background { TopicDetailsActionBasicNavigationView(action: action) }
-      .mayGroupedListStyle()
+      .withTopicDetailsAction() // for signature only
+    .mayGroupedListStyle()
       .navigationTitleInline(string: user.name)
   }
 }

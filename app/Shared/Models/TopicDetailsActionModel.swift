@@ -67,3 +67,24 @@ extension EnvironmentValues {
     set { self[CurrentlyLocalModeKey.self] = newValue }
   }
 }
+
+struct TopicDetailsActionModifier: ViewModifier {
+  @StateObject var action = TopicDetailsActionModel()
+
+  func body(content: Content) -> some View {
+    content
+      .environmentObject(action)
+      .background { TopicDetailsActionBasicNavigationView(action: action) }
+  }
+}
+
+extension View {
+  @ViewBuilder
+  func withTopicDetailsAction(action: TopicDetailsActionModel? = nil) -> some View {
+    if let action = action {
+      self.modifier(TopicDetailsActionModifier(action: action))
+    } else {
+      self.modifier(TopicDetailsActionModifier())
+    }
+  }
+}

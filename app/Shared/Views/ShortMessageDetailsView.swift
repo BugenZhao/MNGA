@@ -42,5 +42,6 @@ struct ShortMessageDetailsView: View {
       .onAppear { dataSource.initialLoad() }
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
+      .withTopicDetailsAction()
   }
 }

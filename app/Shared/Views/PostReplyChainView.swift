@@ -13,7 +13,6 @@ struct PostReplyChainView: View {
   @ObservedObject var votes: VotesModel
 
   @StateObject var prefs = PreferencesStorage.shared
-  @StateObject var action = TopicDetailsActionModel()
 
   @State var remotePosts = [PostId: Post]()
 
@@ -37,8 +36,7 @@ struct PostReplyChainView: View {
         }
       }
     } .navigationTitle("Replies")
-      .background { TopicDetailsActionBasicNavigationView(action: action) }
-      .environmentObject(action)
+      .withTopicDetailsAction()
       .environment(\.enableShowReplyChain, false)
       .mayGroupedListStyle()
   }
