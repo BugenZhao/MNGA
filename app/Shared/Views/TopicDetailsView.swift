@@ -416,7 +416,7 @@ struct TopicDetailsView: View {
   }
 
   var webpageURL: URL? {
-    URL(string: "\(Constants.URL.base)/read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : ""))
+    URL(string: "/read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : ""), relativeTo: Constants.URL.base)
   }
 
   func toggleFavor() {

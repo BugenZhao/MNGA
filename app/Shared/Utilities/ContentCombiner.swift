@@ -316,11 +316,8 @@ class ContentCombiner {
     guard let value = image.spans.first?.value else { return }
     guard case .plain(let plain) = value else { return }
 
-    var urlText = plain.text
-    if !urlText.contains("http") {
-      urlText = Constants.URL.attachmentBase + urlText
-    }
-    guard let url = URL(string: urlText) else { return }
+    let urlText = plain.text
+    guard let url = URL(string: urlText, relativeTo: Constants.URL.attachmentBase) else { return }
 
     let onlyThumbs = self.inQuote && self.replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
@@ -427,7 +424,7 @@ class ContentCombiner {
 
     if let urlString = urlString {
       let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
-        if let url = URL(string: urlString) {
+        if let url = URL(string: urlString, relativeTo: Constants.URL.base) {
           if url.lastPathComponent == "read.php",
             let tid = extractQueryParams(query: url.query ?? "", param: "tid") {
             self.actionModel?.navigateToTid = tid
@@ -512,11 +509,8 @@ class ContentCombiner {
     guard let value = video.spans.first?.value else { return }
     guard case .plain(let plain) = value else { return }
 
-    var urlText = plain.text
-    if !urlText.contains("http") {
-      urlText = Constants.URL.attachmentBase + urlText
-    }
-    guard let url = URL(string: urlText) else { return }
+    let urlText = plain.text
+    guard let url = URL(string: urlText, relativeTo: Constants.URL.attachmentBase) else { return }
 
     let link = ContentButtonView(icon: "film", title: Text("View Video"), inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
@@ -530,11 +524,9 @@ class ContentCombiner {
 
     let tokens = plain.text.split(separator: "?").map(String.init)
     let duration = tokens.last { $0.contains("duration") }
-    guard var urlText = tokens.first else { return }
-    if !urlText.contains("http") {
-      urlText = Constants.URL.attachmentBase + urlText
-    }
-    guard let url = URL(string: urlText) else { return }
+
+    guard let urlText = tokens.first else { return }
+    guard let url = URL(string: urlText, relativeTo: Constants.URL.attachmentBase) else { return }
 
     let title: Text
     if let duration = extractQueryParams(query: duration ?? "", param: "duration") {

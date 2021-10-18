@@ -28,7 +28,6 @@ struct TopicListView: View {
   @State var showingHotTopics = false
   @State var showingRecommendedTopics = false
   @State var showingToppedTopic = false
-  @State var userActivityIsActive = true
   @State var order = PreferencesStorage.shared.defaultTopicListOrder
 
   var dataSource: DataSource {
@@ -240,17 +239,7 @@ struct TopicListView: View {
       .background { subforum; navigations }
       .navigationTitle(forum.name)
       .toolbarWithFix { toolbar }
-      .onAppear { userActivityIsActive = true; selectedForum.inner = forum }
-    .onDisappear {
-      // in iOS 15.0b5, this will make TopicDetailsView's onAppear called unexpectedly on navigation popping
-      // userActivityIsActive = false
-    }
-      .userActivity(Constants.Activity.openForum, isActive: userActivityIsActive) { activity in
-      activity.title = forum.name
-      if let url = URL(string: webpageURL) {
-        activity.webpageURL = url
-      }
-    }
+      .onAppear { selectedForum.inner = forum }
   }
 
   var webpageURL: String {

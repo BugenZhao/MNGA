@@ -38,7 +38,7 @@ struct LoginView: View {
   var inner: some View {
     WebView(webView: webViewStore.webView)
       .onAppear {
-      self.webViewStore.webView.load(URLRequest(url: URL(string: "https://ngabbs.com/nuke.php?__lib=login&__act=account&login")!))
+      self.webViewStore.webView.load(URLRequest(url: Constants.URL.login))
     }.onReceive(timer) { _ in
       self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
     } .navigationTitleInline(key: "Sign in to NGA")

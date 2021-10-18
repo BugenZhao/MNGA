@@ -16,9 +16,12 @@ struct Constants {
   }
 
   struct URL {
-    static let base = "https://ngabbs.com/"
-    static let attachmentBase = "https://img.nga.178.com/attachments/"
-    static let testFlight = "https://testflight.apple.com/join/qFDuytLt"
+    static let base = Foundation.URL(string: "https://ngabbs.com/")!
+    static let attachmentBase = Foundation.URL(string: "https://img.nga.178.com/attachments/")!
+    static let testFlight = Foundation.URL(string: "https://testflight.apple.com/join/qFDuytLt")!
+    static let gitHub = Foundation.URL(string: "https://github.com/BugenZhao/MNGA")!
+    static let mailTo = Foundation.URL(string: "mailto:mnga.feedback@bugenzhao.com")!
+    static let login = Foundation.URL(string: "/nuke.php?__lib=login&__act=account&login", relativeTo: base)!
   }
 
   struct Key {

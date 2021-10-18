@@ -13,17 +13,15 @@ struct AboutView: View {
   @StateObject var activity = ActivityModel()
 
   func openGitHub() {
-    let url = URL(string: "https://github.com/BugenZhao/MNGA")!
-    OpenURLModel.shared.open(url: url, inApp: false)
+    OpenURLModel.shared.open(url: Constants.URL.gitHub, inApp: false)
   }
 
   func mail() {
-    let url = URL(string: "mailto:mnga.feedback@bugenzhao.com")!
-    OpenURLModel.shared.open(url: url, inApp: false)
+    OpenURLModel.shared.open(url: Constants.URL.mailTo, inApp: false)
   }
 
   func doShare() {
-    self.activity.put(URL(string: Constants.URL.testFlight))
+    self.activity.put(Constants.URL.testFlight)
   }
 
   var version: String {
@@ -102,9 +100,9 @@ struct AboutView: View {
     }
       .navigationTitleInline(key: "About & Feedback")
       .toolbarWithFix {
-        ToolbarItem(placement: .status) { footer }
-        ToolbarItem(placement: .mayNavigationBarTrailing) { shareButton }
-      }
+      ToolbarItem(placement: .status) { footer }
+      ToolbarItem(placement: .mayNavigationBarTrailing) { shareButton }
+    }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })

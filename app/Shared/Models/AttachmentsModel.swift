@@ -16,11 +16,10 @@ class AttachmentsModel: ObservableObject {
   }
 
   func attachmentURL(for previewURL: URL) -> URL? {
-    guard var attach = attachs.first(where: { previewURL.absoluteString.contains($0) })
+    guard let attach = attachs.first(where: { previewURL.absoluteString.contains($0) })
       else { return nil }
-    if !attach.contains("http") {
-      attach = Constants.URL.attachmentBase + attach
-    }
-    return URL(string: attach)
+    let url = URL(string: "\(attach)", relativeTo: Constants.URL.attachmentBase)
+    logger.debug("attachment: \(url as Any?) for \(previewURL)")
+    return url
   }
 }
