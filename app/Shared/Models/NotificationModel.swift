@@ -42,7 +42,7 @@ extension NotificationDataSource {
 }
 
 #if targetEnvironment(simulator)
-  fileprivate let refreshInterval: TimeInterval = 5
+  fileprivate let refreshInterval: TimeInterval = 10
 #else
   fileprivate let refreshInterval: TimeInterval = 60
 #endif
@@ -54,12 +54,19 @@ class NotificationModel: ObservableObject {
   let timer = Timer.TimerPublisher(interval: refreshInterval, runLoop: .main, mode: .default).autoconnect()
   var cancellables = Set<AnyCancellable>()
 
-  init() {
-    dataSource.refresh()
-    timer.sink { _ in self.dataSource.refresh() }.store(in: &cancellables)
+  private func refreshNotis() {
+    self.dataSource.refresh(silentOnError: true)
+  }
 
-    // buggy
-    dataSource.objectWillChange.sink { [weak self] _ in
+  init() {
+    timer
+      .prepend(.init())
+      .sink { _ in self.refreshNotis() }
+      .store(in: &cancellables)
+
+    // may buggy
+    dataSource.objectWillChange
+      .sink { [weak self] _ in
       if self?.showing == true { self?.objectWillChange.send() }
     } .store(in: &cancellables)
 

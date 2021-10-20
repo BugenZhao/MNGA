@@ -11,7 +11,7 @@ import SwiftProtobuf
 import SwiftUI
 
 #if os(iOS)
-import SwiftUIRefresh
+  import SwiftUIRefresh
 #endif
 
 class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
@@ -137,10 +137,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.mayFinishOnError()
   }
 
-  func refresh(animated: Bool = false) {
+  func refresh(animated: Bool = false, silentOnError: Bool = false) {
     guard let request = preRefresh() else { return }
 
-    logicCallAsync(request) { (response: Res) in
+    logicCallAsync(request, errorToastModel: silentOnError ? nil : .hud) { (response: Res) in
       self.onRefreshSuccess(response: response, animated: animated)
     } onError: { e in
       self.onRefreshError(e: e, animated: animated)
