@@ -10,74 +10,17 @@ import SwiftUI
 import SwiftUIX
 import AlertToast
 
-class ContentEditorModel: ObservableObject {
-  enum Panel {
-    case sticker
-    case none
-  }
-
-  private let keyboard = Keyboard.main
-
-  @Published var showing = Panel.none {
-    didSet { if showing != .none { keyboard.dismiss() } }
-  }
-  @Published var selected: NSRange
-  @Published var text: String
-
-  @Published var image: Data? = nil
-  @Published var showingImagePicker = false
-
-  private let action: PostReplyAction
-
-  @objc func showSticker() {
-    self.showing = .sticker
-  }
-
-  init(initialText: String, action: PostReplyAction) {
-    self._text = .init(initialValue: initialText)
-    self._selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
-    self.action = action
-  }
-
-  private func appendTag(_ tag: String) {
-    let range = Range(selected, in: text)!
-    let selectedText = text[range]
-    text.replaceSubrange(range, with: "[\(tag)]\(selectedText)[/\(tag)]")
-    let newLocation = selected.location + (tag as NSString).length + 2
-    selected = NSRange(location: newLocation, length: selected.length)
-  }
-
-  @objc func appendBold() {
-    self.appendTag("b")
-  }
-
-  @objc func appendDel() {
-    self.appendTag("del")
-  }
-
-  @objc func showImagePicker() {
-    self.showingImagePicker = true
-  }
-
-  func insert(_ string: String) {
-    let range = Range(selected, in: text)!
-    text.replaceSubrange(range, with: string)
-    let newLocation = selected.location + (string as NSString).length
-    selected = NSRange(location: newLocation, length: 0)
-  }
-}
-
-struct ContentEditorView: View {
-  @Binding var context: PostReplyModel.Context
+struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
+  @Binding var context: M.Context
 
   @StateObject var model: ContentEditorModel
   @StateObject var keyboard = Keyboard.main
 
   @EnvironmentObject var presendAttachments: PresendAttachmentsModel
 
-  static func build(context binding: Binding<PostReplyModel.Context>) -> Self {
+  static func build(context binding: Binding<M.Context>) -> Self {
     let context = binding.wrappedValue
-    let model = ContentEditorModel(initialText: context.content ?? "", action: context.task.action)
+    let model = ContentEditorModel(initialText: context.content ?? "")
     return Self.init(context: binding, model: model)
   }
 
@@ -127,12 +70,12 @@ struct ContentEditorView: View {
 
   func uploadImageAttachment(data: Data?) {
     guard let data = data else { return }
+    guard let request = context.task.buildUploadAttachmentRequest(data: data) else {
+      model.image = nil
+      return
+    }
 
-    logicCallAsync(.uploadAttachment(.with {
-      $0.action = context.task.action
-      $0.file = data
-    }), errorToastModel: ToastModel.alert)
-    { (response: UploadAttachmentResponse) in
+    logicCallAsync(request, errorToastModel: ToastModel.alert) { (response: UploadAttachmentResponse) in
       let attachment = response.attachment
       context.attachments.append(attachment)
       presendAttachments.add(url: attachment.url, data: data)
@@ -145,7 +88,7 @@ struct ContentEditorView: View {
   }
 }
 
-struct PostContentEditorView_Previews: PreviewProvider {
+struct ContentEditorView_Previews: PreviewProvider {
   struct Preview: View {
     @State var context: PostReplyModel.Context
 

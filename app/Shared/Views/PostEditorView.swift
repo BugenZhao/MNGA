@@ -1,223 +1,80 @@
 //
 //  PostEditorView.swift
-//  PostEditorView
+//  MNGA
 //
-//  Created by Bugen Zhao on 7/16/21.
+//  Created by Bugen Zhao on 2021/10/20.
 //
 
 import Foundation
 import SwiftUI
 
-struct PostEditorInnerView: View {
-  enum DisplayMode: String, CaseIterable {
-    case plain = "Plain"
-    case preview = "Preview"
+struct PostReplyTask: TaskProtocol {
+  static var dummy: PostReplyTask = .init(action: .init(), pageToReload: nil)
+
+  static func == (lhs: Self, rhs: Self) -> Bool {
+    return lhs.action.operation == rhs.action.operation
+      && lhs.action.forumID == rhs.action.forumID
+      && lhs.action.postID == rhs.action.postID
   }
 
-  @Environment(\.presentationMode) var presentation
-
-  @EnvironmentObject var postReply: PostReplyModel
-  @State var displayMode = DisplayMode.plain
-
-  @State var subject = nil as Subject?
-  @State var parsedContent = PostContent()
-
-  @StateObject var presendAttachments = PresendAttachmentsModel()
-
-  var title: LocalizedStringKey {
-    postReply.context?.task.action.title ?? "Editor"
+  func hash(into hasher: inout Hasher) {
+    self.action.operation.hash(into: &hasher)
+    self.action.forumID.hash(into: &hasher)
+    self.action.forumID.hash(into: &hasher)
   }
 
-  var device: Device {
-    AuthStorage.shared.authInfo.inner.device
+  var action: PostReplyAction
+  let pageToReload: PageToReload?
+
+  var actionTitle: LocalizedStringKey {
+    self.action.title
   }
 
-  @ViewBuilder
-  var picker: some View {
-    Picker("Display Mode", selection: $displayMode.animation()) {
-      ForEach(DisplayMode.allCases, id: \.rawValue) {
-        Text(LocalizedStringKey($0.rawValue)).tag($0)
-      }
-    } .pickerStyle(SegmentedPickerStyle())
+  func buildUploadAttachmentRequest(data: Data) -> AsyncRequest.OneOf_Value? {
+    return .uploadAttachment(.with {
+      $0.action = self.action
+      $0.file = data
+    })
   }
+}
 
-  @ViewBuilder
-  var previewInner: some View {
-    if let subject = self.subject {
-      TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
-    }
+class PostReplyModel: GenericPostModel<PostReplyTask> {
+  override func buildContext(with task: PostReplyTask, ignoreError: Bool = false) {
+    logicCallAsync(.postReplyFetchContent(.with {
+      $0.action = task.action
+    }), errorToastModel: ToastModel.alert) { (response: PostReplyFetchContentResponse) in
+      // only build context after successful fetching
+      var task = task
+      task.action.verbatim = response.verbatim
+      let subject = (response.hasSubject || task.action.operation == .new) ? response.subject : nil
+      let content = response.content
+      let context = Context(task: task, subject: subject, content: content)
 
-    VStack(alignment: .leading) {
-      PostContentView(content: parsedContent)
-      HStack {
-        Spacer()
-        Image(systemName: device.icon)
-          .frame(width: 10)
-          .foregroundColor(.secondary)
-          .font(.footnote)
-      }
-    }
-  }
-
-  @ViewBuilder
-  var preview: some View {
-    List {
-      Section(header: Text("Preview")) {
-        previewInner
-      }
-    } .mayGroupedListStyle()
-      .onAppear { parseContent() }
-      .environment(\.inRealPost, false)
-  }
-
-  var subjectBinding: Binding<String?> {
-    ($postReply.context ?? .dummy).subject
-  }
-
-  var contentBinding: Binding<String> {
-    ($postReply.context ?? .dummy).content ?? ""
-  }
-
-  @ViewBuilder
-  var inner: some View {
-    if let context = postReply.context {
-      switch displayMode {
-      case .plain:
-        ContentEditorView.build(context: $postReply.context ?? .dummy)
-          .id(context.task)
-      case .preview:
-        preview
-      }
-    } else {
-      ProgressView()
-    }
-  }
-
-  func parseContent() {
-    DispatchQueue.global(qos: .userInitiated).async {
-      let content = (postReply.context?.content ?? "").replacingOccurrences(of: "\n", with: "<br/>")
-      let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = content }))
-      self.parsedContent = response?.content ?? .init()
-    }
-    if let subject = postReply.context?.subject {
-      DispatchQueue.global(qos: .userInitiated).async {
-        let response: SubjectParseResponse? = try? logicCall(.subjectParse(.with { $0.raw = subject }))
-        self.subject = response?.subject
+      self.onBuildContextSuccess(task: task, context: context)
+    } onError: { e in
+      if !ignoreError {
+        self.onBuildContextError(e)
       }
     }
   }
 
-  @ViewBuilder
-  var sendButton: some View {
-    Button(action: { doSend() }) {
-      if postReply.isSending {
-        ProgressView()
-      } else {
-        Text("Send")
-      }
+  override func doSend(with context: GenericPostModel<PostReplyTask>.Context) {
+    logicCallAsync(.postReply(.with {
+      $0.action = context.task.action
+      $0.content = context.content ?? ""
+      if let subject = context.subject { $0.subject = subject }
+      $0.attachments = context.attachments
+    }), errorToastModel: ToastModel.alert)
+    { (response: PostReplyResponse) in
+      self.onSendSuccess(context: context)
+    } onError: { e in
+      self.onSendError(e)
     }
-  }
-
-  @ViewBuilder
-  var previewButton: some View {
-    Button(action: { withAnimation { displayMode = .preview } }) {
-      Text("Preview")
-    }
-  }
-
-  @ViewBuilder
-  var cancelButton: some View {
-    Button(action: { self.presentation.dismiss() }) {
-      Text("Cancel")
-    }
-  }
-
-  @ViewBuilder
-  var discardButton: some View {
-    Button(action: { self.postReply.discardCurrentContext() }) {
-      Text("Discard").foregroundColor(.red)
-    }
-  }
-
-  #if os(iOS)
-    var body: some View {
-      inner
-        .modifier(AlertToastModifier())
-        .navigationTitleInline(key: title)
-        .environmentObject(presendAttachments)
-        .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          switch displayMode {
-          case .plain: previewButton
-          case .preview: sendButton
-          }
-        }
-        ToolbarItem(placement: .cancellationAction) { discardButton }
-        ToolbarItem(placement: .bottomBar) { picker }
-      }
-    }
-  #elseif os(macOS)
-    var body: some View {
-      if let context = postReply.context {
-        VStack {
-          HStack {
-            ContentEditorView.build(context: $postReply.context ?? .dummy)
-              .id(context.task)
-            Divider()
-            preview
-              .onChange(of: context.subject) { _ in parseContent() }
-              .onChange(of: context.content) { _ in parseContent() }
-          }
-          Divider()
-          HStack {
-            discardButton
-            Spacer()
-            cancelButton.keyboardShortcut(.cancelAction)
-            sendButton.keyboardShortcut(.defaultAction)
-          }
-        }
-      } else {
-        ProgressView()
-      }
-    }
-  #endif
-
-  func doSend() {
-    self.postReply.send()
   }
 }
 
 struct PostEditorView: View {
   var body: some View {
-    #if os(iOS)
-      NavigationView {
-        PostEditorInnerView()
-      }
-    #else
-      PostEditorInnerView()
-        .padding()
-        .frame(width: 800, height: 600)
-    #endif
-  }
-}
-
-struct PostEditorView_Previews: PreviewProvider {
-  struct Preview: View {
-    @StateObject var postReply = PostReplyModel()
-    let defaultText: String?
-
-    var body: some View {
-      PostEditorView()
-        .environmentObject(postReply)
-        .onAppear {
-        postReply.showEditor = true
-        postReply.context = .init(task: .init(action: .init(), pageToReload: nil), content: defaultText) // dummy
-      }
-    }
-  }
-
-  static var previews: some View {
-    Preview(defaultText: "Test\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest\n")
-    Preview(defaultText: nil)
+    GenericEditorView<PostReplyTask, PostReplyModel>()
   }
 }
