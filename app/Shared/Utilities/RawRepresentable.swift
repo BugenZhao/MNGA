@@ -1,5 +1,5 @@
 //
-//  Array+RawRepresentable.swift
+//  RawRepresentable.swift
 //  NGA
 //
 //  Created by Bugen Zhao on 7/1/21.
@@ -64,5 +64,23 @@ extension RawRepresentable where RawValue == String {
   init?(readFrom userDefaults: UserDefaults, forKey defaultName: String) {
     let string = userDefaults.string(forKey: defaultName) ?? ""
     self.init(rawValue: string)
+  }
+}
+
+extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.RawValue == String {
+  public var rawValue: String {
+    if let s = self {
+      return s.rawValue
+    } else {
+      return "<nil>"
+    }
+  }
+
+  public init?(rawValue: String) {
+    if rawValue == "<nil>" {
+      return nil
+    } else {
+      self = Wrapped(rawValue: rawValue)
+    }
   }
 }

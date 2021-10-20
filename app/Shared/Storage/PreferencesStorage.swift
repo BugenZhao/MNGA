@@ -20,4 +20,5 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("useInAppSafari") var useInAppSafari = true
   @AppStorage("imageViewerEnableZoom") var imageViewerEnableZoom = true
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
+  @AppStorage("themeColor") var themeColor = ThemeColor.mnga
 }

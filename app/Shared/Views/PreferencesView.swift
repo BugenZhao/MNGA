@@ -13,6 +13,20 @@ struct PreferencesInnerView: View {
   @StateObject var auth = AuthStorage.shared
 
   @ViewBuilder
+  var appearance: some View {
+    Picker(selection: $pref.themeColor, label: Label("Theme Color", systemImage: "circle")) {
+      ForEach(ThemeColor.allCases, id: \.self) { color in
+        Group {
+          Label(color.description) {
+            Image(systemName: "circle.fill")
+              .foregroundColor(color.color ?? Color("AccentColor"))
+          }
+        } .tag(color)
+      }
+    }
+  }
+
+  @ViewBuilder
   var reading: some View {
     Toggle(isOn: $pref.showTopicSubject) {
       Label("Show Topic Subject", systemImage: "paragraphsign")
@@ -59,6 +73,9 @@ struct PreferencesInnerView: View {
   #if os(macOS)
     var body: some View {
       TabView {
+        Form { appearance }
+          .tabItem { Label("Appearance", systemImage: "circle") }
+          .tag("appearance")
         Form { reading }
           .tabItem { Label("Reading", systemImage: "eyeglasses") }
           .tag("reading")
@@ -76,6 +93,10 @@ struct PreferencesInnerView: View {
   #else
     var body: some View {
       Form {
+        Section(header: Text("Appearance")) {
+          appearance
+        }
+
         Section(header: Text("Reading")) {
           NavigationLink(destination: BlockWordListView()) {
             Label("Block Words", systemImage: "hand.raised")

@@ -4,9 +4,12 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 @main
 struct MNGAApp: App {
+  @StateObject var prefs = PreferencesStorage()
+
   init() {
     logger.info("MNGA Init")
     logicInitialConfigure()
@@ -15,6 +18,8 @@ struct MNGAApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()
+        .onChange(of: prefs.themeColor) { _ in setupColor() }
+        .onAppear { setupColor() }
     }
 
     #if os(macOS)
@@ -22,5 +27,13 @@ struct MNGAApp: App {
         PreferencesInnerView()
       }
     #endif
+  }
+
+  func setupColor() {
+    guard
+      let window = AppKitOrUIKitApplication.shared.windows.filter({ $0.isKeyWindow }).first
+      else { return }
+
+    window.tintColor = prefs.themeColor.color?.toUIColor()
   }
 }
