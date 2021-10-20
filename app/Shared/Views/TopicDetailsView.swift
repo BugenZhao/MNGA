@@ -404,7 +404,6 @@ struct TopicDetailsView: View {
     }
       .navigationTitleInline(string: title)
       .toolbarWithFix { toolbar }
-      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
       .onChange(of: dataSource.latestResponse, perform: self.onNewResponse(response:))

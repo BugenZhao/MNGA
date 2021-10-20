@@ -42,6 +42,7 @@ impl ToValue for ShortMessagePostAction_Operation {
         match self {
             ShortMessagePostAction_Operation::REPLY => "reply",
             ShortMessagePostAction_Operation::NEW => "new",
+            ShortMessagePostAction_Operation::NEW_SINGLE_TO => "new",
         }
     }
 }

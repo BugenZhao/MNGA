@@ -15,13 +15,18 @@ struct NotificationRowView: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         Image(systemName: noti.type.icon)
-        TopicSubjectView(topic: noti.asTopic, showIndicators: false)
+        switch noti.type {
+        case .shortMessage, .shortMessageStart:
+          TopicSubjectView(topic: .with { $0.subject.content = NSLocalizedString("Short Message", comment: "") }, showIndicators: false)
+        default:
+          TopicSubjectView(topic: noti.asTopic, showIndicators: false)
+        }
       } .foregroundColor(noti.read ? .secondary : .primary)
 
       HStack {
         HStack(alignment: .center) {
           switch noti.type {
-          case .replyPost, .replyTopic:
+          case .replyPost, .replyTopic, .shortMessage, .shortMessageStart:
             Image(systemName: "person")
             Text(noti.otherUser.name)
           case .vote:

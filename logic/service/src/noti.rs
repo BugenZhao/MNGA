@@ -63,7 +63,7 @@ fn extract_noti(value: &Value) -> Option<Notification> {
         other_post_id.get_pid()
     );
 
-    let topic_subject = extract_topic_subject(get!(kvs, "5")?);
+    let topic_subject = extract_topic_subject(get!(kvs, "5").unwrap_or_default());
 
     let noti = Notification {
         id,

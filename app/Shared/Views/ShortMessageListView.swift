@@ -13,6 +13,8 @@ struct ShortMessageListView: View {
 
   @StateObject var dataSource: DataSource
 
+  @EnvironmentObject var postModel: ShortMessagePostModel
+
   static func build() -> Self {
     let dataSource = DataSource.init(
       buildRequest: { page in
@@ -29,6 +31,13 @@ struct ShortMessageListView: View {
     return Self(dataSource: dataSource)
   }
 
+  @ViewBuilder
+  var newShortMessageButton: some View {
+    Button(action: { self.newShortMessage() }) {
+      Label("New Short Message", systemImage: "square.and.pencil")
+    }
+  }
+
   var body: some View {
     List {
       ForEach(dataSource.items, id: \.id) { message in
@@ -40,5 +49,13 @@ struct ShortMessageListView: View {
       .onAppear { dataSource.initialLoad() }
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
+      .toolbarWithFix { ToolbarItem(placement: .primaryAction) { newShortMessageButton } }
+      .onChange(of: postModel.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
+  }
+
+  func newShortMessage() {
+    self.postModel.show(action: .with {
+      $0.operation = .new
+    })
   }
 }

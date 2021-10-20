@@ -182,6 +182,8 @@ message Notification {
     UNKNOWN = 0;
     REPLY_TOPIC = 1;
     REPLY_POST = 2;
+    SHORT_MESSAGE_START = 10;
+    SHORT_MESSAGE = 11;
     VOTE = 17;
   }
   string id = 9;
@@ -225,7 +227,9 @@ message ShortMessagePostAction {
   enum Operation {
     REPLY = 0;
     NEW = 1;
+    NEW_SINGLE_TO = 2;
   }
   Operation operation = 1;
   string mid = 2;
+  string single_to = 3;
 }

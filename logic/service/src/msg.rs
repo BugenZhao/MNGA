@@ -140,6 +140,7 @@ pub async fn post_short_msg(
             ("act", request.get_action().get_operation().to_value()),
             ("subject", request.get_subject()),
             ("content", request.get_content()),
+            ("to", request.get_action().get_single_to()),
             ("to", to.as_str()),
             ("mid", request.get_action().get_mid()),
         ],

@@ -39,6 +39,13 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   var body: some View {
     VStack {
       List {
+        if context.to != nil {
+          Section(header: Text("Send To"), footer: Text("Separate multiple users with space.")) {
+            TextField("", text: $context.to ?? "")
+              .disableAutocorrection(true)
+          }
+        }
+        
         if context.subject != nil {
           Section(header: Text("Subject")) {
             TextField("", text: $context.subject ?? "")

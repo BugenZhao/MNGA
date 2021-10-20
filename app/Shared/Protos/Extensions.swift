@@ -113,7 +113,7 @@ extension PostReplyAction {
 
 extension Notification {
   var asTopic: Topic {
-    .with {
+      .with {
       $0.id = self.otherPostID.tid
       $0.subject = self.topicSubject
     }
@@ -127,6 +127,10 @@ extension Notification.TypeEnum {
       return "arrowshape.turn.up.left"
     case .vote:
       return "hand.thumbsup"
+    case .shortMessage:
+      return "message"
+    case .shortMessageStart:
+      return "plus.message"
     case .unknown, .UNRECOGNIZED(_):
       return "questionmark.circle"
     }
@@ -140,6 +144,8 @@ extension Notification.TypeEnum {
       return "replied to your topic"
     case .vote:
       return "received 10 more votes"
+    case .shortMessage, .shortMessageStart:
+      return "send you a short message"
     case .unknown, .UNRECOGNIZED(_):
       return ""
     }
@@ -188,6 +194,19 @@ extension TopicListRequest.Order {
     case .postDate:
       return "t.circle"
     default:
+      return ""
+    }
+  }
+}
+
+extension ShortMessagePostAction {
+  var title: LocalizedStringKey {
+    switch self.operation {
+    case .reply:
+      return "Reply"
+    case .new, .newSingleTo:
+      return "New Short Message"
+    case .UNRECOGNIZED(_):
       return ""
     }
   }

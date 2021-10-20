@@ -12,6 +12,10 @@ import SwiftUI
 enum PageToReload: Equatable, Hashable {
   case last
   case exact(Int)
+
+  static var first: Self {
+      .exact(1)
+  }
 }
 
 protocol TaskProtocol: Hashable {
@@ -20,9 +24,9 @@ protocol TaskProtocol: Hashable {
   static var dummy: Self { get }
 
   init(action: Action, pageToReload: PageToReload?)
-  
+
   var actionTitle: LocalizedStringKey { get }
-  
+
   func buildUploadAttachmentRequest(data: Data) -> AsyncRequest.OneOf_Value?
 }
 
@@ -33,13 +37,16 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
     }
 
     let task: Task
+
+    var to: String?
     var subject: String?
     var content: String?
     var attachments: [PostAttachment]
 
     let seed = UUID()
 
-    init(task: Task, subject: String? = nil, content: String? = nil) {
+    init(task: Task, to: String? = nil, subject: String? = nil, content: String? = nil) {
+      self.to = to
       self.task = task
       self.subject = subject
       self.content = content
@@ -79,7 +86,7 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
 
   // MARK: Interface
 
-  public func show(action: Task.Action, pageToReload: PageToReload?) {
+  public func show(action: Task.Action, pageToReload: PageToReload? = nil) {
     let task = Task(action: action, pageToReload: pageToReload)
 
     if self.showEditor { return }

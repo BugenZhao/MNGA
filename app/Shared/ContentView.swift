@@ -13,6 +13,7 @@ struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
   @StateObject var activity = ActivityModel()
   @StateObject var postReply = PostReplyModel()
+  @StateObject var shortMessagePost = ShortMessagePostModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var openURL = OpenURLModel.shared
   @StateObject var authStorage = AuthStorage.shared
@@ -45,13 +46,16 @@ struct ContentView: View {
     #if os(iOS)
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif
-      .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
+    .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })
       .modifier(HudToastModifier())
       .environmentObject(viewingImage)
       .environmentObject(activity)
       .environmentObject(postReply)
+      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
+      .environmentObject(shortMessagePost)
+      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
       .environment(\.useRedact, prefs.useRedact)
   }
 }

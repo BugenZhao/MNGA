@@ -11,7 +11,11 @@ import SwiftUI
 struct ShortMessageDetailsView: View {
   typealias DataSource = PagingDataSource<ShortMessageDetailsResponse, ShortMessagePost>
 
+  let mid: String
+
   @StateObject var dataSource: DataSource
+
+  @EnvironmentObject var postModel: ShortMessagePostModel
 
   static func build(mid: String) -> Self {
     let dataSource = DataSource.init(
@@ -29,7 +33,14 @@ struct ShortMessageDetailsView: View {
       id: \.id
     )
 
-    return Self(dataSource: dataSource)
+    return Self(mid: mid, dataSource: dataSource)
+  }
+
+  @ViewBuilder
+  var replyButton: some View {
+    Button(action: { self.doReply() }) {
+      Label("Reply", systemImage: "arrowshape.turn.up.left")
+    }
   }
 
   var body: some View {
@@ -43,5 +54,14 @@ struct ShortMessageDetailsView: View {
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()
+      .toolbarWithFix { ToolbarItem(placement: .primaryAction) { replyButton } }
+      .onChange(of: postModel.sent) { _ in dataSource.reloadLastPages(evenIfNotLoaded: false) }
+  }
+
+  func doReply() {
+    self.postModel.show(action: .with {
+      $0.operation = .reply
+      $0.mid = mid
+    })
   }
 }

@@ -17,8 +17,14 @@ struct NotificationListView: View {
   @ViewBuilder
   func buildLink(for notification: Notification) -> some View {
     NavigationLink(destination: {
-      TopicDetailsView.build(onlyPost: notification.otherPostID)
-        .onAppear {
+      Group {
+        switch notification.type {
+        case .shortMessage, .shortMessageStart:
+          ShortMessageDetailsView.build(mid: notification.otherPostID.tid)
+        default:
+          TopicDetailsView.build(onlyPost: notification.otherPostID)
+        }
+      } .onAppear {
         let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] }))
       }
     }) {

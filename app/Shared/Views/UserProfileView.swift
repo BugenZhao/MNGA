@@ -22,6 +22,8 @@ struct UserProfileView: View {
 
   @StateObject var topicDataSource: TopicDataSource
   @StateObject var postDataSource: PostDataSource
+  @EnvironmentObject var postModel: ShortMessagePostModel
+
   @State var tab = Tab.topics
 
   static func build(user: User) -> Self {
@@ -90,13 +92,20 @@ struct UserProfileView: View {
     }
   }
 
-  var picker: some ToolbarContent {
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
     ToolbarItem(placement: .mayBottomBar) {
       Picker("Tab", selection: $tab.animation()) {
         ForEach(Tab.allCases, id: \.self) {
           Text($0.rawValue).tag($0)
         }
       } .pickerStyle(SegmentedPickerStyle())
+    }
+
+    ToolbarItem(placement: .primaryAction) {
+      Button(action: { self.newShortMessage() }) {
+        Label("New Short Message", systemImage: "message")
+      }
     }
   }
 
@@ -113,9 +122,16 @@ struct UserProfileView: View {
         list
       }
     }
-      .toolbarWithFix { picker }
+      .toolbarWithFix { toolbar }
       .withTopicDetailsAction() // for signature only
-    .mayGroupedListStyle()
+      .mayGroupedListStyle()
       .navigationTitleInline(string: user.name)
+  }
+  
+  func newShortMessage() {
+    self.postModel.show(action: .with {
+      $0.operation = .newSingleTo
+      $0.singleTo = user.name
+    })
   }
 }

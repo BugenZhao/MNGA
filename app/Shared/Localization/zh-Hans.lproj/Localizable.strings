@@ -118,6 +118,7 @@
 "Copy" = "拷贝";
 "Open in Browser" = "在浏览器中打开";
 "Short Messages" = "短消息";
+"Short Message" = "短消息";
 "%lld new unread notifications" = "%lld 个新的未读通知";
 "Replies Chain" = "回复链";
 "See Full Topic" = "查看完整话题";
@@ -125,3 +126,7 @@
 "Short Message Details" = "短消息详情";
 "Appearance" = "外观";
 "Theme Color" = "主题色";
+"New Short Message" = "发表短消息";
+"Send To" = "发送至";
+"Separate multiple users with space." = "使用空格分隔多个用户。";
+"send you a short message" = "发送了一条短消息";

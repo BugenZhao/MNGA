@@ -235,7 +235,7 @@ struct TopicListView: View {
       }
     }
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
-      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
+      .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
       .background { subforum; navigations }
       .navigationTitle(forum.name)
       .toolbarWithFix { toolbar }
