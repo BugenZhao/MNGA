@@ -9,20 +9,6 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-struct TopicDetailsActionBasicNavigationView: View {
-  @ObservedObject var action: TopicDetailsActionModel
-
-  var body: some View {
-    let navTopic = Topic.with {
-      if let tid = self.action.navigateToTid { $0.id = tid }
-    }
-    let user = self.action.showUserProfile ?? .init()
-
-    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { } .hidden()
-    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) { } .hidden()
-  }
-}
-
 struct TopicDetailsView: View {
   typealias DataSource = PagingDataSource<TopicDetailsResponse, Post>
 
@@ -113,6 +99,15 @@ struct TopicDetailsView: View {
     dataSource.items.contains(where: { $0.id != first?.id })
   }
 
+  private var atForum: Forum? {
+    guard let forumName = dataSource.latestResponse?.forumName, forumName != "" else { return nil }
+    guard let fid = dataSource.items.first?.fid else { return nil }
+    return Forum.with {
+      $0.id = .with { i in i.fid = fid }
+      $0.name = forumName
+    }
+  }
+
   @ViewBuilder
   var progress: some View {
     if dataSource.isLoading {
@@ -171,6 +166,11 @@ struct TopicDetailsView: View {
       #endif
 
       Section {
+        if let atForum = atForum {
+          Button(action: { self.action.navigateToForum = atForum }) {
+            Label("Goto \(atForum.name)", systemImage: "list.triangle")
+          }
+        }
         #if os(iOS)
           favoriteButton
         #endif

@@ -237,7 +237,7 @@ struct TopicListView: View {
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
       .background { subforum; navigations }
-      .navigationTitle(forum.name)
+      .navigationTitleLarge(string: forum.name)
       .toolbarWithFix { toolbar }
       .onAppear { selectedForum.inner = forum }
   }

@@ -103,6 +103,7 @@ message TopicDetailsRequest {
 message TopicDetailsResponse {
   Topic topic = 1;
   repeated Post replies = 2;
+  string forum_name = 4;
   uint32 pages = 3;
 }
 

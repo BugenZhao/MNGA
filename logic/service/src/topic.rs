@@ -8,6 +8,7 @@ use crate::{
     user::extract_user_and_cache,
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
+        extract_string,
     },
 };
 use cache::CACHE;
@@ -351,6 +352,8 @@ pub async fn get_topic_details(
         .flatten()
         .ok_or_else(|| ServiceError::MissingField("topic".to_owned()))?;
 
+    let forum_name = extract_string(&package, "/root/__F").unwrap_or_default();
+
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 
     insert_topic_history(topic.clone()); // save history
@@ -358,6 +361,7 @@ pub async fn get_topic_details(
     let response = TopicDetailsResponse {
         topic: Some(topic).into(),
         replies: replies.into(),
+        forum_name,
         pages,
         ..Default::default()
     };

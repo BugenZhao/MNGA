@@ -13,6 +13,7 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var scrollToPid: String? = nil
   @Published var showingReplyChain: [PostId]? = nil
   @Published var navigateToTid: String? = nil
+  @Published var navigateToForum: Forum? = nil
   @Published var showUserProfile: User? = nil
   @Published var navigateToAuthorOnly: String? = nil
   @Published var navigateToLocalMode: Bool = false
@@ -65,6 +66,24 @@ extension EnvironmentValues {
   var currentlyLocalMode: Bool {
     get { self[CurrentlyLocalModeKey.self] }
     set { self[CurrentlyLocalModeKey.self] = newValue }
+  }
+}
+
+// MARK: TopicDetailsAction
+
+struct TopicDetailsActionBasicNavigationView: View {
+  @ObservedObject var action: TopicDetailsActionModel
+
+  var body: some View {
+    let navTopic = Topic.with {
+      if let tid = self.action.navigateToTid { $0.id = tid }
+    }
+    let user = self.action.showUserProfile ?? .init()
+    let forum = self.action.navigateToForum ?? .init()
+
+    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { } .hidden()
+    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) { } .hidden()
+    NavigationLink(destination: TopicListView.build(forum: forum), isActive: self.$action.navigateToForum.isNotNil()) { } .hidden()
   }
 }
 
