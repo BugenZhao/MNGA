@@ -29,7 +29,7 @@ struct TopicPostRowView: View {
     VStack(alignment: .leading, spacing: 8) {
       TopicSubjectView(topic: topic, lineLimit: 2)
 
-      QuoteView(fullWidth: true) {
+      QuoteView(fullWidth: false) {
         PostContentView(spans: cleanSpans, initialInQuote: true)
           .lineLimit(5)
       }

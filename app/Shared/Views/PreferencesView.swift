@@ -14,13 +14,16 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var appearance: some View {
+    Picker(selection: $pref.colorScheme, label: Label("Color Scheme", systemImage: "rays")) {
+      ForEach(ColorSchemeMode.allCases, id: \.self) { mode in
+        Text(mode.description)
+      }
+    }
     Picker(selection: $pref.themeColor, label: Label("Theme Color", systemImage: "circle")) {
       ForEach(ThemeColor.allCases, id: \.self) { color in
-        Group {
-          Label(color.description) {
-            Image(systemName: "circle.fill")
-              .foregroundColor(color.color ?? Color("AccentColor"))
-          }
+        Label(color.description) {
+          Image(systemName: "circle.fill")
+            .foregroundColor(color.color ?? Color("AccentColor"))
         } .tag(color)
       }
     }
@@ -28,9 +31,9 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var reading: some View {
-    Toggle(isOn: $pref.showTopicSubject) {
-      Label("Show Topic Subject", systemImage: "paragraphsign")
-    }
+//    Toggle(isOn: $pref.showTopicSubject) {
+//      Label("Show Topic Subject", systemImage: "paragraphsign")
+//    }
     Toggle(isOn: $pref.showSignature) {
       Label("Show Signature", systemImage: "signature")
     }
@@ -123,6 +126,7 @@ struct PreferencesInnerView: View {
       } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
         .mayInsetGroupedListStyle()
         .navigationTitle("Preferences")
+        .preferredColorScheme(pref.colorScheme.scheme) // workaround
     }
   #endif
 }

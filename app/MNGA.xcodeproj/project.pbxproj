@@ -92,8 +92,8 @@
 		B41BC0E3271DD23500DD05F2 /* ShortMessagePostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0E1271DD23500DD05F2 /* ShortMessagePostRowView.swift */; };
 		B41BC0E5271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */; };
 		B41BC0E6271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */; };
-		B42BA734271FDE3F004D46EB /* ThemeColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA733271FDE3F004D46EB /* ThemeColors.swift */; };
-		B42BA735271FDE3F004D46EB /* ThemeColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA733271FDE3F004D46EB /* ThemeColors.swift */; };
+		B42BA734271FDE3F004D46EB /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA733271FDE3F004D46EB /* Appearance.swift */; };
+		B42BA735271FDE3F004D46EB /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA733271FDE3F004D46EB /* Appearance.swift */; };
 		B42BA73827204F47004D46EB /* GenericPostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA73727204F47004D46EB /* GenericPostModel.swift */; };
 		B42BA73927204F47004D46EB /* GenericPostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA73727204F47004D46EB /* GenericPostModel.swift */; };
 		B42BA73B27205465004D46EB /* PostEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA73A27205465004D46EB /* PostEditorView.swift */; };
@@ -322,7 +322,7 @@
 		B41BC0D8271C617C00DD05F2 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
 		B41BC0E1271DD23500DD05F2 /* ShortMessagePostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortMessagePostRowView.swift; sourceTree = "<group>"; };
 		B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortMessageDetailsView.swift; sourceTree = "<group>"; };
-		B42BA733271FDE3F004D46EB /* ThemeColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColors.swift; sourceTree = "<group>"; };
+		B42BA733271FDE3F004D46EB /* Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
 		B42BA73727204F47004D46EB /* GenericPostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPostModel.swift; sourceTree = "<group>"; };
 		B42BA73A27205465004D46EB /* PostEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostEditorView.swift; sourceTree = "<group>"; };
 		B42BA73D2720561D004D46EB /* ContentEditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentEditorModel.swift; sourceTree = "<group>"; };
@@ -688,6 +688,7 @@
 		B4DBF6062689762E0027233F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				B42BA733271FDE3F004D46EB /* Appearance.swift */,
 				B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */,
 				B4E1071F268DD215006C1742 /* AuthedPreview.swift */,
 				B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */,
@@ -701,7 +702,6 @@
 				B404C49C270C73EC00FF1743 /* Platform.swift */,
 				B45819BB268D7D7200999830 /* RawRepresentable.swift */,
 				B444639526A1C54A006FA44D /* Stickers.swift */,
-				B42BA733271FDE3F004D46EB /* ThemeColors.swift */,
 				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
 				B4DF95AA26CADD830081ECBB /* View+RedactedIf.swift */,
 			);
@@ -1070,7 +1070,7 @@
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B41BC0D9271C617C00DD05F2 /* NotificationModel.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
-				B42BA734271FDE3F004D46EB /* ThemeColors.swift in Sources */,
+				B42BA734271FDE3F004D46EB /* Appearance.swift in Sources */,
 				B46AD3F62692FBF40072DAC0 /* HotTopicListView.swift in Sources */,
 				B4DBF61B268A20A90027233F /* PostContentView.swift in Sources */,
 				B41BC0E5271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */,
@@ -1143,7 +1143,7 @@
 				B42BA73F2720561D004D46EB /* ContentEditorModel.swift in Sources */,
 				B41BC0E3271DD23500DD05F2 /* ShortMessagePostRowView.swift in Sources */,
 				B4F9F98E26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */,
-				B42BA735271FDE3F004D46EB /* ThemeColors.swift in Sources */,
+				B42BA735271FDE3F004D46EB /* Appearance.swift in Sources */,
 				B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */,
 				B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */,
 				B4F2408526A30A8500D620B0 /* NotificationListView.swift in Sources */,

@@ -57,6 +57,7 @@ struct ContentView: View {
       .environmentObject(shortMessagePost)
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
       .environment(\.useRedact, prefs.useRedact)
+      .preferredColorScheme(prefs.colorScheme.scheme)
   }
 }
 
