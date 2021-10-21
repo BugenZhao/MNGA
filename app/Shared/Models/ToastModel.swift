@@ -20,29 +20,32 @@ class ToastModel: ObservableObject {
     case notification(Int)
   }
 
-  @Published var message: Message? = nil {
-    willSet {
-      if newValue != message, let newMessage = newValue {
-        #if os(iOS)
-          switch newMessage {
-          case .success(_):
-            HapticUtils.play(type: .success)
-          case .error(_):
-            HapticUtils.play(type: .error)
-          case .notification(_):
-            break
-          }
-        #endif
-      }
-    }
-  }
+  @Published var message: Message? = nil
 
-  private init() { }
+  private var cancellables = Set<AnyCancellable>()
+
+  private init() {
+    $message
+      .removeDuplicates()
+      .filter { $0 != nil }
+      .sink { message in
+      #if os(iOS)
+        switch message! {
+        case .success(_):
+          HapticUtils.play(type: .success)
+        case .error(_):
+          HapticUtils.play(type: .error)
+        case .notification(_):
+          HapticUtils.play(type: .warning)
+        }
+      #endif
+    } .store(in: &cancellables)
+  }
 }
 
 extension ToastModel.Message: Equatable { }
 extension ToastModel.Message {
-  func toast(for displayMode: AlertToast.DisplayMode) -> AlertToast {
+  func toastView(for displayMode: AlertToast.DisplayMode) -> AlertToast {
     switch self {
     case .success(let msg):
       return AlertToast(displayMode: displayMode, type: .complete(.green), title: NSLocalizedString("Success", comment: ""), subTitle: msg)

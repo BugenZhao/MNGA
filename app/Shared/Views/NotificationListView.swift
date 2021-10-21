@@ -10,9 +10,7 @@ import SwiftUI
 import SwiftUIX
 
 struct NotificationListView: View {
-  typealias DataSource = NotificationDataSource
-
-  @ObservedObject var dataSource: DataSource
+  @StateObject var dataSource = NotificationModel.shared.dataSource
 
   @ViewBuilder
   func buildLink(for notification: Notification) -> some View {
@@ -64,3 +62,10 @@ struct NotificationListView: View {
   }
 }
 
+struct NotificationListNavigationView: View {
+  var body: some View {
+    NavigationView {
+      NotificationListView()
+    }
+  }
+}

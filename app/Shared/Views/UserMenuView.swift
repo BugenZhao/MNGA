@@ -10,7 +10,7 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct UserMenuView: View {
-  @StateObject var notification = NotificationModel()
+  @StateObject var notification = NotificationModel.shared
   @StateObject var authStorage = AuthStorage.shared
 
   @State var user: User? = nil
@@ -27,7 +27,7 @@ struct UserMenuView: View {
   var navigationBackgrounds: some View {
     NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { } .hidden()
     NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { } .hidden()
-    NavigationLink(destination: NotificationListView(dataSource: notification.dataSource), isActive: $showNotifications) { } .hidden()
+    NavigationLink(destination: NotificationListView(), isActive: $showNotifications) { } .hidden()
     NavigationLink(destination: ShortMessageListView.build(), isActive: $showShortMessages) { } .hidden()
     NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
   }

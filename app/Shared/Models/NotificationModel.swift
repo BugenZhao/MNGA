@@ -48,8 +48,11 @@ extension NotificationDataSource {
 #endif
 
 class NotificationModel: ObservableObject {
+  static let shared = NotificationModel()
+
   @Published var dataSource: NotificationDataSource = .build()
   @Published var showing = false
+  @Published var showingSheet = false
 
   let timer = Timer.TimerPublisher(interval: refreshInterval, runLoop: .main, mode: .default).autoconnect()
   var cancellables = Set<AnyCancellable>()

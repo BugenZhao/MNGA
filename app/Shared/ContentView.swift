@@ -17,6 +17,7 @@ struct ContentView: View {
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var openURL = OpenURLModel.shared
   @StateObject var authStorage = AuthStorage.shared
+  @StateObject var notis = NotificationModel.shared
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
@@ -50,12 +51,13 @@ struct ContentView: View {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })
       .modifier(HudToastModifier())
+      .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
+      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
+      .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
       .environmentObject(viewingImage)
       .environmentObject(activity)
       .environmentObject(postReply)
-      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .environmentObject(shortMessagePost)
-      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
       .environment(\.useRedact, prefs.useRedact)
       .preferredColorScheme(prefs.colorScheme.scheme)
   }
