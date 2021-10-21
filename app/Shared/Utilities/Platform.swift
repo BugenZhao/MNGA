@@ -149,7 +149,7 @@ extension View {
       }
     }
   }
-  
+
   @inlinable func maySymbolRenderingModeMulticolor() -> some View {
     Group {
       if #available(iOS 15.0, *) {

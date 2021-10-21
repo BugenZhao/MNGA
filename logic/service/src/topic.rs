@@ -188,25 +188,14 @@ pub async fn get_favorite_topic_list(
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
-    let id = request.get_id();
     let package = fetch_package(
         "thread.php",
         vec![
-            if id.has_stid() {
-                ("stid", id.get_stid())
-            } else {
-                ("fid", id.get_fid())
-            },
+            ("stid", request.get_id().get_stid()),
+            ("fid", request.get_id().get_fid()),
             ("page", &request.page.to_string()),
             ("order_by", request.get_order().to_value()),
-            (
-                "recommend",
-                if request.get_recommended_only() {
-                    "1"
-                } else {
-                    ""
-                },
-            ),
+            ("recommend", request.get_recommended_only().to_value()),
         ],
         vec![],
     )
@@ -304,6 +293,33 @@ pub async fn get_hot_topic_list(
     Ok(HotTopicListResponse {
         topics: topics.into(),
         forum,
+        ..Default::default()
+    })
+}
+
+pub async fn search_topic(request: TopicSearchRequest) -> ServiceResult<TopicSearchResponse> {
+    let package = fetch_package(
+        "thread.php",
+        vec![
+            ("fid", request.get_id().get_fid()),
+            ("stid", request.get_id().get_stid()),
+            ("key", request.get_key()),
+            ("recommend", request.get_recommended_only().to_value()),
+            ("content", request.get_search_content().to_value()),
+        ],
+        vec![],
+    )
+    .await?;
+
+    let topics = extract_nodes(&package, "/root/__T/item", |ns| {
+        ns.into_iter().filter_map(extract_topic).collect()
+    })?;
+
+    let pages = extract_pages(&package, "/root/__ROWS", "/root/__T__ROWS_PAGE", 35)?;
+
+    Ok(TopicSearchResponse {
+        topics: topics.into(),
+        pages,
         ..Default::default()
     })
 }
@@ -529,6 +545,25 @@ mod test {
             .get_replies()
             .iter()
             .all(|p| p.author_id == author_id));
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_search_topic() -> ServiceResult<()> {
+        let id = make_fid("650".to_owned());
+        let response = search_topic(TopicSearchRequest {
+            id: Some(id).into(),
+            page: 1,
+            search_content: true,
+            key: "钟离".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        assert!(!response.get_topics().is_empty());
 
         Ok(())
     }

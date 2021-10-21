@@ -70,6 +70,7 @@ message AsyncRequest {
     ShortMessageListRequest short_message_list = 18;
     ShortMessageDetailsRequest short_message_details = 19;
     ShortMessagePostRequest short_message_post = 20;
+    TopicSearchRequest topic_search = 21;
   }
 }
 
@@ -237,3 +238,15 @@ message ShortMessagePostRequest {
   repeated string to = 4;
 }
 message ShortMessagePostResponse {}
+
+message TopicSearchRequest {
+  ForumId id = 1;
+  uint32 page = 2;
+  bool search_content = 3;
+  bool recommended_only = 4;
+  string key = 5;
+}
+message TopicSearchResponse {
+  repeated Topic topics = 1;
+  uint32 pages = 2;
+}

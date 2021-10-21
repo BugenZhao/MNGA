@@ -22,6 +22,7 @@ struct TopicListView: View {
   @StateObject var dataSourceLastPost: DataSource
   @StateObject var dataSourcePostDate: DataSource
   @StateObject var favoriteForums = FavoriteForumsStorage.shared
+  @StateObject var searchModel: TopicSearchModel
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
@@ -73,6 +74,7 @@ struct TopicListView: View {
       forum: forum,
       dataSourceLastPost: dataSourceLastPost,
       dataSourcePostDate: dataSourcePostDate,
+      searchModel: TopicSearchModel(id: forum.id),
       order: defaultOrder
     )
   }
@@ -214,30 +216,52 @@ struct TopicListView: View {
     #endif
   }
 
+  @ViewBuilder
+  var list: some View {
+    List {
+      Section(header: Text(order.latestTopicsDescription)) {
+        ForEach(dataSource.items, id: \.id) { topic in
+          NavigationLink(destination: { TopicDetailsView.build(topic: topic) }) {
+            TopicRowView(topic: topic, useTopicPostDate: order == .postDate)
+          } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+        }
+      } .id(order)
+    }
+      .refreshable(dataSource: dataSource)
+      .mayGroupedListStyle()
+  }
+
+
+  @ViewBuilder
+  var main: some View {
+    if #available(iOS 15.0, *) {
+      Group {
+        if let dataSource = searchModel.dataSource {
+          TopicSearchItemsView(dataSource: dataSource)
+        } else {
+          list
+        }
+      }
+        .searchable(text: $searchModel.text, prompt: "Search Topics")
+        .onSubmit(of: .search) { searchModel.commit() }
+    } else {
+      list
+    }
+  }
+
   var body: some View {
     Group {
       if dataSource.items.isEmpty {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
       } else {
-        List {
-          Section(header: Text(order.latestTopicsDescription)) {
-            ForEach(dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: { TopicDetailsView.build(topic: topic) }) {
-                TopicRowView(topic: topic, useTopicPostDate: order == .postDate)
-              } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
-            }
-          }
-        }
-          .refreshable(dataSource: dataSource)
-          .mayGroupedListStyle()
-          .id(order)
+        main
       }
     }
+      .navigationTitleLarge(string: forum.name)
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
       .background { subforum; navigations }
-      .navigationTitleLarge(string: forum.name)
       .toolbarWithFix { toolbar }
       .onAppear { selectedForum.inner = forum }
   }

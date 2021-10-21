@@ -7,6 +7,15 @@ pub trait ToValue {
     fn to_value(&self) -> &'static str;
 }
 
+impl ToValue for bool {
+    fn to_value(&self) -> &'static str {
+        match self {
+            true => "1",
+            false => "",
+        }
+    }
+}
+
 impl ToValue for PostVoteRequest_Operation {
     fn to_value(&self) -> &'static str {
         match self {

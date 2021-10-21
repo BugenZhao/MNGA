@@ -153,13 +153,14 @@ struct ForumListView: View {
   #endif
 
   var body: some View {
-    VStack {
+    Group {
       if searchModel.isSearching { search }
       else { index }
     } .onAppear { loadData() }
       .navigationTitle("Forums")
     #if os(iOS)
       .navigationSearchBar { searchBar }
+        .navigationSearchBarHiddenWhenScrolling(false)
     #endif
     .toolbar {
       ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }

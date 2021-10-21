@@ -9,7 +9,7 @@ use crate::{
     },
     topic::{
         get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list,
-        get_user_topic_list, topic_favor,
+        get_user_topic_list, search_topic, topic_favor,
     },
     user::get_remote_user,
 };
@@ -121,4 +121,10 @@ pub async fn handle_short_message_post(
     request: ShortMessagePostRequest,
 ) -> ServiceResult<ShortMessagePostResponse> {
     post_short_msg(request).await
+}
+
+pub async fn handle_topic_search(
+    request: TopicSearchRequest,
+) -> ServiceResult<TopicSearchResponse> {
+    search_topic(request).await
 }

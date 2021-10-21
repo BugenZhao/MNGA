@@ -240,10 +240,10 @@ extension View {
     #if canImport(SwiftUIRefresh)
       Group {
         if #available(iOS 15.0, *) {
-//        self.refreshable {
-//          await dataSource.refreshAsync()
-//        }
-          self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+        self.refreshable {
+          await dataSource.refreshAsync()
+          await Task.sleep(UInt64(0.5 * Double(NSEC_PER_SEC)))
+        }
         } else {
           self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
         }

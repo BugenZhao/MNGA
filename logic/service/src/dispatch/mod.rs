@@ -42,6 +42,7 @@ mod dispatch_async {
             short_message_list(r) => r!(handle_short_message_list(r)),
             short_message_details(r) => r!(handle_short_message_details(r)),
             short_message_post(r) => r!(handle_short_message_post(r)),
+            topic_search(r) => r!(handle_topic_search(r)),
         }
     }
 }
