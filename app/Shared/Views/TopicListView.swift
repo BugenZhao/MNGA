@@ -218,14 +218,24 @@ struct TopicListView: View {
 
   @ViewBuilder
   var list: some View {
-    List {
-      Section(header: Text(order.latestTopicsDescription)) {
-        ForEach(dataSource.items, id: \.id) { topic in
-          NavigationLink(destination: { TopicDetailsView.build(topic: topic) }) {
-            TopicRowView(topic: topic, useTopicPostDate: order == .postDate)
-          } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+    Group {
+      if dataSource.items.isEmpty {
+        ProgressView()
+          .onAppear {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation
+            self.dataSource.initialLoad()
+          }
         }
-      } .id(order)
+      } else {
+        List {
+          ForEach(dataSource.items, id: \.id) { topic in
+            NavigationLink(destination: { TopicDetailsView.build(topic: topic) }) {
+              TopicRowView(topic: topic, useTopicPostDate: order == .postDate)
+            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+          }
+            .id(order)
+        }
+      }
     }
       .refreshable(dataSource: dataSource)
       .mayGroupedListStyle()
@@ -250,14 +260,7 @@ struct TopicListView: View {
   }
 
   var body: some View {
-    Group {
-      if dataSource.items.isEmpty {
-        ProgressView()
-          .onAppear { dataSource.initialLoad() }
-      } else {
-        main
-      }
-    }
+    main
       .navigationTitleLarge(string: forum.name)
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }

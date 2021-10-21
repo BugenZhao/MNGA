@@ -155,7 +155,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
       let response: Result<Res, LogicError> = await logicCallAsync(request)
 
-      DispatchQueue.main.async {
+      DispatchQueue.main.sync {
         switch response {
         case .success(let response):
           self.onRefreshSuccess(response: response, animated: animated)
@@ -236,16 +236,19 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 }
 
 extension View {
-  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>) -> some View {
+  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>, iOS15Only: Bool = false) -> some View {
     #if canImport(SwiftUIRefresh)
       Group {
         if #available(iOS 15.0, *) {
-        self.refreshable {
-          await dataSource.refreshAsync()
-          await Task.sleep(UInt64(0.5 * Double(NSEC_PER_SEC)))
-        }
-        } else {
+          self.refreshable {
+            await Task.sleep(UInt64(0.25 * Double(NSEC_PER_SEC)))
+            await dataSource.refreshAsync()
+            await Task.sleep(UInt64(0.25 * Double(NSEC_PER_SEC)))
+          }
+        } else if !iOS15Only {
           self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+        } else {
+          self
         }
       }
     #else
