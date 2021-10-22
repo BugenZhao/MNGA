@@ -13,7 +13,7 @@ class PreferencesStorage: ObservableObject {
   static let shared = PreferencesStorage()
 
   @AppStorage("showTopicSubjectNew") var showTopicSubject = false
-  @AppStorage("showSignature") var showSignature = true
+  @AppStorage("showSignatureNew") var showSignature = false
   @AppStorage("showAvatar") var showAvatar = true
   @AppStorage("useRedactNew") var useRedact = false
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = false
