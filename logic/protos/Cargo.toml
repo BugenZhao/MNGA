@@ -5,6 +5,7 @@ edition = "2021"
 
 
 [build-dependencies]
+cargo-emit = "0.2.1"
 protoc-rust = "2.24.1"
 
 [dependencies]

@@ -1,9 +1,8 @@
+use cargo_emit::rerun_if_changed;
 use protoc_rust::Customize;
 
 fn main() {
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=../Cargo.lock");
-    println!("cargo:rerun-if-changed=../../protos/*");
+    rerun_if_changed!("../../protos/Service.proto", "../../protos/DataModel.proto");
 
     protoc_rust::Codegen::new()
         .out_dir("src/generated")

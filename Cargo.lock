@@ -123,6 +123,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cargo-emit"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1582e1c9e755dd6ad6b224dcffb135d199399a4568d454bd89fe515ca8425695"
+
+[[package]]
 name = "cbindgen"
 version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1019,6 +1025,7 @@ dependencies = [
 name = "protos"
 version = "0.1.0"
 dependencies = [
+ "cargo-emit",
  "protobuf",
  "protoc-rust",
 ]
