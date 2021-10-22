@@ -345,11 +345,13 @@ class ContentCombiner {
     metaCombiner.visit(spans: metaSpans)
 
     var tapAction: (() -> Void)?
+    var lineLimit: Int? = nil
 
     if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
       if let model = self.actionModel, let id = self.selfId {
         model.recordReply(from: id, to: pid)
         tapAction = { model.showReplyChain(from: id) }
+        lineLimit = 5 // todo: add an option
       }
 
       let userView = QuoteUserView(uid: uid, action: tapAction)
@@ -364,7 +366,7 @@ class ContentCombiner {
 
     let view = QuoteView(fullWidth: true) {
       combiner.buildView()
-    }
+    } .lineLimit(lineLimit)
     self.append(view)
   }
 

@@ -697,6 +697,7 @@
 		B4DBF6062689762E0027233F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				B4521B692722D1F400258640 /* Alignment.swift */,
 				B42BA733271FDE3F004D46EB /* Appearance.swift */,
 				B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */,
 				B4E1071F268DD215006C1742 /* AuthedPreview.swift */,
@@ -704,6 +705,7 @@
 				B43DED48269C5F78009C52F5 /* Constants.swift */,
 				B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */,
 				B4DBF607268976470027233F /* DateFormatters.swift */,
+				B44059C427228C560034C032 /* Localization.swift */,
 				B40DC699270DC7C6002DC8A1 /* Logger.swift */,
 				B4DBF61726897C520027233F /* Misc.swift */,
 				B4920CDB269083BD00762FC9 /* OpenSourceStickers.swift */,
@@ -713,8 +715,6 @@
 				B444639526A1C54A006FA44D /* Stickers.swift */,
 				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
 				B4DF95AA26CADD830081ECBB /* View+RedactedIf.swift */,
-				B44059C427228C560034C032 /* Localization.swift */,
-				B4521B692722D1F400258640 /* Alignment.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
