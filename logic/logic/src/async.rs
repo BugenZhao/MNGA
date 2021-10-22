@@ -19,6 +19,7 @@ where
     let _guard = RUNTIME.enter();
 
     tokio::spawn(async move {
+        let _ = &request;
         log::debug!("serving async request on {:?}", thread::current());
 
         let request = request.value.expect("no async req");
