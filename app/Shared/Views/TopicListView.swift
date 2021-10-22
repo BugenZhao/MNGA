@@ -247,7 +247,7 @@ struct TopicListView: View {
     if #available(iOS 15.0, *) {
       Group {
         if let dataSource = searchModel.dataSource {
-          TopicSearchItemsView(dataSource: dataSource)
+          TopicSearchView(dataSource: dataSource)
         } else {
           list
         }

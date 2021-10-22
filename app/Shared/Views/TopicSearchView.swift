@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-class TopicSearchModel: GenericSearchModel<TopicSearchResponse, Topic> {
+class TopicSearchModel: SearchModel<TopicSearchResponse, Topic> {
   let id: ForumId
 
   init(id: ForumId) {
@@ -36,8 +36,7 @@ class TopicSearchModel: GenericSearchModel<TopicSearchResponse, Topic> {
   }
 }
 
-@available(iOS 15.0, *)
-struct TopicSearchItemsView: View {
+struct TopicSearchView: View {
   @ObservedObject var dataSource: TopicSearchModel.DataSource
 
   var body: some View {

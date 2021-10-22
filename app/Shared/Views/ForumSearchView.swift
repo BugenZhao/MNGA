@@ -8,11 +8,26 @@
 import Foundation
 import SwiftUI
 
+class ForumSearchModel: SearchModel<ForumSearchResponse, Forum> {
+  override func buildDataSource(text: String) -> DataSource {
+    DataSource(
+      buildRequest: { _ in
+        return .forumSearch(.with {
+          $0.key = text
+        })
+      },
+      onResponse: { response in
+        let items = response.forums
+        return (items, 1)
+      },
+      id: \.idDescription
+    )
+  }
+}
+
 struct ForumSearchView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
-  @EnvironmentObject var model: SearchModel<Forum>
-
-  @State var isLoading = false
+  @ObservedObject var dataSource: ForumSearchModel.DataSource
 
   @ViewBuilder
   func buildLink(_ forum: Forum) -> some View {
@@ -28,25 +43,14 @@ struct ForumSearchView: View {
   }
 
   var body: some View {
-    List {
-      ForEach(model.results, id: \.idDescription) { forum in
-        buildLink(forum)
-      }
-    } .onReceive(model.$commitFlag) { _ in self.doSearch() }
-  }
-
-  func doSearch() {
-    if isLoading || model.text.isEmpty { return }
-    isLoading = true
-
-    logicCallAsync(.forumSearch(.with { $0.key = model.text })) { (response: ForumSearchResponse) in
-      withAnimation {
-        model.results = response.forums
-        isLoading = false
-      }
-    } onError: { e in
-      withAnimation {
-        isLoading = false
+    if dataSource.items.isEmpty {
+      ProgressView()
+        .onAppear { dataSource.initialLoad() }
+    } else {
+      List {
+        ForEach(dataSource.items, id: \.id) { forum in
+          buildLink(forum)
+        }
       }
     }
   }

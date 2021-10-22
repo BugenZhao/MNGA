@@ -11,7 +11,7 @@ import SwiftUIX
 
 struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
-  @StateObject var searchModel = SearchModel<Forum>()
+  @StateObject var searchModel = ForumSearchModel()
 
   @State var categories = [Category]()
   @State var favoriteEditing = false
@@ -145,16 +145,14 @@ struct ForumListView: View {
       SearchBar(
         NSLocalizedString("Search Forums", comment: ""),
         text: $searchModel.text,
-        isEditing: $searchModel.isEditing.animation(),
-        onCommit: { searchModel.commitFlag += 1 }
-      )
-        .onCancel { DispatchQueue.main.async { withAnimation { searchModel.text.removeAll() } } }
+        onCommit: { searchModel.commit() }
+      ) .onCancel { searchModel.cancel() }
     }
   #endif
 
   var body: some View {
     Group {
-      if searchModel.isSearching { search }
+      if let dataSource = searchModel.dataSource { ForumSearchView(dataSource: dataSource) }
       else { index }
     } .onAppear { loadData() }
       .navigationTitle("Forums")
