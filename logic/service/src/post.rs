@@ -467,7 +467,7 @@ mod test {
         let _response = post_reply(PostReplyRequest {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::NEW,
-                forum_id: Some(make_stid("12689291".to_owned())).into(),
+                forum_id: make_stid("12689291".to_owned()).into(),
                 ..Default::default()
             })
             .into(),
@@ -494,7 +494,7 @@ mod test {
                 ..Default::default()
             })
             .into(),
-            forum_id: Some(make_fid("275".to_owned())).into(),
+            forum_id: make_fid("275".to_owned()).into(),
             ..Default::default()
         };
 

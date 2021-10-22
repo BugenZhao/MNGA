@@ -13,17 +13,29 @@ use protos::{
 };
 use sxd_xpath::nodeset::Node;
 
-pub fn make_fid(id: String) -> ForumId {
-    ForumId {
-        id: Some(ForumId_oneof_id::fid(id)),
-        ..Default::default()
+#[inline]
+pub fn make_fid(id: String) -> Option<ForumId> {
+    if id != "" && id != "0" {
+        ForumId {
+            id: Some(ForumId_oneof_id::fid(id)),
+            ..Default::default()
+        }
+        .into()
+    } else {
+        None
     }
 }
 
-pub fn make_stid(id: String) -> ForumId {
-    ForumId {
-        id: Some(ForumId_oneof_id::stid(id)),
-        ..Default::default()
+#[inline]
+pub fn make_stid(id: String) -> Option<ForumId> {
+    if id != "" && id != "0" {
+        ForumId {
+            id: Some(ForumId_oneof_id::stid(id)),
+            ..Default::default()
+        }
+        .into()
+    } else {
+        None
     }
 }
 
@@ -36,8 +48,8 @@ pub fn extract_forum(node: Node) -> Option<Forum> {
         .unwrap_or_default();
     let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, icon_id);
 
-    let fid = get!(map, "fid").map(make_fid);
-    let stid = get!(map, "stid").map(make_stid);
+    let fid = get!(map, "fid").map(make_fid).flatten();
+    let stid = get!(map, "stid").map(make_stid).flatten();
 
     let forum = Forum {
         id: stid.or(fid).into(), // stid first

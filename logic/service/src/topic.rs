@@ -39,8 +39,8 @@ fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
 
-    let fid = get!(map, "_0").map(make_fid);
-    let stid = get!(map, "_1").map(make_stid);
+    let fid = get!(map, "_0").map(make_fid).flatten();
+    let stid = get!(map, "_1").map(make_stid).flatten();
 
     let forum = Forum {
         id: stid.or(fid).into(),
@@ -133,7 +133,7 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
         name: pget!(pairs, 1)?,
         info: pget!(pairs, 2).unwrap_or_default(),
         icon_url,
-        id: Some(id).into(),
+        id: id.into(),
         ..Default::default()
     };
 
@@ -448,7 +448,7 @@ mod test {
     async fn test_topic_list() -> ServiceResult<()> {
         let id = make_fid("315".to_owned());
         let response = get_topic_list(TopicListRequest {
-            id: Some(id).into(),
+            id: id.into(),
             page: 1,
             ..Default::default()
         })
@@ -484,7 +484,7 @@ mod test {
     async fn test_hot_topic_list() -> ServiceResult<()> {
         let id = make_fid("-7".to_owned());
         let response = get_hot_topic_list(HotTopicListRequest {
-            id: Some(id).into(),
+            id: id.into(),
             range: HotTopicListRequest_DateRange::DAY,
             ..Default::default()
         })
@@ -553,7 +553,7 @@ mod test {
     async fn test_search_topic() -> ServiceResult<()> {
         let id = make_fid("650".to_owned());
         let response = search_topic(TopicSearchRequest {
-            id: Some(id).into(),
+            id: id.into(),
             page: 1,
             search_content: true,
             key: "钟离".to_owned(),
