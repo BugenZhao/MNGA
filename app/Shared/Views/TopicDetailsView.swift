@@ -381,7 +381,7 @@ struct TopicDetailsView: View {
     } .mayGroupedListStyle()
       .withTopicDetailsAction(action: action)
       .onChange(of: dataSource.refreshedTimes) { _ in mayScrollToJumpFloor() }
-      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 1, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
+      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
   }
 
   var body: some View {

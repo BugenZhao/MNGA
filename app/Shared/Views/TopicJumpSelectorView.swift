@@ -19,14 +19,14 @@ struct TopicJumpSelectorView: View {
   let floorToJump: Binding<Int?>?
   let pageToJump: Binding<Int?>?
 
-  init(maxFloor: Int, initialFloor: Int = 1, floorToJump: Binding<Int?>? = nil, pageToJump: Binding<Int?>? = nil) {
+  init(maxFloor: Int, initialFloor: Int = 0, floorToJump: Binding<Int?>? = nil, pageToJump: Binding<Int?>? = nil) {
     self.maxFloor = maxFloor
     self.floorToJump = floorToJump
     self.pageToJump = pageToJump
     self._selectedFloor = .init(initialValue: initialFloor)
   }
 
-  var maxPage: Int { (maxFloor + Constants.postPerPage - 1) / Constants.postPerPage }
+  var maxPage: Int { (maxFloor + Constants.postPerPage) / Constants.postPerPage }
 
   @Environment(\.presentationMode) var presentation
 
@@ -35,18 +35,7 @@ struct TopicJumpSelectorView: View {
   @State var text = ""
 
   var selectedPage: Binding<Int> {
-      .init(get: { (selectedFloor + Constants.postPerPage - 1) / Constants.postPerPage }, set: { selectedFloor = ($0 - 1) * Constants.postPerPage + 1 })
-  }
-
-
-  @ViewBuilder
-  var picker: some View {
-    Picker("Mode", selection: $mode.animation()) {
-      ForEach(Mode.allCases, id: \.rawValue) {
-        Text(LocalizedStringKey($0.rawValue)).tag($0)
-      }
-    } .pickerStyle(SegmentedPickerStyle())
-      .frame(width: 150)
+      .init(get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage }, set: { selectedFloor = ($0 - 1) * Constants.postPerPage })
   }
 
   @ViewBuilder
@@ -58,32 +47,31 @@ struct TopicJumpSelectorView: View {
   var main: some View {
     List {
       Section(header: Text("Jump to...")) {
-        switch mode {
-        case .floor:
+        Group {
           Picker("Floor", selection: $selectedFloor) {
-            ForEach(1..<maxFloor + 1) { i in
+            ForEach(0..<maxFloor + 1) { i in
               Text("Floor \(i)").tag(i)
             }
           }
-        case .page:
-          Section(header: Text("Jump to...")) {
-            Picker("Page", selection: selectedPage) {
-              ForEach(1..<maxPage + 1) { i in
-                Text("Page \(i)").tag(i)
-              }
-            }
-          }
-        }
+        } .pickerStyle(.wheel)
 
-        TextField(NSLocalizedString("Type here...", comment: ""), text: $text)
-          .keyboardType(.numberPad)
-          .multilineTextAlignment(.center)
-          .onChange(of: text) { _ in parseText() }
+        HStack {
+          Picker("", selection: $mode) {
+            ForEach(Mode.allCases, id: \.rawValue) {
+              Text(LocalizedStringKey($0.rawValue)).tag($0)
+            }
+          } .pickerStyle(MenuPickerStyle())
+
+          TextField(NSLocalizedString("Type here...", comment: ""), text: $text)
+            .keyboardType(.numberPad)
+            .multilineTextAlignment(.trailing)
+        } .onChange(of: text) { _ in parseText() }
+          .onChange(of: mode) { _ in parseText() }
       }
 
       Section {
         HStack {
-          Button(action: { withAnimation { selectedFloor = 1 } }) {
+          Button(action: { withAnimation { selectedFloor = 0 } }) {
             Text("First")
           } .frame(maxWidth: .infinity)
           Divider()
@@ -108,7 +96,7 @@ struct TopicJumpSelectorView: View {
     withAnimation {
       switch mode {
       case .floor:
-        number = min(max(number, 1), maxFloor)
+        number = min(max(number, 0), maxFloor)
         selectedFloor = number
       case .page:
         number = min(max(number, 1), maxPage)
@@ -120,8 +108,6 @@ struct TopicJumpSelectorView: View {
   var body: some View {
     NavigationView {
       main
-        .pickerStyle(.wheel)
-        .navigationBarTitleView(picker)
         .toolbarWithFix { ToolbarItem(placement: .primaryAction) { jumpButton } }
     }
   }
