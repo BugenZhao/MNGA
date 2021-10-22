@@ -57,6 +57,7 @@ class ContentCombiner {
   private let fontModifier: (Font?) -> Font?
   private let colorModifier: (Color?) -> Color?
   private let otherStylesModifier: (OtherStyles) -> OtherStyles
+  private let alignment: HorizontalAlignment
 
   private var subviews = [Subview]()
   private var envs = [String: Any]()
@@ -106,13 +107,15 @@ class ContentCombiner {
     parent: ContentCombiner?,
     font: @escaping (Font?) -> Font? = { $0 },
     color: @escaping (Color?) -> Color? = { $0 },
-    otherStyles: @escaping (OtherStyles) -> OtherStyles = { $0 }
+    otherStyles: @escaping (OtherStyles) -> OtherStyles = { $0 },
+    overrideAlignment: HorizontalAlignment? = nil
   ) {
     self.parent = parent
     self.actionModel = parent?.actionModel
     self.fontModifier = font
     self.colorModifier = color
     self.otherStylesModifier = otherStyles
+    self.alignment = overrideAlignment ?? parent?.alignment ?? .leading
   }
 
   init(actionModel: TopicDetailsActionModel?, id: PostId?, defaultFont: Font, defaultColor: Color, initialEnvs: [String: Any]? = nil) {
@@ -121,6 +124,7 @@ class ContentCombiner {
     self.fontModifier = { _ in defaultFont }
     self.colorModifier = { _ in defaultColor }
     self.otherStylesModifier = { $0 }
+    self.alignment = .leading
     self.envs = initialEnvs ?? [:]
 
     self.selfId = id
@@ -192,7 +196,7 @@ class ContentCombiner {
     } else {
       // complex view
       tryAppendTextBuffer()
-      let stack = VStack(alignment: .leading, spacing: 8) {
+      let stack = VStack(alignment: self.alignment, spacing: 8) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
@@ -236,6 +240,10 @@ class ContentCombiner {
 
   private func visit(plain: Span.Plain) {
     let text: Text
+
+    var plain = plain
+    plain.text = plain.text.replacingOccurrences(of: "[*]", with: "→ ")
+
     if plain.text == "Post by " {
       text = Text("Post by") + Text(" ")
     } else {
@@ -307,6 +315,8 @@ class ContentCombiner {
       self.visit(collapsed: tagged)
     case "flash":
       self.visit(flash: tagged)
+    case "align":
+      self.visit(align: tagged)
     default:
       self.visit(defaultTagged: tagged)
     }
@@ -397,24 +407,30 @@ class ContentCombiner {
   }
 
   private func visit(tid: Span.Tagged) {
-    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
-    combiner.append(Text("Topic"))
+//    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
+//    combiner.append(Text("Topic"))
     if let tid = tid.attributes.first {
-      combiner.append(Text(" #\(tid) "))
+//      combiner.append(Text(" #\(tid) "))
       self.replyTo = .with {
         $0.pid = "0"
         $0.tid = tid
       }
     }
-    self.append(combiner.build())
+//    self.append(combiner.build())
+    guard let id = tid.attributes.first else { return }
+    let url = Span.Tagged.with {
+      $0.spans = tid.spans
+      $0.attributes = ["read.php?tid=\(id)"]
+    }
+    self.visit(url: url, defaultTitle: Text("Topic \(id)"))
   }
 
-  private func visit(url: Span.Tagged) {
+  private func visit(url: Span.Tagged, defaultTitle: Text? = nil) {
     let urlString: String?
 
     let combiner = ContentCombiner(parent: self, font: { _ in .footnote }, color: { _ in .accentColor })
     combiner.visit(spans: url.spans)
-    let innerView = url.spans.isEmpty ? nil : combiner.buildView().eraseToAnyView()
+    let innerView = url.spans.isEmpty ? defaultTitle?.eraseToAnyView() : combiner.buildView().eraseToAnyView()
 
     if let u = url.attributes.first {
       urlString = u
@@ -546,6 +562,44 @@ class ContentCombiner {
       OpenURLModel.shared.open(url: url, inApp: true)
     }
     self.append(link)
+  }
+
+  private func visit(align: Span.Tagged) {
+    var alignment: HorizontalAlignment? = nil
+    if align.attributes.first == "center" {
+      alignment = .center
+    } else if align.attributes.first == "left" {
+      alignment = .leading
+    } else if align.attributes.first == "right" {
+      alignment = .trailing
+    }
+
+    let combiner = ContentCombiner(parent: self, overrideAlignment: alignment)
+    combiner.visit(spans: align.spans)
+
+    let inner = combiner.buildView()
+    if align.attributes.first == "center" {
+      let view = HStack {
+        Spacer()
+        inner
+        Spacer()
+      }
+      self.append(view)
+    } else if align.attributes.first == "left" {
+      let view = HStack {
+        inner
+        Spacer()
+      }
+      self.append(view)
+    } else if align.attributes.first == "right" {
+      let view = HStack {
+        Spacer()
+        inner
+      }
+      self.append(view)
+    } else {
+      self.append(inner)
+    }
   }
 
   private func visit(defaultTagged: Span.Tagged) {
