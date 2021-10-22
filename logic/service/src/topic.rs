@@ -368,7 +368,9 @@ pub async fn get_topic_details(
         .flatten()
         .ok_or_else(|| ServiceError::MissingField("topic".to_owned()))?;
 
-    let forum_name = extract_string(&package, "/root/__F").unwrap_or_default();
+    let forum_name = extract_string(&package, "/root/__F/name")
+        .or_else(|_| extract_string(&package, "/root/__F"))
+        .unwrap_or_default();
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 
@@ -564,6 +566,24 @@ mod test {
         println!("response: {:?}", response);
 
         assert!(!response.get_topics().is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_forum_name() -> ServiceResult<()> {
+        let cases = [("29094948", "手机研究所"), ("29100260", "原神")];
+
+        for (id, name) in cases {
+            let response = get_topic_details(TopicDetailsRequest {
+                topic_id: id.to_owned(),
+                page: 1,
+                ..Default::default()
+            })
+            .await?;
+
+            assert_eq!(response.forum_name, name);
+        }
 
         Ok(())
     }
