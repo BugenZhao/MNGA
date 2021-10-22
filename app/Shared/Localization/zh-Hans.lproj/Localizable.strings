@@ -139,3 +139,8 @@
 "Search Results" = "搜索结果";
 "Search Topics" = "搜索话题";
 "Topic %@" = "话题 %@";
+"Floor" = "楼层";
+"Floor %lld" = "第 %lld 层";
+"Page" = "页面";
+"Jump" = "跳转";
+"Jump to..." = "跳转至…";

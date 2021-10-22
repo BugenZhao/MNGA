@@ -29,6 +29,9 @@ struct TopicDetailsView: View {
 
   @State var isFavored: Bool
 
+  @State var showJumpSelector = false
+  @State var floorToJump: Int?
+
   let onlyPost: Bool
 
   static func build(id: String) -> some View {
@@ -152,6 +155,9 @@ struct TopicDetailsView: View {
             Label("View Cached Topic", systemImage: "clock")
           }
         }
+        Button(action: { self.showJumpSelector = true }) {
+          Label("Jump to...", systemImage: "arrow.up.arrow.down")
+        }
       }
 
       #if os(iOS)
@@ -201,8 +207,13 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    PostRowView(post: post, vote: votes.binding(for: post))
-      .id((withId ? "" : "dummy") + post.id.pid)
+    let row = PostRowView(post: post, vote: votes.binding(for: post))
+
+    if withId {
+      row.id(post)
+    } else {
+      row
+    }
   }
 
   @ViewBuilder
@@ -239,9 +250,12 @@ struct TopicDetailsView: View {
   var allRepliesSection: some View {
     if shouldShowReplies {
       Section(header: Text("Replies")) {
-        ForEach(dataSource.sortedItems(by: \.floor).filter { $0.id != first?.id }, id: \.id.pid) { post in
-          buildRow(post: post)
-            .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+        ForEach(dataSource.pagedItems, id: \.page) { pair in
+          let items = pair.items.filter { $0.id != first?.id }
+          ForEach(items, id: \.id.pid) { post in
+            buildRow(post: post)
+              .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+          }
         }
       }
     }
@@ -267,58 +281,6 @@ struct TopicDetailsView: View {
       headerSection
       hotRepliesSection
       allRepliesSection
-    }
-  }
-
-  @ViewBuilder
-  func buildStack<S: RandomAccessCollection>(_ items: S) -> some View where S.Element == Post {
-    VStack(alignment: .leading, spacing: 6) {
-      ForEach(items, id: \.id.pid) { post in
-        buildRow(post: post)
-        if post.id != items.last?.id {
-          Divider()
-            .padding(.trailing, -20)
-        }
-      }
-    } .fixedSize(horizontal: false, vertical: true)
-  }
-
-  @ViewBuilder
-  var listStackHotRepliesSection: some View {
-    if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
-      Section(header: Text("Hot Replies")) {
-        buildStack(hotReplies)
-      }
-    }
-  }
-
-  @ViewBuilder
-  var listStackAllRepliesSections: some View {
-    if shouldShowReplies {
-      ForEach(dataSource.pagedItems, id: \.page) { pair in
-        Section(header: Text("Page \(pair.page)")) {
-          let items = pair.items.filter { $0.id != first?.id }
-          buildStack(items)
-        }
-      }
-
-      if let nextPage = dataSource.nextPage {
-        let loadTrigger = Text("").onAppear { dataSource.loadMore(after: 0.3) }
-        Section(header: Text("Page \(nextPage)"), footer: loadTrigger) {
-          // BUGEN'S HACK:
-          LoadingRowView()
-        } .id(nextPage)
-      }
-    }
-  }
-
-  @available(*, deprecated, message: "This is just a workaround")
-  @ViewBuilder
-  var listStackMain: some View {
-    List {
-      headerSection
-      listStackHotRepliesSection
-      listStackAllRepliesSections
     }
   }
 
@@ -374,10 +336,20 @@ struct TopicDetailsView: View {
     }
   }
 
+  @ViewBuilder
+  var loadFirstPageButton: some View {
+    if let _ = dataSource.loadFromPage {
+      Button(action: { dataSource.loadFromPage = nil; floorToJump = nil }) {
+        Label("Load First Page", systemImage: "arrow.up.to.line")
+      }
+    }
+  }
+
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
       ToolbarItem(placement: .navigationBarTrailing) { progress }
+      ToolbarItem(placement: .navigationBarTrailing) { loadFirstPageButton }
       ToolbarItem(placement: .navigationBarTrailing) { menu }
     #elseif os(macOS)
       ToolbarItemGroup {
@@ -390,18 +362,27 @@ struct TopicDetailsView: View {
     #endif
   }
 
-  var body: some View {
-    VStack(alignment: .leading) {
+  @ViewBuilder var main: some View {
+    ScrollViewReader { proxy in
       Group {
         if prefs.usePaginatedDetails && !onlyPost {
           paginatedMain
         } else {
           listMain
         }
+      } .onReceive(action.$scrollToFloor) { floor in
+        guard let floor = floor else { return }
+        let item = dataSource.items.first { $0.floor == UInt32(floor) }
+        proxy.scrollTo(item, anchor: .top)
       }
-        .mayGroupedListStyle()
-        .withTopicDetailsAction(action: action)
-    }
+    } .mayGroupedListStyle()
+      .withTopicDetailsAction(action: action)
+      .onChange(of: dataSource.refreshedTimes) { _ in mayScrollToJumpFloor() }
+      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 1, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
+  }
+
+  var body: some View {
+    main
       .navigationTitleInline(string: title)
       .toolbarWithFix { toolbar }
       .background { navigation }
@@ -410,6 +391,17 @@ struct TopicDetailsView: View {
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = webpageURL }
+  }
+
+  var maxFloor: Int {
+    Int((dataSource.latestResponse?.topic ?? topic).repliesNum)
+  }
+
+  func mayScrollToJumpFloor() {
+    guard let floor = floorToJump, let _ = dataSource.loadFromPage else { return }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+      withAnimation { action.scrollToFloor = floor }
+    }
   }
 
   var webpageURL: URL? {

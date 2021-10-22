@@ -11,6 +11,7 @@ import SwiftUI
 
 class TopicDetailsActionModel: ObservableObject {
   @Published var scrollToPid: String? = nil
+  @Published var scrollToFloor: Int? = nil
   @Published var showingReplyChain: [PostId]? = nil
   @Published var navigateToTid: String? = nil
   @Published var navigateToForum: Forum? = nil

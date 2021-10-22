@@ -28,4 +28,6 @@ struct Constants {
     static let groupStore = "group.com.bugenzhao.MNGA"
     static let favoriteForums = "favoriteForums"
   }
+
+  static let postPerPage = 20
 }
