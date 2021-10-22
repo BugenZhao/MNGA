@@ -31,7 +31,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private var loadedPage = 0
   private var totalPages = 1
   private var dataFlowId = UUID()
-  
+
   private var cancellables = Set<AnyCancellable>()
 
   var hasMore: Bool { loadedPage < totalPages }
@@ -48,7 +48,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.onResponse = onResponse
     self.id = id
     self.finishOnError = finishOnError
-    
+
     $loadFromPage
       .dropFirst()
       .sink { self.refresh(fromPage: $0 ?? 1) }

@@ -171,15 +171,18 @@ struct TopicDetailsView: View {
         }
       #endif
 
+      #if os(iOS)
+        Section {
+          favoriteButton
+        }
+      #endif
+
       Section {
         if let atForum = atForum {
           Button(action: { self.action.navigateToForum = atForum }) {
             Label("Goto \(atForum.name)", systemImage: "list.triangle")
           }
         }
-        #if os(iOS)
-          favoriteButton
-        #endif
         Button(action: { self.dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
