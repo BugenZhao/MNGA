@@ -85,6 +85,12 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
 
 
   // MARK: Interface
+  
+  public func showAfter(action: Task.Action) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+      self.show(action: action)
+    }
+  }
 
   public func show(action: Task.Action, pageToReload: PageToReload? = nil) {
     let task = Task(action: action, pageToReload: pageToReload)

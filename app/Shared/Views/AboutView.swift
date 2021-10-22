@@ -11,9 +11,20 @@ import SwiftUIX
 
 struct AboutView: View {
   @StateObject var activity = ActivityModel()
+  @EnvironmentObject var shortMessagePost: ShortMessagePostModel
+
+  @Environment(\.presentationMode) var presentation
 
   func openGitHub() {
     OpenURLModel.shared.open(url: Constants.URL.gitHub, inApp: false)
+  }
+
+  func shortMessage() {
+    shortMessagePost.showAfter(action: .with {
+      $0.operation = .newSingleTo
+      $0.singleTo = "BugenZhao"
+    })
+    self.presentation.dismiss()
   }
 
   func mail() {
@@ -47,7 +58,7 @@ struct AboutView: View {
         .font(.footnote)
       Text("Make NGA Great Again")
 
-      HStack {
+      HStack(spacing: 12) {
         Button(action: { openGitHub() }) {
           Image("github")
             .renderingMode(.template)
@@ -55,8 +66,14 @@ struct AboutView: View {
             .scaledToFit()
             .width(30)
         }
+        Button(action: { shortMessage() }) {
+          Image(systemName: "message")
+            .resizable()
+            .scaledToFit()
+            .width(30)
+        }
         Button(action: { mail() }) {
-          Image(systemName: "envelope.fill")
+          Image(systemName: "envelope")
             .resizable()
             .scaledToFit()
             .width(30)
@@ -67,8 +84,12 @@ struct AboutView: View {
 
   @ViewBuilder
   var description: some View {
-    Text("\t") +
-      Text("MNGA Description")
+    VStack {
+      Text("\t") +
+        Text("MNGA Description") +
+        Text("\n\t") +
+        Text("MNGA Please Share")
+    }
   }
 
   @ViewBuilder
@@ -114,6 +135,6 @@ struct AboutView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {
       AboutView()
-    }
+    } .environmentObject(ShortMessagePostModel())
   }
 }
