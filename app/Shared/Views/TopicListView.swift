@@ -241,26 +241,15 @@ struct TopicListView: View {
       .mayGroupedListStyle()
   }
 
-
-  @ViewBuilder
-  var main: some View {
-    if #available(iOS 15.0, *) {
-      Group {
-        if let dataSource = searchModel.dataSource {
-          TopicSearchView(dataSource: dataSource)
-        } else {
-          list
-        }
-      }
-        .searchable(text: $searchModel.text, prompt: "Search Topics")
-        .onSubmit(of: .search) { searchModel.commit() }
-    } else {
-      list
-    }
-  }
-
   var body: some View {
-    main
+    Group {
+      if let dataSource = searchModel.dataSource {
+        TopicSearchView(dataSource: dataSource)
+      } else {
+        list
+      }
+    }
+      .searchable(model: searchModel, prompt: "Search Topics".localized, iOS15Only: true)
       .navigationTitleLarge(string: forum.name)
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }

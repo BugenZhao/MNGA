@@ -124,6 +124,8 @@
 		B43DED61269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED62269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED63269F02CF009C52F5 /* HapticUtils.swift */; };
+		B44059C527228C560034C032 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B44059C427228C560034C032 /* Localization.swift */; };
+		B44059C627228C560034C032 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B44059C427228C560034C032 /* Localization.swift */; };
 		B444639326A1B745006FA44D /* OptionalBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B444639226A1B745006FA44D /* OptionalBinding.swift */; };
 		B444639426A1B745006FA44D /* OptionalBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B444639226A1B745006FA44D /* OptionalBinding.swift */; };
 		B444639626A1C54A006FA44D /* Stickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B444639526A1C54A006FA44D /* Stickers.swift */; };
@@ -342,6 +344,7 @@
 		B43DED63269F02CF009C52F5 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		B43DEDAB269F0951009C52F5 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		B43DEDAD269F0951009C52F5 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		B44059C427228C560034C032 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		B444639226A1B745006FA44D /* OptionalBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalBinding.swift; sourceTree = "<group>"; };
 		B444639526A1C54A006FA44D /* Stickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stickers.swift; sourceTree = "<group>"; };
 		B444639826A1C5F9006FA44D /* StickerInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerInputView.swift; sourceTree = "<group>"; };
@@ -707,6 +710,7 @@
 				B444639526A1C54A006FA44D /* Stickers.swift */,
 				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
 				B4DF95AA26CADD830081ECBB /* View+RedactedIf.swift */,
+				B44059C427228C560034C032 /* Localization.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1071,6 +1075,7 @@
 				B402308226EBB72C0077D3AA /* UserProfileView.swift in Sources */,
 				B4EB80EF269B2C090014DDFA /* ContentCombiner.swift in Sources */,
 				B42BA74127205943004D46EB /* ShortMessageEditorView.swift in Sources */,
+				B44059C527228C560034C032 /* Localization.swift in Sources */,
 				B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
 				B41BC0D9271C617C00DD05F2 /* NotificationModel.swift in Sources */,
@@ -1239,6 +1244,7 @@
 				B4DCF4492688D5A500EC78A4 /* PagingDataSource.swift in Sources */,
 				B4DBF609268976470027233F /* DateFormatters.swift in Sources */,
 				B43DED4A269C5F78009C52F5 /* Constants.swift in Sources */,
+				B44059C627228C560034C032 /* Localization.swift in Sources */,
 				B4CF7E92270B2A8D00E7C374 /* RecommendedTopicListView.swift in Sources */,
 				B41BC0E6271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */,
 			);

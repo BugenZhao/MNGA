@@ -134,33 +134,18 @@ struct ForumListView: View {
     #endif
   }
 
-  @ViewBuilder
-  var search: some View {
-    ForumSearchView()
-      .environmentObject(self.searchModel)
-  }
-
-  #if os(iOS)
-    var searchBar: SearchBar {
-      SearchBar(
-        NSLocalizedString("Search Forums", comment: ""),
-        text: $searchModel.text,
-        onCommit: { searchModel.commit() }
-      ) .onCancel { searchModel.cancel() }
-    }
-  #endif
-
   var body: some View {
     Group {
-      if let dataSource = searchModel.dataSource { ForumSearchView(dataSource: dataSource) }
-      else { index }
-    } .onAppear { loadData() }
+      if let dataSource = searchModel.dataSource {
+        ForumSearchView(dataSource: dataSource)
+      } else {
+        index
+      }
+    }
+      .searchable(model: searchModel, prompt: "Search Forums".localized, alwaysShow: true)
+      .onAppear { loadData() }
       .navigationTitle("Forums")
-    #if os(iOS)
-      .navigationSearchBar { searchBar }
-        .navigationSearchBarHiddenWhenScrolling(false)
-    #endif
-    .toolbar {
+      .toolbar {
       ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }
       ToolbarItem(placement: .mayNavigationBarTrailing) { filter }
     }
