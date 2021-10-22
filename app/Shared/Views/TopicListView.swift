@@ -12,7 +12,7 @@ import SDWebImageSwiftUI
 struct TopicListView: View {
   typealias DataSource = PagingDataSource<TopicListResponse, Topic>
 
-  let forum: Forum
+  @State var forum: Forum
 
   @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var postReply: PostReplyModel
@@ -256,6 +256,7 @@ struct TopicListView: View {
       .background { subforum; navigations }
       .toolbarWithFix { toolbar }
       .onAppear { selectedForum.inner = forum }
+      .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
   }
 
   var webpageURL: String {
@@ -264,6 +265,15 @@ struct TopicListView: View {
       return "\(Constants.URL.base)/thread.php?fid=\(fid)"
     case .stid(let stid):
       return "\(Constants.URL.base)/thread.php?stid=\(stid)"
+    }
+  }
+  
+  func updateForumMeta(r: TopicListResponse?) {
+    guard let r = r else { return }
+    if forum.name.isEmpty {
+      forum.name = r.forum.name
+      forum.info = r.forum.info
+      forum.iconURL = r.forum.iconURL
     }
   }
 }

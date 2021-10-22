@@ -422,19 +422,26 @@ class ContentCombiner {
       urlString = url.spans.first?.plain.text
     }
 
-    if let urlString = urlString {
-      let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
-        if let url = URL(string: urlString, relativeTo: Constants.URL.base) {
-          if url.lastPathComponent == "read.php",
-            let tid = extractQueryParams(query: url.query ?? "", param: "tid") {
-            self.actionModel?.navigateToTid = tid
-          } else {
-            OpenURLModel.shared.open(url: url)
-          }
-        }
+    let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
+      guard let urlString = urlString else { return }
+      guard let url = URL(string: urlString, relativeTo: Constants.URL.base) else { return }
+      guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
+
+      if components.path.contains("read.php"),
+        let tid = components.queryItems?.first(where: { $0.name == "tid" })?.value {
+        self.actionModel?.navigateToTid = tid
+      } else if components.path.contains("thread.php"),
+        let stid = components.queryItems?.first(where: { $0.name == "stid" })?.value {
+        self.actionModel?.navigateToForum = Forum.with { $0.id.stid = stid }
+      } else if components.path.contains("thread.php"),
+        let fid = components.queryItems?.first(where: { $0.name == "fid" })?.value {
+        self.actionModel?.navigateToForum = Forum.with { $0.id.fid = fid }
+      } else {
+        OpenURLModel.shared.open(url: url)
       }
-      self.append(link)
     }
+
+    self.append(link)
   }
 
   private func visit(code: Span.Tagged) {
