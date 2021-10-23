@@ -56,7 +56,7 @@ struct TopicJumpSelectorView: View {
             }
           } else {
             Text("Floor \(selectedFloor)")
-              .font(.title3.bold())
+              .font(.title3)
               .multilineTextAlignment(.center)
               .frame(maxWidth: .infinity)
               .animation(nil)
@@ -80,11 +80,11 @@ struct TopicJumpSelectorView: View {
 
         HStack {
           Button(action: { withAnimation { selectedFloor = 0 } }) {
-            Text("First")
+            Image(systemName: "arrow.up.to.line")
           } .frame(maxWidth: .infinity)
           Divider()
           Button(action: { withAnimation { selectedFloor = maxFloor } }) {
-            Text("Last")
+            Image(systemName: "arrow.down.to.line")
           } .frame(maxWidth: .infinity)
         } .buttonStyle(.plain)
           .foregroundColor(.accentColor)
