@@ -48,13 +48,23 @@ struct TopicJumpSelectorView: View {
     List {
       Section(header: Text("Jump to...")) {
         Group {
-          Picker("Floor", selection: $selectedFloor) {
-            ForEach(0..<maxFloor + 1) { i in
-              Text("Floor \(i)").tag(i)
+          if maxFloor <= 799 {
+            Picker("Floor", selection: $selectedFloor) {
+              ForEach(0..<maxFloor + 1) { i in
+                Text("Floor \(i)").tag(i)
+              }
             }
+          } else {
+            Text("Floor \(selectedFloor)")
+              .font(.title3.bold())
+              .multilineTextAlignment(.center)
+              .frame(maxWidth: .infinity)
+              .animation(nil)
           }
         } .pickerStyle(.wheel)
+      }
 
+      Section {
         HStack {
           Picker("", selection: $mode) {
             ForEach(Mode.allCases, id: \.rawValue) {
@@ -67,9 +77,7 @@ struct TopicJumpSelectorView: View {
             .multilineTextAlignment(.trailing)
         } .onChange(of: text) { _ in parseText() }
           .onChange(of: mode) { _ in parseText() }
-      }
 
-      Section {
         HStack {
           Button(action: { withAnimation { selectedFloor = 0 } }) {
             Text("First")
@@ -115,6 +123,7 @@ struct TopicJumpSelectorView: View {
 
 struct TopicJumpSelectorView_Previews: PreviewProvider {
   static var previews: some View {
-    TopicJumpSelectorView(maxFloor: 210, floorToJump: .constant(nil))
+    TopicJumpSelectorView(maxFloor: 799, floorToJump: .constant(nil))
+    TopicJumpSelectorView(maxFloor: 1000, floorToJump: .constant(nil))
   }
 }
