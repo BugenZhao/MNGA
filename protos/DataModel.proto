@@ -138,6 +138,7 @@ message AuthInfo {
   string uid = 1;
   string token = 2;
   Device device = 3;
+  string cached_name = 4;
 }
 
 enum VoteState {

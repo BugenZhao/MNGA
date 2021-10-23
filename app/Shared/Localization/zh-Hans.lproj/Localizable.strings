@@ -148,3 +148,5 @@
 "First" = "最前";
 "Last" = "最后";
 "Load Page %lld" = "加载第 %lld 页";
+"Add User" = "添加用户";
+"User Switched" = "用户已切换";

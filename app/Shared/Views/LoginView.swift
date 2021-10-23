@@ -60,7 +60,7 @@ struct LoginView: View {
     guard let token = cookies.first(where: { $0.name == "ngaPassportCid" })?.value else { return }
 
     authing = true
-    authStorage.setAuth(AuthInfo.with {
+    authStorage.setCurrentAuth(AuthInfo.with {
       $0.uid = uid
       $0.token = token
     })
@@ -78,8 +78,8 @@ fileprivate struct LoginPreviewView: View {
   var body: some View {
     NavigationView {
       VStack {
-        Text("Authed as '\(authStorage.authInfo.inner.uid)'")
-        Button(action: { authStorage.clearAuth() }) {
+        Text("Authed as '\(authStorage.authInfo.uid)'")
+        Button(action: { authStorage.clearCurrentAuth() }) {
           Text("Show")
         }
       } .sheet(isPresented: $authStorage.isSigning, content: {

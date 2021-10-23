@@ -17,6 +17,8 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
   @Environment(\.presentationMode) var presentation
 
   @EnvironmentObject var postReply: M
+  @EnvironmentObject var currentUser: CurrentUserModel
+
   @State var displayMode = DisplayMode.plain
 
   @State var subject = nil as Subject?
@@ -29,7 +31,7 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
   }
 
   var device: Device {
-    AuthStorage.shared.authInfo.inner.device
+    AuthStorage.shared.authInfo.device
   }
 
   @ViewBuilder
@@ -48,7 +50,12 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
     }
 
     VStack(alignment: .leading) {
+      if let user = self.currentUser.user {
+        UserView(user: user, style: .normal)
+      }
+
       PostContentView(content: parsedContent)
+
       HStack {
         Spacer()
         Image(systemName: device.icon)

@@ -133,23 +133,6 @@ struct PostRowView: View {
       .equatable()
   }
 
-//  @ArrayBuilder<CellAction?>
-//  var menuActions: [CellAction?] {
-//    CellAction(title: self.post.content.raw, systemImage: "doc.on.doc") { copyToPasteboard(post.content.raw) }
-//    if let model = postReply {
-//      CellAction.separator
-//      CellAction(title: "Quote", systemImage: "quote.bubble") { doQuote(model: model) }
-//      CellAction(title: "Comment", systemImage: "tag") { doComment(model: model) }
-//      if authStorage.authInfo.inner.uid == post.authorID {
-//        CellAction(title: "Edit", systemImage: "pencil") { doEdit(model: model) }
-//      }
-//    }
-//    if let action = action, enableAuthorOnly {
-//      CellAction.separator
-//      CellAction(title: "This Author Only", systemImage: "person") { action.navigateToAuthorOnly = post.authorID }
-//    }
-//  }
-
   @ViewBuilder
   var menu: some View {
     Section {
@@ -165,7 +148,7 @@ struct PostRowView: View {
         Button(action: { doComment(model: model) }) {
           Label("Comment", systemImage: "tag")
         }
-        if authStorage.authInfo.inner.uid == post.authorID {
+        if authStorage.authInfo.uid == post.authorID {
           Button(action: { doEdit(model: model) }) {
             Label("Edit", systemImage: "pencil")
           }

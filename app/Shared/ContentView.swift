@@ -18,6 +18,7 @@ struct ContentView: View {
   @StateObject var openURL = OpenURLModel.shared
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var notis = NotificationModel.shared
+  @StateObject var currentUser = CurrentUserModel()
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
@@ -58,6 +59,7 @@ struct ContentView: View {
       .environmentObject(activity)
       .environmentObject(postReply)
       .environmentObject(shortMessagePost)
+      .environmentObject(currentUser)
       .environment(\.useRedact, prefs.useRedact)
       .preferredColorScheme(prefs.colorScheme.scheme)
   }

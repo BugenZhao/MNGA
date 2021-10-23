@@ -13,7 +13,7 @@ struct UserMenuView: View {
   @StateObject var notification = NotificationModel.shared
   @StateObject var authStorage = AuthStorage.shared
 
-  @State var user: User? = nil
+  @EnvironmentObject var model: CurrentUserModel
 
   @State var showHistory: Bool = false
   @State var showFavorite: Bool = false
@@ -22,6 +22,10 @@ struct UserMenuView: View {
   @State var showPreferencesModal: Bool = false
   @State var showSeparateAboutModal: Bool = false
   @State var showUserProfile: Bool = false
+
+  var user: User? {
+    self.model.user
+  }
 
   @ViewBuilder
   var navigationBackgrounds: some View {
@@ -53,9 +57,29 @@ struct UserMenuView: View {
   }
 
   @ViewBuilder
-  var menu: some View {
-    let uid = authStorage.authInfo.inner.uid
+  var userSwitcher: some View {
+    Menu {
+      if authStorage.allAuthInfos.count > 1 {
+        Picker("Users", selection: $authStorage.authInfo) {
+          ForEach(authStorage.allAuthInfos.sorted(by: { $0.uid < $1.uid }), id: \.uid) { info in
+            Text(info.cachedName.isEmpty ? info.uid : info.cachedName).tag(info)
+          }
+        }
+      }
 
+      Button(action: { addUser() }) {
+        Label("Add User", systemImage: "person.crop.circle.fill.badge.plus")
+      }
+      Button(action: { reSignIn() }) {
+        Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
+      }
+    } label: {
+      Label(user?.name ?? authStorage.authInfo.uid, systemImage: "person")
+    }
+  }
+
+  @ViewBuilder
+  var menu: some View {
     Menu {
       if let _ = self.user {
         Section {
@@ -80,13 +104,7 @@ struct UserMenuView: View {
       }
       Section {
         if authStorage.signedIn {
-          Menu {
-            Button(action: { reSignIn() }) {
-              Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
-            }
-          } label: {
-            Label(user?.name ?? uid, systemImage: "person")
-          }
+          userSwitcher
         } else {
           Button(action: { reSignIn() }) {
             Label("Sign In", systemImage: "person.crop.circle.badge.plus")
@@ -113,27 +131,22 @@ struct UserMenuView: View {
         notificationButton
       }
     }
-      .onAppear { loadData() }
+      .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
-      .onChange(of: authStorage.authInfo) { _ in loadData() }
       .background { navigationBackgrounds }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
       .sheet(isPresented: $showSeparateAboutModal) { NavigationView { AboutView() } }
   }
 
   func reSignIn() {
-    authStorage.clearAuth()
-    authStorage.isSigning = true
+    authStorage.clearCurrentAuth()
+    if !authStorage.signedIn {
+      authStorage.isSigning = true
+    }
   }
 
-  func loadData() {
-    let uid = authStorage.authInfo.inner.uid
-    if uid.isEmpty { return }
-    logicCallAsync(.remoteUser(.with { $0.userID = uid })) { (response: RemoteUserResponse) in
-      if response.hasUser {
-        self.user = response.user
-      }
-    }
+  func addUser() {
+    authStorage.isSigning = true
   }
 }

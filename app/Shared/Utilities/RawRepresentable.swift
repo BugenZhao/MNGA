@@ -34,6 +34,20 @@ extension Array: RawRepresentable where Element: SwiftProtobuf.Message {
   }
 }
 
+extension Set: RawRepresentable where Element: SwiftProtobuf.Message {
+  public init?(rawValue: String) {
+    if let array = [Element].init(rawValue: rawValue) {
+      self = Set(array)
+    } else {
+      return nil
+    }
+  }
+
+  public var rawValue: String {
+    return Array(self).rawValue
+  }
+}
+
 public struct WrappedMessage<M> where M: SwiftProtobuf.Message {
   public var inner: M
 }
@@ -82,5 +96,19 @@ extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.Ra
     } else {
       self = Wrapped(rawValue: rawValue)
     }
+  }
+}
+
+extension AuthInfo: RawRepresentable {
+  public init?(rawValue: String) {
+    if let w = WrappedMessage<AuthInfo>(rawValue: rawValue) {
+      self = w.inner
+    } else {
+      return nil
+    }
+  }
+
+  public var rawValue: String {
+    WrappedMessage(inner: self).rawValue
   }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import SwiftUI
 
 class AuthStorage: ObservableObject {
@@ -13,34 +14,46 @@ class AuthStorage: ObservableObject {
 
   @Published var isSigning = false
 
-  @AppStorage("authInfo") var authInfo = WrappedMessage(inner: AuthInfo()) {
+  // do not set this as value other than members in `allAuthInfos`
+  @AppStorage("authInfo") var authInfo = AuthInfo() {
     didSet {
-      reAuth()
+      syncAuthWithLogic()
     }
   }
+  @AppStorage("allAuthInfos") var allAuthInfos = Set<AuthInfo>()
 
-  init() {
-    reAuth()
+  private var cancellables = Set<AnyCancellable>()
+
+  init(defaultAuthInfo: AuthInfo? = nil) {
+    if signedIn && allAuthInfos.isEmpty {
+      allAuthInfos = [authInfo] // for backward compatibility
+    }
+
+    if let info = defaultAuthInfo { setCurrentAuth(info) }
+    syncAuthWithLogic()
   }
 
-  init(defaultAuthInfo: AuthInfo) {
-    setAuth(defaultAuthInfo)
-  }
-
-  private func reAuth() {
-    let _: AuthResponse = try! logicCall(.auth(.with { $0.info = authInfo.inner }))
+  private func syncAuthWithLogic() {
+    let _: AuthResponse = try! logicCall(.auth(.with { $0.info = authInfo }))
   }
 
   var signedIn: Bool {
-    !authInfo.inner.token.isEmpty
+    !authInfo.token.isEmpty
   }
 
-  func setAuth(_ authInfo: AuthInfo) {
-    self.authInfo.inner = authInfo
+  func setCurrentAuth(_ authInfo: AuthInfo) {
+    if let old = self.allAuthInfos.first(where: { $0.uid == authInfo.uid }) {
+      self.allAuthInfos.remove(old)
+    }
+    self.allAuthInfos.insert(authInfo)
+    self.authInfo = authInfo
     isSigning = false
   }
 
-  func clearAuth() {
-    self.authInfo.inner = AuthInfo()
+  func clearCurrentAuth() {
+    if let old = self.allAuthInfos.first(where: { $0.uid == authInfo.uid }) {
+      self.allAuthInfos.remove(old)
+    }
+    self.authInfo = allAuthInfos.first ?? AuthInfo()
   }
 }
