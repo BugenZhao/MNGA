@@ -145,6 +145,8 @@
 		B4521B6E2722E11000258640 /* TopicJumpSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4521B6C2722E11000258640 /* TopicJumpSelectorView.swift */; };
 		B4521B702724141F00258640 /* CurrentUserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4521B6F2724141E00258640 /* CurrentUserModel.swift */; };
 		B4521B712724141F00258640 /* CurrentUserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4521B6F2724141E00258640 /* CurrentUserModel.swift */; };
+		B4521B732724197E00258640 /* TextSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4521B722724197E00258640 /* TextSelectionView.swift */; };
+		B4521B742724197E00258640 /* TextSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4521B722724197E00258640 /* TextSelectionView.swift */; };
 		B454F37826B1C2A4009C6B27 /* LoadingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */; };
 		B454F37926B1C2A4009C6B27 /* LoadingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */; };
 		B45819BC268D7D7200999830 /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* RawRepresentable.swift */; };
@@ -361,6 +363,7 @@
 		B4521B692722D1F400258640 /* Alignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alignment.swift; sourceTree = "<group>"; };
 		B4521B6C2722E11000258640 /* TopicJumpSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicJumpSelectorView.swift; sourceTree = "<group>"; };
 		B4521B6F2724141E00258640 /* CurrentUserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserModel.swift; sourceTree = "<group>"; };
+		B4521B722724197E00258640 /* TextSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSelectionView.swift; sourceTree = "<group>"; };
 		B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingRowView.swift; sourceTree = "<group>"; };
 		B45819BB268D7D7200999830 /* RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawRepresentable.swift; sourceTree = "<group>"; };
 		B45819C2268D822800999830 /* FavoriteForumsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteForumsStorage.swift; sourceTree = "<group>"; };
@@ -779,6 +782,7 @@
 				B444639E26A1D745006FA44D /* StickerImageView.swift */,
 				B444639826A1C5F9006FA44D /* StickerInputView.swift */,
 				B4920CDE2690A98200762FC9 /* SubforumListView.swift */,
+				B4521B722724197E00258640 /* TextSelectionView.swift */,
 				B4DBF60E268979C20027233F /* TopicDetailsView.swift */,
 				B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */,
 				B4521B6C2722E11000258640 /* TopicJumpSelectorView.swift */,
@@ -1049,6 +1053,7 @@
 				B4920CD926904CE700762FC9 /* Extensions.swift in Sources */,
 				B444639926A1C5F9006FA44D /* StickerInputView.swift in Sources */,
 				B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */,
+				B4521B732724197E00258640 /* TextSelectionView.swift in Sources */,
 				B47F849D2721A8960065E52A /* TopicSearchView.swift in Sources */,
 				B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */,
 				B4521B702724141F00258640 /* CurrentUserModel.swift in Sources */,
@@ -1242,6 +1247,7 @@
 				B42BA74227205943004D46EB /* ShortMessageEditorView.swift in Sources */,
 				B44463A026A1D745006FA44D /* StickerImageView.swift in Sources */,
 				B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */,
+				B4521B742724197E00258640 /* TextSelectionView.swift in Sources */,
 				B43DED62269EFAF4009C52F5 /* ToastModel.swift in Sources */,
 				B45819C4268D822800999830 /* FavoriteForumsStorage.swift in Sources */,
 				B48B0C4726932CC70067794F /* ForumRowView.swift in Sources */,

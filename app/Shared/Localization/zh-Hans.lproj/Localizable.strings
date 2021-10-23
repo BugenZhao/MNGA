@@ -150,3 +150,6 @@
 "Load Page %lld" = "加载第 %lld 页";
 "Add User" = "添加用户";
 "User Switched" = "用户已切换";
+"Select Text" = "选择文本";
+"Text Selection" = "文本选择";
+"Copy All" = "全部拷贝";

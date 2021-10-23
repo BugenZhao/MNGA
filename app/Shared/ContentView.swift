@@ -19,6 +19,7 @@ struct ContentView: View {
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var notis = NotificationModel.shared
   @StateObject var currentUser = CurrentUserModel()
+  @StateObject var textSelection = TextSelectionModel()
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
@@ -55,11 +56,13 @@ struct ContentView: View {
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
+      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView() }
       .environmentObject(viewingImage)
       .environmentObject(activity)
       .environmentObject(postReply)
       .environmentObject(shortMessagePost)
       .environmentObject(currentUser)
+      .environmentObject(textSelection)
       .environment(\.useRedact, prefs.useRedact)
       .preferredColorScheme(prefs.colorScheme.scheme)
   }

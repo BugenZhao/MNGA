@@ -16,6 +16,7 @@ struct PostRowView: View {
 
   @OptionalEnvironmentObject<TopicDetailsActionModel> var action
   @OptionalEnvironmentObject<PostReplyModel> var postReply
+  @EnvironmentObject var textSelection: TextSelectionModel
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
 
   @StateObject var authStorage = AuthStorage.shared
@@ -136,8 +137,8 @@ struct PostRowView: View {
   @ViewBuilder
   var menu: some View {
     Section {
-      Button(action: { copyToPasteboard(string: post.content.raw) }) {
-        Label("Copy Raw Content", systemImage: "doc.on.doc")
+      Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
+        Label("Select Text", systemImage: "selection.pin.in.out")
       }
     }
     if let model = postReply {
@@ -181,7 +182,7 @@ struct PostRowView: View {
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-      .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
+    .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
       .environmentObject(attachments)
   }
 
