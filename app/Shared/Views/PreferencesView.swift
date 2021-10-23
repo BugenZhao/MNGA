@@ -117,12 +117,6 @@ struct PreferencesInnerView: View {
           }
           advanced
         }
-
-        Section(header: Text("Support")) {
-          NavigationLink(destination: AboutView()) {
-            Label("About & Feedback", systemImage: "hands.sparkles")
-          }
-        }
       } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
         .mayInsetGroupedListStyle()
         .navigationTitle("Preferences")
