@@ -136,7 +136,7 @@ struct TopicListView: View {
       }
 
       Section {
-        Button(action: { self.activity.put(URL(string: webpageURL)) }) {
+        Button(action: { self.activity.put(webpageURL) }) {
           Label("Share", systemImage: "square.and.arrow.up")
         }
       }
@@ -259,15 +259,15 @@ struct TopicListView: View {
       .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
   }
 
-  var webpageURL: String {
+  var webpageURL: URL? {
     switch forum.id.id! {
     case .fid(let fid):
-      return "\(Constants.URL.base)/thread.php?fid=\(fid)"
+      return URL(string: "thread.php?fid=\(fid)", relativeTo: Constants.URL.base)?.absoluteURL
     case .stid(let stid):
-      return "\(Constants.URL.base)/thread.php?stid=\(stid)"
+      return URL(string: "thread.php?stid=\(stid)", relativeTo: Constants.URL.base)?.absoluteURL
     }
   }
-  
+
   func updateForumMeta(r: TopicListResponse?) {
     guard let r = r else { return }
     if forum.name.isEmpty {
