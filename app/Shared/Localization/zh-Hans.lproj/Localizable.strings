@@ -147,3 +147,4 @@
 "Type here..." = "输入…";
 "First" = "最前";
 "Last" = "最后";
+"Load Page %lld" = "加载第 %lld 页";

@@ -37,6 +37,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   var hasMore: Bool { loadedPage < totalPages }
   var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
   var isInitialLoading: Bool { isLoading && loadedPage == 0 }
+  var firstLoadedPage: Int? { itemToIndexAndPage.values.map { $0.page }.min() }
 
   init(
     buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
@@ -55,15 +56,17 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       .drop { $0 == nil }
       .sink { self.refresh(fromPage: $0 ?? 1) }
       .store(in: &cancellables)
-    
-    $refreshedTimes
-      .dropFirst()
-      .sink { print("refresh", $0) }
-      .store(in: &cancellables)
   }
 
   func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
     self.items.sorted { $0[keyPath: key] < $1[keyPath: key] }
+  }
+  
+  func itemsAtPage(_ page: Int) -> [Item] {
+    items.filter { item in
+      let id = item[keyPath: id]
+      return itemToIndexAndPage[id]!.page == page
+    }
   }
 
   var pagedItems: [(page: Int, items: [Item])] {
@@ -193,7 +196,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func reload(page: Int, evenIfNotLoaded: Bool) {
+  func reload(page: Int, evenIfNotLoaded: Bool, animated: Bool = true, after: (() -> Void)? = nil) {
     guard page <= loadedPage || evenIfNotLoaded else { return }
     let request = buildRequest(page)
     let currentId = dataFlowId
@@ -204,11 +207,12 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       self.latestResponse = response
       let (newItems, newTotalPages) = self.onResponse(response)
 
-      withAnimation {
+      withAnimation(when: animated) {
         self.upsertItems(newItems, page: page)
         self.isLoading = false
       }
       self.totalPages = newTotalPages ?? self.totalPages
+      if let after = after { after() }
     } onError: { e in
       withAnimation {
         self.isLoading = false

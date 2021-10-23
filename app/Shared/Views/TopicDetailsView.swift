@@ -212,6 +212,23 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  var mayLoadBackButton: some View {
+    if let _ = dataSource.loadFromPage,
+      let prevPage = dataSource.firstLoadedPage?.advanced(by: -1), prevPage >= 1,
+      let currFirst = dataSource.items.min(by: { $0.floor < $1.floor }) {
+      Button(action: {
+        self.action.scrollToFloor = Int(currFirst.floor) // scroll to first for fixing scroll position
+        dataSource.reload(page: prevPage, evenIfNotLoaded: true) {
+          guard let floor = dataSource.itemsAtPage(prevPage).map(\.floor).max() else { return }
+          DispatchQueue.main.async { self.action.scrollToFloor = Int(floor) } // scroll to last of prev page
+        }
+      }) {
+        Label("Load Page \(prevPage)", systemImage: "arrow.counterclockwise")
+      } .disabled(dataSource.isLoading)
+    }
+  }
+
+  @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
     let row = PostRowView(post: post, vote: votes.binding(for: post))
 
@@ -256,6 +273,7 @@ struct TopicDetailsView: View {
   var allRepliesSection: some View {
     if shouldShowReplies {
       Section(header: Text("Replies")) {
+        mayLoadBackButton
         ForEach(dataSource.pagedItems, id: \.page) { pair in
           let items = pair.items.filter { $0.id != first?.id }
           ForEach(items, id: \.id.pid) { post in
@@ -293,6 +311,8 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var paginatedAllRepliesSectionsNew: some View {
     if shouldShowReplies {
+      mayLoadBackButton
+
       ForEach(dataSource.pagedItems, id: \.page) { pair in
         Section(header: Text("Page \(pair.page)")) {
           let items = pair.items.filter { $0.id != first?.id }
