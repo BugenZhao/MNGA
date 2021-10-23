@@ -20,7 +20,7 @@ struct NotificationListView: View {
         case .shortMessage, .shortMessageStart:
           ShortMessageDetailsView.build(mid: notification.otherPostID.tid)
         default:
-          TopicDetailsView.build(onlyPost: notification.otherPostID)
+          TopicDetailsView.build(onlyPost: (id: notification.otherPostID, atPage: max(Int(notification.page), 1)))
         }
       } .onAppear {
         let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] }))

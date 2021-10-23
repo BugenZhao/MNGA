@@ -83,7 +83,7 @@ struct UserProfileView: View {
       } else {
         Section(header: Text("\(user.name)'s Posts")) {
           ForEach(postDataSource.items, id: \.post.id) { tp in
-            NavigationLink(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: tp.post.id)) {
+            NavigationLink(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: (id: tp.post.id, atPage: nil))) {
               TopicPostRowView(topic: tp.topic, post: tp.post)
             } .onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }
           }

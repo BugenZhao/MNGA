@@ -29,27 +29,28 @@ struct TopicDetailsView: View {
 
   @State var isFavored: Bool
 
+  let onlyPost: (id: PostId?, atPage: Int?)
+
   @State var showJumpSelector = false
   @State var floorToJump: Int?
-
-  let onlyPost: Bool
+  @State var postIdToJump: PostId?
 
   static func build(id: String) -> some View {
     Self.build(topic: .with { $0.id = id })
   }
 
-  static func build(onlyPost: PostId) -> some View {
-    let topic = Topic.with { $0.id = onlyPost.tid }
+  static func build(onlyPost: (id: PostId, atPage: Int?)) -> some View {
+    let topic = Topic.with { $0.id = onlyPost.id.tid }
     return Self.build(topic: topic, onlyPost: onlyPost)
   }
 
-  static func build(topic: Topic, localMode: Bool = false, onlyPost: PostId? = nil) -> some View {
+  static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
-          if let pid = onlyPost?.pid { $0.postID = pid }
+          if let pid = onlyPost.id?.pid { $0.postID = pid }
           $0.localCache = localMode
           $0.page = UInt32(page)
         })
@@ -60,10 +61,11 @@ struct TopicDetailsView: View {
         return (items, Int(pages))
       },
       id: \.floor.description,
-      finishOnError: localMode
+      finishOnError: localMode,
+      loadFromPage: fromPage
     )
 
-    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost != nil)
+    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, postIdToJump: postIdToJump)
       .environment(\.enableAuthorOnly, !localMode)
       .environment(\.currentlyLocalMode, localMode)
   }
@@ -86,7 +88,7 @@ struct TopicDetailsView: View {
       id: \.floor.description
     )
 
-    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: false)
+    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil))
       .environment(\.enableAuthorOnly, false)
   }
 
@@ -199,8 +201,9 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var menu: some View {
-    if onlyPost {
-      Button(action: { action.navigateToTid = topic.id }) {
+    if let postId = onlyPost.id {
+      let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
+      Button(action: { action.navigateToView = view }) {
         Label("See Full Topic", systemImage: "doc.richtext")
       }
     } else {
@@ -330,7 +333,7 @@ struct TopicDetailsView: View {
       return NSLocalizedString("Topic (Cached)", comment: "")
     } else if !enableAuthorOnly {
       return NSLocalizedString("Author Only", comment: "")
-    } else if onlyPost {
+    } else if onlyPost.id != nil {
       return NSLocalizedString("Reply", comment: "")
     } else if prefs.showTopicSubject {
       return topic.subject.content
@@ -365,10 +368,11 @@ struct TopicDetailsView: View {
     #endif
   }
 
-  @ViewBuilder var main: some View {
+  @ViewBuilder
+  var main: some View {
     ScrollViewReader { proxy in
       Group {
-        if prefs.usePaginatedDetails && !onlyPost {
+        if prefs.usePaginatedDetails && onlyPost.id == nil {
           paginatedMain
         } else {
           listMain
@@ -377,10 +381,14 @@ struct TopicDetailsView: View {
         guard let floor = floor else { return }
         let item = dataSource.items.first { $0.floor == UInt32(floor) }
         proxy.scrollTo(item, anchor: .top)
+      } .onReceive(action.$scrollToPid) { pid in
+        guard let pid = pid else { return }
+        let item = dataSource.items.first { $0.id.pid == pid }
+        proxy.scrollTo(item, anchor: .top)
       }
     } .mayGroupedListStyle()
       .withTopicDetailsAction(action: action)
-      .onChange(of: dataSource.refreshedTimes) { _ in mayScrollToJumpFloor() }
+      .onReceive(dataSource.$refreshedTimes) { _ in mayScrollToJumpFloor() }
       .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
   }
 
@@ -401,9 +409,15 @@ struct TopicDetailsView: View {
   }
 
   func mayScrollToJumpFloor() {
-    guard let floor = floorToJump, let _ = dataSource.loadFromPage else { return }
+    guard let _ = dataSource.loadFromPage else { return }
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-      withAnimation { action.scrollToFloor = floor }
+      withAnimation {
+        if let floor = floorToJump {
+          action.scrollToFloor = floor
+        } else if let pid = postIdToJump?.pid {
+          action.scrollToPid = pid
+        }
+      }
     }
   }
 

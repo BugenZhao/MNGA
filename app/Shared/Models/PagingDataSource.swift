@@ -42,16 +42,23 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
     onResponse: @escaping (_ response: Res) -> ([Item], Int?),
     id: KeyPath<Item, String>,
-    finishOnError: Bool = false
+    finishOnError: Bool = false,
+    loadFromPage: Int? = nil
   ) {
     self.buildRequest = buildRequest
     self.onResponse = onResponse
     self.id = id
     self.finishOnError = finishOnError
+    self.loadFromPage = loadFromPage
 
     $loadFromPage
-      .dropFirst()
+      .drop { $0 == nil }
       .sink { self.refresh(fromPage: $0 ?? 1) }
+      .store(in: &cancellables)
+    
+    $refreshedTimes
+      .dropFirst()
+      .sink { print("refresh", $0) }
       .store(in: &cancellables)
   }
 
@@ -176,8 +183,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   func initialLoad() {
     if self.loadedPage == 0 {
-      loadMore()
-      refreshedTimes += 1
+      refresh(animated: true)
     }
   }
 

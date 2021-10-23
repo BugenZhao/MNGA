@@ -14,10 +14,12 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var scrollToFloor: Int? = nil
   @Published var showingReplyChain: [PostId]? = nil
   @Published var navigateToTid: String? = nil
+  @Published var navigateToTidWithPidAndPage: (tid: String, pid: String, page: Int?)? = nil
   @Published var navigateToForum: Forum? = nil
   @Published var showUserProfile: User? = nil
   @Published var navigateToAuthorOnly: String? = nil
   @Published var navigateToLocalMode: Bool = false
+  @Published var navigateToView: AnyView? = nil
 
   private var replyTo = [PostId: PostId]()
 
@@ -81,10 +83,22 @@ struct TopicDetailsActionBasicNavigationView: View {
     }
     let user = self.action.showUserProfile ?? .init()
     let forum = self.action.navigateToForum ?? .init()
+    let view = self.action.navigateToView ?? EmptyView().eraseToAnyView()
 
     NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { } .hidden()
     NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) { } .hidden()
     NavigationLink(destination: TopicListView.build(forum: forum), isActive: self.$action.navigateToForum.isNotNil()) { } .hidden()
+    NavigationLink(destination: view, isActive: self.$action.navigateToView.isNotNil()) { } .hidden()
+
+    let withPidTopic = Topic.with {
+      if let tid = self.action.navigateToTidWithPidAndPage?.tid { $0.id = tid }
+    }
+    let page = self.action.navigateToTidWithPidAndPage?.page
+    let postId = PostId.with {
+      if let pid = self.action.navigateToTidWithPidAndPage?.pid { $0.pid = pid }
+      $0.tid = withPidTopic.id
+    }
+    NavigationLink(destination: TopicDetailsView.build(topic: withPidTopic, fromPage: page, postIdToJump: postId), isActive: self.$action.navigateToTidWithPidAndPage.isNotNil()) { }.hidden()
   }
 }
 
