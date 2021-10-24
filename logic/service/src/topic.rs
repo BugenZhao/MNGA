@@ -87,7 +87,10 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         .and_then(|s| extract_fav(&s).map(ToOwned::to_owned))
         .map(Topic_oneof__fav::fav);
 
-    let id = get!(map, "tid")?;
+    let id = get!(map, "quote_from")
+        .filter(|q| q != "" && q != "0")
+        .or_else(|| get!(map, "tid"))?;
+
     let is_favored = CACHE
         .get_msg::<TopicFavorResponse>(&favor_response_key(&id))
         .ok()
@@ -583,6 +586,50 @@ mod test {
             .await?;
 
             assert_eq!(response.forum_name, name);
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_extract_topic_id() -> ServiceResult<()> {
+        let cases = [
+            ("18308359", "18308359"),
+            ("0", "21187622"),
+            ("", "21187622"),
+        ];
+
+        for (quote_from, id) in cases {
+            let xml = format!(
+                r#"
+            <item>
+                <tid>21187622</tid>
+                <fid>-7</fid>
+                <quote_from>{}</quote_from>
+                <quote_to/>
+                <titlefont>AQAAACA</titlefont>
+                <topic_misc>AQAAACA</topic_misc>
+                <author>ValkyriaLenneth</author>
+                <authorid>41048233</authorid>
+                <subject>[网事杂谈(访客)][原创内容] [留学日本]留学考试三部曲，日本究竟怎么去，怎么考，怎么上这个学。</subject>
+                <type>12452</type>
+                <postdate>1566859773</postdate>
+                <lastpost>1635090264</lastpost>
+                <lastposter>猪猪冰室主理人</lastposter>
+                <replies>319</replies>
+                <lastmodify>1586344498</lastmodify>
+                <recommend>0</recommend>
+                <tpcurl>/read.php?tid=18308359</tpcurl>
+            </item>
+            "#,
+                quote_from
+            );
+
+            let package = sxd_document::parser::parse(&xml).unwrap();
+            let topic = extract_node(&package, "/item", extract_topic)?
+                .unwrap()
+                .unwrap();
+            assert_eq!(topic.get_id(), id);
         }
 
         Ok(())
