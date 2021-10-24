@@ -69,10 +69,10 @@ struct UserProfileView: View {
           .onAppear { topicDataSource.initialLoad() }
       } else {
         Section(header: Text("\(user.name)'s Topics")) {
-          ForEach(topicDataSource.items, id: \.id) { topic in
-            NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-              TopicRowView(topic: topic)
-            } .onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic) }
+          ForEach($topicDataSource.items, id: \.id) { topic in
+            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+              TopicRowView(topic: topic.w)
+            } .onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
         }
       }

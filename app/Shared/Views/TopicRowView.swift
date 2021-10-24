@@ -40,17 +40,19 @@ struct TopicRowView: View {
   let topic: Topic
   let useTopicPostDate: Bool
   let dimmedSubject: Bool
+  let showIndicators: Bool
 
-  init(topic: Topic, useTopicPostDate: Bool = false, dimmedSubject: Bool = true) {
+  init(topic: Topic, useTopicPostDate: Bool = false, dimmedSubject: Bool = true, showIndicators: Bool = true) {
     self.topic = topic
     self.useTopicPostDate = useTopicPostDate
     self.dimmedSubject = dimmedSubject
+    self.showIndicators = showIndicators
   }
 
   @ViewBuilder
   var subject: some View {
     BlockedView(content: topic.subject.full, revealOnTap: false) {
-      TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: true)
+      TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: showIndicators)
         .foregroundColor(dimmedSubject && topic.hasRepliesNumLastVisit ? .secondary : nil)
     }
   }

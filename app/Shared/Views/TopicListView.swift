@@ -35,7 +35,17 @@ struct TopicListView: View {
     switch order {
     case .lastPost: return dataSourceLastPost
     case .postDate: return dataSourcePostDate
-    default: return dataSourceLastPost
+    default: fatalError()
+    }
+  }
+
+  var itemBindings: Binding<[Topic]> {
+    switch order {
+    case .lastPost:
+      return $dataSourceLastPost.items
+    case .postDate:
+      return $dataSourcePostDate.items
+    default: fatalError()
     }
   }
 
@@ -228,10 +238,10 @@ struct TopicListView: View {
         }
       } else {
         List {
-          ForEach(dataSource.items, id: \.id) { topic in
-            NavigationLink(destination: { TopicDetailsView.build(topic: topic) }) {
-              TopicRowView(topic: topic, useTopicPostDate: order == .postDate)
-            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+          ForEach(itemBindings, id: \.id) { topic in
+            NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
+              TopicRowView(topic: topic.w, useTopicPostDate: order == .postDate)
+            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
             .id(order)
         }

@@ -43,10 +43,10 @@ struct RecommendedTopicListView: View {
           .onAppear { dataSource.initialLoad() }
       } else {
         List {
-          ForEach(dataSource.items, id: \.id) { topic in
-            NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-              TopicRowView(topic: topic, useTopicPostDate: true)
-            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+          ForEach($dataSource.items, id: \.id) { topic in
+            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+              TopicRowView(topic: topic.w, useTopicPostDate: true)
+            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
         }
           .mayGroupedListStyle()

@@ -46,10 +46,10 @@ struct TopicSearchView: View {
     } else {
       List {
         Section(header: Text("Search Results")) {
-          ForEach(dataSource.items, id: \.id) { topic in
-            NavigationLink(destination: { TopicDetailsView.build(topic: topic) }) {
-              TopicRowView(topic: topic)
-            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic) }
+          ForEach($dataSource.items, id: \.id) { topic in
+            NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
+              TopicRowView(topic: topic.w)
+            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
         }
       }
