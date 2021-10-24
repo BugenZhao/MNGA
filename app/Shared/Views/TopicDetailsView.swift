@@ -350,15 +350,15 @@ struct TopicDetailsView: View {
 
   var title: String {
     if localMode {
-      return NSLocalizedString("Topic (Cached)", comment: "")
+      return "Topic (Cached)".localized
     } else if !enableAuthorOnly {
-      return NSLocalizedString("Author Only", comment: "")
+      return "Author Only".localized
     } else if onlyPost.id != nil {
-      return NSLocalizedString("Reply", comment: "")
+      return "Reply".localized
     } else if prefs.showTopicSubject {
       return topic.subject.content
     } else {
-      return NSLocalizedString("Topic", comment: "")
+      return "Topic".localized
     }
   }
 
@@ -537,7 +537,7 @@ struct TopicDetailsView: View {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       let image = screenshotView.snapshot()
       if image.size == .zero {
-        self.alert.message = .error(NSLocalizedString("Contents are too large to take a screenshot.", comment: ""))
+        self.alert.message = .error("Contents are too large to take a screenshot.".localized)
       } else {
         viewingImage.show(image: image)
       }

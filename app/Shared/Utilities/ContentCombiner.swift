@@ -509,7 +509,7 @@ class ContentCombiner {
   }
 
   private func visit(collapsed: Span.Tagged) {
-    let title = collapsed.attributes.first ?? NSLocalizedString("Collapsed Content", comment: "")
+    let title = collapsed.attributes.first ?? "Collapsed Content".localized
 
     let combiner = ContentCombiner(parent: self)
     combiner.visit(spans: collapsed.spans)

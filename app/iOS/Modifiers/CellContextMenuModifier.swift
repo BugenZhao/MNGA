@@ -28,7 +28,7 @@ fileprivate class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
       let actions = self.actions.map { action -> UIMenuElement? in
         guard let action = action else { return nil }
         return UIAction(
-          title: NSLocalizedString(action.title, comment: ""),
+          title: action.title.localized,
           image: UIImage(systemName: action.systemImage),
           handler: { _ in action.callback() }
         )

@@ -17,7 +17,7 @@ struct NotificationRowView: View {
         Image(systemName: noti.type.icon)
         switch noti.type {
         case .shortMessage, .shortMessageStart:
-          TopicSubjectView(topic: .with { $0.subject.content = NSLocalizedString("Short Message", comment: "") }, showIndicators: false)
+          TopicSubjectView(topic: .with { $0.subject.content = "Short Message".localized }, showIndicators: false)
         default:
           TopicSubjectView(topic: noti.asTopic, showIndicators: false)
         }

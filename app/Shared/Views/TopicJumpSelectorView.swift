@@ -72,7 +72,7 @@ struct TopicJumpSelectorView: View {
             }
           } .pickerStyle(MenuPickerStyle())
 
-          TextField(NSLocalizedString("Type here...", comment: ""), text: $text)
+          TextField("Type here...".localized, text: $text)
             .keyboardType(.numberPad)
             .multilineTextAlignment(.trailing)
         } .onChange(of: text) { _ in parseText() }

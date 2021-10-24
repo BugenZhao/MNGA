@@ -48,7 +48,7 @@ struct TopicHistoryListView: View {
     #if os(iOS)
       .navigationSearchBar {
         SearchBar(
-          NSLocalizedString("Search History", comment: ""),
+          "Search History".localized,
           text: $searchText,
           isEditing: $isSearching.animation()
         )
