@@ -715,6 +715,7 @@
 				B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */,
 				B4E1071F268DD215006C1742 /* AuthedPreview.swift */,
 				B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */,
+				B40A833F272542C7004DFA87 /* Binding.swift */,
 				B43DED48269C5F78009C52F5 /* Constants.swift */,
 				B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */,
 				B4DBF607268976470027233F /* DateFormatters.swift */,
@@ -728,7 +729,6 @@
 				B444639526A1C54A006FA44D /* Stickers.swift */,
 				B4DCF44A2688E5CA00EC78A4 /* View+FirstAppear.swift */,
 				B4DF95AA26CADD830081ECBB /* View+RedactedIf.swift */,
-				B40A833F272542C7004DFA87 /* Binding.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";

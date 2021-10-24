@@ -12,5 +12,6 @@ extension Binding {
   @inlinable
   var w: Value {
     get { self.wrappedValue }
+    nonmutating set { self.wrappedValue = newValue }
   }
 }
