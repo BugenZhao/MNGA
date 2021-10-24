@@ -1,0 +1,29 @@
+name: iOS
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  testflight:
+    name: Upload to TestFlight
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: arduino/setup-protoc@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Install Prereqs
+        run: |
+          brew install swift-protobuf
+          rustup target add aarch64-apple-ios
+          cargo install cargo-lipo
+      - name: Build Logic for Deployment
+        run: make deploy-release
+      - run: fastlane beta
+        working-directory: app
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}

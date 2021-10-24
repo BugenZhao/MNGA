@@ -13,6 +13,11 @@ sim-debug: swift-pb logic-bindings
 	${CARGO} build --target x86_64-apple-ios
 	cp ${TARGET}/x86_64-apple-ios/debug/liblogic.a ${OUT_LIBS}/liblogicios.a
 
+deploy-release: swift-pb logic-bindings
+	@echo ">>>>> Logic aarch64-apple-ios"
+	${CARGO} build --release --target aarch64-apple-ios
+	cp ${TARGET}/aarch64-apple-ios/release/liblogic.a ${OUT_LIBS}/liblogicios.a
+
 swift-pb:
 	@echo ">>>>> Swift PB"
 	protoc --swift_out=app/Shared/Protos/ --swift_opt=Visibility=Public -I protos/ protos/*.proto

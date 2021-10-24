@@ -1,0 +1,8 @@
+app_identifier("com.bugenzhao.MNGA") # The bundle identifier of your app
+apple_id("app@bugenzhao.com") # Your Apple email address
+
+itc_team_id("123520970") # App Store Connect Team ID
+team_id("87F9J2DF6R") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
