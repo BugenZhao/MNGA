@@ -19,6 +19,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let onResponse: (_ response: Res) -> ([Item], Int?)
   private let id: KeyPath<Item, String>
   private let finishOnError: Bool
+  private let neverRemove: Bool
 
   @Published var items = [Item]()
   @Published var itemToIndexAndPage = [String: (index: Int, page: Int)]()
@@ -44,13 +45,15 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     onResponse: @escaping (_ response: Res) -> ([Item], Int?),
     id: KeyPath<Item, String>,
     finishOnError: Bool = false,
-    loadFromPage: Int? = nil
+    loadFromPage: Int? = nil,
+    neverRemove: Bool = false
   ) {
     self.buildRequest = buildRequest
     self.onResponse = onResponse
     self.id = id
     self.finishOnError = finishOnError
     self.loadFromPage = loadFromPage
+    self.neverRemove = neverRemove
 
     $loadFromPage
       .drop { $0 == nil }
@@ -93,8 +96,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 
   private func replaceItems<S>(_ items: S, page: Int) where S: Sequence, S.Element == Item {
-    self.items.removeAll()
-    self.itemToIndexAndPage.removeAll()
+    if neverRemove == false {
+      self.items.removeAll()
+      self.itemToIndexAndPage.removeAll()
+    }
     self.upsertItems(items, page: page)
   }
 
