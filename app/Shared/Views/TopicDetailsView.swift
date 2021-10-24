@@ -12,7 +12,7 @@ import SwiftUIX
 struct TopicDetailsView: View {
   typealias DataSource = PagingDataSource<TopicDetailsResponse, Post>
 
-  @State var topic: Topic
+  @Binding var topic: Topic
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @Environment(\.currentlyLocalMode) var localMode
@@ -44,7 +44,9 @@ struct TopicDetailsView: View {
     return Self.build(topic: topic, onlyPost: onlyPost)
   }
 
-  static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
+  static func build(topicBinding: Binding<Topic>, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
+    let topic = topicBinding.wrappedValue
+
     let dataSource = DataSource(
       buildRequest: { page in
         return .topicDetails(TopicDetailsRequest.with {
@@ -65,9 +67,13 @@ struct TopicDetailsView: View {
       loadFromPage: fromPage
     )
 
-    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, postIdToJump: postIdToJump)
+    return Self.init(topic: topicBinding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, postIdToJump: postIdToJump)
       .environment(\.enableAuthorOnly, !localMode)
       .environment(\.currentlyLocalMode, localMode)
+  }
+
+  static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
+    return Self.build(topicBinding: .local(topic), localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
   }
 
   static func build(topic: Topic, only authorID: String) -> some View {
@@ -88,7 +94,7 @@ struct TopicDetailsView: View {
       id: \.floor.description
     )
 
-    return Self.init(topic: topic, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil))
+    return Self.init(topic: .local(topic), dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil))
       .environment(\.enableAuthorOnly, false)
   }
 
@@ -491,6 +497,8 @@ struct TopicDetailsView: View {
     }
     self.topic.authorID = newTopic.authorID
     self.topic.subject = newTopic.subject
+    self.topic.repliesNumLastVisit = newTopic.repliesNum // mark as read at frontend
+
 //    if let response = response {
 //      DispatchQueue.main.async {
 //        for id in response.replies.map(\.authorID) {
