@@ -1,5 +1,4 @@
 **/*.pb.swift
-**/*Debug.swift
 
 **/*.ipa
 **/*.dSYM.zip
