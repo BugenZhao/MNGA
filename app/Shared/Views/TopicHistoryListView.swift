@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import SwiftUIX
 
 struct TopicHistoryListView: View {
   @StateObject var dataSource: PagingDataSource<TopicHistoryResponse, TopicSnapshot>

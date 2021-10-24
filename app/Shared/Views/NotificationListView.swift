@@ -13,7 +13,9 @@ struct NotificationListView: View {
   @StateObject var dataSource = NotificationModel.shared.dataSource
 
   @ViewBuilder
-  func buildLink(for notification: Notification) -> some View {
+  func buildLink(for binding: Binding<Notification>) -> some View {
+    let notification = binding.w
+
     NavigationLink(destination: {
       Group {
         switch notification.type {
@@ -23,7 +25,8 @@ struct NotificationListView: View {
           TopicDetailsView.build(onlyPost: (id: notification.otherPostID, atPage: max(Int(notification.page), 1)))
         }
       } .onAppear {
-        let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] }))
+        binding.w.read = true // frontend
+        let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] })) // backend
       }
     }) {
       NotificationRowView(noti: notification)
@@ -51,7 +54,7 @@ struct NotificationListView: View {
 
   var body: some View {
     List {
-      ForEach(dataSource.items, id: \.id) { notification in
+      ForEach($dataSource.items, id: \.id) { notification in
         buildLink(for: notification)
       }
     } .navigationTitle(dataSource.title)

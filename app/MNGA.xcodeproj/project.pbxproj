@@ -41,6 +41,8 @@
 		B409CE6B269F3A6E00F617EC /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B409CE6A269F3A6E00F617EC /* AlertToast */; };
 		B409CE6D26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
+		B40A8340272542C7004DFA87 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40A833F272542C7004DFA87 /* Binding.swift */; };
+		B40A8341272542C7004DFA87 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40A833F272542C7004DFA87 /* Binding.swift */; };
 		B40DC66D270DB9B2002DC8A1 /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B40DC648270DB8B3002DC8A1 /* Intents.framework */; platformFilter = maccatalyst; };
 		B40DC679270DBA19002DC8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC678270DBA19002DC8A1 /* SwiftProtobuf */; };
 		B40DC67B270DBA2B002DC8A1 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC67A270DBA2B002DC8A1 /* SwiftProtobuf */; };
@@ -317,6 +319,7 @@
 		B409252126D29D2100BCB666 /* ContentImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentImageView.swift; sourceTree = "<group>"; };
 		B409252726D29FD900BCB666 /* OpenURLModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenURLModel.swift; sourceTree = "<group>"; };
 		B409CE6C26A0920C00F617EC /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
+		B40A833F272542C7004DFA87 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		B40DC648270DB8B3002DC8A1 /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		B40DC653270DB8B3002DC8A1 /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = Library/Frameworks/IntentsUI.framework; sourceTree = DEVELOPER_DIR; };
 		B40DC66C270DB9B2002DC8A1 /* Widget Intents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Widget Intents.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -712,6 +715,7 @@
 				B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */,
 				B4E1071F268DD215006C1742 /* AuthedPreview.swift */,
 				B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */,
+				B40A833F272542C7004DFA87 /* Binding.swift */,
 				B43DED48269C5F78009C52F5 /* Constants.swift */,
 				B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */,
 				B4DBF607268976470027233F /* DateFormatters.swift */,
@@ -1105,6 +1109,7 @@
 				B41BC0E5271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */,
 				B4DBF61826897C520027233F /* Misc.swift in Sources */,
 				B40F1533271AC3E3004CAB86 /* ShortMessageRowView.swift in Sources */,
+				B40A8340272542C7004DFA87 /* Binding.swift in Sources */,
 				B41BC0E2271DD23500DD05F2 /* ShortMessagePostRowView.swift in Sources */,
 				B4E10720268DD215006C1742 /* AuthedPreview.swift in Sources */,
 				B4F2408726A30C4900D620B0 /* NotificationRowView.swift in Sources */,
@@ -1195,6 +1200,7 @@
 				B40DC6BA270DF7A8002DC8A1 /* RepliesNumView.swift in Sources */,
 				B4DD2BDE26A490960030ADD8 /* BlockedView.swift in Sources */,
 				B4DCF43B26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
+				B40A8341272542C7004DFA87 /* Binding.swift in Sources */,
 				B4F2408826A30C4900D620B0 /* NotificationRowView.swift in Sources */,
 				B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */,
 				B43DED47269C29BB009C52F5 /* DateTimeTextView.swift in Sources */,

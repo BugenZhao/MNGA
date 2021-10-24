@@ -43,9 +43,9 @@ struct HotTopicListInnerView: View {
       } else {
         List {
           Section(header: Text(range.description)) {
-            ForEach(dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
-                TopicRowView(topic: topic)
+            ForEach($dataSource.items, id: \.id) { topic in
+              NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+                TopicRowView(topic: topic.w)
               }
             }
           }
