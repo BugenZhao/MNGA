@@ -9,6 +9,15 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+struct StaticTopicDetailsView<Content: View>: View {
+  @State var topic: Topic
+  let buildView: (_: Binding<Topic>) -> Content
+
+  var body: some View {
+    buildView($topic)
+  }
+}
+
 struct TopicDetailsView: View {
   typealias DataSource = PagingDataSource<TopicDetailsResponse, Post>
 
@@ -73,7 +82,9 @@ struct TopicDetailsView: View {
   }
 
   static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
-    return Self.build(topicBinding: .local(topic), localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
+    return StaticTopicDetailsView(topic: topic) { binding in
+      Self.build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
+    }
   }
 
   static func build(topic: Topic, only authorID: String) -> some View {
@@ -94,8 +105,10 @@ struct TopicDetailsView: View {
       id: \.floor.description
     )
 
-    return Self.init(topic: .local(topic), dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil))
-      .environment(\.enableAuthorOnly, false)
+    return StaticTopicDetailsView(topic: topic) { binding in
+      Self.init(topic: binding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil))
+        .environment(\.enableAuthorOnly, false)
+    }
   }
 
   private var first: Post? {

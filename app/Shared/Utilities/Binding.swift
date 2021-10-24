@@ -10,13 +10,7 @@ import SwiftUI
 
 extension Binding {
   @inlinable
-  static func local(_ initialValue: Value) -> Self {
-    var value = initialValue
-    return .init(get: { value }, set: { value = $0 })
-  }
-
-  @inlinable
   var w: Value {
-    self.wrappedValue
+    get { self.wrappedValue }
   }
 }
