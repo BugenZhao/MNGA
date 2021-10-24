@@ -11,9 +11,7 @@ import SwiftUIX
 
 struct TopicHistoryListView: View {
   @StateObject var dataSource: PagingDataSource<TopicHistoryResponse, TopicSnapshot>
-
-  @State var searchText = ""
-  @State var isSearching = false
+  @StateObject var search = BasicSearchModel()
 
   static func build() -> Self {
     let dataSource = PagingDataSource<TopicHistoryResponse, TopicSnapshot>(
@@ -34,7 +32,7 @@ struct TopicHistoryListView: View {
 
   var body: some View {
     List {
-      let items = dataSource.items.filter { searchText.isEmpty || $0.topicSnapshot.subject.full.contains(searchText) }
+      let items = dataSource.items.filter { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) }
       ForEach(items, id: \.topicSnapshot.id) { snapshot in
         let topic = snapshot.topicSnapshot
         NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
@@ -45,14 +43,6 @@ struct TopicHistoryListView: View {
       .onAppear { dataSource.initialLoad() }
       .refreshable(dataSource: dataSource)
       .mayGroupedListStyle()
-    #if os(iOS)
-      .navigationSearchBar {
-        SearchBar(
-          "Search History".localized,
-          text: $searchText,
-          isEditing: $isSearching.animation()
-        )
-      }
-    #endif
+      .searchable(model: search, prompt: "Search History".localized, alwaysShow: true)
   }
 }

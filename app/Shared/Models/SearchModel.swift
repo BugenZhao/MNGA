@@ -11,31 +11,17 @@ import Combine
 import SwiftUI
 import SwiftUIX
 
-class SearchModel<Res: SwiftProtobuf.Message, Item>: ObservableObject {
-  typealias DataSource = PagingDataSource<Res, Item>
-
+class BasicSearchModel: ObservableObject {
   @Published var text = ""
-  @Published private var commitedText: String? = nil
-  @Published var dataSource: DataSource? = nil
+  @Published var commitedText: String? = nil
 
   private var cancellables = Set<AnyCancellable>()
-
-  func buildDataSource(text: String) -> DataSource {
-    preconditionFailure()
-  }
 
   init() {
     $text
       .filter { $0.isEmpty }
       .sink { _ in self.commitedText = nil }
       .store(in: &cancellables)
-
-    $commitedText
-      .map { (t) -> DataSource? in
-      if let t = t { return self.buildDataSource(text: t) }
-      else { return nil }
-    }
-      .assign(to: &$dataSource)
   }
 
   func commit() {
@@ -47,8 +33,29 @@ class SearchModel<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 }
 
-struct SearchableModifier<Res: SwiftProtobuf.Message, Item>: ViewModifier {
-  @ObservedObject var model: SearchModel<Res, Item>
+class SearchModel<Res: SwiftProtobuf.Message, Item>: BasicSearchModel {
+  typealias DataSource = PagingDataSource<Res, Item>
+
+  @Published var dataSource: DataSource? = nil
+
+  func buildDataSource(text: String) -> DataSource {
+    preconditionFailure()
+  }
+
+  override init() {
+    super.init()
+
+    $commitedText
+      .map { (t) -> DataSource? in
+      if let t = t { return self.buildDataSource(text: t) }
+      else { return nil }
+    }
+      .assign(to: &$dataSource)
+  }
+}
+
+struct SearchableModifier: ViewModifier {
+  @ObservedObject var model: BasicSearchModel
   let prompt: String
   let alwaysShow: Bool
   let iOS15Only: Bool
@@ -78,7 +85,7 @@ struct SearchableModifier<Res: SwiftProtobuf.Message, Item>: ViewModifier {
 }
 
 extension View {
-  func searchable<Res, Item>(model: SearchModel<Res, Item>, prompt: String, alwaysShow: Bool = false, iOS15Only: Bool = false) -> some View {
+  func searchable(model: BasicSearchModel, prompt: String, alwaysShow: Bool = false, iOS15Only: Bool = false) -> some View {
     self
       .modifier(SearchableModifier(model: model, prompt: prompt, alwaysShow: alwaysShow, iOS15Only: iOS15Only))
   }

@@ -261,11 +261,11 @@ extension View {
         if #available(iOS 15.0, *) {
           self.refreshable {
             await Task.sleep(UInt64(0.25 * Double(NSEC_PER_SEC)))
-            await dataSource.refreshAsync()
+            await dataSource.refreshAsync(animated: true)
             await Task.sleep(UInt64(0.25 * Double(NSEC_PER_SEC)))
           }
         } else if !iOS15Only {
-          self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh() }
+          self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh(animated: true) }
         } else {
           self
         }
