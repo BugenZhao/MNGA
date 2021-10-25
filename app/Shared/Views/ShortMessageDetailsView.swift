@@ -44,13 +44,19 @@ struct ShortMessageDetailsView: View {
   }
 
   var body: some View {
-    List {
-      ForEach(dataSource.items, id: \.id) { post in
-        ShortMessagePostRowView(post: post)
-          .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+    Group {
+      if dataSource.notLoaded {
+        ProgressView()
+          .onAppear { dataSource.initialLoad() }
+      } else {
+        List {
+          ForEach(dataSource.items, id: \.id) { post in
+            ShortMessagePostRowView(post: post)
+              .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+          }
+        }
       }
     } .navigationTitleInline(key: "Short Message Details")
-      .onAppear { dataSource.initialLoad() }
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()

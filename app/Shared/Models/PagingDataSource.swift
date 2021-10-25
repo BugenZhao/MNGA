@@ -39,6 +39,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
   var isInitialLoading: Bool { isLoading && loadedPage == 0 }
   var firstLoadedPage: Int? { itemToIndexAndPage.values.map { $0.page }.min() }
+  var notLoaded: Bool { items.isEmpty && refreshedTimes == 0 }
 
   init(
     buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
@@ -64,7 +65,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
     self.items.sorted { $0[keyPath: key] < $1[keyPath: key] }
   }
-  
+
   func itemsAtPage(_ page: Int) -> [Item] {
     items.filter { item in
       let id = item[keyPath: id]

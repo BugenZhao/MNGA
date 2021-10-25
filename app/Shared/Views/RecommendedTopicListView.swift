@@ -38,7 +38,7 @@ struct RecommendedTopicListView: View {
 
   var body: some View {
     Group {
-      if dataSource.items.isEmpty {
+      if dataSource.notLoaded {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
       } else {

@@ -229,7 +229,7 @@ struct TopicListView: View {
   @ViewBuilder
   var list: some View {
     Group {
-      if dataSource.items.isEmpty {
+      if dataSource.notLoaded {
         ProgressView()
           .onAppear {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation

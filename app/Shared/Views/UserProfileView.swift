@@ -64,7 +64,7 @@ struct UserProfileView: View {
   var list: some View {
     switch self.tab {
     case .topics:
-      if topicDataSource.items.isEmpty {
+      if topicDataSource.notLoaded {
         LoadingRowView()
           .onAppear { topicDataSource.initialLoad() }
       } else {
@@ -77,7 +77,7 @@ struct UserProfileView: View {
         }
       }
     case .posts:
-      if postDataSource.items.isEmpty {
+      if postDataSource.notLoaded {
         LoadingRowView()
           .onAppear { postDataSource.initialLoad() }
       } else {
@@ -124,10 +124,10 @@ struct UserProfileView: View {
     }
       .toolbarWithFix { toolbar }
       .withTopicDetailsAction() // for signature only
-      .mayGroupedListStyle()
+    .mayGroupedListStyle()
       .navigationTitleInline(string: user.name)
   }
-  
+
   func newShortMessage() {
     self.postModel.show(action: .with {
       $0.operation = .newSingleTo

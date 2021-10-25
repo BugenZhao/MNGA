@@ -35,16 +35,22 @@ struct FavoriteTopicListView: View {
   }
 
   var body: some View {
-    List {
-      ForEach($dataSource.items, id: \.id) { topic in
-        NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
-          TopicRowView(topic: topic.w, dimmedSubject: false, showIndicators: false)
-            .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+    Group {
+      if dataSource.notLoaded {
+        ProgressView()
+          .onAppear { dataSource.initialLoad() }
+      } else {
+        List {
+          ForEach($dataSource.items, id: \.id) { topic in
+            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+              TopicRowView(topic: topic.w, dimmedSubject: false, showIndicators: false)
+                .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            }
+          } .onDelete { indexSet in deleteFavorites(at: indexSet) }
         }
-      } .onDelete { indexSet in deleteFavorites(at: indexSet) }
+      }
     }
       .navigationTitle("Favorite Topics")
-      .onAppear { dataSource.initialLoad() }
       .refreshable(dataSource: dataSource)
       .mayGroupedListStyle()
   }

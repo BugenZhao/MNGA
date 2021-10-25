@@ -37,21 +37,20 @@ struct HotTopicListInnerView: View {
   }
 
   var body: some View {
-    Group {
-      if dataSource.items.isEmpty {
-        ProgressView()
-      } else {
-        List {
-          Section(header: Text(range.description)) {
-            ForEach($dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
-                TopicRowView(topic: topic.w)
-              }
+    if dataSource.notLoaded {
+      ProgressView()
+        .onAppear { dataSource.initialLoad() }
+    } else {
+      List {
+        Section(header: Text(range.description)) {
+          ForEach($dataSource.items, id: \.id) { topic in
+            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+              TopicRowView(topic: topic.w)
             }
           }
-        } .mayGroupedListStyle()
-      }
-    } .onAppear { dataSource.initialLoad() }
+        }
+      } .mayGroupedListStyle()
+    }
   }
 }
 
