@@ -53,12 +53,19 @@ struct NotificationListView: View {
   }
 
   var body: some View {
-    List {
-      ForEach($dataSource.items, id: \.id) { notification in
-        buildLink(for: notification)
+    Group {
+      if dataSource.notLoaded {
+        ProgressView()
+          .onAppear { dataSource.initialLoad() }
+      } else {
+        List {
+          ForEach($dataSource.items, id: \.id) { notification in
+            buildLink(for: notification)
+          }
+        }
       }
-    } .navigationTitle(dataSource.title)
-      .onAppear { dataSource.initialLoad() }
+    }
+      .navigationTitle(dataSource.title)
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .toolbarWithFix { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }

@@ -43,7 +43,7 @@ struct ForumSearchView: View {
   }
 
   var body: some View {
-    if dataSource.items.isEmpty {
+    if dataSource.notLoaded {
       ProgressView()
         .onAppear { dataSource.initialLoad() }
     } else {

@@ -22,8 +22,7 @@ fileprivate extension NotificationDataSource {
         let items = response.notis
         return (items, 1)
       },
-      id: \.id,
-      neverRemove: true
+      id: \.id
     )
   }
 }

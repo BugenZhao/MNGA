@@ -39,14 +39,21 @@ struct ShortMessageListView: View {
   }
 
   var body: some View {
-    List {
-      ForEach(dataSource.items, id: \.id) { message in
-        NavigationLink(destination: { ShortMessageDetailsView.build(mid: message.id) }) {
-          ShortMessageRowView(message: message)
-        } .onAppear { dataSource.loadMoreIfNeeded(currentItem: message) }
+    Group {
+      if dataSource.notLoaded {
+        ProgressView()
+          .onAppear { dataSource.initialLoad() }
+      } else {
+        List {
+          ForEach(dataSource.items, id: \.id) { message in
+            NavigationLink(destination: { ShortMessageDetailsView.build(mid: message.id) }) {
+              ShortMessageRowView(message: message)
+            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: message) }
+          }
+        }
       }
-    } .navigationTitle("Short Messages")
-      .onAppear { dataSource.initialLoad() }
+    }
+      .navigationTitle("Short Messages")
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .toolbarWithFix { ToolbarItem(placement: .primaryAction) { newShortMessageButton } }
