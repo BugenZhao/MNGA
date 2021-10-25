@@ -447,6 +447,8 @@ pub async fn get_user_topic_list(
 
 #[cfg(test)]
 mod test {
+    use crate::constants::REVIEW_UID;
+
     use super::{super::user::UserController, *};
 
     #[tokio::test]
@@ -569,6 +571,18 @@ mod test {
         println!("response: {:?}", response);
 
         assert!(!response.get_topics().is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_get_user_no_topic_not_err() -> ServiceResult<()> {
+        let request = UserTopicListRequest {
+            author_id: REVIEW_UID.to_owned(),
+            page: 1,
+            ..Default::default()
+        };
+        let _ = get_user_topic_list(request).await?;
 
         Ok(())
     }
