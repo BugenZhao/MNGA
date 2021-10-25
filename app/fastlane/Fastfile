@@ -43,7 +43,15 @@ platform :ios do
 
     build_app(scheme: "MNGA (iOS)")
 
-    upload_to_testflight(skip_waiting_for_build_processing: true)
+    changelog = changelog_from_git_commits(
+      date_format: "short",
+    )
+
+    upload_to_testflight(
+      changelog: changelog,
+      distribute_external: true,
+      groups: ["Nightly"],
+    )
 
     add_git_tag
     push_git_tags
