@@ -14,9 +14,11 @@
 
 ## Get the App
 
-- TestFlight Public Link for both iOS and macOS
-  <br/>
-  [<img src="https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png" width="250" />](https://testflight.apple.com/join/w9duC4Du)
+- TestFlight Public Link for iOS
+
+  | Stable Channel （稳定版）  | Nightly Channel （开发版）  |
+  | -------------------------- | --------------------------- |
+  | [![tf-image]][stable-link] | [![tf-image]][nightly-link] |
 
 - Or build the project yourself, check instructions below.
 
@@ -98,3 +100,7 @@
 
 - 本项目中涉及的 NGA 等文字，NGA 版块、帖子、用户等数据，AC 娘表情等资源，其版权均归 NGA BBS (https://ngabbs.com) 所有。
 - This project _currently_ has NO LICENSE. You MAY NOT modify or redistribute this code without explicit permission.
+
+[stable-link]: https://testflight.apple.com/join/w9duC4Du
+[nightly-link]: https://testflight.apple.com/join/UL8mvVKt
+[tf-image]: https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png
