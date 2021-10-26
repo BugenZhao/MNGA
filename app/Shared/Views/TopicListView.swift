@@ -210,7 +210,9 @@ struct TopicListView: View {
 
   @ViewBuilder
   var icon: some View {
-    ForumIconView(iconURL: forum.iconURL)
+    if #available(iOS 15.0, *) {
+      ForumIconView(iconURL: forum.iconURL)
+    }
   }
 
   @ToolbarContentBuilder
