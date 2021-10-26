@@ -24,8 +24,8 @@ class CurrentUserModel: ObservableObject {
 
     $user
       .compactMap { $0 }
-      .dropFirst()
       .removeDuplicates { $0.id == $1.id }
+      .dropFirst()
       .filter { $0.id != "" }
       .sink { ToastModel.hud.message = .userSwitch($0.name) }
       .store(in: &cancellables)
