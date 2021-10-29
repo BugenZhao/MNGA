@@ -159,12 +159,6 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var moreMenu: some View {
     Menu {
-      #if os(iOS)
-        Section {
-          replyButton
-        }
-      #endif
-
       Section {
         if enableAuthorOnly {
           Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
@@ -226,7 +220,10 @@ struct TopicDetailsView: View {
         Label("See Full Topic", systemImage: "doc.richtext")
       }
     } else {
-      moreMenu
+      HStack {
+        replyButton
+        moreMenu
+      }
     }
   }
 
@@ -393,8 +390,8 @@ struct TopicDetailsView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
+      ToolbarItem(placement: .mayNavigationBarLeading) { loadFirstPageButton }
       ToolbarItem(placement: .navigationBarTrailing) { progress }
-      ToolbarItem(placement: .navigationBarTrailing) { loadFirstPageButton }
       ToolbarItem(placement: .navigationBarTrailing) { menu }
     #elseif os(macOS)
       ToolbarItemGroup {
@@ -427,7 +424,7 @@ struct TopicDetailsView: View {
       }
     } .mayGroupedListStyle()
       .withTopicDetailsAction(action: action)
-      .onReceive(dataSource.$refreshedTimes) { _ in mayScrollToJumpFloor() }
+      .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
       .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
   }
 
