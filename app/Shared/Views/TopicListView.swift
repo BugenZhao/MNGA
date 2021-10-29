@@ -249,7 +249,7 @@ struct TopicListView: View {
         }
       }
     }
-      .refreshable(dataSource: dataSource)
+      .refreshable(dataSource: dataSource, refreshWhenEnterForeground: true)
       .mayGroupedListStyle()
   }
 

@@ -73,7 +73,7 @@ class NotificationModel: ObservableObject {
       if self?.showing == true { self?.objectWillChange.send() }
     } .store(in: &cancellables)
 
-    dataSource.$refreshedTimes
+    dataSource.$lastRefreshTime
       .map { _ in self.dataSource.items.filter { n in n.read == false }.count }
       .prepend(0)
       .pairwise()
