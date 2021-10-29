@@ -65,12 +65,12 @@ struct UserView: View {
 
   @ViewBuilder
   var avatar: some View {
-    if let user = self.user, let action = self.action {
-      Button(action: { action.showUserProfile = user }) {
+    if style == .huge, let url = avatarURL {
+      Button(action: { viewingImage.show(url: url) }) {
         avatarInner
       } .buttonStyle(PlainButtonStyle())
-    } else if style == .huge, let url = avatarURL {
-      Button(action: { viewingImage.show(url: url) }) {
+    } else if let user = self.user, let action = self.action {
+      Button(action: { action.showUserProfile = user }) {
         avatarInner
       } .buttonStyle(PlainButtonStyle())
     } else {
@@ -117,17 +117,20 @@ struct UserView: View {
               Text("\(user?.postNum ?? 0)")
                 .redacted(if: badUser)
             } .foregroundColor((1..<50 ~= user?.postNum ?? 50) ? .red : .secondary)
-            HStack(spacing: 2) {
-              Image(systemName: "calendar")
-              Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)
-                .redacted(if: badUser)
-            }
+
             HStack(spacing: 2) {
               Image(systemName: "flag")
-              Text("\((user?.fame ?? 0) / 10)")
+              Text(String(format: "%.01f", Double(user?.fame ?? 0) / 10.0))
                 .redacted(if: badUser)
             } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
 
+            if style == .huge {
+              HStack(spacing: 2) {
+                Image(systemName: "calendar")
+                Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)
+                  .redacted(if: badUser)
+              }
+            }
           } .font(.footnote)
             .foregroundColor(.secondary)
         }
