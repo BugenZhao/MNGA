@@ -168,7 +168,7 @@ struct PostRowView: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
+    let body = VStack(alignment: .leading, spacing: 10) {
       header
       content
       footer
@@ -184,8 +184,21 @@ struct PostRowView: View {
     #endif
     .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
       .environmentObject(attachments)
+
+    if #available(iOS 15.0, *), let model = postReply {
+      body
+        .swipeActions(edge: .leading) { Button(action: { self.doQuote(model: model) }) { Image(systemName: "quote.bubble") } .tint(.accentColor) }
+    } else {
+      body
+    }
   }
 
+  func onLongPress() {
+    if let model = postReply {
+      HapticUtils.play(style: .medium)
+      doQuote(model: model)
+    }
+  }
 
   func doVote(_ operation: PostVoteRequest.Operation) {
     logicCallAsync(.postVote(.with {
