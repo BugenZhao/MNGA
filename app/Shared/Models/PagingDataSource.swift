@@ -26,7 +26,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   @Published var isLoading = false
   @Published var isRefreshing = false
   @Published var latestResponse: Res?
-  @Published var refreshedTimes = 0
+  @Published var lastRefreshTime: Date?
   @Published var loadFromPage: Int?
 
   private var loadedPage = 0
@@ -39,7 +39,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
   var isInitialLoading: Bool { isLoading && loadedPage == 0 }
   var firstLoadedPage: Int? { itemToIndexAndPage.values.map { $0.page }.min() }
-  var notLoaded: Bool { items.isEmpty && refreshedTimes == 0 }
+  var notLoaded: Bool { items.isEmpty && lastRefreshTime == nil }
 
   init(
     buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
@@ -150,7 +150,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
     self.totalPages = newTotalPages ?? self.totalPages
     self.loadedPage += 1
-    self.refreshedTimes += 1
+    self.lastRefreshTime = Date()
   }
 
   private func onRefreshError(e: LogicError, animated: Bool) {
@@ -261,7 +261,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
 
 extension View {
-  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>, iOS15Only: Bool = false) -> some View {
+  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>, iOS15Only: Bool = false, refreshWhenEnterForeground: Bool = false) -> some View {
     #if canImport(SwiftUIRefresh)
       Group {
         if #available(iOS 15.0, *) {
@@ -274,6 +274,14 @@ extension View {
           self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh(animated: true) }
         } else {
           self
+        }
+      } .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+        guard refreshWhenEnterForeground else { return }
+        guard let last = dataSource.lastRefreshTime else { return }
+
+        let elasped = Date().timeIntervalSince(last)
+        if elasped > 60 * 60 { // 1 hour elapsed
+          dataSource.refresh()
         }
       }
     #else
