@@ -13,6 +13,7 @@ struct EmptyRowView: View {
     HStack {
       Spacer()
       Text("Empty")
+        .foregroundColor(.secondary)
       Spacer()
     }
   }
