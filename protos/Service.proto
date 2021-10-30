@@ -106,6 +106,7 @@ message TopicDetailsResponse {
   repeated Post replies = 2;
   string forum_name = 4;
   uint32 pages = 3;
+  bool is_local_cache = 5;
 }
 
 message SubforumFilterRequest {

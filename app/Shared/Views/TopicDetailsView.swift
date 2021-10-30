@@ -24,7 +24,6 @@ struct TopicDetailsView: View {
   @Binding var topic: Topic
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
-  @Environment(\.currentlyLocalMode) var localMode
   @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var viewingImage: ViewingImageModel
   @EnvironmentObject var postReply: PostReplyModel
@@ -39,10 +38,15 @@ struct TopicDetailsView: View {
   @State var isFavored: Bool
 
   let onlyPost: (id: PostId?, atPage: Int?)
+  let forceLocalMode: Bool
 
   @State var showJumpSelector = false
   @State var floorToJump: Int?
   @State var postIdToJump: PostId?
+
+  var localMode: Bool {
+    forceLocalMode || (dataSource.latestResponse?.isLocalCache == true)
+  }
 
   static func build(id: String) -> some View {
     Self.build(topic: .with { $0.id = id })
@@ -76,9 +80,8 @@ struct TopicDetailsView: View {
       loadFromPage: fromPage
     )
 
-    return Self.init(topic: topicBinding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, postIdToJump: postIdToJump)
+    return Self.init(topic: topicBinding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, forceLocalMode: localMode, postIdToJump: postIdToJump)
       .environment(\.enableAuthorOnly, !localMode)
-      .environment(\.currentlyLocalMode, localMode)
   }
 
   static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
@@ -106,13 +109,13 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self.init(topic: binding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil))
+      Self.init(topic: binding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil), forceLocalMode: false)
         .environment(\.enableAuthorOnly, false)
     }
   }
 
   private var first: Post? {
-    if let first = dataSource.items.min(by: { $0.floor < $1.floor }) , first.id.pid == "0" {
+    if let first = dataSource.items.min(by: { $0.floor < $1.floor }), first.id.pid == "0" {
       return first
     } else {
       return nil
@@ -169,9 +172,9 @@ struct TopicDetailsView: View {
           Button(action: { self.action.navigateToLocalMode = true }) {
             Label("View Cached Topic", systemImage: "clock")
           }
-        }
-        Button(action: { self.showJumpSelector = true }) {
-          Label("Jump to...", systemImage: "arrow.up.arrow.down")
+          Button(action: { self.showJumpSelector = true }) {
+            Label("Jump to...", systemImage: "arrow.up.arrow.down")
+          }
         }
       }
 
@@ -262,9 +265,6 @@ struct TopicDetailsView: View {
     if let first = self.first {
       buildRow(post: first)
     }
-//    else {
-//      LoadingRowView(high: true)
-//    }
   }
 
   @ViewBuilder
@@ -309,10 +309,8 @@ struct TopicDetailsView: View {
     let authorOnlyView = TopicDetailsView.build(topic: topic, only: self.action.navigateToAuthorOnly ?? .init())
     NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) { } .hidden()
 
-    if !localMode {
-      let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
-      NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) { } .hidden()
-    }
+    let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
+    NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) { } .hidden()
   }
 
   @ViewBuilder
@@ -365,8 +363,8 @@ struct TopicDetailsView: View {
   }
 
   var title: String {
-    if localMode {
-      return "Topic (Cached)".localized
+    if forceLocalMode {
+      return "Topic".localized
     } else if !enableAuthorOnly {
       return "Author Only".localized
     } else if onlyPost.id != nil {
@@ -387,9 +385,18 @@ struct TopicDetailsView: View {
     }
   }
 
+  @ViewBuilder
+  var status: some View {
+    if localMode {
+      Text("Cached Topic")
+        .foregroundColor(.secondary)
+    }
+  }
+
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
+      ToolbarItem(placement: .status) { status }
       ToolbarItem(placement: .status) { loadFirstPageButton }
       ToolbarItem(placement: .navigationBarTrailing) { progress }
       ToolbarItem(placement: .navigationBarTrailing) { menu }
