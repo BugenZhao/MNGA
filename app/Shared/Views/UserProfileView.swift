@@ -69,10 +69,14 @@ struct UserProfileView: View {
           .onAppear { topicDataSource.initialLoad() }
       } else {
         Section(header: Text("\(user.name)'s Topics")) {
-          ForEach($topicDataSource.items, id: \.id) { topic in
-            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
-              TopicRowView(topic: topic.w)
-            } .onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
+          if topicDataSource.items.isEmpty {
+            EmptyRowView()
+          } else {
+            ForEach($topicDataSource.items, id: \.id) { topic in
+              NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+                TopicRowView(topic: topic.w)
+              } .onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            }
           }
         }
       }
@@ -82,10 +86,14 @@ struct UserProfileView: View {
           .onAppear { postDataSource.initialLoad() }
       } else {
         Section(header: Text("\(user.name)'s Posts")) {
-          ForEach(postDataSource.items, id: \.post.id) { tp in
-            NavigationLink(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: (id: tp.post.id, atPage: nil))) {
-              TopicPostRowView(topic: tp.topic, post: tp.post)
-            } .onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }
+          if postDataSource.items.isEmpty {
+            EmptyRowView()
+          } else {
+            ForEach(postDataSource.items, id: \.post.id) { tp in
+              NavigationLink(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: (id: tp.post.id, atPage: nil))) {
+                TopicPostRowView(topic: tp.topic, post: tp.post)
+              } .onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }
+            }
           }
         }
       }

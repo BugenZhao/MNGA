@@ -12,6 +12,8 @@ import SwiftUIX
 struct ShortMessagePostRowView: View {
   let post: ShortMessagePost
 
+  @EnvironmentObject var textSelection: TextSelectionModel
+
   @StateObject var pref = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
   @StateObject var attachments = AttachmentsModel()
@@ -72,8 +74,8 @@ struct ShortMessagePostRowView: View {
   @ViewBuilder
   var menu: some View {
     Section {
-      Button(action: { copyToPasteboard(string: post.content.raw) }) {
-        Label("Copy Raw Content", systemImage: "doc.on.doc")
+      Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
+        Label("Select Text", systemImage: "selection.pin.in.out")
       }
     }
   }

@@ -112,7 +112,7 @@ struct TopicDetailsView: View {
   }
 
   private var first: Post? {
-    if let first = dataSource.items.first, first.id.pid == "0" {
+    if let first = dataSource.items.min(by: { $0.floor < $1.floor }) , first.id.pid == "0" {
       return first
     } else {
       return nil
@@ -380,7 +380,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var loadFirstPageButton: some View {
-    if let _ = dataSource.loadFromPage {
+    if let page = dataSource.firstLoadedPage, page >= 2 {
       Button(action: { dataSource.loadFromPage = nil; floorToJump = nil }) {
         Label("Load First Page", systemImage: "arrow.up.to.line")
       }
@@ -390,7 +390,7 @@ struct TopicDetailsView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
-      ToolbarItem(placement: .mayNavigationBarLeading) { loadFirstPageButton }
+      ToolbarItem(placement: .status) { loadFirstPageButton }
       ToolbarItem(placement: .navigationBarTrailing) { progress }
       ToolbarItem(placement: .navigationBarTrailing) { menu }
     #elseif os(macOS)
