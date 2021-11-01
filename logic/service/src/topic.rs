@@ -332,8 +332,8 @@ pub async fn get_topic_details(
 ) -> ServiceResult<TopicDetailsResponse> {
     let key = topic_details_response_key(&request);
 
-    if request.get_local_cache() {
-        return key
+    let get_local_cache = || {
+        key.as_ref()
             .and_then(|key| CACHE.get_msg::<TopicDetailsResponse>(&key).ok())
             .flatten()
             .ok_or_else(|| {
@@ -341,10 +341,18 @@ pub async fn get_topic_details(
                     info: "No local cache found".to_owned(),
                     ..Default::default()
                 })
-            });
+            })
+            .map(|mut r| {
+                r.is_local_cache = true;
+                r
+            })
+    };
+
+    if request.get_local_cache() {
+        return get_local_cache();
     }
 
-    let package = fetch_package(
+    let package_result = fetch_package(
         "read.php",
         vec![
             ("tid", request.get_topic_id()),
@@ -355,7 +363,15 @@ pub async fn get_topic_details(
         ],
         vec![],
     )
-    .await?;
+    .await;
+
+    if let Err(e @ ServiceError::Nga(_)) = package_result {
+        match get_local_cache() {
+            Ok(response) => return Ok(response),
+            Err(_) => return Err(e),
+        }
+    }
+    let package = package_result?;
 
     let _users = extract_nodes(&package, "/root/__U/item", |ns| {
         ns.into_iter().filter_map(extract_user_and_cache).collect()
@@ -367,9 +383,10 @@ pub async fn get_topic_details(
             .collect()
     })?;
 
-    let topic = extract_node(&package, "/root/__T", extract_topic)?
+    let mut topic = extract_node(&package, "/root/__T", extract_topic)?
         .flatten()
         .ok_or_else(|| ServiceError::MissingField("topic".to_owned()))?;
+    topic.set_fav(request.get_fav().to_owned());
 
     let forum_name = extract_string(&package, "/root/__F/name")
         .or_else(|_| extract_string(&package, "/root/__F"))
@@ -384,6 +401,7 @@ pub async fn get_topic_details(
         replies: replies.into(),
         forum_name,
         pages,
+        is_local_cache: false,
         ..Default::default()
     };
     if let Some(key) = key {
