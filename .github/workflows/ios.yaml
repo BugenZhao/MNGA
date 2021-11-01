@@ -10,6 +10,10 @@ jobs:
     name: Upload to TestFlight
     runs-on: macos-11
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
