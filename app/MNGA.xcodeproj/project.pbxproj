@@ -112,8 +112,6 @@
 		B43DED4A269C5F78009C52F5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED48269C5F78009C52F5 /* Constants.swift */; };
 		B43DED4C269C7C8B009C52F5 /* SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED4B269C7C8B009C52F5 /* SearchModel.swift */; };
 		B43DED4D269C7C8B009C52F5 /* SearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED4B269C7C8B009C52F5 /* SearchModel.swift */; };
-		B43DED4F269C7D0B009C52F5 /* ForumSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */; };
-		B43DED50269C7D0B009C52F5 /* ForumSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */; };
 		B43DED52269C9216009C52F5 /* VotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED51269C9216009C52F5 /* VotesModel.swift */; };
 		B43DED53269C9216009C52F5 /* VotesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED51269C9216009C52F5 /* VotesModel.swift */; };
 		B43DED55269DE1E4009C52F5 /* CollapsedContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED54269DE1E4009C52F5 /* CollapsedContentView.swift */; };
@@ -198,6 +196,8 @@
 		B498FEFA26EC7938008C577B /* QuoteUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEF826EC7938008C577B /* QuoteUserView.swift */; };
 		B498FEFC26EC8735008C577B /* PostReplyChainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEFB26EC8735008C577B /* PostReplyChainView.swift */; };
 		B498FEFD26EC8735008C577B /* PostReplyChainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B498FEFB26EC8735008C577B /* PostReplyChainView.swift */; };
+		B49B563D27303E2800EA252F /* GlobalSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49B563C27303E2800EA252F /* GlobalSearchView.swift */; };
+		B49B563E27303E2800EA252F /* GlobalSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49B563C27303E2800EA252F /* GlobalSearchView.swift */; };
 		B4B3545F26C91DA00052FE80 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3545E26C91DA00052FE80 /* UsersModel.swift */; };
 		B4B3546026C91DA00052FE80 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3545E26C91DA00052FE80 /* UsersModel.swift */; };
 		B4B3A5212726F60500275EAD /* ForEachOrEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3A5202726F60500275EAD /* ForEachOrEmpty.swift */; };
@@ -348,7 +348,6 @@
 		B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeTextView.swift; sourceTree = "<group>"; };
 		B43DED48269C5F78009C52F5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B43DED4B269C7C8B009C52F5 /* SearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchModel.swift; sourceTree = "<group>"; };
-		B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumSearchView.swift; sourceTree = "<group>"; };
 		B43DED51269C9216009C52F5 /* VotesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesModel.swift; sourceTree = "<group>"; };
 		B43DED54269DE1E4009C52F5 /* CollapsedContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollapsedContentView.swift; sourceTree = "<group>"; };
 		B43DED57269ED5EB009C52F5 /* FavoriteTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteTopicListView.swift; sourceTree = "<group>"; };
@@ -392,6 +391,7 @@
 		B4920CDE2690A98200762FC9 /* SubforumListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubforumListView.swift; sourceTree = "<group>"; };
 		B498FEF826EC7938008C577B /* QuoteUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteUserView.swift; sourceTree = "<group>"; };
 		B498FEFB26EC8735008C577B /* PostReplyChainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostReplyChainView.swift; sourceTree = "<group>"; };
+		B49B563C27303E2800EA252F /* GlobalSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSearchView.swift; sourceTree = "<group>"; };
 		B4B3545E26C91DA00052FE80 /* UsersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersModel.swift; sourceTree = "<group>"; };
 		B4B3859226F6E20800A48D8F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B4B3A5202726F60500275EAD /* ForEachOrEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForEachOrEmpty.swift; sourceTree = "<group>"; };
@@ -762,8 +762,8 @@
 				B4DF95AD26CADF5D0081ECBB /* ForumIconView.swift */,
 				B4DBF61D268B8CD80027233F /* ForumListView.swift */,
 				B48B0C4526932CC70067794F /* ForumRowView.swift */,
-				B43DED4E269C7D0B009C52F5 /* ForumSearchView.swift */,
 				B45A9E8A26A171720088F04D /* GenericEditorView.swift */,
+				B49B563C27303E2800EA252F /* GlobalSearchView.swift */,
 				B46AD3F52692FBF40072DAC0 /* HotTopicListView.swift */,
 				B454F37726B1C2A4009C6B27 /* LoadingRowView.swift */,
 				B4E10719268DADFF006C1742 /* LoginView.swift */,
@@ -1121,6 +1121,7 @@
 				B4F9F98D26F0CCA700D5ED1E /* PresendAttachmentsModel.swift in Sources */,
 				B4DD2BDD26A490960030ADD8 /* BlockedView.swift in Sources */,
 				B45819BC268D7D7200999830 /* RawRepresentable.swift in Sources */,
+				B49B563D27303E2800EA252F /* GlobalSearchView.swift in Sources */,
 				B4521B6D2722E11000258640 /* TopicJumpSelectorView.swift in Sources */,
 				B409251C26D299E600BCB666 /* ContentButtonView.swift in Sources */,
 				B447BC1026F7033200BCC2E8 /* AboutView.swift in Sources */,
@@ -1152,7 +1153,6 @@
 				B45A9E8B26A171720088F04D /* GenericEditorView.swift in Sources */,
 				B4DBF61526897A170027233F /* TopicRowView.swift in Sources */,
 				B4FBED8226A7163E006390A3 /* PreferencesStorage.swift in Sources */,
-				B43DED4F269C7D0B009C52F5 /* ForumSearchView.swift in Sources */,
 				B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */,
 				B40F1536271AC60F004CAB86 /* ShortMessageListView.swift in Sources */,
 				B4715CC526A413E00049D136 /* QuoteView.swift in Sources */,
@@ -1177,6 +1177,7 @@
 				B4920CDA26904CE700762FC9 /* Extensions.swift in Sources */,
 				B444639726A1C54A006FA44D /* Stickers.swift in Sources */,
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
+				B49B563E27303E2800EA252F /* GlobalSearchView.swift in Sources */,
 				B402308626EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B4521B712724141F00258640 /* CurrentUserModel.swift in Sources */,
 				B45A9E8C26A171720088F04D /* GenericEditorView.swift in Sources */,
@@ -1272,7 +1273,6 @@
 				B4C024D726884FD700E53554 /* ContentView.swift in Sources */,
 				B4E1071E268DC4D1006C1742 /* AuthStorage.swift in Sources */,
 				B4DBF61626897A170027233F /* TopicRowView.swift in Sources */,
-				B43DED50269C7D0B009C52F5 /* ForumSearchView.swift in Sources */,
 				B454F37926B1C2A4009C6B27 /* LoadingRowView.swift in Sources */,
 				B40DC681270DBAF7002DC8A1 /* MNGA_Widget.intentdefinition in Sources */,
 				B4DF95AF26CADF5D0081ECBB /* ForumIconView.swift in Sources */,

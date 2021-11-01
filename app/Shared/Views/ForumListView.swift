@@ -11,7 +11,7 @@ import SwiftUIX
 
 struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
-  @StateObject var searchModel = ForumSearchModel()
+  @StateObject var searchModel = GlobalSearchModel()
 
   @State var categories = [Category]()
   @State var favoriteEditing = false
@@ -136,13 +136,13 @@ struct ForumListView: View {
 
   var body: some View {
     Group {
-      if let dataSource = searchModel.dataSource {
-        ForumSearchView(dataSource: dataSource)
+      if searchModel.text != "" {
+        GlobalSearchView(model: searchModel)
       } else {
         index
       }
     }
-      .searchable(model: searchModel, prompt: "Search Forums".localized, alwaysShow: true)
+      .searchable(model: searchModel, prompt: "Search".localized, alwaysShow: true)
       .onAppear { loadData() }
       .navigationTitle("Forums")
       .toolbar {

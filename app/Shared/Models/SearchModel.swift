@@ -33,8 +33,35 @@ class BasicSearchModel: ObservableObject {
   }
 }
 
-class SearchModel<Res: SwiftProtobuf.Message, Item>: BasicSearchModel {
-  typealias DataSource = PagingDataSource<Res, Item>
+class SearchModel<DS>: BasicSearchModel {
+  typealias DataSource = DS
+
+  @Published var dataSource: DataSource? = nil
+
+  func buildDataSource(text: String) -> DataSource {
+    preconditionFailure()
+  }
+
+  init(commited: Bool = true) {
+    super.init()
+
+    if commited {
+      $commitedText
+        .map { (t) -> DataSource? in
+        if let t = t { return self.buildDataSource(text: t) }
+        else { return nil }
+      }
+        .assign(to: &$dataSource)
+    } else {
+      $text
+        .map(self.buildDataSource(text:))
+        .assign(to: &$dataSource)
+    }
+  }
+}
+
+class AutoSearchModel<DS>: BasicSearchModel {
+  typealias DataSource = DS
 
   @Published var dataSource: DataSource? = nil
 
@@ -45,11 +72,10 @@ class SearchModel<Res: SwiftProtobuf.Message, Item>: BasicSearchModel {
   override init() {
     super.init()
 
-    $commitedText
-      .map { (t) -> DataSource? in
-      if let t = t { return self.buildDataSource(text: t) }
-      else { return nil }
-    }
+    $text
+      .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+      .removeDuplicates()
+      .map(self.buildDataSource(text:))
       .assign(to: &$dataSource)
   }
 }
