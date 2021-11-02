@@ -123,7 +123,10 @@ message SubforumFilterResponse {}
 message ForumListRequest {}
 message ForumListResponse { repeated Category categories = 1; }
 
-message RemoteUserRequest { string user_id = 1; }
+message RemoteUserRequest {
+  string user_id = 1;
+  string user_name = 2;
+}
 message RemoteUserResponse { optional User user = 1; }
 
 message PostVoteRequest {

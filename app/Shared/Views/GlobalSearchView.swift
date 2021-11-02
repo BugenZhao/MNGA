@@ -11,6 +11,7 @@ import SwiftUI
 struct DataSource {
   let forum: PagingDataSource<ForumSearchResponse, Forum>
   let topic: PagingDataSource<TopicSearchResponse, Topic>
+  let user: PagingDataSource<RemoteUserResponse, User>
 }
 
 class GlobalSearchModel: SearchModel<DataSource> {
@@ -48,6 +49,22 @@ class GlobalSearchModel: SearchModel<DataSource> {
           return (items, pages)
         },
         id: \.id
+      ),
+
+      user: .init(
+        buildRequest: { _ in
+          return .remoteUser(.with {
+            $0.userName = text
+          })
+        },
+        onResponse: { response in
+          if response.hasUser {
+            return ([response.user], 1)
+          } else {
+            return ([], 1)
+          }
+        },
+        id: \.id
       )
 
     )
@@ -83,6 +100,23 @@ struct ForumSearchItemsView: View {
   }
 }
 
+struct UserSearchItemsView: View {
+  @ObservedObject var dataSource: PagingDataSource<RemoteUserResponse, User>
+
+  var body: some View {
+    if dataSource.notLoaded {
+      LoadingRowView()
+        .onAppear { dataSource.initialLoad() }
+    } else {
+      ForEach(dataSource.items, id: \.id) { user in
+        NavigationLink(destination: UserProfileView.build(user: user)) {
+          UserView(user: user, style: .huge)
+        }
+      }
+    }
+  }
+}
+
 
 struct GlobalSearchView: View {
   enum Mode: Equatable {
@@ -99,13 +133,13 @@ struct GlobalSearchView: View {
     List {
       if mode == nil {
         Section(header: Text("Search \"\(model.text)\" in...")) {
-          Button(action: { mode = .forum }) {
+          Button(action: { withAnimation { mode = .forum } }) {
             Label("All Forums", systemImage: "square.stack.3d.down.right")
           }
-          Button(action: { mode = .topic }) {
+          Button(action: { withAnimation { mode = .topic } }) {
             Label("All Topics", systemImage: "doc.richtext")
           }
-          Button(action: { mode = .user }) {
+          Button(action: { withAnimation { mode = .user } }) {
             Label("All Users", systemImage: "person.2")
           }
         }
@@ -120,6 +154,10 @@ struct GlobalSearchView: View {
         case .topic:
           Section(header: Text("Topics")) {
             TopicSearchItemsView(dataSource: ds.topic)
+          }
+        case .user:
+          Section(header: Text("User")) {
+            UserSearchItemsView(dataSource: ds.user)
           }
         default:
           EmptyView()

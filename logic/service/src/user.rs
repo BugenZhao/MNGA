@@ -70,8 +70,8 @@ pub fn extract_user_and_cache(node: Node) -> Option<User> {
 }
 
 pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<RemoteUserResponse> {
-    let user_id = request.user_id;
-    if let Some(user) = UserController::get().get(&user_id) {
+    let user_id = request.get_user_id();
+    if let Some(user) = UserController::get().get(user_id) {
         return Ok(RemoteUserResponse {
             _user: Some(RemoteUserResponse_oneof__user::user(user.to_owned())),
             ..Default::default()
@@ -80,7 +80,12 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
 
     let package = fetch_package(
         "nuke.php",
-        vec![("__lib", "ucp"), ("__act", "get"), ("uid", &user_id)],
+        vec![
+            ("__lib", "ucp"),
+            ("__act", "get"),
+            ("uid", &user_id),
+            ("username", request.get_user_name()),
+        ],
         vec![],
     )
     .await?;
@@ -101,6 +106,21 @@ mod test {
     async fn test_remote_user() -> ServiceResult<()> {
         let response = get_remote_user(RemoteUserRequest {
             user_id: "41417929".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        assert!(response.has_user());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_remote_user_name() -> ServiceResult<()> {
+        let response = get_remote_user(RemoteUserRequest {
+            user_name: "MNGA-Review".to_owned(),
             ..Default::default()
         })
         .await?;
