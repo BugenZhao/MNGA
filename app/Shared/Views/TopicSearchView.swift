@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-class TopicSearchModel: SearchModel<TopicSearchResponse, Topic> {
+class TopicSearchModel: SearchModel<PagingDataSource<TopicSearchResponse, Topic>> {
   let id: ForumId
 
   init(id: ForumId) {
@@ -36,6 +36,24 @@ class TopicSearchModel: SearchModel<TopicSearchResponse, Topic> {
   }
 }
 
+struct TopicSearchItemsView: View {
+  @ObservedObject var dataSource: TopicSearchModel.DataSource
+
+  var body: some View {
+    if dataSource.notLoaded {
+      LoadingRowView()
+        .onAppear { dataSource.initialLoad() }
+    } else {
+      ForEach($dataSource.items, id: \.id) { topic in
+        NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
+          TopicRowView(topic: topic.w)
+        } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+      }
+    }
+  }
+}
+
+
 struct TopicSearchView: View {
   @ObservedObject var dataSource: TopicSearchModel.DataSource
 
@@ -46,11 +64,7 @@ struct TopicSearchView: View {
     } else {
       List {
         Section(header: Text("Search Results")) {
-          ForEach($dataSource.items, id: \.id) { topic in
-            NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
-              TopicRowView(topic: topic.w)
-            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
-          }
+          TopicSearchItemsView(dataSource: dataSource)
         }
       }
         .mayGroupedListStyle()

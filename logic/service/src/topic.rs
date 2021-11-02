@@ -309,6 +309,7 @@ pub async fn search_topic(request: TopicSearchRequest) -> ServiceResult<TopicSea
             ("key", request.get_key()),
             ("recommend", request.get_recommended_only().to_value()),
             ("content", request.get_search_content().to_value()),
+            ("page", &request.get_page().to_string()),
         ],
         vec![],
     )

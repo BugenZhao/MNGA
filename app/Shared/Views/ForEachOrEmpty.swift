@@ -9,10 +9,17 @@ import Foundation
 import SwiftUI
 
 struct EmptyRowView: View {
+  let title: LocalizedStringKey
+  
+  init(title: LocalizedStringKey = "Empty") {
+    self.title = title
+  }
+  
   var body: some View {
     HStack {
       Spacer()
-      Text("Empty")
+      Text(title)
+        .font(.callout)
         .foregroundColor(.secondary)
       Spacer()
     }
