@@ -1,6 +1,7 @@
 /out/**/*.h
 /out/**/*.a
 /out/**/*.so
+/out/*.xcframework
 .idea/
 .build/
 
