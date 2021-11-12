@@ -23,17 +23,18 @@ struct TopicListView: View {
   @StateObject var dataSourcePostDate: DataSource
   @StateObject var favoriteForums = FavoriteForumsStorage.shared
   @StateObject var searchModel: TopicSearchModel
+  @StateObject var prefs = PreferencesStorage.shared
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
   @State var showingHotTopics = false
   @State var showingRecommendedTopics = false
   @State var showingToppedTopic = false
-  @State var order = PreferencesStorage.shared.defaultTopicListOrder
+  @State var order: TopicListRequest.Order? = nil
 
   var dataSource: DataSource {
     switch order {
-    case .lastPost: return dataSourceLastPost
+    case .lastPost, .none: return dataSourceLastPost
     case .postDate: return dataSourcePostDate
     default: fatalError()
     }
@@ -41,7 +42,7 @@ struct TopicListView: View {
 
   var itemBindings: Binding<[Topic]> {
     switch order {
-    case .lastPost:
+    case .lastPost, .none:
       return $dataSourceLastPost.items
     case .postDate:
       return $dataSourcePostDate.items
@@ -49,7 +50,7 @@ struct TopicListView: View {
     }
   }
 
-  static func build(forum: Forum, defaultOrder: TopicListRequest.Order = .lastPost) -> Self {
+  static func build(forum: Forum) -> Self {
     let dataSourceLastPost = DataSource(
       buildRequest: { page in
         return .topicList(TopicListRequest.with {
@@ -84,8 +85,7 @@ struct TopicListView: View {
       forum: forum,
       dataSourceLastPost: dataSourceLastPost,
       dataSourcePostDate: dataSourcePostDate,
-      searchModel: TopicSearchModel(id: forum.id),
-      order: defaultOrder
+      searchModel: TopicSearchModel(id: forum.id)
     )
   }
 
@@ -123,14 +123,14 @@ struct TopicListView: View {
 
       Section {
         Menu {
-          Picker(selection: $order.animation(), label: Text("Order")) {
+          Picker(selection: $order, label: Text("Order")) {
             ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
               Label(order.description, systemImage: order.icon)
-                .tag(order)
+                .tag(order as TopicListRequest.Order?)
             }
           }
         } label: {
-          Label("Order by", systemImage: order.icon)
+          Label("Order by", systemImage: (order ?? .lastPost).icon)
         }
         Button(action: { showingHotTopics = true }) {
           Label("Hot Topics", systemImage: "flame")
@@ -268,6 +268,8 @@ struct TopicListView: View {
       .background { subforum; navigations }
       .toolbarWithFix { toolbar }
       .onAppear { selectedForum.inner = forum }
+      .onChange(of: prefs.defaultTopicListOrder) { if $0 != self.order { self.order = $0 } }
+      .onAppear { if self.order == nil { self.order = prefs.defaultTopicListOrder } }
       .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
   }
 

@@ -229,7 +229,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   private func loadMore(background: Bool = false, alwaysAnimation: Bool = false) {
     if isLoading || loadedPage >= totalPages { return }
-    isLoading = true;
+    isLoading = true
 
     let page = loadedPage + 1
     let request = buildRequest(page)
@@ -275,15 +275,18 @@ extension View {
         } else {
           self
         }
-      } .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-        guard refreshWhenEnterForeground else { return }
-        guard let last = dataSource.lastRefreshTime else { return }
-
-        let elasped = Date().timeIntervalSince(last)
-        if elasped > 60 * 60 { // 1 hour elapsed
-          dataSource.refresh()
-        }
       }
+// refreshWhenEnterForeground is currently buggy
+
+//      .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+//        guard refreshWhenEnterForeground else { return }
+//        guard let last = dataSource.lastRefreshTime else { return }
+//
+//        let elasped = Date().timeIntervalSince(last)
+//        if elasped > 60 * 60 { // 1 hour elapsed
+//          dataSource.refresh()
+//        }
+//      }
     #else
       self
     #endif
