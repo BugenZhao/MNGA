@@ -1,60 +1,90 @@
-CARGO = ${HOME}/.cargo/bin/cargo
-XARGO = ${HOME}/.cargo/bin/xargo
-TARGET = target
+CARGO = $(shell which cargo)
+XARGO = $(shell which xargo)
+TARGET_DIR = target
 OUT_LIBS = out/libs
 OUT_LIBS_ANDROID = out/libs/jniLibs
 OUT_INCLUDE = out/include
 
-ios-release: swift-pb logic-release-ios logic-bindings
-macos-release: swift-pb logic-release-macos logic-bindings
+PROCESSOR = $(shell uname -p)
 
-sim-debug: swift-pb logic-bindings
-	@echo ">>>>> Logic Simulator"
-	${CARGO} build --target x86_64-apple-ios
-	cp ${TARGET}/x86_64-apple-ios/debug/liblogic.a ${OUT_LIBS}/liblogicios.a
+ifeq (${PROCESSOR}, arm)
+	IOS_SIM_TARGET = aarch64-apple-ios-sim
+else
+	IOS_SIM_TARGET = x86_64-apple-ios
+endif
+IOS_TARGET = aarch64-apple-ios
+IOS_ALL_TARGETS = ${IOS_TARGET} ${IOS_SIM_TARGET}
+MACOS_ALL_TARGETS = aarch64-apple-darwin x86_64-apple-darwin
+CATALYST_TARGET = x86_64-apple-ios-macabi
 
-deploy-release: swift-pb logic-bindings
-	@echo ">>>>> Logic aarch64-apple-ios"
-	${CARGO} build --release --target aarch64-apple-ios
-	cp ${TARGET}/aarch64-apple-ios/release/liblogic.a ${OUT_LIBS}/liblogicios.a
+ALL_TARGETS = unspecified-target
+MODE ?= debug
+
+ifeq (${MODE}, release)
+	CARGO_MODE_ARG = --release
+else
+	CARGO_MODE_ARG =
+endif
+
+ifneq (,$(findstring ios, $(ALL_TARGETS)))
+	OUT_FRAMEWORK = out/logic-ios.xcframework
+else
+	OUT_FRAMEWORK = out/logic-macos.xcframework
+endif
+
+.PHONY: logic
+
+ios: logic-ios-release
+macos: logic-macos-release
+
+logic-ios-%:
+	make logic-ios MODE=$*
+logic-ios:
+	make logic ALL_TARGETS="${IOS_ALL_TARGETS}"
+
+logic-sim:
+	make logic ALL_TARGETS="${IOS_SIM_TARGET}" MODE=debug
+logic-deploy:
+	make logic ALL_TARGETS="${IOS_TARGET}" MODE=release
+
+logic-macos-%:
+	make logic-macos MODE=$*
+logic-macos:
+	make logic ALL_TARGETS="${MACOS_ALL_TARGETS}"
+
+logic-catalyst-%:
+	make logic-catalyst MODE=$*
+logic-catalyst:
+	make logic ALL_TARGETS="${CATALYST_TARGET}"
+
+
+logic: swift-pb build-logic create-framework
 
 swift-pb:
 	@echo ">>>>> Swift PB"
 	protoc --swift_out=app/Shared/Protos/ --swift_opt=Visibility=Public -I protos/ protos/*.proto
 
-logic-release-macos:
-	@echo ">>>>> Logic macOS"
-	${CARGO} lipo --release --targets aarch64-apple-darwin x86_64-apple-darwin
-	cp ${TARGET}/universal/release/liblogic.a ${OUT_LIBS}/liblogicmacos.a
-
-logic-release-ios:
-	@echo ">>>>> Logic iOS"
-	${CARGO} lipo --release
-	cp ${TARGET}/universal/release/liblogic.a ${OUT_LIBS}/liblogicios.a
-
-logic-release-catalyst:
-	@echo ">>>>> Logic Catalyst"
-	${XARGO} build --target x86_64-apple-ios-macabi --release
-	cp ${TARGET}/x86_64-apple-ios-macabi/release/liblogic.a ${OUT_LIBS}/liblogiccatalyst.a
-
-logic-debug-macos:
-	@echo ">>>>> Logic macOS"
-	${CARGO} build
-	cp ${TARGET}/debug/liblogic.a ${OUT_LIBS}/liblogicmacos.a
-
-logic-debug-ios:
-	@echo ">>>>> Logic iOS"
-	${CARGO} lipo
-	cp ${TARGET}/universal/debug/liblogic.a ${OUT_LIBS}/liblogicios.a
-
-logic-debug-catalyst:
-	@echo ">>>>> Logic Catalyst"
-	${XARGO} build --target x86_64-apple-ios-macabi
-	cp ${TARGET}/x86_64-apple-ios-macabi/debug/liblogic.a ${OUT_LIBS}/liblogiccatalyst.a
-
-logic-bindings:
-	@echo ">>>>> Logic bindings"
+build-logic:
+	@echo ">>>>> Build liblogic.a for '${ALL_TARGETS}' in ${MODE} mode"
+	@for target in ${ALL_TARGETS}; do \
+		CMD="${CARGO} build --target $${target} ${CARGO_MODE_ARG}" ;\
+		echo ">>> $${CMD}" ;\
+		$${CMD} ;\
+	done
+	@echo ">>>>> Copy bindings"
 	cp logic/logic/bindings.h ${OUT_INCLUDE}
+
+create-framework:
+	@echo ">>>>> Create Framework to ${OUT_FRAMEWORK}"
+	@CMD="xcodebuild -create-xcframework" ;\
+	for target in ${ALL_TARGETS}; do \
+		CMD="$${CMD} -library ${TARGET_DIR}/$${target}/${MODE}/liblogic.a" ;\
+	done ;\
+	CMD="$${CMD} -headers ${OUT_INCLUDE}/* -output ${OUT_FRAMEWORK}" ;\
+	rm -rf ${OUT_FRAMEWORK} ;\
+	echo ">>> $${CMD}" ;\
+	$${CMD}
+
 
 kotlin-pb:
 	@echo ">>>>> Kotlin PB"
@@ -63,19 +93,18 @@ kotlin-pb:
 logic-debug-android:
 	@echo ">>>>> Logic Android"
 	cd logic && ${CARGO} ndk --target arm64-v8a --target x86_64 --target x86 --platform 26 build
-	cp ${TARGET}/aarch64-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
-	cp ${TARGET}/x86_64-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
-	cp ${TARGET}/i686-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86/
-
+	cp ${TARGET_DIR}/aarch64-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
+	cp ${TARGET_DIR}/x86_64-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
+	cp ${TARGET_DIR}/i686-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86/
 logic-release-android:
 	@echo ">>>>> Logic Android"
 	cd logic && ${CARGO} ndk --target arm64-v8a --target x86_64 --target x86 --platform 26 build --release
-	cp ${TARGET}/aarch64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
-	cp ${TARGET}/x86_64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
-	cp ${TARGET}/i686-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86/
+	cp ${TARGET_DIR}/aarch64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
+	cp ${TARGET_DIR}/x86_64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
+	cp ${TARGET_DIR}/i686-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86/
+
 
 nightly:
 	rustup override set nightly
-
 nightly-unset:
 	rustup override unset
