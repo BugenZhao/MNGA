@@ -50,6 +50,11 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
     }
+    Picker(selection: $pref.defaultTopicListOrder, label: Label("Default Topic List Order", systemImage: "arrow.up.arrow.down")) {
+      ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
+        Label(order.description, systemImage: order.icon).tag(order)
+      }
+    }
   }
 
   @ViewBuilder
@@ -65,11 +70,6 @@ struct PreferencesInnerView: View {
   var advanced: some View {
     Toggle(isOn: $pref.imageViewerEnableZoom) {
       Label("Enable Zoom for Image Viewer", systemImage: "arrow.up.left.and.arrow.down.right")
-    }
-    Picker(selection: $pref.defaultTopicListOrder, label: Label("Default Topic List Order", systemImage: "arrow.up.arrow.down")) {
-      ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
-        Label(order.description, systemImage: order.icon).tag(order)
-      }
     }
   }
 
