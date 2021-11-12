@@ -1,7 +1,6 @@
 CARGO = $(shell which cargo)
 XARGO = $(shell which xargo)
 TARGET_DIR = target
-OUT_LIBS = out/libs
 OUT_LIBS_ANDROID = out/libs/jniLibs
 OUT_INCLUDE = out/include
 
@@ -50,7 +49,7 @@ logic-deploy:
 logic-macos-%:
 	make logic-macos MODE=$*
 logic-macos:
-	make logic ALL_TARGETS="${MACOS_ALL_TARGETS}"
+	make logic-lipo ALL_TARGETS="${MACOS_ALL_TARGETS}"
 
 logic-catalyst-%:
 	make logic-catalyst MODE=$*
@@ -59,6 +58,10 @@ logic-catalyst:
 
 
 logic: swift-pb build-logic create-framework
+logic-lipo:
+	@make swift-pb
+	@make build-logic-lipo
+	@make create-framework ALL_TARGETS=universal
 
 swift-pb:
 	@echo ">>>>> Swift PB"
@@ -71,6 +74,12 @@ build-logic:
 		echo ">>> $${CMD}" ;\
 		$${CMD} ;\
 	done
+	@echo ">>>>> Copy bindings"
+	cp logic/logic/bindings.h ${OUT_INCLUDE}
+
+build-logic-lipo:
+	@echo ">>>>> Build liblogic.a for '${ALL_TARGETS}' in ${MODE} mode using lipo"
+	${CARGO} lipo --targets ${ALL_TARGETS} ${CARGO_MODE_ARG}
 	@echo ">>>>> Copy bindings"
 	cp logic/logic/bindings.h ${OUT_INCLUDE}
 

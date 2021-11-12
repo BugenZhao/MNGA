@@ -210,9 +210,10 @@
 		B4C024E6268850AA00E53554 /* BasicLogicCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024E2268850AA00E53554 /* BasicLogicCall.swift */; };
 		B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EC268850E800E53554 /* SwiftProtobuf */; };
 		B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EF268850F300E53554 /* SwiftProtobuf */; };
-		B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F32688511E00E53554 /* liblogicmacos.a */; };
 		B4C7F011273EBFF400F64A88 /* logic-ios.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */; };
 		B4C7F012273EBFF400F64A88 /* logic-ios.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B4C7F015273EE4F200F64A88 /* logic-macos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */; };
+		B4C7F016273EE4F200F64A88 /* logic-macos.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B4CF7E7E2709DBF500E7C374 /* CellContextMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */; };
 		B4CF7E842709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
 		B4CF7E852709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
@@ -306,6 +307,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B4C7F012273EBFF400F64A88 /* logic-ios.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B4C7F017273EE4F200F64A88 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B4C7F016273EE4F200F64A88 /* logic-macos.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,6 +429,7 @@
 		B4C024F12688510C00E53554 /* liblogicios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicios.a; path = ../out/libs/liblogicios.a; sourceTree = "<group>"; };
 		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
 		B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "logic-ios.xcframework"; path = "../out/logic-ios.xcframework"; sourceTree = "<group>"; };
+		B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "logic-macos.xcframework"; path = "../out/logic-macos.xcframework"; sourceTree = "<group>"; };
 		B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellContextMenuModifier.swift; sourceTree = "<group>"; };
 		B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayBuilder.swift; sourceTree = "<group>"; };
 		B4CF7E862709F58400E7C374 /* ZoomableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableScrollView.swift; sourceTree = "<group>"; };
@@ -506,8 +519,8 @@
 			files = (
 				B412F709268DFC4F00EB0614 /* Logging in Frameworks */,
 				B409CE6B269F3A6E00F617EC /* AlertToast in Frameworks */,
+				B4C7F015273EE4F200F64A88 /* logic-macos.xcframework in Frameworks */,
 				B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */,
-				B4C024F42688512600E53554 /* liblogicmacos.a in Frameworks */,
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
 				B404C497270C71F600FF1743 /* Colorful in Frameworks */,
 				B4E10718268DADF5006C1742 /* WebView in Frameworks */,
@@ -725,6 +738,7 @@
 		B4C7F008273EA62000F64A88 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */,
 				B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */,
 			);
 			name = Frameworks;
@@ -920,6 +934,7 @@
 				B4C024CC26884FD700E53554 /* Sources */,
 				B4C024CD26884FD700E53554 /* Frameworks */,
 				B4C024CE26884FD700E53554 /* Resources */,
+				B4C7F017273EE4F200F64A88 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
