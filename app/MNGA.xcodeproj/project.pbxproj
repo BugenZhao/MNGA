@@ -63,7 +63,6 @@
 		B40DC69E270DC7D0002DC8A1 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC699270DC7C6002DC8A1 /* Logger.swift */; };
 		B40DC6A0270DC7F0002DC8A1 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC69F270DC7F0002DC8A1 /* Logging */; };
 		B40DC6A2270DC7F7002DC8A1 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC6A1270DC7F7002DC8A1 /* Logging */; };
-		B40DC6A3270DC826002DC8A1 /* liblogicios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C024F12688510C00E53554 /* liblogicios.a */; };
 		B40DC6AD270DD33C002DC8A1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED48269C5F78009C52F5 /* Constants.swift */; };
 		B40DC6AE270DD33C002DC8A1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED48269C5F78009C52F5 /* Constants.swift */; };
 		B40DC6AF270DDB90002DC8A1 /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* RawRepresentable.swift */; };
@@ -211,9 +210,7 @@
 		B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EC268850E800E53554 /* SwiftProtobuf */; };
 		B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EF268850F300E53554 /* SwiftProtobuf */; };
 		B4C7F011273EBFF400F64A88 /* logic-ios.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */; };
-		B4C7F012273EBFF400F64A88 /* logic-ios.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B4C7F015273EE4F200F64A88 /* logic-macos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */; };
-		B4C7F016273EE4F200F64A88 /* logic-macos.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B4CF7E7E2709DBF500E7C374 /* CellContextMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */; };
 		B4CF7E842709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
 		B4CF7E852709E38500E7C374 /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E832709E38500E7C374 /* ArrayBuilder.swift */; };
@@ -300,28 +297,6 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B4C7F00E273EA64A00F64A88 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B4C7F012273EBFF400F64A88 /* logic-ios.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B4C7F017273EE4F200F64A88 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B4C7F016273EE4F200F64A88 /* logic-macos.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -346,7 +321,6 @@
 		B409CE6C26A0920C00F617EC /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
 		B40A833F272542C7004DFA87 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		B40DC648270DB8B3002DC8A1 /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
-		B40DC653270DB8B3002DC8A1 /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = Library/Frameworks/IntentsUI.framework; sourceTree = DEVELOPER_DIR; };
 		B40DC66C270DB9B2002DC8A1 /* Widget Intents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Widget Intents.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B40DC66F270DB9B2002DC8A1 /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
 		B40DC671270DB9B2002DC8A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -426,8 +400,6 @@
 		B4C024D226884FD700E53554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B4C024D326884FD700E53554 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		B4C024E2268850AA00E53554 /* BasicLogicCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLogicCall.swift; sourceTree = "<group>"; };
-		B4C024F12688510C00E53554 /* liblogicios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicios.a; path = ../out/libs/liblogicios.a; sourceTree = "<group>"; };
-		B4C024F32688511E00E53554 /* liblogicmacos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogicmacos.a; path = ../out/libs/liblogicmacos.a; sourceTree = "<group>"; };
 		B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "logic-ios.xcframework"; path = "../out/logic-ios.xcframework"; sourceTree = "<group>"; };
 		B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "logic-macos.xcframework"; path = "../out/logic-macos.xcframework"; sourceTree = "<group>"; };
 		B4CF7E7D2709DBF500E7C374 /* CellContextMenuModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellContextMenuModifier.swift; sourceTree = "<group>"; };
@@ -462,7 +434,6 @@
 		B4EB80E5269B13830014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
 		B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOverlay.swift; sourceTree = "<group>"; };
 		B4EB80EB269B1B4F0014DDFA /* MNGA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MNGA.entitlements; sourceTree = "<group>"; };
-		B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblogiccatalyst.a; path = ../out/libs/liblogiccatalyst.a; sourceTree = "<group>"; };
 		B4EB80EE269B2C090014DDFA /* ContentCombiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentCombiner.swift; sourceTree = "<group>"; };
 		B4F2408326A30A8500D620B0 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
 		B4F2408626A30C4900D620B0 /* NotificationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRowView.swift; sourceTree = "<group>"; };
@@ -481,7 +452,6 @@
 				B404C4F9270D9EBA00FF1743 /* WidgetKit.framework in Frameworks */,
 				B40DC6A2270DC7F7002DC8A1 /* Logging in Frameworks */,
 				B40DC679270DBA19002DC8A1 /* SwiftProtobuf in Frameworks */,
-				B40DC6A3270DC826002DC8A1 /* liblogicios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,7 +627,6 @@
 		B4C024BB26884FD600E53554 = {
 			isa = PBXGroup;
 			children = (
-				B4C7F008273EA62000F64A88 /* Frameworks */,
 				B40DC6AB270DD1F7002DC8A1 /* MNGA Widget Extension.entitlements */,
 				B4EB80EB269B1B4F0014DDFA /* MNGA.entitlements */,
 				B4C024C026884FD600E53554 /* Shared */,
@@ -724,22 +693,11 @@
 		B4C024EE268850F300E53554 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B4EB80EC269B1B740014DDFA /* liblogiccatalyst.a */,
-				B4C024F32688511E00E53554 /* liblogicmacos.a */,
-				B4C024F12688510C00E53554 /* liblogicios.a */,
+				B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */,
+				B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */,
 				B43DEDAB269F0951009C52F5 /* WidgetKit.framework */,
 				B43DEDAD269F0951009C52F5 /* SwiftUI.framework */,
 				B40DC648270DB8B3002DC8A1 /* Intents.framework */,
-				B40DC653270DB8B3002DC8A1 /* IntentsUI.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		B4C7F008273EA62000F64A88 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B4C7F013273EE4E600F64A88 /* logic-macos.xcframework */,
-				B4C7F00F273EBFEC00F64A88 /* logic-ios.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -904,7 +862,6 @@
 				B4C024C526884FD700E53554 /* Frameworks */,
 				B4C024C626884FD700E53554 /* Resources */,
 				B43DEDBC269F0952009C52F5 /* Embed App Extensions */,
-				B4C7F00E273EA64A00F64A88 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -934,7 +891,6 @@
 				B4C024CC26884FD700E53554 /* Sources */,
 				B4C024CD26884FD700E53554 /* Frameworks */,
 				B4C024CE26884FD700E53554 /* Resources */,
-				B4C7F017273EE4F200F64A88 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
