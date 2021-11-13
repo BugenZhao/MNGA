@@ -60,6 +60,10 @@ struct UserProfileView: View {
     return Self.init(user: user, topicDataSource: topicDataSource, postDataSource: postDataSource)
   }
 
+  var shouldShowList: Bool {
+    !user.id.isEmpty
+  }
+
   @ViewBuilder
   var list: some View {
     switch self.tab {
@@ -102,15 +106,18 @@ struct UserProfileView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    ToolbarItem(placement: .mayBottomBar) {
-      Picker("Tab", selection: $tab.animation()) {
-        ForEach(Tab.allCases, id: \.self) {
-          Text($0.rawValue).tag($0)
-        }
-      } .pickerStyle(SegmentedPickerStyle())
+    ToolbarItem(placement: .principal) {
+      if shouldShowList {
+        Picker("Tab", selection: $tab.animation()) {
+          ForEach(Tab.allCases, id: \.self) {
+            Text($0.rawValue).tag($0)
+          }
+        } .pickerStyle(SegmentedPickerStyle())
+          .frame(maxWidth: 200)
+      }
     }
 
-    ToolbarItem(placement: .primaryAction) {
+    ToolbarItem(placement: .mayNavigationBarTrailing) {
       Button(action: { self.newShortMessage() }) {
         Label("New Short Message", systemImage: "message")
       }
@@ -126,7 +133,7 @@ struct UserProfileView: View {
         }
       }
 
-      if !user.id.isEmpty {
+      if shouldShowList {
         list
       }
     }
