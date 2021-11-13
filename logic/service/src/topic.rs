@@ -4,11 +4,11 @@ use crate::{
     fetch_package,
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
-    post::extract_post_with_at_page,
+    post::extract_post,
     user::{extract_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
-        extract_string,
+        extract_string, get_unique_id,
     },
 };
 use cache::CACHE;
@@ -374,13 +374,16 @@ pub async fn get_topic_details(
     }
     let package = package_result?;
 
+    let user_context = get_unique_id();
     let _users = extract_nodes(&package, "/root/__U/item", |ns| {
-        ns.into_iter().filter_map(extract_user_and_cache).collect()
+        ns.into_iter()
+            .filter_map(|n| extract_user_and_cache(n, Some(&user_context)))
+            .collect()
     })?;
 
     let replies = extract_nodes(&package, "/root/__R/item", |ns| {
         ns.into_iter()
-            .filter_map(|n| extract_post_with_at_page(request.page, n))
+            .filter_map(|n| extract_post(n, request.get_page(), &user_context))
             .collect()
     })?;
 
@@ -466,9 +469,8 @@ pub async fn get_user_topic_list(
 
 #[cfg(test)]
 mod test {
-    use crate::constants::REVIEW_UID;
-
-    use super::{super::user::UserController, *};
+    use super::*;
+    use crate::{constants::REVIEW_UID, user::UserController};
 
     #[tokio::test]
     async fn test_topic_list() -> ServiceResult<()> {
@@ -501,7 +503,6 @@ mod test {
 
         assert!(!response.get_topic().get_id().is_empty());
         assert!(!response.get_replies().is_empty());
-        assert!(!UserController::get().is_empty());
 
         Ok(())
     }
@@ -663,6 +664,36 @@ mod test {
                 .unwrap()
                 .unwrap();
             assert_eq!(topic.get_id(), id);
+        }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_anonymous_names() -> ServiceResult<()> {
+        for page in [1, 2] {
+            let response = get_topic_details(TopicDetailsRequest {
+                topic_id: "17260903".to_owned(),
+                page,
+                ..Default::default()
+            })
+            .await?;
+
+            let anony_ids = response
+                .replies
+                .into_iter()
+                .map(|p| p.author_id)
+                .filter(|id| id.contains(","))
+                .collect::<Vec<_>>();
+
+            assert!(anony_ids.len() > 0);
+
+            for id in anony_ids {
+                let user = UserController::get().get_by_id(&id).unwrap();
+                let anony_name = user.get_name().get_anonymous();
+                assert_ne!(anony_name, "");
+                dbg!(&id, anony_name);
+            }
         }
 
         Ok(())

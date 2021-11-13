@@ -104,7 +104,9 @@ pub async fn get_short_msg_details(
     .await?;
 
     let _users = extract_nodes(&package, "/root/data/item/userInfo/item", |ns| {
-        ns.into_iter().filter_map(extract_user_and_cache).collect()
+        ns.into_iter()
+            .filter_map(|n| extract_user_and_cache(n, None))
+            .collect()
     })?;
 
     let posts = extract_nodes(&package, "/root/data/item/item", |ns| {

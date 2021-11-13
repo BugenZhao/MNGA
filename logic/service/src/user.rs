@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{
     error::ServiceResult,
     fetch_package,
@@ -16,12 +18,16 @@ lazy_static! {
     static ref USER_CONTROLLER: UserController = Default::default();
 }
 
-#[derive(Default)]
-pub struct UserController {
-    map: DashMap<String, User>,
+pub fn attach_context_to_id(id: &str, context: &str) -> String {
+    format!("{},{}", context, id)
 }
 
-#[allow(dead_code)]
+#[derive(Default, Debug)]
+pub struct UserController {
+    map: DashMap<String, User>,
+    anonymous: DashMap<String, HashMap<String, User>>,
+}
+
 impl UserController {
     pub fn get<'a>() -> &'a Self {
         &USER_CONTROLLER
@@ -31,16 +37,23 @@ impl UserController {
         self.map.insert(user.id.to_owned(), user);
     }
 
-    pub fn update_users(&self, users: Vec<User>) {
-        users.into_iter().for_each(|u| self.update_user(u));
+    pub fn add_anonymous_user(&self, mut user: User, context: &str) -> User {
+        let mut e = self.anonymous.entry(context.to_owned()).or_default();
+        let v = e.value_mut();
+        let id = attach_context_to_id(&format!("-{}", v.len() + 1), context);
+        user.set_id(id);
+        v.insert(user.get_id().to_owned(), user.clone());
+        user
     }
-}
 
-impl std::ops::Deref for UserController {
-    type Target = DashMap<String, User>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.map
+    pub fn get_by_id(&self, id: &str) -> Option<User> {
+        if id.contains(",") {
+            let context: String = id.chars().take_while(|c| *c != ',').collect();
+            let map = self.anonymous.get(&context)?;
+            let user = map.get(id)?;
+            return Some(user.to_owned());
+        }
+        self.map.get(id).map(|u| u.to_owned())
     }
 }
 
@@ -100,10 +113,14 @@ fn extract_user(node: Node) -> Option<User> {
     let user = User {
         id: get!(map, "uid")?,
         name: Some(name).into(),
-        avatar_url: get!(map, "avatar")?,
-        reg_date: get!(map, "regdate", _)?,
-        post_num: get!(map, "postnum", _).or_else(|| get!(map, "posts", _))?,
-        fame: get!(map, "fame", _).or_else(|| get!(map, "rvrc", _))?,
+        avatar_url: get!(map, "avatar").unwrap_or_default(),
+        reg_date: get!(map, "regdate", _).unwrap_or_default(),
+        post_num: get!(map, "postnum", _)
+            .or_else(|| get!(map, "posts", _))
+            .unwrap_or_default(),
+        fame: get!(map, "fame", _)
+            .or_else(|| get!(map, "rvrc", _))
+            .unwrap_or_default(),
         signature: Some(signature).into(),
         ..Default::default()
     };
@@ -111,15 +128,22 @@ fn extract_user(node: Node) -> Option<User> {
     Some(user)
 }
 
-pub fn extract_user_and_cache(node: Node) -> Option<User> {
-    let user = extract_user(node)?;
-    UserController::get().update_user(user.clone());
+pub fn extract_user_and_cache(node: Node, context: Option<&str>) -> Option<User> {
+    let mut user = extract_user(node)?;
+
+    let controller = UserController::get();
+    match (user.get_name().get_anonymous() != "", context) {
+        (true, Some(context)) => user = controller.add_anonymous_user(user.clone(), context),
+        (true, None) => {}
+        (false, _) => controller.update_user(user.clone()),
+    }
+
     Some(user)
 }
 
 pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<RemoteUserResponse> {
     let user_id = request.get_user_id();
-    if let Some(user) = UserController::get().get(user_id) {
+    if let Some(user) = UserController::get().get_by_id(user_id) {
         return Ok(RemoteUserResponse {
             _user: Some(RemoteUserResponse_oneof__user::user(user.to_owned())),
             ..Default::default()
@@ -138,7 +162,10 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
     )
     .await?;
 
-    let user = extract_node(&package, "/root/data/item", extract_user_and_cache)?.flatten();
+    let user = extract_node(&package, "/root/data/item", |n| {
+        extract_user_and_cache(n, None)
+    })?
+    .flatten();
 
     Ok(RemoteUserResponse {
         _user: user.map(RemoteUserResponse_oneof__user::user),
