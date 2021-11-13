@@ -8,5 +8,7 @@ members = [
     "logic/service",
 ]
 
-# [profile.release]
-# debug = true
+[profile.release]
+opt-level = "s"   # Optimize for size.
+lto = true        # Enable link time optimization
+codegen-units = 1
