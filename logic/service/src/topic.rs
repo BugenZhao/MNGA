@@ -5,7 +5,7 @@ use crate::{
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
     post::extract_post_with_at_page,
-    user::extract_user_and_cache,
+    user::{extract_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
         extract_string,
@@ -108,7 +108,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         id,
         subject: Some(subject).into(),
         author_id: get!(map, "authorid").unwrap_or_default(), // fix 0730 bug
-        author_name: get!(map, "author").unwrap_or_default(), // fix 0730 bug
+        author_name: get!(map, "author").map(extract_user_name).into(), // fix 0730 bug
         post_date: get!(map, "postdate", _)?,
         last_post_date: get!(map, "lastpost", _)?,
         replies_num: get!(map, "replies", _)?,

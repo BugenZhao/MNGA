@@ -10,7 +10,10 @@ use protos::{
 };
 use serde_json::Value;
 
-use crate::{error::ServiceResult, fetch::fetch_json_value, topic::extract_topic_subject};
+use crate::{
+    error::ServiceResult, fetch::fetch_json_value, topic::extract_topic_subject,
+    user::extract_user_name,
+};
 
 static NOTI_PREFIX: &str = "/noti_v2";
 fn noti_key(id: &str) -> String {
@@ -38,7 +41,7 @@ fn extract_noti(value: &Value) -> Option<Notification> {
 
     let other_user = User {
         id: get!(kvs, "1").unwrap_or_default(),
-        name: get!(kvs, "2").unwrap_or_default(),
+        name: get!(kvs, "2").map(extract_user_name).into(),
         ..Default::default()
     };
 
