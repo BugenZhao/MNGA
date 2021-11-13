@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 struct DataSource {
   let forum: PagingDataSource<ForumSearchResponse, Forum>
@@ -16,7 +17,7 @@ struct DataSource {
 
 class GlobalSearchModel: SearchModel<DataSource> {
   init() {
-    super.init(commited: true)
+    super.init(commited: false)
   }
 
   override func buildDataSource(text: String) -> DataSource {
@@ -71,7 +72,7 @@ class GlobalSearchModel: SearchModel<DataSource> {
   }
 }
 
-struct ForumSearchItemsView: View {
+struct ForumSearchView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
   @ObservedObject var dataSource: PagingDataSource<ForumSearchResponse, Forum>
 
@@ -84,36 +85,40 @@ struct ForumSearchItemsView: View {
         .modifier(FavoriteModifier(
         isFavorite: isFavorite,
         toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-        ))
+      ))
     }
   }
 
   var body: some View {
-    if dataSource.notLoaded {
-      LoadingRowView()
-        .onAppear { dataSource.initialLoad() }
-    } else {
-      ForEach(dataSource.items, id: \.id) { forum in
-        buildLink(forum)
+    List {
+      if dataSource.notLoaded {
+        LoadingRowView()
+          .onAppear { dataSource.initialLoad() }
+      } else {
+        ForEach(dataSource.items, id: \.id) { forum in
+          buildLink(forum)
+        }
       }
-    }
+    } .navigationTitleInline(key: "Forum Search")
   }
 }
 
-struct UserSearchItemsView: View {
+struct UserSearchView: View {
   @ObservedObject var dataSource: PagingDataSource<RemoteUserResponse, User>
 
   var body: some View {
-    if dataSource.notLoaded {
-      LoadingRowView()
-        .onAppear { dataSource.initialLoad() }
-    } else {
-      ForEach(dataSource.items, id: \.id) { user in
-        NavigationLink(destination: UserProfileView.build(user: user)) {
-          UserView(user: user, style: .huge)
+    List {
+      if dataSource.notLoaded {
+        LoadingRowView()
+          .onAppear { dataSource.initialLoad() }
+      } else {
+        ForEach(dataSource.items, id: \.id) { user in
+          NavigationLink(destination: UserProfileView.build(user: user)) {
+            UserView(user: user, style: .huge)
+          }
         }
       }
-    }
+    } .navigationTitleInline(key: "User Search")
   }
 }
 
@@ -127,43 +132,21 @@ struct GlobalSearchView: View {
 
   @ObservedObject var model: GlobalSearchModel
 
-  @State var mode: Mode?
-
   var body: some View {
     List {
-      if mode == nil {
+      if let ds = model.dataSource {
         Section(header: Text("Search \"\(model.text)\" in...")) {
-          Button(action: { withAnimation { mode = .forum } }) {
+          NavigationLink(destination: ForumSearchView(dataSource: ds.forum)) {
             Label("All Forums", systemImage: "square.stack.3d.down.right")
           }
-          Button(action: { withAnimation { mode = .topic } }) {
+          NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitleInline(key: "Topic Search")) {
             Label("All Topics", systemImage: "doc.richtext")
           }
-          Button(action: { withAnimation { mode = .user } }) {
+          NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
             Label("All Users", systemImage: "person.2")
           }
         }
       }
-
-      if let ds = model.dataSource {
-        switch mode {
-        case .forum:
-          Section(header: Text("Forums")) {
-            ForumSearchItemsView(dataSource: ds.forum)
-          }
-        case .topic:
-          Section(header: Text("Topics")) {
-            TopicSearchItemsView(dataSource: ds.topic)
-          }
-        case .user:
-          Section(header: Text("User")) {
-            UserSearchItemsView(dataSource: ds.user)
-          }
-        default:
-          EmptyView()
-        }
-      }
     } .mayInsetGroupedListStyle()
-      .onChange(of: mode) { _ in model.commit() }
   }
 }
