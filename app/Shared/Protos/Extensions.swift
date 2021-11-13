@@ -211,3 +211,21 @@ extension ShortMessagePostAction {
     }
   }
 }
+
+extension UserName {
+  var display: String {
+    self.anonymous.isEmpty ? self.normal : self.anonymous
+  }
+}
+
+extension Topic {
+  var authorNameDisplay: String {
+    let new = self.authorName.display
+
+    if new.isEmpty {
+      return self.authorNameRaw
+    } else {
+      return new
+    }
+  }
+}

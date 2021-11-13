@@ -79,8 +79,8 @@ struct UserView: View {
   }
 
   var name: String {
-    if let name = user?.name, !name.isEmpty {
-      return name
+    if let name = user?.name, !name.display.isEmpty {
+      return name.display
     } else if !id.isEmpty {
       return id
     } else {

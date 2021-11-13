@@ -58,7 +58,7 @@ struct TopicRowView: View {
   }
 
   var body: some View {
-    TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, name: topic.authorName, date: useTopicPostDate ? topic.postDate : topic.lastPostDate)
+    TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, name: topic.authorNameDisplay, date: useTopicPostDate ? topic.postDate : topic.lastPostDate)
   }
 }
 
@@ -71,14 +71,14 @@ struct TopicView_Previews: PreviewProvider {
           s.content = "很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题很长的标题"
         }
         $0.repliesNum = n
-        $0.authorName = "Author"
+        $0.authorName = .with { n in n.normal = "Author" }
         $0.lastPostDate = UInt64(Date(timeIntervalSinceNow: TimeInterval(-300)).timeIntervalSince1970)
       })
     }
 
     AuthedPreview {
       List {
-        item(0); item(20); item(50); item(150); item(250); item(550);
+        item(0); item(20); item(50); item(150); item(250); item(550)
       } .mayGroupedListStyle()
     }
   }

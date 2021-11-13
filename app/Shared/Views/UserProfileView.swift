@@ -72,7 +72,7 @@ struct UserProfileView: View {
         LoadingRowView()
           .onAppear { topicDataSource.initialLoad() }
       } else {
-        Section(header: Text("\(user.name)'s Topics")) {
+        Section(header: Text("\(user.name.display)'s Topics")) {
           if topicDataSource.items.isEmpty {
             EmptyRowView()
           } else {
@@ -89,7 +89,7 @@ struct UserProfileView: View {
         LoadingRowView()
           .onAppear { postDataSource.initialLoad() }
       } else {
-        Section(header: Text("\(user.name)'s Posts")) {
+        Section(header: Text("\(user.name.display)'s Posts")) {
           if postDataSource.items.isEmpty {
             EmptyRowView()
           } else {
@@ -139,14 +139,14 @@ struct UserProfileView: View {
     }
       .toolbarWithFix { toolbar }
       .withTopicDetailsAction() // for signature only
-    .mayGroupedListStyle()
-      .navigationTitleInline(string: user.name)
+      .mayGroupedListStyle()
+      .navigationTitleInline(string: user.name.display)
   }
 
   func newShortMessage() {
     self.postModel.show(action: .with {
       $0.operation = .newSingleTo
-      $0.singleTo = user.name
+      $0.singleTo = user.name.normal
     })
   }
 }
