@@ -74,9 +74,10 @@
    $ cargo install cargo-lipo
 
    $ rustup target add aarch64-apple-ios
-   $ rustup target add x86_64-apple-ios     # Simulator target for Intel
-   $ rustup target add aarch64-apple-darwin # macOS target for Apple Silicon
-   $ rustup target add x86_64-apple-darwin  # macOS target for Intel
+   $ rustup target add aarch64-apple-ios-sim  # optional: Simulator target for Apple Silicon
+   $ rustup target add x86_64-apple-ios       # optional: Simulator target for Intel
+   $ rustup target add aarch64-apple-darwin   # optional: macOS target for Apple Silicon
+   $ rustup target add x86_64-apple-darwin    # optional: macOS target for Intel
    ```
 
 3. Clone the repository and run at the project root:
@@ -84,13 +85,13 @@
    克隆仓库到本地，在项目的根目录，运行
 
    ```bash
-   $ make ios-release
-   $ make macos-release
+   $ make ios
+   $ make macos
    ```
 
-   You'll find a `.a` archive and its header under `out/`
+   You'll find `logic-ios.xcframework` and `logic-macos.xcframework` under `out`.
 
-   检查 `out` 目录，将会生成一个 `.a` 库和其对应的 `.h` 头文件
+   检查 `out` 目录，将会生成 `logic-ios.xcframework` 和 `logic-macos.xcframework` 两个 Xcode Framework.
 
 4. Open the Xcode project `app/NGA.xcodeproj`. Run the app after you set the correct Apple ID.
 
