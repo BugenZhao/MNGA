@@ -90,16 +90,20 @@ struct ForumSearchView: View {
   }
 
   var body: some View {
-    List {
+    Group {
       if dataSource.notLoaded {
-        LoadingRowView()
+        ProgressView()
           .onAppear { dataSource.initialLoad() }
       } else {
-        ForEach(dataSource.items, id: \.id) { forum in
-          buildLink(forum)
+        List {
+          Section(header: Text("Search Results")) {
+            ForEach(dataSource.items, id: \.id) { forum in
+              buildLink(forum)
+            }
+          }
         }
       }
-    } .navigationTitleInline(key: "Forum Search")
+    } .navigationTitle("Forum Search")
   }
 }
 
@@ -107,18 +111,22 @@ struct UserSearchView: View {
   @ObservedObject var dataSource: PagingDataSource<RemoteUserResponse, User>
 
   var body: some View {
-    List {
+    Group {
       if dataSource.notLoaded {
-        LoadingRowView()
+        ProgressView()
           .onAppear { dataSource.initialLoad() }
       } else {
-        ForEach(dataSource.items, id: \.id) { user in
-          NavigationLink(destination: UserProfileView.build(user: user)) {
-            UserView(user: user, style: .huge)
+        List {
+          Section(header: Text("Search Results")) {
+            ForEach(dataSource.items, id: \.id) { user in
+              NavigationLink(destination: UserProfileView.build(user: user)) {
+                UserView(user: user, style: .huge)
+              }
+            }
           }
         }
       }
-    } .navigationTitleInline(key: "User Search")
+    } .navigationTitle("User Search")
   }
 }
 
@@ -139,7 +147,7 @@ struct GlobalSearchView: View {
           NavigationLink(destination: ForumSearchView(dataSource: ds.forum)) {
             Label("All Forums", systemImage: "square.stack.3d.down.right")
           }
-          NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitleInline(key: "Topic Search")) {
+          NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search")) {
             Label("All Topics", systemImage: "doc.richtext")
           }
           NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
