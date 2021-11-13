@@ -109,6 +109,7 @@ message Span {
   message Tagged {
     string tag = 1;
     repeated string attributes = 2;
+    repeated string complex_attributes = 4;
     repeated Span spans = 3;
   }
 

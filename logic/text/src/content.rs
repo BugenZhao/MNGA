@@ -26,7 +26,7 @@ peg::parser! {
         rule colon() = ":"
         rule ws() = [' ' | '\t' | '\r' | '\n']
         rule _() = ws()*
-        rule br_tag() = "<br/>"
+        rule br_tag() = "<br/>" / "[stripbr]"
         rule divider_tag() = "==="
 
         rule token() -> &'input str
@@ -37,12 +37,12 @@ peg::parser! {
             = $( (!(left_bracket() / right_bracket() / comma()) any_char())* )
         rule attributes() -> Vec<&'input str>
             = equal() ts:(attribute() ** comma()) { ts }
-        rule space_sep_attrs()  // ignored "[td rowspan=2 colspan=3]"
-            = " " ( (!("=") attribute()) ** " " )
+        rule complex_attrs() -> Vec<&'input str> // "[td rowspan=2 colspan=3]"
+            = " " ts:( attribute() ** " " ) { ts }
 
-        rule start_tag() -> (&'input str, Vec<&'input str>)
-            = left_bracket() t:token() a:attributes()? space_sep_attrs()? right_bracket() {
-                (t, a.unwrap_or_default())
+        rule start_tag() -> (&'input str, Vec<&'input str>, Vec<&'input str>)
+            = left_bracket() t:token() a:attributes()? c:complex_attrs()? right_bracket() {
+                (t, a.unwrap_or_default(), c.unwrap_or_default())
             }
         rule close_tag() -> &'input str
             = left_close_bracket() t:token() right_bracket() { t }
@@ -50,32 +50,21 @@ peg::parser! {
         rule plain_text() -> &'input str
             = $( (!(start_tag() / close_tag() / br_tag() / left_sticker_bracket() / divider_tag()) any_char())+ )
 
-        rule well_tagged() -> Span
-            = st:start_tag() s:(span()*) ct:close_tag() {?
-                let (start_tag, attributes) = st;
+        rule tagged() -> Span
+            = st:start_tag() s:(span()*) ct:close_tag()? {?
+                let (start_tag, attributes, complex_attributes) = st;
                 // if !start_tag.contains(ct) { return Err("matched close tag"); } // todo: add a flag for this check
                 let attributes = attributes.into_iter().map(|s| s.to_owned()).collect();
+                let complex_attributes = complex_attributes.into_iter().map(|s| s.to_owned()).collect();
 
                 Ok(span_of!(tagged(Span_Tagged {
                     tag: start_tag.to_owned(),
                     attributes,
+                    complex_attributes,
                     spans: s.into(),
                     ..Default::default()
                 })))
             }
-        rule unclosed_tagged() -> Span
-            = st:start_tag() s:(span()*) {
-                let (start_tag, attributes) = st;
-                let attributes = attributes.into_iter().map(|s| s.to_owned()).collect();
-
-                span_of!(tagged(Span_Tagged {
-                    tag: start_tag.to_owned(),
-                    attributes,
-                    spans: s.into(),
-                    ..Default::default()
-                }))
-            }
-        rule tagged() -> Span = well_tagged() / unclosed_tagged()
 
         rule sticker() -> Span
             = left_sticker_bracket() n:sticker_name() right_bracket() {
@@ -110,7 +99,7 @@ peg::parser! {
             }
 
         rule rich() -> Span
-            = tagged() / sticker() / br()
+            = br() / tagged() / sticker()
         rule non_divider_span() -> Span
             = rich() / plain()  // todo: any better way?
         rule span() -> Span
@@ -331,6 +320,44 @@ size=百分比]
     #[test]
     fn test_too_many_divider() {
         let text = &"======".repeat(10000).to_string();
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_stripbr() {
+        let text = r#"
+[randomblock]
+[stripbr]
+[fixsize height 20.999999 width 110 150 background #ffffff #ffffff][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 110%;100%;50%;0%;0%;./mon_202110/31/-10yuu8Q9vk-68x7K12T3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 110%;40%;40%;400%;0%;./mon_202110/31/-10yuu8Q9vk-55fgKkT3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 110%;50%;0%;600%;0%;./mon_202110/31/-10yuu8Q9vk-hx6oKlT3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 110%;60%;0%;500%;0%;./mon_202110/31/-10yuu8Q17b-37huKiT3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 120%;80%;10%;40%;30%;./mon_202110/31/-10yuu8Q9vk-jiehKvT3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 130%;10%;0%;65%;30%;./mon_202110/31/-10yuu8Q9vk-ci8mKkT3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 150%;10%;0%;45%;0%;./mon_202110/31/-10yuu8Q17b-3lylZgT3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 150%;100%;0%;20%;0%;./mon_202110/31/-10yuu8Q9vk-42pwZdT3cS1ls-a0.png][stripbr]
+[style height 100% width 100% left 0 top 0 dybg 115%;100%;50%;0%;0%;./mon_202110/31/-10yuu8Q17b-gjalKbT3cS1ls-a0.png][stripbr]
+[style left 0 top 0 margin 0 0 0][stripbr][align=right][url=https://space.bilibili.com/730732][img]./mon_202111/05/-1165qiQmh6v-gvebK5T3cSz6-a0.png[/img][/url][/align]
+[style left 0 top 0 margin 0 0 0][stripbr][align=left][url=https://space.bilibili.com/269415357][img]./mon_202111/05/-1165qiQr9f4-h4kbK4T1kShh-a0.png[/img][/url][/align]
+
+
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+[/style][stripbr]
+
+[/randomblock]
+        "#;
+
         let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }

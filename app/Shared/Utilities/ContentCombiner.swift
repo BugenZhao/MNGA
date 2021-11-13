@@ -50,6 +50,9 @@ class ContentCombiner {
     "sienna": .sienna,
     "silver": .init(hex: 0x888888),
   ]
+  static private let ignoredTags = [
+    "list"
+  ]
 
   private let parent: ContentCombiner?
   private let actionModel: TopicDetailsActionModel?
@@ -509,7 +512,7 @@ class ContentCombiner {
   }
 
   private func visit(collapsed: Span.Tagged) {
-    let title = collapsed.attributes.first ?? "Collapsed Content".localized
+    let title = "\(collapsed.attributes.first ?? "Collapsed Content".localized)..."
 
     let combiner = ContentCombiner(parent: self)
     combiner.visit(spans: collapsed.spans)
@@ -605,6 +608,16 @@ class ContentCombiner {
   }
 
   private func visit(defaultTagged: Span.Tagged) {
-    self.visit(spans: defaultTagged.spans)
+    if Self.ignoredTags.contains(defaultTagged.tag) {
+      self.visit(spans: defaultTagged.spans)
+      return
+    }
+
+    let combiner = ContentCombiner(parent: self)
+    let tagFont = Font.system(.footnote, design: .monospaced)
+    combiner.append(Text("[\(defaultTagged.tag)]").font(tagFont))
+    combiner.visit(spans: defaultTagged.spans)
+    combiner.append(Text("[/\(defaultTagged.tag)]").font(tagFont))
+    self.append(combiner.build())
   }
 }
