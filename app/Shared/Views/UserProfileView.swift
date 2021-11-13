@@ -61,7 +61,7 @@ struct UserProfileView: View {
   }
 
   var shouldShowList: Bool {
-    !user.id.isEmpty
+    !user.id.isEmpty && !user.isAnonymous
   }
 
   @ViewBuilder

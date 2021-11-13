@@ -212,7 +212,17 @@ extension ShortMessagePostAction {
   }
 }
 
+extension User {
+  var isAnonymous: Bool {
+    self.name.isAnonymous
+  }
+}
+
 extension UserName {
+  var isAnonymous: Bool {
+    self.anonymous != ""
+  }
+
   var display: String {
     self.anonymous.isEmpty ? self.normal : self.anonymous
   }
@@ -226,6 +236,18 @@ extension Topic {
       return self.authorNameRaw
     } else {
       return new
+    }
+  }
+
+  var authorNameCompat: UserName {
+    let new = self.authorName.display
+
+    if new.isEmpty {
+      return .with {
+        $0.normal = self.authorNameRaw
+      }
+    } else {
+      return self.authorName
     }
   }
 }
