@@ -13,7 +13,11 @@ struct TopicPostRowView: View {
   let post: LightPost
 
   var cleanSpans: [Span] {
-    let spans = post.content.spans.filter { $0.tagged.tag != "quote" }
+    let spans = post.content.spans.filter {
+      let isQuote = $0.tagged.tag == "quote"
+      let isReply = $0.tagged.tag == "b" && $0.tagged.spans.first?.plain.text.starts(with: "Reply to") == true
+      return !(isQuote || isReply)
+    }
     if spans.isEmpty {
       return [
         Span.with { s in
