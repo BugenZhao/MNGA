@@ -6,7 +6,7 @@ edition = "2021"
 
 [build-dependencies]
 cargo-emit = "0.2.1"
-protoc-rust = "2.24.1"
+protoc-rust = "2.25"
 
 [dependencies]
-protobuf = "2.24.1"
+protobuf = "2.25"
