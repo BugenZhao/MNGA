@@ -108,6 +108,8 @@ pub fn extract_user_name(original_name: String) -> UserName {
 }
 
 fn extract_user(node: Node) -> Option<User> {
+    static MUTE_BUFF: &'static str = "105";
+
     use super::macros::get;
     let map = extract_kv(node);
 
@@ -117,6 +119,8 @@ fn extract_user(node: Node) -> Option<User> {
         .or_else(|| get!(map, "sign"))
         .unwrap_or_default();
     let signature = extract_post_content(raw_signature);
+
+    let mute = get!(map, "buffs").unwrap_or_default().contains(MUTE_BUFF);
 
     let user = User {
         id: get!(map, "uid")?,
@@ -130,6 +134,7 @@ fn extract_user(node: Node) -> Option<User> {
             .or_else(|| get!(map, "rvrc", _))
             .unwrap_or_default(),
         signature: Some(signature).into(),
+        mute,
         ..Default::default()
     };
 
