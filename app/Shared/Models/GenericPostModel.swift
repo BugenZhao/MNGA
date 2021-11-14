@@ -128,7 +128,7 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
   }
 
   func onBuildContextError(_ e: Error) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.showEditor = false }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { self.showEditor = false }
   }
 
   func onBuildContextSuccess(task: Task, context: Context) {
