@@ -216,6 +216,15 @@ extension User {
   var isAnonymous: Bool {
     self.name.isAnonymous
   }
+  
+  var nameDisplayCompat: String {
+    let new = self.name.display
+    if new.isEmpty {
+      return self.nameRaw
+    } else {
+      return new
+    }
+  }
 }
 
 extension UserName {

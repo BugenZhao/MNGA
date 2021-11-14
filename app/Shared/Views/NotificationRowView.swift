@@ -28,7 +28,7 @@ struct NotificationRowView: View {
           switch noti.type {
           case .replyPost, .replyTopic, .shortMessage, .shortMessageStart:
             Image(systemName: "person")
-            Text(noti.otherUser.name.display)
+            Text(noti.otherUser.nameDisplayCompat)
           case .vote:
             Image(systemName: "text.bubble")
             Text("Your post")
