@@ -42,15 +42,17 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
     var subject: String?
     var content: String?
     var attachments: [PostAttachment]
+    var anonymous: Bool?
 
     let seed = UUID()
 
-    init(task: Task, to: String? = nil, subject: String? = nil, content: String? = nil) {
+    init(task: Task, to: String? = nil, subject: String? = nil, content: String? = nil, anonymous: Bool? = nil) {
       self.to = to
       self.task = task
       self.subject = subject
       self.content = content
       self.attachments = []
+      self.anonymous = anonymous
     }
 
     static var dummy: Context {
@@ -126,7 +128,7 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
   }
 
   func onBuildContextError(_ e: Error) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.showEditor = false }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { self.showEditor = false }
   }
 
   func onBuildContextSuccess(task: Task, context: Context) {

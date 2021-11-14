@@ -6,13 +6,19 @@ message Subject {
   string content = 2;
 }
 
+message UserName {
+  string normal = 1;
+  string anonymous = 2;
+}
+
 message Topic {
   string id = 1;
   repeated string tags = 8 [ deprecated = true ];
   string subject_content = 9 [ deprecated = true ];
   Subject subject = 2;
   string author_id = 3;
-  string author_name = 4;
+  string author_name_raw = 4 [ deprecated = true ];
+  UserName author_name = 15;
   uint64 post_date = 5;
   uint64 last_post_date = 6;
   uint32 replies_num = 7;
@@ -25,12 +31,13 @@ message Topic {
 
 message User {
   string id = 1;
-  string name = 2;
+  UserName name = 8;
   string avatar_url = 3;
   uint64 reg_date = 4;
   uint32 post_num = 5;
   sint64 fame = 6;
   PostContent signature = 7;
+  string name_raw = 2 [ deprecated = true ];
 }
 
 message PostId {

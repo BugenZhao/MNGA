@@ -38,7 +38,6 @@
 		B409252626D29F6C00BCB666 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = B409252526D29F6C00BCB666 /* BetterSafariView */; };
 		B409252826D29FD900BCB666 /* OpenURLModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409252726D29FD900BCB666 /* OpenURLModel.swift */; };
 		B409252926D29FD900BCB666 /* OpenURLModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409252726D29FD900BCB666 /* OpenURLModel.swift */; };
-		B409CE6B269F3A6E00F617EC /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B409CE6A269F3A6E00F617EC /* AlertToast */; };
 		B409CE6D26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B409CE6E26A0920C00F617EC /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B409CE6C26A0920C00F617EC /* ToastModifier.swift */; };
 		B40A8340272542C7004DFA87 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40A833F272542C7004DFA87 /* Binding.swift */; };
@@ -119,7 +118,6 @@
 		B43DED59269ED5EB009C52F5 /* FavoriteTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED57269ED5EB009C52F5 /* FavoriteTopicListView.swift */; };
 		B43DED5B269EDFDA009C52F5 /* UserMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */; };
 		B43DED5C269EDFDA009C52F5 /* UserMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED5A269EDFDA009C52F5 /* UserMenuView.swift */; };
-		B43DED5F269EFA5A009C52F5 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B43DED5E269EFA5A009C52F5 /* AlertToast */; };
 		B43DED61269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED62269EFAF4009C52F5 /* ToastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED60269EFAF4009C52F5 /* ToastModel.swift */; };
 		B43DED64269F02CF009C52F5 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED63269F02CF009C52F5 /* HapticUtils.swift */; };
@@ -269,6 +267,8 @@
 		B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */; };
 		B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
 		B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
+		B4EA154E2740F2F200C0308B /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B4EA154D2740F2F200C0308B /* AlertToast */; };
+		B4EA15502740F30000C0308B /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B4EA154F2740F30000C0308B /* AlertToast */; };
 		B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
 		B4EB80E6269B13830014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E5269B13830014DDFA /* ImageOverlay.swift */; };
 		B4EB80EA269B13B90014DDFA /* ImageOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EB80E8269B13B60014DDFA /* ImageOverlay.swift */; };
@@ -470,7 +470,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F707268DFC4600EB0614 /* Logging in Frameworks */,
-				B43DED5F269EFA5A009C52F5 /* AlertToast in Frameworks */,
+				B4EA154E2740F2F200C0308B /* AlertToast in Frameworks */,
 				B409252626D29F6C00BCB666 /* BetterSafariView in Frameworks */,
 				B41BC0DD271C7E5D00DD05F2 /* CombineExt in Frameworks */,
 				B45819C7268D9B5600999830 /* SDWebImageSwiftUI in Frameworks */,
@@ -488,9 +488,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F709268DFC4F00EB0614 /* Logging in Frameworks */,
-				B409CE6B269F3A6E00F617EC /* AlertToast in Frameworks */,
 				B4C7F015273EE4F200F64A88 /* logic-macos.xcframework in Frameworks */,
 				B45819C9268D9B6300999830 /* SDWebImageSwiftUI in Frameworks */,
+				B4EA15502740F30000C0308B /* AlertToast in Frameworks */,
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
 				B404C497270C71F600FF1743 /* Colorful in Frameworks */,
 				B4E10718268DADF5006C1742 /* WebView in Frameworks */,
@@ -875,10 +875,10 @@
 				B4E10715268DADEE006C1742 /* WebView */,
 				B412F706268DFC4600EB0614 /* Logging */,
 				B437B278269B09DC0092FF9E /* SwiftUIRefresh */,
-				B43DED5E269EFA5A009C52F5 /* AlertToast */,
 				B409252526D29F6C00BCB666 /* BetterSafariView */,
 				B4CF7E8E270AE04A00E7C374 /* Colorful */,
 				B41BC0DC271C7E5D00DD05F2 /* CombineExt */,
+				B4EA154D2740F2F200C0308B /* AlertToast */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
@@ -903,10 +903,10 @@
 				B45819CD268DA18600999830 /* SwiftUIX */,
 				B4E10717268DADF5006C1742 /* WebView */,
 				B412F708268DFC4F00EB0614 /* Logging */,
-				B409CE6A269F3A6E00F617EC /* AlertToast */,
 				B404C494270C71DC00FF1743 /* BetterSafariView */,
 				B404C496270C71F600FF1743 /* Colorful */,
 				B404C4A7270C8E1000FF1743 /* Introspect */,
+				B4EA154F2740F30000C0308B /* AlertToast */,
 			);
 			productName = "NGA (macOS)";
 			productReference = B4C024D026884FD700E53554 /* MNGA.app */;
@@ -952,11 +952,11 @@
 				B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */,
 				B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */,
 				B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
-				B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				B409252426D29F6C00BCB666 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */,
 				B404C4A6270C8E1000FF1743 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */,
+				B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -1730,14 +1730,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/elai950/AlertToast.git";
-			requirement = {
-				kind = revision;
-				revision = 0e5d99338a01674b9e8c1606e735a4fb6015ff31;
-			};
-		};
 		B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
@@ -1786,6 +1778,14 @@
 				minimumVersion = 0.3.0;
 			};
 		};
+		B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BugenZhao/AlertToast";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1808,11 +1808,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B409252426D29F6C00BCB666 /* XCRemoteSwiftPackageReference "BetterSafariView" */;
 			productName = BetterSafariView;
-		};
-		B409CE6A269F3A6E00F617EC /* AlertToast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */;
-			productName = AlertToast;
 		};
 		B40DC678270DBA19002DC8A1 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1859,11 +1854,6 @@
 			package = B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
 			productName = SwiftUIRefresh;
 		};
-		B43DED5E269EFA5A009C52F5 /* AlertToast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B43DED5D269EFA5A009C52F5 /* XCRemoteSwiftPackageReference "AlertToast" */;
-			productName = AlertToast;
-		};
 		B45819C6268D9B5600999830 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
@@ -1908,6 +1898,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */;
 			productName = WebView;
+		};
+		B4EA154D2740F2F200C0308B /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
+		};
+		B4EA154F2740F30000C0308B /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

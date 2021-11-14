@@ -12,6 +12,7 @@ import AlertToast
 
 struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   @Binding var context: M.Context
+  @State var first = true
 
   @StateObject var model: ContentEditorModel
   @StateObject var keyboard = Keyboard.main
@@ -45,7 +46,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
               .disableAutocorrection(true)
           }
         }
-        
+
         if context.subject != nil {
           Section(header: Text("Subject")) {
             TextField("", text: $context.subject ?? "")
@@ -54,10 +55,20 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
         Section(header: Text("Content")) {
           ZStack(alignment: .topLeading) { // hack for dynamic height
-            textEditor
+            textEditor.introspectTextView { tv in
+              if first { tv.becomeFirstResponder(); first = false }
+            }
             Text(model.text).opacity(0).padding(.all, 6)
           } .font(.callout)
             .frame(minHeight: 250)
+        }
+
+        if context.anonymous != nil {
+          Section {
+            Toggle(isOn: $context.anonymous ?? false) {
+              Label("Anonymous", systemImage: "theatermasks")
+            } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+          }
         }
       } .listStyle(GroupedListStyle())
 

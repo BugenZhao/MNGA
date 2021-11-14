@@ -28,7 +28,7 @@ struct NotificationRowView: View {
           switch noti.type {
           case .replyPost, .replyTopic, .shortMessage, .shortMessageStart:
             Image(systemName: "person")
-            Text(noti.otherUser.name)
+            Text(noti.otherUser.nameDisplayCompat)
           case .vote:
             Image(systemName: "text.bubble")
             Text("Your post")
@@ -50,7 +50,7 @@ struct NotificationRowView_Previews: PreviewProvider {
   static var previews: some View {
     NotificationRowView(noti: .with {
       $0.type = .replyTopic
-      $0.otherUser = .with { u in u.name = "Bugen" }
+      $0.otherUser = .with { u in u.name.normal = "Bugen" }
       $0.topicSubject = .with { s in s.content = "何方道友在西安渡劫？" }
       $0.timestamp = UInt64(Date().timeIntervalSince1970 - 60)
     }) .background(.primary.opacity(0.1)).padding()

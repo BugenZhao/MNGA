@@ -18,7 +18,9 @@ class UsersModel: ObservableObject {
     if self.users[id] == nil {
       let localResponse: LocalUserResponse? =
         try? logicCall(.localUser(.with { $0.userID = id }))
-      self.users[id] = localResponse?.user
+      if let r = localResponse, r.hasUser {
+        self.users[id] = r.user
+      }
     }
     return self.users[id] ?? nil
   }

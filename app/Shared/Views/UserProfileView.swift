@@ -61,7 +61,7 @@ struct UserProfileView: View {
   }
 
   var shouldShowList: Bool {
-    !user.id.isEmpty
+    !user.id.isEmpty && !user.isAnonymous
   }
 
   @ViewBuilder
@@ -72,7 +72,7 @@ struct UserProfileView: View {
         LoadingRowView()
           .onAppear { topicDataSource.initialLoad() }
       } else {
-        Section(header: Text("\(user.name)'s Topics")) {
+        Section(header: Text("\(user.name.display)'s Topics")) {
           if topicDataSource.items.isEmpty {
             EmptyRowView()
           } else {
@@ -89,7 +89,7 @@ struct UserProfileView: View {
         LoadingRowView()
           .onAppear { postDataSource.initialLoad() }
       } else {
-        Section(header: Text("\(user.name)'s Posts")) {
+        Section(header: Text("\(user.name.display)'s Posts")) {
           if postDataSource.items.isEmpty {
             EmptyRowView()
           } else {
@@ -118,10 +118,16 @@ struct UserProfileView: View {
     }
 
     ToolbarItem(placement: .mayNavigationBarTrailing) {
-      Button(action: { self.newShortMessage() }) {
-        Label("New Short Message", systemImage: "message")
+      if !user.isAnonymous {
+        Button(action: { self.newShortMessage() }) {
+          Label("New Short Message", systemImage: "message")
+        }
       }
     }
+  }
+
+  var title: String {
+    user.isAnonymous ? "Anonymous User".localized : user.name.display
   }
 
   var body: some View {
@@ -140,13 +146,13 @@ struct UserProfileView: View {
       .toolbarWithFix { toolbar }
       .withTopicDetailsAction() // for signature only
     .mayGroupedListStyle()
-      .navigationTitleInline(string: user.name)
+      .navigationTitleInline(string: title)
   }
 
   func newShortMessage() {
     self.postModel.show(action: .with {
       $0.operation = .newSingleTo
-      $0.singleTo = user.name
+      $0.singleTo = user.name.normal
     })
   }
 }

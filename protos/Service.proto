@@ -25,7 +25,7 @@ message ConfigureRequest {
 message ConfigureResponse { optional string error = 1; }
 
 message LocalUserRequest { string user_id = 1; }
-message LocalUserResponse { optional User user = 1; }
+message LocalUserResponse { User user = 1; }
 
 message AuthRequest { AuthInfo info = 1; }
 message AuthResponse {}
@@ -193,6 +193,7 @@ message PostReplyRequest {
   string content = 2;
   optional string subject = 3;
   repeated PostAttachment attachments = 4;
+  bool anonymous = 5;
 }
 message PostReplyResponse { string message = 1; }
 

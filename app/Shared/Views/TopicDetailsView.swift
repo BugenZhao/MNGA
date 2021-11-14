@@ -163,7 +163,7 @@ struct TopicDetailsView: View {
   var moreMenu: some View {
     Menu {
       Section {
-        if enableAuthorOnly {
+        if enableAuthorOnly && !topic.authorName.isAnonymous {
           Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
             Label("Author Only", systemImage: "person.fill")
           }
@@ -205,7 +205,7 @@ struct TopicDetailsView: View {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
         Label("#" + topic.id, systemImage: "number")
-        if topic.hasFav {
+        if topic.hasFav && topic.fav != "" {
           Label(topic.fav, systemImage: "bookmark.fill")
         }
       }

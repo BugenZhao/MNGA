@@ -6,6 +6,7 @@ use protos::DataModel::ErrorMessage;
 use std::collections::HashMap;
 use sxd_document::Package;
 use sxd_xpath::{nodeset::Node, Context, Factory, XPath};
+use uuid::Uuid;
 
 fn to_xpath(s: &str) -> ServiceResult<XPath> {
     let factory = Factory::new();
@@ -150,7 +151,10 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
 
     frontend.or(backend).or(backend_code).map_or_else(
         || Ok(()),
-        |e| {
+        |mut e| {
+            if e.get_code().is_empty() {
+                e.set_code("?".to_owned());
+            }
             if SUCCESS_MSGS.iter().any(|msg| e.info.contains(msg)) {
                 Ok(())
             } else {
@@ -158,4 +162,8 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
             }
         },
     )
+}
+
+pub fn get_unique_id() -> String {
+    Uuid::new_v4().to_string()
 }

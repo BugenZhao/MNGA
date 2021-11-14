@@ -4,14 +4,17 @@ use crate::{
     fetch::fetch_package_multipart,
     fetch_package,
     topic::extract_topic,
-    utils::{extract_kv, extract_node_rel, extract_nodes, extract_nodes_rel, extract_string},
+    user,
+    utils::{
+        extract_kv, extract_node_rel, extract_nodes, extract_nodes_rel, extract_string,
+        get_unique_id,
+    },
 };
 use cache::CACHE;
 use protos::{DataModel::*, Service::*, ToValue};
 use reqwest::multipart;
 use sxd_xpath::nodeset::Node;
 use text::error::ParseError;
-use uuid::Uuid;
 
 fn vote_response_key(id: &PostId) -> String {
     format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)
@@ -41,7 +44,7 @@ pub fn extract_post_content(raw: String) -> PostContent {
     }
 }
 
-pub fn extract_post(node: Node) -> Option<Post> {
+pub fn extract_post(node: Node, at_page: u32, context: &str) -> Option<Post> {
     use super::macros::get;
     let map = extract_kv(node);
 
@@ -63,14 +66,14 @@ pub fn extract_post(node: Node) -> Option<Post> {
 
     let hot_replies = extract_nodes_rel(node, "./hotreply/item", |ns| {
         ns.into_iter()
-            .filter_map(|n| extract_post_with_at_page(1, n))
+            .filter_map(|n| extract_post(n, 1, context))
             .collect()
     })
     .unwrap_or_default();
 
     let comments = extract_nodes_rel(node, "./comment/item", |ns| {
         ns.into_iter()
-            .filter_map(|n| extract_post_with_at_page(1, n))
+            .filter_map(|n| extract_post(n, 1, context))
             .collect()
     })
     .unwrap_or_default();
@@ -96,12 +99,19 @@ pub fn extract_post(node: Node) -> Option<Post> {
     })
     .unwrap_or_default();
 
-    let fid = get!(map, "fid")?;
+    let author_id = {
+        let id = get!(map, "authorid")?;
+        if id.starts_with("-") {
+            user::attach_context_to_id(&id, context)
+        } else {
+            id
+        }
+    };
 
     let post = Post {
         id: Some(post_id).into(),
         floor: get!(map, "lou", u32)?,
-        author_id: get!(map, "authorid")?,
+        author_id,
         content: Some(content).into(),
         post_date: get!(map, "postdatetimestamp", _)?,
         score: get!(map, "score", _)?,
@@ -111,7 +121,8 @@ pub fn extract_post(node: Node) -> Option<Post> {
         device,
         alter_info: get!(map, "alterinfo").unwrap_or_default(),
         attachments: attachments.into(),
-        fid,
+        fid: get!(map, "fid")?,
+        at_page,
         ..Default::default()
     };
 
@@ -152,13 +163,6 @@ fn extract_topic_with_light_post(node: Node) -> Option<TopicWithLightPost> {
         topic: Some(topic).into(),
         post: Some(post).into(),
         ..Default::default()
-    })
-}
-
-pub fn extract_post_with_at_page(at_page: u32, node: Node) -> Option<Post> {
-    extract_post(node).map(|mut p| {
-        p.at_page = at_page;
-        p
     })
 }
 
@@ -256,6 +260,9 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
         {
             query.push(("modify_append", "1"));
         }
+        if request.get_anonymous() {
+            query.push(("anony", "1"));
+        }
         query_insert_id!(query, request);
         query
     };
@@ -312,7 +319,7 @@ pub async fn upload_attachment(
 ) -> ServiceResult<UploadAttachmentResponse> {
     let action = request.take_action();
     let file = request.take_file();
-    let name = format!("{}.jpeg", Uuid::new_v4().to_string());
+    let name = format!("{}.jpeg", get_unique_id());
 
     let query = vec![];
 

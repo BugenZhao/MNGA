@@ -40,7 +40,6 @@ struct ContentTextEditorView: UIViewRepresentable {
     inputView.addSubview(toolbar)
 
     textView.inputAccessoryView = inputView
-    textView.becomeFirstResponder()
     textView.isSelectable = true
     textView.isUserInteractionEnabled = true
     textView.font = UIFont.preferredFont(forTextStyle: .callout)

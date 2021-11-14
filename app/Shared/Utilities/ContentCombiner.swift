@@ -357,7 +357,8 @@ class ContentCombiner {
         lineLimit = 5 // todo: add an option
       }
 
-      let userView = QuoteUserView(uid: uid, action: tapAction)
+      let name = metaCombiner.getEnv(key: "username") as! String?
+      let userView = QuoteUserView(uid: uid, nameHint: name, action: tapAction)
       combiner.append(userView)
       combiner.envs = metaCombiner.envs
       let contentSpans = spans[metaSpans.count...]
@@ -391,9 +392,18 @@ class ContentCombiner {
     let combiner = ContentCombiner(parent: self, color: { _ in Color.accentColor })
     combiner.append(Text(Image(systemName: "person.fill")))
     combiner.visit(spans: uid.spans)
+
+    var name: String?
+    if case .plain(let p) = uid.spans.first?.value, p.text != "" {
+      name = p.text
+      self.setEnv(key: "username", globalValue: p.text)
+    }
     if let uid = uid.attributes.first {
       self.setEnv(key: "uid", globalValue: uid)
+    } else if let name = name { // treat raw name as id, mainly for anonymous users
+      self.setEnv(key: "uid", globalValue: name)
     }
+
     self.append(combiner.build())
   }
 

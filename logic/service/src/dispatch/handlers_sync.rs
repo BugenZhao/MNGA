@@ -15,12 +15,10 @@ pub fn handle_configure(request: ConfigureRequest) -> ServiceResult<ConfigureRes
 }
 
 pub fn handle_local_user(request: LocalUserRequest) -> ServiceResult<LocalUserResponse> {
-    let user = UserController::get()
-        .get(&request.user_id)
-        .map(|e| e.value().clone());
+    let user = UserController::get().get_by_id(request.get_user_id());
 
     Ok(LocalUserResponse {
-        _user: user.map(LocalUserResponse_oneof__user::user),
+        user: user.into(),
         ..Default::default()
     })
 }

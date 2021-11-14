@@ -38,9 +38,6 @@ struct ContentView: View {
       } else {
         NavigationView {
           ForumListView()
-          if selectedForum.inner != Forum() {
-            TopicListView.build(forum: selectedForum.inner)
-          }
         }
       }
     } .overlay { ImageOverlay() }

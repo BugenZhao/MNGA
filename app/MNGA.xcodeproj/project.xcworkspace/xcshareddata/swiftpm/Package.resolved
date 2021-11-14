@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "AlertToast",
-        "repositoryURL": "https://github.com/elai950/AlertToast.git",
+        "repositoryURL": "https://github.com/BugenZhao/AlertToast",
         "state": {
-          "branch": null,
-          "revision": "0e5d99338a01674b9e8c1606e735a4fb6015ff31",
+          "branch": "master",
+          "revision": "39e47f0c5607c7544a00d06230eb8fa982ffda28",
           "version": null
         }
       },

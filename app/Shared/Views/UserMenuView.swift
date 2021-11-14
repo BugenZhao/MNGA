@@ -74,7 +74,7 @@ struct UserMenuView: View {
         Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
       }
     } label: {
-      Label(user?.name ?? authStorage.authInfo.uid, systemImage: "person")
+      Label(user?.name.display ?? authStorage.authInfo.uid, systemImage: "person")
     }
   }
 

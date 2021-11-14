@@ -27,7 +27,7 @@ class CurrentUserModel: ObservableObject {
       .removeDuplicates { $0.id == $1.id }
       .dropFirst()
       .filter { $0.id != "" }
-      .sink { ToastModel.hud.message = .userSwitch($0.name) }
+      .sink { ToastModel.hud.message = .userSwitch($0.name.display) }
       .store(in: &cancellables)
   }
 
@@ -38,7 +38,7 @@ class CurrentUserModel: ObservableObject {
       self.user = response.user
       if self.authStorage.authInfo.uid == uid, response.user.id == uid, self.authStorage.authInfo.cachedName.isEmpty {
         var info = self.authStorage.authInfo
-        info.cachedName = response.user.name
+        info.cachedName = response.user.name.normal
         self.authStorage.setCurrentAuth(info)
       }
     }
