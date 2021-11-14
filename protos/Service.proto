@@ -96,6 +96,8 @@ message AsyncRequest {
     ShortMessagePostRequest short_message_post = 20;
     // Search for topics with some keyword in specific forum or all forums.
     TopicSearchRequest topic_search = 21;
+    // Sign in (clock in) for today.
+    ClockInRequest clock_in = 22;
   }
 }
 
@@ -280,3 +282,6 @@ message TopicSearchResponse {
   repeated Topic topics = 1;
   uint32 pages = 2;
 }
+
+message ClockInRequest {}
+message ClockInResponse {}

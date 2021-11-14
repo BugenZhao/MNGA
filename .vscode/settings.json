@@ -1,5 +1,6 @@
 {
-    "protoc": {
+  "rust-analyzer.procMacro.enable": true,
+  "protoc": {
     "options": ["-I protos/"]
-    }
+  }
 }
