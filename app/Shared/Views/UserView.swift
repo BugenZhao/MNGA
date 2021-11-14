@@ -131,14 +131,21 @@ struct UserView: View {
       avatar
 
       VStack(alignment: .leading, spacing: style == .huge ? 4 : 2) {
-        Group {
-          if showId {
-            Text(self.idDisplay)
-          } else {
-            Text(self.name)
+        HStack {
+          Group {
+            if showId {
+              Text(self.idDisplay)
+            } else {
+              Text(self.name)
+            }
+          } .font(style == .huge ? .title : .subheadline, weight: style == .huge ? .bold : .medium)
+
+          if user?.mute == true {
+            Image(systemName: "mic.slash.fill")
+              .font(style == .huge ? .body : .footnote)
+              .foregroundColor(.red)
           }
-        } .font(style == .huge ? .title : .subheadline, weight: style == .huge ? .bold : .medium)
-          .onTapGesture { withAnimation { self.showId.toggle() } }
+        } .onTapGesture { withAnimation { self.showId.toggle() } }
           .redacted(if: shouldRedactName)
 
         if style != .compact {
