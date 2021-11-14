@@ -57,6 +57,13 @@ struct UserMenuView: View {
   }
 
   @ViewBuilder
+  var clockInButton: some View {
+    Button(action: { clockIn() }) {
+      Label("Clock in", systemImage: "lanyardcard")
+    }
+  }
+
+  @ViewBuilder
   var userSwitcher: some View {
     Menu {
       if authStorage.allAuthInfos.count > 1 {
@@ -105,11 +112,14 @@ struct UserMenuView: View {
       Section {
         if authStorage.signedIn {
           userSwitcher
+          clockInButton
         } else {
           Button(action: { reSignIn() }) {
             Label("Sign In", systemImage: "person.crop.circle.badge.plus")
           }
         }
+      }
+      Section {
         #if os(iOS)
           Button(action: { showPreferencesModal = true }) {
             Label("Preferences", systemImage: "gear")
@@ -148,5 +158,11 @@ struct UserMenuView: View {
 
   func addUser() {
     authStorage.isSigning = true
+  }
+
+  func clockIn() {
+    logicCallAsync(.clockIn(.init())) { (_: ClockInResponse) in
+      ToastModel.hud.message = .success("Clocked in Successfully")
+    }
   }
 }

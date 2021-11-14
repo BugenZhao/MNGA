@@ -27,3 +27,7 @@ public func detailedTime(_ timestamp: UInt64) -> String {
   let dateString = detailedFormatter.string(from: date)
   return dateString
 }
+
+public func currentDateString() -> String {
+  ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withFullDate, .withDashSeparatorInDate])
+}
