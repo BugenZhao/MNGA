@@ -260,6 +260,9 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
         {
             query.push(("modify_append", "1"));
         }
+        if request.get_anonymous() {
+            query.push(("anony", "1"));
+        }
         query_insert_id!(query, request);
         query
     };

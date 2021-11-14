@@ -10,6 +10,13 @@ import SwiftUI
 import SDWebImageSwiftUI
 import SwiftUIX
 
+extension User {
+  static let anonymousExample = Self.with {
+    $0.name.normal = "??????"
+    $0.name.anonymous = "??????"
+  }
+}
+
 struct UserView: View {
   enum Style {
     case compact
@@ -112,7 +119,7 @@ struct UserView: View {
   }
 
   var shouldRedactName: Bool {
-    user == nil || user == User.init()
+    user == nil || user == User.init() || user == .anonymousExample
   }
 
   var shouldRedactInfo: Bool {

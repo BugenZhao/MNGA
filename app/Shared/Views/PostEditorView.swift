@@ -48,7 +48,7 @@ class PostReplyModel: GenericPostModel<PostReplyTask> {
       task.action.verbatim = response.verbatim
       let subject = (response.hasSubject || task.action.operation == .new) ? response.subject : nil
       let content = response.content
-      let context = Context(task: task, subject: subject, content: content)
+      let context = Context(task: task, subject: subject, content: content, anonymous: false)
 
       self.onBuildContextSuccess(task: task, context: context)
     } onError: { e in
@@ -61,9 +61,10 @@ class PostReplyModel: GenericPostModel<PostReplyTask> {
   override func doSend(with context: GenericPostModel<PostReplyTask>.Context) {
     logicCallAsync(.postReply(.with {
       $0.action = context.task.action
-      $0.content = context.content ?? ""
+      $0.content = context.content!
       if let subject = context.subject { $0.subject = subject }
       $0.attachments = context.attachments
+      $0.anonymous = context.anonymous!
     }), errorToastModel: ToastModel.alert)
     { (response: PostReplyResponse) in
       self.onSendSuccess(context: context)

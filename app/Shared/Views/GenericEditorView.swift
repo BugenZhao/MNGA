@@ -49,8 +49,10 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
       TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
     }
 
-    VStack(alignment: .leading) {
-      if let user = self.currentUser.user {
+    VStack(alignment: .leading, spacing: 10) {
+      if postReply.context?.anonymous == true {
+        UserView(user: .anonymousExample, style: .normal)
+      } else if let user = self.currentUser.user {
         UserView(user: user, style: .normal)
       }
 
@@ -63,7 +65,8 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
           .foregroundColor(.secondary)
           .font(.footnote)
       }
-    }
+    } .padding(.vertical, 4)
+      .fixedSize(horizontal: false, vertical: true)
   }
 
   @ViewBuilder

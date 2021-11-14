@@ -193,6 +193,7 @@ message PostReplyRequest {
   string content = 2;
   optional string subject = 3;
   repeated PostAttachment attachments = 4;
+  bool anonymous = 5;
 }
 message PostReplyResponse { string message = 1; }
 
