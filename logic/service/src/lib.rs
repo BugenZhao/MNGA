@@ -2,7 +2,7 @@ mod attachment;
 mod auth;
 mod constants;
 mod dispatch;
-mod error;
+pub mod error;
 mod fetch;
 mod forum;
 mod history;
