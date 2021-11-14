@@ -28,7 +28,6 @@ jobs:
         run: |
           brew install swift-protobuf
           rustup target add aarch64-apple-ios
-          cargo install cargo-lipo
       - name: Build Logic for Deployment
         run: make logic-deploy
       - run: fastlane beta

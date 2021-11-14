@@ -88,9 +88,11 @@ create-framework:
 	@CMD="xcodebuild -create-xcframework" ;\
 	for target in ${ALL_TARGETS}; do \
 		logic_lib="${TARGET_DIR}/$${target}/${MODE}/liblogic.a" ;\
-		strip_cmd="strip $${logic_lib}" ;\
-		echo ">>> $${strip_cmd}" ;\
-		$${strip_cmd} >/dev/null 2>&1 || exit 1;\
+		if [[ ${MODE} = "release" ]]; then \
+			strip_cmd="strip $${logic_lib}" ;\
+			echo ">>> $${strip_cmd}" ;\
+			$${strip_cmd} >/dev/null 2>&1 || true ;\
+		fi ;\
 		CMD="$${CMD} -library $${logic_lib}" ;\
 	done ;\
 	CMD="$${CMD} -headers ${OUT_INCLUDE}/* -output ${OUT_FRAMEWORK}" ;\
