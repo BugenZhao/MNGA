@@ -1,74 +1,82 @@
 syntax = "proto3";
-option java_package = "com.bugenzhao.nga.protos.datamodel";
+option java_package = "com.bugenzhao.mnga.protos.datamodel";
 
+// Subject of a topic.
 message Subject {
-  repeated string tags = 1;
-  string content = 2;
+  repeated string tags = 1; // Leading tags of the topic.
+  string content = 2;       // Main content.
 }
 
 message UserName {
-  string normal = 1;
-  string anonymous = 2;
+  string normal = 1;    // Original name of a user, will always be some.
+  string anonymous = 2; // Anonymous representation of a user name, if exists.
 }
 
 message Topic {
-  string id = 1;
+  string id = 1; // `tid` from NGA.
   repeated string tags = 8 [ deprecated = true ];
   string subject_content = 9 [ deprecated = true ];
   Subject subject = 2;
   string author_id = 3;
   string author_name_raw = 4 [ deprecated = true ];
   UserName author_name = 15;
-  uint64 post_date = 5;
-  uint64 last_post_date = 6;
+  uint64 post_date = 5;      // Timestamp of the topic's initial posting.
+  uint64 last_post_date = 6; // Timestamp of the topic's last reply from others.
   uint32 replies_num = 7;
-  optional Forum parent_forum = 10;
-  optional string fav = 11;
+  optional Forum parent_forum = 10; // The direct parent forum of this topic, if
+                                    // it's not the exactly requested one.
+  optional string fav = 11; // Code for accessing the topic even if it's hidden
+                            // or expired, if it's favored before
   bool is_favored = 12;
   optional uint32 replies_num_last_visit = 13;
-  string fid = 14;
+  string fid = 14; // The id of the topic's parent forum, mainly used for
+                   // uploading attachments.
 }
 
 message User {
   string id = 1;
   UserName name = 8;
   string avatar_url = 3;
-  uint64 reg_date = 4;
+  uint64 reg_date = 4; // The timestamp of the user's registration.
   uint32 post_num = 5;
-  sint64 fame = 6;
+  sint64 fame = 6; // Should be resolved as `fame / 10`.
   PostContent signature = 7;
   string name_raw = 2 [ deprecated = true ];
-  bool mute = 9;
+  bool mute = 9; // Whether the user is temporarily banned by NGA.
 }
 
 message PostId {
-  string pid = 1;
-  string tid = 2;
+  string pid = 1; // The id of this post. If `pid` is 0, it's the main floor of
+                  // this `topic`. Otherwise, it's globally unique.
+  string tid = 2; // The id of the topic where this post resides.
 }
 
 enum Device {
-  APPLE = 0;
+  APPLE = 0; // From official NGA iOS App or MNGA (by default).
   ANDROID = 1;
   DESKTOP = 2;
 }
 
 message Post {
   PostId id = 6;
-  uint32 floor = 1;
+  uint32 floor = 1; // This might be inaccurate if it's from a special topic
+                    // details request with other arguments specified.
   string author_id = 2;
   PostContent content = 3;
-  uint64 post_date = 4;
-  uint32 score = 5;
-  VoteState vote_state = 7;
-  repeated Post hot_replies = 8;
-  repeated Post comments = 12;
+  uint64 post_date = 4;     // The timestamp of the posting.
+  uint32 score = 5;         // The number of upvotes.
+  VoteState vote_state = 7; // The vote state cached from current client before.
+  repeated Post hot_replies = 8; // Hot replies only exist in the main floor.
+  repeated Post comments = 12;   // Inline replies.
   Device device = 9;
-  string alter_info = 10;
-  uint32 at_page = 11;
+  string alter_info = 10; // This post has been altered if it's not empty.
+  uint32 at_page = 11;    // The page which this post belongs to.
   repeated Attachment attachments = 13;
-  string fid = 14;
+  string fid = 14; // The id of the post's parent forum, mainly used for
+                   // uploading attachments.
 }
 
+// Post with much less information, used for posts of some user.
 message LightPost {
   PostId id = 1;
   string author_id = 2;
@@ -76,17 +84,19 @@ message LightPost {
   uint64 post_date = 4;
 }
 
+// Combination of `Topic` and `LightPost`, used for posts of some user.
 message TopicWithLightPost {
   Topic topic = 1;
   LightPost post = 2;
 }
 
+// Children of a parent forum, can be subscribed or unsubscribed.
 message Subforum {
-  Forum forum = 8;
-  string filter_id = 7;
+  Forum forum = 8;      // Info of the subforum.
+  string filter_id = 7; // ID used for sending request to (un)subcribe self.
   uint64 attributes = 4;
-  bool filterable = 5;
-  bool selected = 6;
+  bool filterable = 5; // Whether this subforum is able to be unsubscribed.
+  bool selected = 6; // Whether this subforum is subscribed in its parent forum.
 }
 
 message Category {
@@ -110,6 +120,7 @@ message Forum {
   string topped_topic_id = 5;
 }
 
+// Part of rich contents.
 message Span {
   message Plain { string text = 1; }
   message BreakLine {}
@@ -118,7 +129,7 @@ message Span {
     string tag = 1;
     repeated string attributes = 2;
     repeated string complex_attributes = 4;
-    repeated Span spans = 3;
+    repeated Span spans = 3; // Children span nodes.
   }
 
   oneof value {
@@ -129,10 +140,11 @@ message Span {
   }
 }
 
+// Rich content parsed from bbcode.
 message PostContent {
   repeated Span spans = 1;
-  string raw = 2;
-  string error = 3;
+  string raw = 2;   // Raw bbcode representation of this content.
+  string error = 3; // Parse error.
 }
 
 message Attachment {
@@ -141,13 +153,15 @@ message Attachment {
   string type = 3;
 }
 
-message Configuration { string document_dir_path = 1; }
+message Configuration {
+  string document_dir_path = 1; // Path to an App-local writable directory.
+}
 
 message AuthInfo {
   string uid = 1;
   string token = 2;
   Device device = 3;
-  string cached_name = 4;
+  string cached_name = 4; // Cached user name from last authentication.
 }
 
 enum VoteState {
@@ -167,10 +181,13 @@ message ErrorMessage {
   string detailed = 3;
 }
 
+// Extra info for posting action from fetching step, which should be passed
+// verbatim when do posting.
 message PostReplyVerbatim {
-  bool modify_append = 1;
-  string auth = 2;
-  string attach_url = 3;
+  bool modify_append = 1; // Whether this modification can only be appendent due
+                          // to exceeding of date, or in-place.
+  string auth = 2;        // Code used for uploading attachments.
+  string attach_url = 3;  // URL where attachments should be uploaded to.
 }
 
 message PostReplyAction {
@@ -182,39 +199,41 @@ message PostReplyAction {
     NEW = 4;
   }
   Operation operation = 1;
-  PostId post_id = 2;
-  ForumId forum_id = 3;
+  PostId post_id = 2;   // Used if operation is not `NEW`.
+  ForumId forum_id = 3; // Used if operation is `NEW`.
   PostReplyVerbatim verbatim = 4;
 }
 
 message Notification {
   enum Type {
     UNKNOWN = 0;
-    REPLY_TOPIC = 1;
-    REPLY_POST = 2;
-    SHORT_MESSAGE_START = 10;
-    SHORT_MESSAGE = 11;
-    VOTE = 17;
+    REPLY_TOPIC = 1;          // One replies to user's topic.
+    REPLY_POST = 2;           // One replies to user's post.
+    SHORT_MESSAGE_START = 10; // One starts a new short message.
+    SHORT_MESSAGE = 11;       // One replies to a short message.
+    VOTE = 17;                // User's post receives some votes.
   }
   string id = 9;
   Type type = 1;
   User other_user = 2;
-  PostId post_id = 3;
-  PostId other_post_id = 4;
+  PostId post_id = 3;       // ID of our post.
+  PostId other_post_id = 4; // ID of other's post.
   Subject topic_subject = 5;
   uint64 timestamp = 6;
-  uint32 page = 7;
-  bool read = 8;
+  uint32 page = 7; // The page of other's post in the topic.
+  bool read = 8;   // Whether this notification has been read.
 }
 
 message BlockWord { string word = 1; }
 
+// Attachments that have been already uploaded, but not posted yet.
 message PostAttachment {
   string name = 1;
   string url = 2;
-  string check = 3;
+  string check = 3; // Verification code for posting this attachment.
 }
 
+// Info of one short message conversation, contains a list of posts.
 message ShortMessage {
   string id = 1;
   string subject = 2;
@@ -237,9 +256,9 @@ message ShortMessagePostAction {
   enum Operation {
     REPLY = 0;
     NEW = 1;
-    NEW_SINGLE_TO = 2;
+    NEW_SINGLE_TO = 2; // Send to exactly single user.
   }
   Operation operation = 1;
-  string mid = 2;
-  string single_to = 3;
+  string mid = 2;       // Message id to reply to, used if operation is `REPLY`.
+  string single_to = 3; // UID to send to, used if operation is `NEW_SINGLE_TO`.
 }

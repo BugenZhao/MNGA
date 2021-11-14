@@ -1,26 +1,31 @@
 syntax = "proto3";
-option java_package = "com.bugenzhao.nga.protos.service";
+option java_package = "com.bugenzhao.mnga.protos.service";
 
 import "DataModel.proto";
 
-//
-// sync
-//
-
+/*
+ * Synchronous services that return immediately.
+ */
 message SyncRequest {
   oneof value {
+    // Configure and initialize logic, should be called once the app is started.
     ConfigureRequest configure = 1;
+    // Find user info in locally loaded dictionary.
     LocalUserRequest local_user = 2;
+    // Sync auth info to logic, should be called if current user changes.
     AuthRequest auth = 3;
+    // Parse string as `PostContent`.
     ContentParseRequest content_parse = 4;
+    // Parse string as `Subject` of topic.
     SubjectParseRequest subject_parse = 5;
+    // Mark some notifications as read.
     MarkNotificationReadRequest mark_noti_read = 6;
   }
 }
 
 message ConfigureRequest {
   Configuration config = 1;
-  bool debug = 2;
+  bool debug = 2; // Whether this is a debugging environment.
 }
 message ConfigureResponse { optional string error = 1; }
 
@@ -44,50 +49,70 @@ message SubjectParseResponse { Subject subject = 1; }
 message MarkNotificationReadRequest { repeated string ids = 1; }
 message MarkNotificationReadResponse {}
 
-//
-// async
-//
-
+/*
+ * Asynchronous services that are called in callback manner.
+ */
 message AsyncRequest {
   oneof value {
+    // Get topics in given forum.
     TopicListRequest topic_list = 1;
+    // Get posts in given topic.
     TopicDetailsRequest topic_details = 2;
+    // Set filter for subforums.
     SubforumFilterRequest subforum_filter = 3;
+    // Get all forums.
     ForumListRequest forum_list = 4;
+    // Find user info remotely.
     RemoteUserRequest remote_user = 5;
+    // Do voting to posts.
     PostVoteRequest post_vote = 6;
+    // Get history of visited topics.
     TopicHistoryRequest topic_history = 7;
+    // Get hot topics in given forum.
     HotTopicListRequest hot_topic_list = 8;
+    // Search for a specific forum.
     ForumSearchRequest forum_search = 9;
+    // Get favorite topics.
     FavoriteTopicListRequest favorite_topic_list = 10;
+    // Mark a topic as favored.
     TopicFavorRequest topic_favor = 11;
+    // Fetch the initial content for a posting action.
     PostReplyFetchContentRequest post_reply_fetch_content = 12;
+    // Do posting to some topic or forum.
     PostReplyRequest post_reply = 13;
+    // Get all notifications.
     FetchNotificationRequest fetch_notification = 14;
+    // Upload attachments before posting.
     UploadAttachmentRequest upload_attachment = 15;
+    // Get topics of given user.
     UserTopicListRequest user_topic_list = 16;
+    // Get posts of given user.
     UserPostListRequest user_post_list = 17;
+    // Get short message conversations of current user.
     ShortMessageListRequest short_message_list = 18;
+    // Get short message posts of a conversation.
     ShortMessageDetailsRequest short_message_details = 19;
+    // Do posting to some short message post or conversation.
     ShortMessagePostRequest short_message_post = 20;
+    // Search for topics with some keyword in specific forum or all forums.
     TopicSearchRequest topic_search = 21;
   }
 }
 
 message TopicListRequest {
   enum Order {
-    LAST_POST = 0;
-    POST_DATE = 1;
+    LAST_POST = 0; // Order by the time of the last post of the topic.
+    POST_DATE = 1; // Order by the initial post time of the topic.
   }
 
   ForumId id = 1;
   uint32 page = 2;
   bool sort_subforums = 4;
   Order order = 5;
-  bool recommended_only = 6;
+  bool recommended_only = 6; // Whether to only show recommended topics.
 }
 message TopicListResponse {
-  Forum forum = 4;
+  Forum forum = 4; // Details of the given forum id.
   repeated Topic topics = 1;
   uint32 pages = 2;
   repeated Subforum subforums = 3;
@@ -95,28 +120,28 @@ message TopicListResponse {
 
 message TopicDetailsRequest {
   string topic_id = 1;
-  string fav = 3;
+  string fav = 3; // See `Topic.fav`
   string post_id = 4;
   string author_id = 5;
   uint32 page = 2;
-  bool local_cache = 6;
+  bool local_cache = 6; // Whether to only request cached version of the topic.
 }
 message TopicDetailsResponse {
   Topic topic = 1;
   repeated Post replies = 2;
   string forum_name = 4;
   uint32 pages = 3;
-  bool is_local_cache = 5;
+  bool is_local_cache = 5; // Whether the replies are from local cache.
 }
 
 message SubforumFilterRequest {
   enum Operation {
-    SHOW = 0;
-    BLOCK = 1;
+    SHOW = 0;  // Subscribe.
+    BLOCK = 1; // Unsubscribe.
   }
   Operation operation = 1;
-  string forum_id = 2;
-  string subforum_filter_id = 3;
+  string forum_id = 2;           // ID of the parent forum.
+  string subforum_filter_id = 3; // See `Subforum.filter_id`
 }
 message SubforumFilterResponse {}
 
@@ -124,8 +149,8 @@ message ForumListRequest {}
 message ForumListResponse { repeated Category categories = 1; }
 
 message RemoteUserRequest {
-  string user_id = 1;
-  string user_name = 2;
+  string user_id = 1;   // Request by ID.
+  string user_name = 2; // Request by name.
 }
 message RemoteUserResponse { optional User user = 1; }
 
@@ -138,9 +163,9 @@ message PostVoteRequest {
   PostId post_id = 2;
 }
 message PostVoteResponse {
-  sint32 delta = 1;
+  sint32 delta = 1;          // Delta to add to the current score.
   optional string error = 2; // not used
-  VoteState state = 3;
+  VoteState state = 3;       // Vote state after voting.
 }
 
 message TopicHistoryRequest { uint64 limit = 1; }
@@ -153,13 +178,13 @@ message HotTopicListRequest {
     MONTH = 2;
   }
   ForumId id = 1;
-  DateRange range = 2;
-  optional uint32 fetch_page_limit = 3;
+  DateRange range = 2; // Only see topics posted in this date range.
+  optional uint32 fetch_page_limit = 3; // Maximum page of topics to collect.
   optional uint64 limit = 4;
 }
 message HotTopicListResponse {
   repeated Topic topics = 1;
-  Forum forum = 2;
+  Forum forum = 2; // Details of the given forum id.
 }
 
 message ForumSearchRequest { string key = 1; }
@@ -184,8 +209,8 @@ message TopicFavorResponse { bool is_favored = 1; }
 message PostReplyFetchContentRequest { PostReplyAction action = 1; }
 message PostReplyFetchContentResponse {
   string content = 1;
-  optional string subject = 2;
-  PostReplyVerbatim verbatim = 3;
+  optional string subject = 2;    // Used for topics.
+  PostReplyVerbatim verbatim = 3; // Extra info to keep and pass verbatim.
 }
 
 message PostReplyRequest {
@@ -193,7 +218,7 @@ message PostReplyRequest {
   string content = 2;
   optional string subject = 3;
   repeated PostAttachment attachments = 4;
-  bool anonymous = 5;
+  bool anonymous = 5; // Whether to post as anonymous identity.
 }
 message PostReplyResponse { string message = 1; }
 
@@ -202,7 +227,7 @@ message FetchNotificationResponse { repeated Notification notis = 1; }
 
 message UploadAttachmentRequest {
   PostReplyAction action = 1;
-  bytes file = 2;
+  bytes file = 2; // Data of the file.
 }
 message UploadAttachmentResponse { PostAttachment attachment = 1; }
 
@@ -240,15 +265,15 @@ message ShortMessagePostRequest {
   ShortMessagePostAction action = 1;
   string content = 2;
   string subject = 3;
-  repeated string to = 4;
+  repeated string to = 4; // Used if `action.operation`` is `NEW`
 }
 message ShortMessagePostResponse {}
 
 message TopicSearchRequest {
-  ForumId id = 1;
+  ForumId id = 1; // If not provided, search in all forums.
   uint32 page = 2;
-  bool search_content = 3;
-  bool recommended_only = 4;
+  bool search_content = 3;   // Whether to search content for the key.
+  bool recommended_only = 4; // Whether to only search recommended topics.
   string key = 5;
 }
 message TopicSearchResponse {

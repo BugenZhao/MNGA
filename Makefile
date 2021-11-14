@@ -1,10 +1,10 @@
-CARGO = $(shell which cargo)
-XARGO = $(shell which xargo)
+CARGO ?= $(shell which cargo)
+XARGO ?= $(shell which xargo)
 TARGET_DIR = target
-OUT_LIBS_ANDROID = out/libs/jniLibs
-OUT_INCLUDE = out/include
+OUT_LIBS_ANDROID ?= out/libs/jniLibs
+OUT_INCLUDE ?= out/include
 
-PROCESSOR = $(shell uname -p)
+PROCESSOR ?= $(shell uname -p)
 
 ifeq (${PROCESSOR}, arm)
 	IOS_SIM_TARGET = aarch64-apple-ios-sim
@@ -16,7 +16,7 @@ IOS_ALL_TARGETS = ${IOS_TARGET} ${IOS_SIM_TARGET}
 MACOS_ALL_TARGETS = aarch64-apple-darwin x86_64-apple-darwin
 CATALYST_TARGET = x86_64-apple-ios-macabi
 
-ALL_TARGETS = unspecified-target
+ALL_TARGETS ?= unspecified-target
 MODE ?= debug
 
 ifeq (${MODE}, release)
@@ -105,18 +105,14 @@ kotlin-pb:
 	@echo ">>>>> Kotlin PB"
 	protoc --java_out=android --kotlin_out=android -I protos/ protos/*.proto
 
-logic-debug-android:
-	@echo ">>>>> Logic Android"
-	cd logic && ${CARGO} ndk --target arm64-v8a --target x86_64 --target x86 --platform 26 build
-	cp ${TARGET_DIR}/aarch64-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
-	cp ${TARGET_DIR}/x86_64-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
-	cp ${TARGET_DIR}/i686-linux-android/debug/liblogic.so ${OUT_LIBS_ANDROID}/x86/
-logic-release-android:
-	@echo ">>>>> Logic Android"
-	cd logic && ${CARGO} ndk --target arm64-v8a --target x86_64 --target x86 --platform 26 build --release
-	cp ${TARGET_DIR}/aarch64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
-	cp ${TARGET_DIR}/x86_64-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
-	cp ${TARGET_DIR}/i686-linux-android/release/liblogic.so ${OUT_LIBS_ANDROID}/x86/
+logic-android-%:
+	make logic-android MODE=$*
+logic-android:
+	@echo ">>>>> Build liblogic.so for Android in ${MODE} mode"
+	${CARGO} ndk --target arm64-v8a --target x86_64 --target x86 --platform 26 build ${CARGO_MODE_ARG}
+	cp ${TARGET_DIR}/aarch64-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
+	cp ${TARGET_DIR}/x86_64-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
+	cp ${TARGET_DIR}/i686-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/x86/
 
 
 nightly:

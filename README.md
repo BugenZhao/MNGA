@@ -25,7 +25,7 @@
 ## Features
 
 - Built with SwiftUI which provides awesome UX feelings for **multiple platforms** like iOS, iPadOS and macOS
-- High-performance logic layer energized by Rust (and can be ported to other platforms with ease, check [Android Examples](android/README.md))
+- High-performance logic layer energized by Rust (and can be ported to other platforms with ease, check [Android Instructions](android/README.md))
 
 ## Screenshots
 
