@@ -38,6 +38,7 @@ message User {
   sint64 fame = 6;
   PostContent signature = 7;
   string name_raw = 2 [ deprecated = true ];
+  bool mute = 9;
 }
 
 message PostId {
