@@ -151,7 +151,10 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
 
     frontend.or(backend).or(backend_code).map_or_else(
         || Ok(()),
-        |e| {
+        |mut e| {
+            if e.get_code().is_empty() {
+                e.set_code("?".to_owned());
+            }
             if SUCCESS_MSGS.iter().any(|msg| e.info.contains(msg)) {
                 Ok(())
             } else {

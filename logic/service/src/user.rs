@@ -53,7 +53,15 @@ impl UserController {
             let user = map.get(id)?;
             return Some(user.to_owned());
         }
-        self.map.get(id).map(|u| u.to_owned())
+        self.map.get(id).map(|u| u.to_owned()).or_else(|| {
+            // may treat anony raw name as id
+            let name = extract_user_name(id.to_owned());
+            (name.get_anonymous() != "").then(|| User {
+                id: id.to_owned(),
+                name: Some(name).into(),
+                ..Default::default()
+            })
+        })
     }
 }
 
@@ -221,5 +229,15 @@ mod test {
             extract_user_name("#anony_bad".to_owned()).get_anonymous(),
             ""
         );
+    }
+
+    #[test]
+    fn test_anonymous_name_as_id() {
+        let controller = UserController::get();
+        let anony_name = "#anony_8cec9b35cf118bfdbde7e28d6df94143";
+        let user = controller.get_by_id(anony_name).unwrap();
+        assert_eq!(user.get_id(), anony_name);
+        assert_eq!(user.get_name().get_normal(), anony_name);
+        assert_eq!(user.get_name().get_anonymous(), "壬宫窦丁钱甄");
     }
 }

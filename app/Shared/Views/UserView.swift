@@ -27,8 +27,15 @@ struct UserView: View {
   let id: String
   let style: Style
 
-  init(id: String, style: Style) {
-    self.user = UsersModel.shared.localUser(id: id)
+  init(id: String, nameHint: String? = nil, style: Style) {
+    var user = UsersModel.shared.localUser(id: id)
+    if let nameHint = nameHint, user == nil {
+      user = .with {
+        $0.id = id
+        $0.name.normal = nameHint
+      }
+    }
+    self.user = user
     self.id = id
     self.style = style
   }
@@ -92,6 +99,14 @@ struct UserView: View {
     }
   }
 
+  var idDisplay: String {
+    if self.isAnonymous, let user = user {
+      return user.name.normal
+    } else {
+      return id
+    }
+  }
+
   var isAnonymous: Bool {
     user?.isAnonymous ?? false
   }
@@ -111,7 +126,7 @@ struct UserView: View {
       VStack(alignment: .leading, spacing: style == .huge ? 4 : 2) {
         Group {
           if showId {
-            Text(id)
+            Text(self.idDisplay)
           } else {
             Text(self.name)
           }
