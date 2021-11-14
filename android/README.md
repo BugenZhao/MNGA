@@ -7,12 +7,12 @@
 
    ```bash
    make kotlin-pb
-   make logic-release-android
+   make logic-android-release
    ```
 
    Follow the instructions from the output of commands above to install missing components, if any.
 
-You should see generated Kotlin sources under `android/.../protos/`, and dynamic-linked libraries for JNI under `out/libs/jniLibs/`.
+You should see generated Kotlin sources under `android/com/bugenzhao/mnga/protos/`, and dynamic-linked libraries for JNI under `out/libs/jniLibs/`.
 
 ## Prepare Android Project
 
@@ -27,7 +27,7 @@ logic
     ├── main
     │   ├── AndroidManifest.xml
     │   ├── java
-    │   │   └── com.bugenzhao.nga
+    │   │   └── com.bugenzhao.mnga
     │   │      ├── protos
     │   │      └── logic.kt
     │   └── jniLibs

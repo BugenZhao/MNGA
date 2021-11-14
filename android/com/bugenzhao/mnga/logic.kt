@@ -1,12 +1,12 @@
-package com.bugenzhao.nga
+package com.bugenzhao.mnga
 
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.bugenzhao.nga.protos.datamodel.DataModel
-import com.bugenzhao.nga.protos.datamodel.configuration
-import com.bugenzhao.nga.protos.datamodel.forumId
-import com.bugenzhao.nga.protos.service.*
+import com.bugenzhao.mnga.protos.datamodel.DataModel
+import com.bugenzhao.mnga.protos.datamodel.configuration
+import com.bugenzhao.mnga.protos.datamodel.forumId
+import com.bugenzhao.mnga.protos.service.*
 import com.google.protobuf.Message
 import com.google.protobuf.Parser
 
