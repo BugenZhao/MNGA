@@ -25,7 +25,7 @@ struct TopicLikeRowInnerView<S: View>: View {
 
       HStack {
         HStack(alignment: .center) {
-          Image(systemName: name.isAnonymous ? "theatermasks" : "person")
+          Image(systemName: name.isAnonymous ? "theatermasks.circle" : "person")
           Text(name.display)
         }
         Spacer()

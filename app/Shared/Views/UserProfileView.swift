@@ -118,10 +118,16 @@ struct UserProfileView: View {
     }
 
     ToolbarItem(placement: .mayNavigationBarTrailing) {
-      Button(action: { self.newShortMessage() }) {
-        Label("New Short Message", systemImage: "message")
+      if !user.isAnonymous {
+        Button(action: { self.newShortMessage() }) {
+          Label("New Short Message", systemImage: "message")
+        }
       }
     }
+  }
+
+  var title: String {
+    user.isAnonymous ? "Anonymous User".localized : user.name.display
   }
 
   var body: some View {
@@ -139,8 +145,8 @@ struct UserProfileView: View {
     }
       .toolbarWithFix { toolbar }
       .withTopicDetailsAction() // for signature only
-      .mayGroupedListStyle()
-      .navigationTitleInline(string: user.name.display)
+    .mayGroupedListStyle()
+      .navigationTitleInline(string: title)
   }
 
   func newShortMessage() {
