@@ -25,7 +25,7 @@ message ConfigureRequest {
 message ConfigureResponse { optional string error = 1; }
 
 message LocalUserRequest { string user_id = 1; }
-message LocalUserResponse { optional User user = 1; }
+message LocalUserResponse { User user = 1; }
 
 message AuthRequest { AuthInfo info = 1; }
 message AuthResponse {}

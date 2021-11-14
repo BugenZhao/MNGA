@@ -18,7 +18,7 @@ pub fn handle_local_user(request: LocalUserRequest) -> ServiceResult<LocalUserRe
     let user = UserController::get().get_by_id(request.get_user_id());
 
     Ok(LocalUserResponse {
-        _user: user.map(LocalUserResponse_oneof__user::user),
+        user: user.into(),
         ..Default::default()
     })
 }
