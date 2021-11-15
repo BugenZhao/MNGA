@@ -31,6 +31,21 @@ lazy_static! {
     static ref CLIENT: Client = build_client();
 }
 
+#[cfg(test)]
+tokio::task_local! {
+    static RESPONSE_CB: std::cell::Cell<Option<Box<dyn FnOnce(&str)>>>;
+}
+
+#[cfg(test)]
+pub async fn with_single_fetch_check<F: futures::Future>(
+    cb: impl FnOnce(&str) + 'static,
+    f: F,
+) -> <F as futures::Future>::Output {
+    RESPONSE_CB
+        .scope(std::cell::Cell::new(Some(Box::new(cb))), f)
+        .await
+}
+
 trait ResponseFormat: Sized {
     fn query_pair() -> (&'static str, &'static str);
     fn parse_response(response: String) -> ServiceResult<Self>;
@@ -72,7 +87,7 @@ where
     let response = builder.send().await?.text_with_charset("gb18030").await?;
 
     #[cfg(test)]
-    println!("response: {}", response);
+    RESPONSE_CB.with(|c| c.take().expect("callback can not be run multiple times")(&response));
 
     RF::parse_response(response)
 }
