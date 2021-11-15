@@ -1,5 +1,12 @@
-on: [push, pull_request]
 name: Logic
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   check:
