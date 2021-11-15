@@ -10,13 +10,31 @@ import WebKit
 import SwiftUI
 import WebView
 
+fileprivate class LoginViewUIDelegate: NSObject, WKUIDelegate {
+  let parent: LoginView
+
+  init(parent: LoginView) {
+    self.parent = parent
+    super.init()
+  }
+
+  func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+    parent.alertCompletion = completionHandler
+    parent.alertMessage = message
+  }
+}
+
 struct LoginView: View {
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var webViewStore: WebViewStore
 
   @State var authing = false
 
-  let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+  @State private var delegate: LoginViewUIDelegate? = nil
+  @State var alertMessage: String? = nil
+  @State var alertCompletion: (() -> Void)? = nil
+
+  let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
   init() {
     let configuration = WKWebViewConfiguration()
@@ -25,24 +43,25 @@ struct LoginView: View {
     self._webViewStore = StateObject(wrappedValue: WebViewStore(webView: webView))
   }
 
-  @ViewBuilder
-  var closeButton: some View {
-    Button(action: close) {
-      if authing {
-        ProgressView()
-      }
-    }
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
+    ToolbarItem(placement: .cancellationAction) { Button(action: close) { Text("Cancel") } }
+    ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
   }
 
   @ViewBuilder
   var inner: some View {
     WebView(webView: webViewStore.webView)
       .onAppear {
+      self.delegate = .init(parent: self)
       self.webViewStore.webView.load(URLRequest(url: Constants.URL.login))
+      self.webViewStore.webView.uiDelegate = self.delegate
     }.onReceive(timer) { _ in
       self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
     } .navigationTitleInline(key: "Sign in to NGA")
-      .toolbar { ToolbarItem(placement: .mayNavigationBarTrailing) { closeButton } }
+      .toolbar { toolbar }
+      .alert(isPresented: $alertMessage.isNotNil()) { Alert(title: "From NGA".localized, message: alertMessage) }
+      .onChange(of: alertMessage) { if $0 == nil, let c = alertCompletion { c(); alertCompletion = nil } }
   }
 
   var body: some View {
@@ -64,7 +83,6 @@ struct LoginView: View {
       $0.uid = uid
       $0.token = token
     })
-    authing = false
   }
 
   func close() {
