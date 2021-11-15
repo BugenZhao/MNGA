@@ -2,7 +2,7 @@ use crate::{
     error::ServiceResult,
     forum::{get_forum_list, search_forum, set_subforum_filter},
     history::get_topic_history,
-    misc::clock_in,
+    clock_in::clock_in,
     msg::{get_short_msg_details, get_short_msg_list, post_short_msg},
     noti::fetch_notis,
     post::{

@@ -25,7 +25,9 @@ pub fn handle_local_user(request: LocalUserRequest) -> ServiceResult<LocalUserRe
 
 pub fn handle_auth(request: AuthRequest) -> ServiceResult<AuthResponse> {
     auth::set_auth(request.info.unwrap());
-    Ok(AuthResponse::new())
+    Ok(AuthResponse {
+        ..Default::default()
+    })
 }
 
 pub fn handle_content_parse(request: ContentParseRequest) -> ServiceResult<ContentParseResponse> {

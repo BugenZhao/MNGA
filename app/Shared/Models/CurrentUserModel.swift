@@ -16,10 +16,24 @@ class CurrentUserModel: ObservableObject {
 
   private var cancellables = Set<AnyCancellable>()
 
+  private let clockInTimer = Timer.publish(every: 2 * 60, on: .main, in: .common).autoconnect()
+
   init() {
     authStorage
       .objectWillChange
-      .sink { self.loadData(uid: self.authStorage.authInfo.uid) }
+      .map { _ in self.authStorage.authInfo.uid }
+      .removeDuplicates()
+      .sink { self.loadData(uid: $0) }
+      .store(in: &cancellables)
+
+    authStorage.$authResponse
+      .delay(for: .seconds(5), scheduler: RunLoop.main)
+      .sink { _ in self.clockIn() }
+      .store(in: &cancellables)
+
+    clockInTimer
+      .dropFirst()
+      .sink { _ in self.clockIn() }
       .store(in: &cancellables)
 
     $user
@@ -40,6 +54,14 @@ class CurrentUserModel: ObservableObject {
         var info = self.authStorage.authInfo
         info.cachedName = response.user.name.normal
         self.authStorage.setCurrentAuth(info)
+      }
+    }
+  }
+
+  func clockIn() {
+    logicCallAsync(.clockIn(.init())) { (response: ClockInResponse) in
+      if response.isFirstTime {
+        ToastModel.hud.message = .clockIn("\(self.user?.name.display ?? "???") @ \(response.date)")
       }
     }
   }
