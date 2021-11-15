@@ -21,12 +21,12 @@ class CurrentUserModel: ObservableObject {
   init() {
     authStorage
       .objectWillChange
-      .sink { self.loadData(uid: self.authStorage.authInfo.uid) }
+      .map { _ in self.authStorage.authInfo.uid }
+      .removeDuplicates()
+      .sink { self.loadData(uid: $0) }
       .store(in: &cancellables)
 
     authStorage.$authResponse
-      .map { $0?.shouldClockIn ?? false }
-      .filter { $0 }
       .delay(for: .seconds(5), scheduler: RunLoop.main)
       .sink { _ in self.clockIn() }
       .store(in: &cancellables)
@@ -61,7 +61,7 @@ class CurrentUserModel: ObservableObject {
   func clockIn() {
     logicCallAsync(.clockIn(.init())) { (response: ClockInResponse) in
       if response.isFirstTime {
-        ToastModel.hud.message = .clockIn(response.date)
+        ToastModel.hud.message = .clockIn("\(self.user?.name.display ?? "???") @ \(response.date)")
       }
     }
   }

@@ -9,7 +9,7 @@ fn clock_in_key() -> String {
     format!("/clock_in/user/{}", current_uid())
 }
 
-pub fn clocked_in_today() -> ServiceResult<bool> {
+fn clocked_in_today() -> ServiceResult<bool> {
     let last = CACHE.get_msg::<ClockInResponse>(&clock_in_key())?;
     Ok(last
         .map(|r| r.date == server_today_string())
