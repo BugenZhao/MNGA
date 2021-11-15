@@ -8,11 +8,11 @@ use crate::{
     user::{extract_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
-        extract_string, get_unique_id,
+        extract_string, get_unique_id, server_now,
     },
 };
 use cache::CACHE;
-use chrono::{Duration, Utc};
+use chrono::Duration;
 use futures::TryFutureExt;
 use protos::{DataModel::*, Service::*, ToValue};
 use std::cmp::Reverse;
@@ -255,7 +255,7 @@ pub async fn get_hot_topic_list(
     request: HotTopicListRequest,
 ) -> ServiceResult<HotTopicListResponse> {
     let fetch_page_limit = request.get_fetch_page_limit().max(10);
-    let start_timestamp = (Utc::now()
+    let start_timestamp = (server_now()
         - match request.get_range() {
             HotTopicListRequest_DateRange::DAY => Duration::days(1),
             HotTopicListRequest_DateRange::WEEK => Duration::days(7),

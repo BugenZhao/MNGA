@@ -27,3 +27,7 @@ lazy_static! {
 pub fn set_auth(info: AuthInfo) {
     *AUTH_INFO.write().unwrap() = info;
 }
+
+pub fn current_uid() -> String {
+    AUTH_INFO.read().unwrap().get_uid().to_owned()
+}

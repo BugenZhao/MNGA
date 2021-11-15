@@ -13,6 +13,7 @@ class AuthStorage: ObservableObject {
   static let shared = AuthStorage()
 
   @Published var isSigning = false
+  @Published var authResponse: AuthResponse? = nil
 
   // do not set this as value other than members in `allAuthInfos`
   @AppStorage("authInfo") var authInfo = AuthInfo() {
@@ -34,7 +35,7 @@ class AuthStorage: ObservableObject {
   }
 
   private func syncAuthWithLogic() {
-    let _: AuthResponse = try! logicCall(.auth(.with { $0.info = authInfo }))
+    authResponse = try! logicCall(.auth(.with { $0.info = authInfo }))
   }
 
   var signedIn: Bool {

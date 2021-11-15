@@ -1,5 +1,6 @@
 mod attachment;
 mod auth;
+mod clock_in;
 mod constants;
 mod dispatch;
 pub mod error;
@@ -7,7 +8,6 @@ mod fetch;
 mod forum;
 mod history;
 mod macros;
-mod misc;
 mod msg;
 mod noti;
 mod post;

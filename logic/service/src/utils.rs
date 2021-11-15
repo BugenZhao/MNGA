@@ -2,6 +2,7 @@ use crate::{
     constants::SUCCESS_MSGS,
     error::{ServiceError, ServiceResult},
 };
+use chrono::{DateTime, FixedOffset, Utc};
 use protos::DataModel::ErrorMessage;
 use std::collections::HashMap;
 use sxd_document::Package;
@@ -164,6 +165,18 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
     )
 }
 
+#[inline]
 pub fn get_unique_id() -> String {
     Uuid::new_v4().to_string()
+}
+
+#[inline]
+pub fn server_now() -> DateTime<FixedOffset> {
+    const HOUR: i32 = 3600;
+    Utc::now().with_timezone(&FixedOffset::east(8 * HOUR))
+}
+
+#[inline]
+pub fn server_today_string() -> String {
+    server_now().format("%Y-%m-%d").to_string()
 }

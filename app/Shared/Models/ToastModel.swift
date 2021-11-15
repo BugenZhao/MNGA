@@ -19,6 +19,7 @@ class ToastModel: ObservableObject {
     case error(String)
     case notification(Int)
     case userSwitch(String)
+    case clockIn(String)
   }
 
   @Published var message: Message? = nil
@@ -32,7 +33,7 @@ class ToastModel: ObservableObject {
       .sink { message in
       #if os(iOS)
         switch message! {
-        case .success(_), .userSwitch(_):
+        case .success(_), .userSwitch(_), .clockIn(_):
           HapticUtils.play(type: .success)
         case .error(_):
           HapticUtils.play(type: .error)
@@ -56,6 +57,8 @@ extension ToastModel.Message {
       return AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String.localizedStringWithFormat("%lld new unread notifications".localized, newCount))
     case .userSwitch(let user):
       return AlertToast(displayMode: displayMode, type: .systemImage("person.crop.circle.badge.checkmark", .accentColor), title: "User Switched".localized, subTitle: user)
+    case .clockIn(let msg):
+      return AlertToast(displayMode: displayMode, type: .systemImage("lanyardcard", .accentColor), title: "Clocked in Successfully".localized, subTitle: msg)
     }
   }
 }

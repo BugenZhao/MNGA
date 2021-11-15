@@ -1,6 +1,6 @@
 use crate::{
-    auth, error::ServiceResult, noti::mark_noti_read, topic::extract_topic_subject,
-    user::UserController,
+    auth, clock_in::clocked_in_today, error::ServiceResult, noti::mark_noti_read,
+    topic::extract_topic_subject, user::UserController,
 };
 use log::info;
 use protos::{DataModel::PostContent, Service::*};
@@ -25,7 +25,10 @@ pub fn handle_local_user(request: LocalUserRequest) -> ServiceResult<LocalUserRe
 
 pub fn handle_auth(request: AuthRequest) -> ServiceResult<AuthResponse> {
     auth::set_auth(request.info.unwrap());
-    Ok(AuthResponse::new())
+    Ok(AuthResponse {
+        should_clock_in: !clocked_in_today()?,
+        ..Default::default()
+    })
 }
 
 pub fn handle_content_parse(request: ContentParseRequest) -> ServiceResult<ContentParseResponse> {

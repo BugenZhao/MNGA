@@ -33,7 +33,7 @@ message LocalUserRequest { string user_id = 1; }
 message LocalUserResponse { User user = 1; }
 
 message AuthRequest { AuthInfo info = 1; }
-message AuthResponse {}
+message AuthResponse { bool should_clock_in = 1; }
 
 message ContentParseRequest { string raw = 1; }
 message ContentParseResponse {
@@ -284,4 +284,7 @@ message TopicSearchResponse {
 }
 
 message ClockInRequest {}
-message ClockInResponse {}
+message ClockInResponse {
+  string date = 1;
+  bool is_first_time = 2;
+}
