@@ -60,7 +60,7 @@ struct UserMenuView: View {
   var userSwitcher: some View {
     Menu {
       if authStorage.allAuthInfos.count > 1 {
-        Picker("Users", selection: $authStorage.authInfo) {
+        Picker("Accounts", selection: $authStorage.authInfo) {
           ForEach(authStorage.allAuthInfos.sorted(by: { $0.uid < $1.uid }), id: \.uid) { info in
             Text(info.cachedName.isEmpty ? info.uid : info.cachedName).tag(info)
           }
@@ -68,7 +68,7 @@ struct UserMenuView: View {
       }
 
       Button(action: { addUser() }) {
-        Label("Add User", systemImage: "person.crop.circle.fill.badge.plus")
+        Label("Add Account", systemImage: "person.crop.circle.fill.badge.plus")
       }
       Button(action: { reSignIn() }) {
         Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")

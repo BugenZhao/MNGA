@@ -27,7 +27,9 @@
 "Sign Out" = "退出登录";
 "Me" = "我";
 "%u Posts" = "%u 个帖子";
-"Sign in to NGA" = "登录到 泥潭";
+"Sign in to NGA" = "登录到 NGA";
+"From NGA" = "来自 NGA";
+"Cancel" = "取消";
 "Subforums of %@" = "%@ - 子版块";
 "Press and hold a subforum to mark it as favorite." = "长按子版块以收藏。";
 "History" = "浏览历史";
@@ -148,8 +150,9 @@
 "First" = "最前";
 "Last" = "最后";
 "Load Page %lld" = "加载第 %lld 页";
-"Add User" = "添加用户";
-"User Switched" = "用户已切换";
+"Accounts" = "账号";
+"Add Account" = "添加账号";
+"Account Switched" = "账号已切换";
 "Select Text" = "选择文本";
 "Text Selection" = "文本选择";
 "Copy All" = "全部拷贝";

@@ -33,7 +33,7 @@ message LocalUserRequest { string user_id = 1; }
 message LocalUserResponse { User user = 1; }
 
 message AuthRequest { AuthInfo info = 1; }
-git message AuthResponse {}
+message AuthResponse {}
 
 message ContentParseRequest { string raw = 1; }
 message ContentParseResponse {

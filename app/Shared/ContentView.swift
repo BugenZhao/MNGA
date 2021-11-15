@@ -41,7 +41,7 @@ struct ContentView: View {
         }
       }
     } .overlay { ImageOverlay() }
-      .sheet(isPresented: $authStorage.isSigning) { LoginView() }
+      .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
     #if os(iOS)
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
