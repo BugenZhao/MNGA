@@ -16,7 +16,7 @@ class CurrentUserModel: ObservableObject {
 
   private var cancellables = Set<AnyCancellable>()
 
-  private let clockInTimer = Timer.publish(every: 10 * 60, on: .main, in: .common).autoconnect()
+  private let clockInTimer = Timer.publish(every: 2 * 60, on: .main, in: .common).autoconnect()
 
   init() {
     authStorage
