@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  check:
-    name: Check
+  test:
+    name: Test
     runs-on: ubuntu-latest
     env:
       AUTH_DEBUG_UID: ${{ secrets.LOGIC_AUTH_DEBUG_UID }}
@@ -21,7 +21,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - name: Cargo check
+      - name: Cargo test
         uses: actions-rs/cargo@v1
         with:
-          command: check
+          command: test
