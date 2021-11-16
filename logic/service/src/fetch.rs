@@ -33,16 +33,16 @@ lazy_static! {
 
 #[cfg(test)]
 tokio::task_local! {
-    static RESPONSE_CB: std::cell::Cell<Option<Box<dyn FnOnce(&str)>>>;
+    static RESPONSE_CB: std::cell::RefCell<Box<dyn FnMut(&str)>>;
 }
 
 #[cfg(test)]
-pub async fn with_single_fetch_check<F: futures::Future>(
-    cb: impl FnOnce(&str) + 'static,
+pub async fn with_fetch_check<F: futures::Future>(
+    cb: impl FnMut(&str) + 'static,
     f: F,
 ) -> <F as futures::Future>::Output {
     RESPONSE_CB
-        .scope(std::cell::Cell::new(Some(Box::new(cb))), f)
+        .scope(std::cell::RefCell::new(Box::new(cb)), f)
         .await
 }
 
@@ -87,7 +87,7 @@ where
     let response = builder.send().await?.text_with_charset("gb18030").await?;
 
     #[cfg(test)]
-    RESPONSE_CB.with(|c| c.take().expect("callback can not be run multiple times")(&response));
+    let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
 
     RF::parse_response(response)
 }
