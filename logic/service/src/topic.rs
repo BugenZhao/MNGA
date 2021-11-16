@@ -470,11 +470,11 @@ pub async fn get_user_topic_list(
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{constants::REVIEW_UID, user::UserController};
+    use crate::{constants::REVIEW_UID, fetch::with_fetch_check, user::UserController};
 
     #[tokio::test]
     async fn test_topic_list() -> ServiceResult<()> {
-        let id = make_fid("315".to_owned());
+        let id = make_fid("650".to_owned());
         let response = get_topic_list(TopicListRequest {
             id: id.into(),
             page: 1,
@@ -486,6 +486,7 @@ mod test {
         println!("forum: {:#?}", response.get_forum());
 
         assert!(!response.get_topics().is_empty());
+        assert_eq!(response.get_forum().get_name(), "原神");
 
         Ok(())
     }
@@ -493,7 +494,7 @@ mod test {
     #[tokio::test]
     async fn test_topic_details() -> ServiceResult<()> {
         let response = get_topic_details(TopicDetailsRequest {
-            topic_id: "27477718".to_owned(),
+            topic_id: "27455825".to_owned(),
             page: 1,
             ..Default::default()
         })
@@ -504,12 +505,29 @@ mod test {
         assert!(!response.get_topic().get_id().is_empty());
         assert!(!response.get_replies().is_empty());
 
+        assert!(response
+            .get_replies()
+            .first()
+            .unwrap()
+            .get_content()
+            .get_raw()
+            .contains("zsbd"));
+        assert_eq!(
+            response
+                .get_topic()
+                .get_subject()
+                .get_tags()
+                .first()
+                .unwrap(),
+            "测试"
+        );
+
         Ok(())
     }
 
     #[tokio::test]
     async fn test_hot_topic_list() -> ServiceResult<()> {
-        let id = make_fid("-7".to_owned());
+        let id = make_fid("650".to_owned());
         let response = get_hot_topic_list(HotTopicListRequest {
             id: id.into(),
             range: HotTopicListRequest_DateRange::DAY,
@@ -529,11 +547,14 @@ mod test {
         use TopicFavorRequest_Operation::*;
 
         let post = |op| {
-            topic_favor(TopicFavorRequest {
-                topic_id: "27455825".to_owned(),
-                operation: op,
-                ..Default::default()
-            })
+            with_fetch_check(
+                |c| assert!(c.contains("操作成功")),
+                topic_favor(TopicFavorRequest {
+                    topic_id: "27455825".to_owned(),
+                    operation: op,
+                    ..Default::default()
+                }),
+            )
         };
 
         post(ADD).await?;
@@ -545,12 +566,19 @@ mod test {
     #[tokio::test]
     async fn test_specific_post() -> ServiceResult<()> {
         let response = get_topic_details(TopicDetailsRequest {
-            post_id: "549031060".to_owned(),
+            post_id: "531589220".to_owned(),
             ..Default::default()
         })
         .await?;
 
         assert_eq!(response.get_replies().len(), 1);
+        assert!(response
+            .get_replies()
+            .first()
+            .unwrap()
+            .get_content()
+            .get_raw()
+            .contains("BOLD"));
 
         Ok(())
     }
@@ -673,7 +701,7 @@ mod test {
     async fn test_anonymous_names() -> ServiceResult<()> {
         for page in [1, 2] {
             let response = get_topic_details(TopicDetailsRequest {
-                topic_id: "17260903".to_owned(),
+                topic_id: "17169610".to_owned(),
                 page,
                 ..Default::default()
             })
@@ -691,8 +719,8 @@ mod test {
             for id in anony_ids {
                 let user = UserController::get().get_by_id(&id).unwrap();
                 let anony_name = user.get_name().get_anonymous();
-                assert_ne!(anony_name, "");
                 dbg!(&id, anony_name);
+                assert_eq!(anony_name.chars().count(), 6);
             }
         }
 
