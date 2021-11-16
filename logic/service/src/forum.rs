@@ -142,19 +142,22 @@ pub async fn search_forum(request: ForumSearchRequest) -> ServiceResult<ForumSea
 
 #[cfg(test)]
 mod test {
+    use crate::fetch::with_fetch_check;
+
     use super::*;
 
     #[tokio::test]
     async fn test_set_filter() -> ServiceResult<()> {
-        let response = set_subforum_filter(SubforumFilterRequest {
-            forum_id: "310".to_owned(),
-            subforum_filter_id: "19115466".to_owned(),
-            operation: SubforumFilterRequest_Operation::SHOW,
-            ..Default::default()
-        })
+        let _response = with_fetch_check(
+            |r| assert!(r.contains("操作成功")),
+            set_subforum_filter(SubforumFilterRequest {
+                forum_id: "310".to_owned(),
+                subforum_filter_id: "19115466".to_owned(),
+                operation: SubforumFilterRequest_Operation::SHOW,
+                ..Default::default()
+            }),
+        )
         .await?;
-
-        println!("response: {:?}", response);
 
         Ok(())
     }
@@ -167,10 +170,9 @@ mod test {
 
         let forum_exists = response
             .get_categories()
-            .first()
-            .map(|c| c.get_forums().first())
-            .flatten()
-            .is_some();
+            .iter()
+            .flat_map(|c| c.get_forums())
+            .any(|f| f.name == "晴风村");
         assert!(forum_exists);
 
         Ok(())
@@ -186,7 +188,7 @@ mod test {
 
         println!("response: {:?}", response);
 
-        let forum_exists = response.get_forums().first().is_some();
+        let forum_exists = response.get_forums().iter().any(|f| f.name == "原神");
         assert!(forum_exists);
 
         Ok(())

@@ -390,7 +390,10 @@ pub async fn get_user_post_list(
 
 #[cfg(test)]
 mod test {
-    use crate::forum::{make_fid, make_stid};
+    use crate::{
+        fetch::with_fetch_check,
+        forum::{make_fid, make_stid},
+    };
 
     use super::*;
     use protos::DataModel::PostId;
@@ -400,16 +403,19 @@ mod test {
     async fn test_post_vote() -> ServiceResult<()> {
         use PostVoteRequest_Operation::*;
         let vote = |op| {
-            post_vote(PostVoteRequest {
-                post_id: Some(PostId {
-                    tid: "27477718".to_owned(),
-                    pid: "0".to_owned(),
+            with_fetch_check(
+                |c| println!("{}", c),
+                post_vote(PostVoteRequest {
+                    post_id: Some(PostId {
+                        tid: "27477718".to_owned(),
+                        pid: "0".to_owned(),
+                        ..Default::default()
+                    })
+                    .into(),
+                    operation: op,
                     ..Default::default()
-                })
-                .into(),
-                operation: op,
-                ..Default::default()
-            })
+                }),
+            )
         };
 
         while vote(UPVOTE).await.unwrap().delta != -1 {}
@@ -430,8 +436,8 @@ mod test {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::REPLY,
                 post_id: Some(PostId {
-                    pid: "0".to_owned(),
                     tid: "27455825".to_owned(),
+                    pid: "0".to_owned(),
                     ..Default::default()
                 })
                 .into(),
@@ -447,14 +453,13 @@ mod test {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_post_reply_fetch_content() -> ServiceResult<()> {
-        let _response = post_reply_fetch_content(PostReplyFetchContentRequest {
+        let response = post_reply_fetch_content(PostReplyFetchContentRequest {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::QUOTE,
                 post_id: Some(PostId {
-                    pid: "0".to_owned(),
                     tid: "27455825".to_owned(),
+                    pid: "0".to_owned(),
                     ..Default::default()
                 })
                 .into(),
@@ -464,6 +469,8 @@ mod test {
             ..Default::default()
         })
         .await?;
+
+        assert!(response.get_content().contains("[quote][tid=27455825]"));
 
         Ok(())
     }
@@ -491,7 +498,6 @@ mod test {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_upload_attachment() -> ServiceResult<()> {
         let mut action = PostReplyAction {
             operation: PostReplyAction_Operation::REPLY,
@@ -538,7 +544,7 @@ mod test {
     #[tokio::test]
     async fn test_user_post_list() -> ServiceResult<()> {
         let response = get_user_post_list(UserPostListRequest {
-            author_id: "23965969".to_owned(),
+            author_id: "41417929".to_owned(),
             page: 1,
             ..Default::default()
         })

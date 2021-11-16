@@ -169,19 +169,31 @@ mod test {
 
         println!("response: {:?}", response);
 
+        let msg_exists = response
+            .get_messages()
+            .iter()
+            .any(|m| m.subject == "For Logic Test");
+        assert!(msg_exists);
+
         Ok(())
     }
 
     #[tokio::test]
     async fn test_get_short_msg_details() -> ServiceResult<()> {
         let response = get_short_msg_details(ShortMessageDetailsRequest {
-            id: "3473951".to_owned(),
+            id: "3549006".to_owned(),
             page: 1,
             ..Default::default()
         })
         .await?;
 
         println!("response: {:?}", response);
+
+        let post_exists = response
+            .get_posts()
+            .iter()
+            .any(|p| p.get_content().get_raw().contains("测试"));
+        assert!(post_exists);
 
         Ok(())
     }
@@ -198,7 +210,7 @@ mod test {
             action: Some(action).into(),
             content: "Test Content".to_owned(),
             subject: "Test Short Message from Logic Test".to_owned(),
-            to: vec!["yricky".to_owned()].into(),
+            to: vec!["y-ricky".to_owned()].into(),
             ..Default::default()
         })
         .await?;
@@ -213,7 +225,7 @@ mod test {
     async fn test_reply_short_msg() -> ServiceResult<()> {
         let action = ShortMessagePostAction {
             operation: ShortMessagePostAction_Operation::REPLY,
-            mid: "3501275".to_owned(),
+            mid: "3549006".to_owned(),
             ..Default::default()
         };
 

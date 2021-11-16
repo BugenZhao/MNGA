@@ -201,6 +201,7 @@ mod test {
         println!("response: {:?}", response);
 
         assert!(response.has_user());
+        assert_eq!(response.get_user().get_name().get_normal(), "BugenZhao");
 
         Ok(())
     }
@@ -216,6 +217,7 @@ mod test {
         println!("response: {:?}", response);
 
         assert!(response.has_user());
+        assert_eq!(response.get_user().get_id(), "63598535");
 
         Ok(())
     }
