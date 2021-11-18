@@ -13,7 +13,7 @@ import AlertToast
 class ToastModel: ObservableObject {
   static let hud = ToastModel()
   static let banner = ToastModel()
-  static let alert = ToastModel()
+  static let editorAlert = ToastModel()
 
   enum Message {
     case success(String)

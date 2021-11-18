@@ -33,7 +33,7 @@ struct TopicDetailsView: View {
   @StateObject var votes = VotesModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
-  @StateObject var alert = ToastModel.alert
+  @StateObject var alert = ToastModel.editorAlert
 
   @State var isFavored: Bool
 

@@ -45,7 +45,7 @@ class ShortMessagePostModel: GenericPostModel<ShortMessagePostTask> {
       $0.to = context.to?.split(separator: " ").map(String.init) ?? []
       $0.subject = context.subject ?? "From MNGA"
       $0.content = context.content ?? ""
-    }), errorToastModel: ToastModel.alert)
+    }), errorToastModel: ToastModel.editorAlert)
     { (response: PostReplyResponse) in
       self.onSendSuccess(context: context)
     } onError: { e in

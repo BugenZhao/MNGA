@@ -35,7 +35,7 @@ struct MainToastModifier: ViewModifier {
 }
 
 struct AlertToastModifier: ViewModifier {
-  @StateObject var alert = ToastModel.alert
+  @StateObject var alert = ToastModel.editorAlert
 
   func body(content: Content) -> some View {
     content
