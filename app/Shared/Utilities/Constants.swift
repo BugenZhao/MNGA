@@ -24,6 +24,13 @@ struct Constants {
     static let login = Foundation.URL(string: "/nuke.php?__lib=login&__act=account&login", relativeTo: base)!
   }
 
+  struct MNGA {
+    static let scheme = "mnga"
+    static let topicBase = "\(scheme)://topic/"
+    static let forumFBase = "\(scheme)://forum/f/"
+    static let forumSTBase = "\(scheme)://forum/st/"
+  }
+
   struct Key {
     static let groupStore = "group.com.bugenzhao.MNGA"
     static let favoriteForums = "favoriteForums"

@@ -37,7 +37,7 @@ struct ForumListView: View {
         .modifier(FavoriteModifier(
         isFavorite: isFavorite,
         toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-        ))
+      ))
     }
   }
 

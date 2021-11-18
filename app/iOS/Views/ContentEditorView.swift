@@ -93,7 +93,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
       return
     }
 
-    logicCallAsync(request, errorToastModel: ToastModel.alert) { (response: UploadAttachmentResponse) in
+    logicCallAsync(request, errorToastModel: ToastModel.editorAlert) { (response: UploadAttachmentResponse) in
       let attachment = response.attachment
       context.attachments.append(attachment)
       presendAttachments.add(url: attachment.url, data: data)

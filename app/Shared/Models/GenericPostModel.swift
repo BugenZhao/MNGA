@@ -66,7 +66,7 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
   @Published var showEditor = false {
     willSet {
       if showEditor == true, newValue == false, self.context != nil, self.sent == nil {
-        ToastModel.hud.message = .success("Draft Saved")
+        ToastModel.showAuto(.success("Draft Saved"))
       }
     }
   }

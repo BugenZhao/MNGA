@@ -20,27 +20,25 @@ struct ContentView: View {
   @StateObject var notis = NotificationModel.shared
   @StateObject var currentUser = CurrentUserModel()
   @StateObject var textSelection = TextSelectionModel()
+  @StateObject var schemes = SchemesModel()
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
   var body: some View {
-    Group {
+    NavigationView {
+      ForumListView()
+        .modifier(SchemesNavigationModifier(model: schemes))
       if UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac {
-        NavigationView {
-          ForumListView()
-          if selectedForum.inner != Forum() {
-            TopicListView.build(forum: selectedForum.inner)
-          } else {
-            TopicListPlaceholderView()
-          }
-          TopicDetailsPlaceholderView()
+        if selectedForum.inner != Forum() {
+          TopicListView.build(forum: selectedForum.inner)
+        } else {
+          TopicListPlaceholderView()
         }
-      } else {
-        NavigationView {
-          ForumListView()
-        }
+        TopicDetailsPlaceholderView()
       }
-    } .overlay { ImageOverlay() }
+    }
+      .onOpenURL { let _ = schemes.onOpenMNGAScheme($0) }
+      .overlay { ImageOverlay() }
       .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
     #if os(iOS)
@@ -49,7 +47,7 @@ struct ContentView: View {
     .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })
-      .modifier(HudToastModifier())
+      .modifier(MainToastModifier())
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }

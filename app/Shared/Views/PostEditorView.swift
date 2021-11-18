@@ -42,7 +42,7 @@ class PostReplyModel: GenericPostModel<PostReplyTask> {
   override func buildContext(with task: PostReplyTask, ignoreError: Bool = false) {
     logicCallAsync(.postReplyFetchContent(.with {
       $0.action = task.action
-    }), errorToastModel: ToastModel.alert) { (response: PostReplyFetchContentResponse) in
+    }), errorToastModel: ToastModel.editorAlert) { (response: PostReplyFetchContentResponse) in
       // only build context after successful fetching
       var task = task
       task.action.verbatim = response.verbatim
@@ -65,7 +65,7 @@ class PostReplyModel: GenericPostModel<PostReplyTask> {
       if let subject = context.subject { $0.subject = subject }
       $0.attachments = context.attachments
       $0.anonymous = context.anonymous!
-    }), errorToastModel: ToastModel.alert)
+    }), errorToastModel: ToastModel.editorAlert)
     { (response: PostReplyResponse) in
       self.onSendSuccess(context: context)
     } onError: { e in

@@ -199,6 +199,11 @@
 		B4B3546026C91DA00052FE80 /* UsersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3545E26C91DA00052FE80 /* UsersModel.swift */; };
 		B4B3A5212726F60500275EAD /* ForEachOrEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3A5202726F60500275EAD /* ForEachOrEmpty.swift */; };
 		B4B3A5222726F60500275EAD /* ForEachOrEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B3A5202726F60500275EAD /* ForEachOrEmpty.swift */; };
+		B4BDE1382746A5F300F0607E /* Crossroad in Frameworks */ = {isa = PBXBuildFile; productRef = B4BDE1372746A5F300F0607E /* Crossroad */; };
+		B4BDE13A2746B29600F0607E /* SchemesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BDE1392746B29600F0607E /* SchemesModel.swift */; };
+		B4BDE13B2746B29600F0607E /* SchemesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BDE1392746B29600F0607E /* SchemesModel.swift */; };
+		B4BDE13D2746B7CA00F0607E /* ShareLinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BDE13C2746B7CA00F0607E /* ShareLinksView.swift */; };
+		B4BDE13E2746B7CA00F0607E /* ShareLinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BDE13C2746B7CA00F0607E /* ShareLinksView.swift */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D726884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D826884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
@@ -392,6 +397,8 @@
 		B4B3545E26C91DA00052FE80 /* UsersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersModel.swift; sourceTree = "<group>"; };
 		B4B3859226F6E20800A48D8F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B4B3A5202726F60500275EAD /* ForEachOrEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForEachOrEmpty.swift; sourceTree = "<group>"; };
+		B4BDE1392746B29600F0607E /* SchemesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemesModel.swift; sourceTree = "<group>"; };
+		B4BDE13C2746B7CA00F0607E /* ShareLinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLinksView.swift; sourceTree = "<group>"; };
 		B4C024C226884FD600E53554 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B4C024C326884FD700E53554 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B4C024C826884FD700E53554 /* MNGA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MNGA.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -470,6 +477,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B412F707268DFC4600EB0614 /* Logging in Frameworks */,
+				B4BDE1382746A5F300F0607E /* Crossroad in Frameworks */,
 				B4EA154E2740F2F200C0308B /* AlertToast in Frameworks */,
 				B409252626D29F6C00BCB666 /* BetterSafariView in Frameworks */,
 				B41BC0DD271C7E5D00DD05F2 /* CombineExt in Frameworks */,
@@ -614,6 +622,7 @@
 				B409252726D29FD900BCB666 /* OpenURLModel.swift */,
 				B4DCF4472688D5A500EC78A4 /* PagingDataSource.swift */,
 				B4F9F98C26F0CCA700D5ED1E /* PresendAttachmentsModel.swift */,
+				B4BDE1392746B29600F0607E /* SchemesModel.swift */,
 				B43DED4B269C7C8B009C52F5 /* SearchModel.swift */,
 				B43DED60269EFAF4009C52F5 /* ToastModel.swift */,
 				B402308726EBBC5C0077D3AA /* TopicDetailsActionModel.swift */,
@@ -796,6 +805,7 @@
 				B4CF7E8A270AAF4500E7C374 /* UserSignatureView.swift */,
 				B402308426EBBA7A0077D3AA /* UserView.swift */,
 				B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */,
+				B4BDE13C2746B7CA00F0607E /* ShareLinksView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -879,6 +889,7 @@
 				B4CF7E8E270AE04A00E7C374 /* Colorful */,
 				B41BC0DC271C7E5D00DD05F2 /* CombineExt */,
 				B4EA154D2740F2F200C0308B /* AlertToast */,
+				B4BDE1372746A5F300F0607E /* Crossroad */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
@@ -957,6 +968,7 @@
 				B404C4A6270C8E1000FF1743 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */,
 				B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */,
+				B4BDE1362746A5F300F0607E /* XCRemoteSwiftPackageReference "Crossroad" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -1063,6 +1075,7 @@
 				B444639626A1C54A006FA44D /* Stickers.swift in Sources */,
 				B4521B6A2722D1F400258640 /* Alignment.swift in Sources */,
 				B4DBF60F268979C20027233F /* TopicDetailsView.swift in Sources */,
+				B4BDE13D2746B7CA00F0607E /* ShareLinksView.swift in Sources */,
 				B4715CCE26A481FF0049D136 /* BlockWordListView.swift in Sources */,
 				B4DCF43A26885DD700EC78A4 /* DataModel.pb.swift in Sources */,
 				B413D67E2705E47800993DA2 /* WebOrAsyncImage.swift in Sources */,
@@ -1115,6 +1128,7 @@
 				B45819BC268D7D7200999830 /* RawRepresentable.swift in Sources */,
 				B49B563D27303E2800EA252F /* GlobalSearchView.swift in Sources */,
 				B4521B6D2722E11000258640 /* TopicJumpSelectorView.swift in Sources */,
+				B4BDE13A2746B29600F0607E /* SchemesModel.swift in Sources */,
 				B409251C26D299E600BCB666 /* ContentButtonView.swift in Sources */,
 				B447BC1026F7033200BCC2E8 /* AboutView.swift in Sources */,
 				B4920CD62690465100762FC9 /* TopicSubjectView.swift in Sources */,
@@ -1170,6 +1184,7 @@
 				B444639726A1C54A006FA44D /* Stickers.swift in Sources */,
 				B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */,
 				B49B563E27303E2800EA252F /* GlobalSearchView.swift in Sources */,
+				B4BDE13E2746B7CA00F0607E /* ShareLinksView.swift in Sources */,
 				B402308626EBBA7A0077D3AA /* UserView.swift in Sources */,
 				B4521B712724141F00258640 /* CurrentUserModel.swift in Sources */,
 				B45A9E8C26A171720088F04D /* GenericEditorView.swift in Sources */,
@@ -1240,6 +1255,7 @@
 				B4FBED8326A7163E006390A3 /* PreferencesStorage.swift in Sources */,
 				B4521B6E2722E11000258640 /* TopicJumpSelectorView.swift in Sources */,
 				B4920CE02690A98200762FC9 /* SubforumListView.swift in Sources */,
+				B4BDE13B2746B29600F0607E /* SchemesModel.swift in Sources */,
 				B4715CC326A40DF40049D136 /* PostCommentRowView.swift in Sources */,
 				B40F1534271AC3E3004CAB86 /* ShortMessageRowView.swift in Sources */,
 				B45819BD268D7D7200999830 /* RawRepresentable.swift in Sources */,
@@ -1754,6 +1770,14 @@
 				minimumVersion = 0.0.3;
 			};
 		};
+		B4BDE1362746A5F300F0607E /* XCRemoteSwiftPackageReference "Crossroad" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/giginet/Crossroad";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		B4C024EB268850E800E53554 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf";
@@ -1873,6 +1897,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
 			productName = SwiftUIX;
+		};
+		B4BDE1372746A5F300F0607E /* Crossroad */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4BDE1362746A5F300F0607E /* XCRemoteSwiftPackageReference "Crossroad" */;
+			productName = Crossroad;
 		};
 		B4C024EC268850E800E53554 /* SwiftProtobuf */ = {
 			isa = XCSwiftPackageProductDependency;

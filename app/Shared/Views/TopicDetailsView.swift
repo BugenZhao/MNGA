@@ -33,7 +33,7 @@ struct TopicDetailsView: View {
   @StateObject var votes = VotesModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
-  @StateObject var alert = ToastModel.alert
+  @StateObject var alert = ToastModel.editorAlert
 
   @State var isFavored: Bool
 
@@ -179,19 +179,10 @@ struct TopicDetailsView: View {
       }
 
       #if os(iOS)
-        Section {
-          Button(action: { self.activity.put(webpageURL) }) {
-            Label("Share", systemImage: "square.and.arrow.up")
-          }
+        ShareLinksView(mnga: mngaSchemeURL, nga: webpageURL) {
           Button(action: self.shareAsImage) {
-            Label("Share As Image", systemImage: "text.below.photo")
+            Label("As Image", systemImage: "text.below.photo")
           }
-        }
-      #endif
-
-      #if os(iOS)
-        Section {
-          favoriteButton
         }
       #endif
 
@@ -201,6 +192,9 @@ struct TopicDetailsView: View {
             Label("Goto \(atForum.name)", systemImage: "list.triangle")
           }
         }
+        #if os(iOS)
+          favoriteButton
+        #endif
         Button(action: { self.dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
@@ -466,6 +460,9 @@ struct TopicDetailsView: View {
 
   var webpageURL: URL? {
     URL(string: "read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : ""), relativeTo: Constants.URL.base)?.absoluteURL
+  }
+  var mngaSchemeURL: URL? {
+    URL(string: topic.id, relativeTo: URL(string: Constants.MNGA.topicBase)!)?.absoluteURL
   }
 
   func toggleFavor() {

@@ -50,6 +50,13 @@ struct TopicListView: View {
     }
   }
 
+  static func build(id: ForumId) -> Self {
+    let forum = Forum.with {
+      $0.id = id
+    }
+    return Self.build(forum: forum)
+  }
+
   static func build(forum: Forum) -> Self {
     let dataSourceLastPost = DataSource(
       buildRequest: { page in
@@ -145,11 +152,7 @@ struct TopicListView: View {
         }
       }
 
-      Section {
-        Button(action: { self.activity.put(webpageURL) }) {
-          Label("Share", systemImage: "square.and.arrow.up")
-        }
-      }
+      ShareLinksView(mnga: mngaSchemeURL, nga: webpageURL) { }
 
       Section {
         if let subforums = dataSource.latestResponse?.subforums,
@@ -279,6 +282,14 @@ struct TopicListView: View {
       return URL(string: "thread.php?fid=\(fid)", relativeTo: Constants.URL.base)?.absoluteURL
     case .stid(let stid):
       return URL(string: "thread.php?stid=\(stid)", relativeTo: Constants.URL.base)?.absoluteURL
+    }
+  }
+  var mngaSchemeURL: URL? {
+    switch forum.id.id! {
+    case .fid(let fid):
+      return URL(string: fid, relativeTo: URL(string: Constants.MNGA.forumFBase)!)?.absoluteURL
+    case .stid(let stid):
+      return URL(string: stid, relativeTo: URL(string: Constants.MNGA.forumSTBase)!)?.absoluteURL
     }
   }
 

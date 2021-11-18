@@ -12,7 +12,9 @@ import AlertToast
 
 class ToastModel: ObservableObject {
   static let hud = ToastModel()
+  static let banner = ToastModel()
   static let alert = ToastModel()
+  static let editorAlert = ToastModel()
 
   enum Message {
     case success(String)
@@ -20,6 +22,7 @@ class ToastModel: ObservableObject {
     case notification(Int)
     case userSwitch(String)
     case clockIn(String)
+    case openURL(URL)
   }
 
   @Published var message: Message? = nil
@@ -33,15 +36,28 @@ class ToastModel: ObservableObject {
       .sink { message in
       #if os(iOS)
         switch message! {
-        case .success(_), .userSwitch(_), .clockIn(_):
-          HapticUtils.play(type: .success)
         case .error(_):
           HapticUtils.play(type: .error)
         case .notification(_):
           HapticUtils.play(type: .warning)
+        default:
+          HapticUtils.play(type: .success)
         }
       #endif
     } .store(in: &cancellables)
+  }
+
+  static func showAuto(_ message: Message?) {
+    switch message {
+    case .success(_), .error(_):
+      ToastModel.banner.message = message
+    case .notification(_), .userSwitch(_), .clockIn(_):
+      ToastModel.hud.message = message
+    case .openURL(_):
+      ToastModel.alert.message = message
+    case .none:
+      break
+    }
   }
 }
 
@@ -59,6 +75,8 @@ extension ToastModel.Message {
       return AlertToast(displayMode: displayMode, type: .systemImage("person.crop.circle.badge.checkmark", .accentColor), title: "Account Switched".localized, subTitle: user)
     case .clockIn(let msg):
       return AlertToast(displayMode: displayMode, type: .systemImage("lanyardcard", .accentColor), title: "Clocked in Successfully".localized, subTitle: msg)
+    case .openURL(let url):
+      return AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
     }
   }
 }
