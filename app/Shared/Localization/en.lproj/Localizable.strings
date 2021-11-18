@@ -6,5 +6,6 @@
   
 */
 
-"MNGA Description" = "MNGA is an open source iOS client for \"THE FORUM\", developed based on SwiftUI and Rust. If you've encountered some problems using MNGA App, or just want to request some new features, you may give feedback via GitHub Issues/PRs or email.";
+"MNGA Description" = "MNGA is an open source iOS client for NGA Forum, developed based on SwiftUI and Rust. If you've encountered some problems using MNGA App, or just want to request some new features, you may give feedback via GitHub, NGA short messages, or Email.";
 "MNGA Please Share" = "Press the button on the top-right to share the link of MNGA!";
+"As Image" = "作为图片 (Beta)";
