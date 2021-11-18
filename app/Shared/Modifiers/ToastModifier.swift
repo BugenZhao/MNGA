@@ -13,6 +13,7 @@ struct MainToastModifier: ViewModifier {
   @StateObject var notis = NotificationModel.shared
   @StateObject var hud = ToastModel.hud
   @StateObject var banner = ToastModel.banner
+  @StateObject var alert = ToastModel.alert
 
   var onTap: (() -> ())? {
     if case .notification(_) = hud.message {
@@ -30,6 +31,10 @@ struct MainToastModifier: ViewModifier {
 
       .toast(isPresenting: $banner.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
       (banner.message ?? .success("")).toastView(for: .banner(.pop))
+    } onTap: { if let onTap = onTap { onTap() } }
+
+      .toast(isPresenting: $alert.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
+      (alert.message ?? .success("")).toastView(for: .alert)
     } onTap: { if let onTap = onTap { onTap() } }
   }
 }

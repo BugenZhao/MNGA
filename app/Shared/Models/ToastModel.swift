@@ -13,6 +13,7 @@ import AlertToast
 class ToastModel: ObservableObject {
   static let hud = ToastModel()
   static let banner = ToastModel()
+  static let alert = ToastModel()
   static let editorAlert = ToastModel()
 
   enum Message {
@@ -48,10 +49,12 @@ class ToastModel: ObservableObject {
 
   static func showAuto(_ message: Message?) {
     switch message {
-    case .success(_), .error(_), .openURL(_):
+    case .success(_), .error(_):
       ToastModel.banner.message = message
     case .notification(_), .userSwitch(_), .clockIn(_):
       ToastModel.hud.message = message
+    case .openURL(_):
+      ToastModel.alert.message = message
     case .none:
       break
     }
@@ -73,7 +76,7 @@ extension ToastModel.Message {
     case .clockIn(let msg):
       return AlertToast(displayMode: displayMode, type: .systemImage("lanyardcard", .accentColor), title: "Clocked in Successfully".localized, subTitle: msg)
     case .openURL(let url):
-      return AlertToast(displayMode: displayMode, type: .systemImage("network", .accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
+      return AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
     }
   }
 }
