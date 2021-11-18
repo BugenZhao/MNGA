@@ -164,7 +164,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   func refresh(animated: Bool = false, silentOnError: Bool = false, fromPage: Int = 1) {
     guard let request = preRefresh(fromPage: fromPage) else { return }
 
-    logicCallAsync(request, errorToastModel: silentOnError ? nil : .hud) { (response: Res) in
+    logicCallAsync(request, errorToastModel: silentOnError ? nil : .banner) { (response: Res) in
       self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
     } onError: { e in
       self.onRefreshError(e: e, animated: animated)

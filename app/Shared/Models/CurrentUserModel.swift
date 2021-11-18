@@ -41,7 +41,7 @@ class CurrentUserModel: ObservableObject {
       .removeDuplicates { $0.id == $1.id }
       .dropFirst()
       .filter { $0.id != "" }
-      .sink { ToastModel.hud.message = .userSwitch($0.name.display) }
+      .sink { ToastModel.showAuto(.userSwitch($0.name.display)) }
       .store(in: &cancellables)
   }
 
@@ -61,7 +61,7 @@ class CurrentUserModel: ObservableObject {
   func clockIn() {
     logicCallAsync(.clockIn(.init())) { (response: ClockInResponse) in
       if response.isFirstTime {
-        ToastModel.hud.message = .clockIn("\(self.user?.name.display ?? "???") @ \(response.date)")
+        ToastModel.showAuto(.clockIn("\(self.user?.name.display ?? "???") @ \(response.date)"))
       }
     }
   }

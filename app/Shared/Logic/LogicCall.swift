@@ -11,7 +11,7 @@ import SwiftProtobuf
 func logicCallAsync<Response: SwiftProtobuf.Message>(
   _ requestValue: AsyncRequest.OneOf_Value,
   requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
-  errorToastModel: ToastModel? = ToastModel.hud,
+  errorToastModel: ToastModel? = .banner,
   onSuccess: @escaping (Response) -> Void,
   onError: @escaping (LogicError) -> Void = { _ in }
 ) {
@@ -28,7 +28,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
   func logicCallAsync<Response: SwiftProtobuf.Message>(
     _ requestValue: AsyncRequest.OneOf_Value,
     requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
-    errorToastModel: ToastModel? = ToastModel.hud
+    errorToastModel: ToastModel? = .banner
   ) async -> Result<Response, LogicError> {
     return await withCheckedContinuation { (continuation: CheckedContinuation<Result<Response, LogicError>, Never>) in
       logicCallAsync(requestValue, requestDispatchQueue: requestDispatchQueue, errorToastModel: errorToastModel)

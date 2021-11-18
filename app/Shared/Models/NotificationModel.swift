@@ -78,7 +78,7 @@ class NotificationModel: ObservableObject {
       .prepend(0)
       .pairwise()
       .map { $0.1 - $0.0 }
-      .sink { new in if new > 0 { ToastModel.hud.message = .notification(new) } }
+      .sink { new in if new > 0 { ToastModel.showAuto(.notification(new)) } }
       .store(in: &cancellables)
   }
 }

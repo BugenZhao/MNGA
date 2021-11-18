@@ -27,7 +27,7 @@ struct ContentView: View {
   var body: some View {
     NavigationView {
       ForumListView()
-        .background { SchemesNavigationView(model: schemes) }
+        .modifier(SchemesNavigationModifier(model: schemes))
       if UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac {
         if selectedForum.inner != Forum() {
           TopicListView.build(forum: selectedForum.inner)
@@ -37,7 +37,7 @@ struct ContentView: View {
         TopicDetailsPlaceholderView()
       }
     }
-      .onOpenURL(perform: schemes.onOpenMNGAScheme(_:))
+      .onOpenURL { let _ = schemes.onOpenMNGAScheme($0) }
       .overlay { ImageOverlay() }
       .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
@@ -47,7 +47,7 @@ struct ContentView: View {
     .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })
-      .modifier(HudToastModifier())
+      .modifier(MainToastModifier())
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
