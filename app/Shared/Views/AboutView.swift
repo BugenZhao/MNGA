@@ -16,7 +16,7 @@ struct AboutView: View {
   @Environment(\.presentationMode) var presentation
 
   func openGitHub() {
-    OpenURLModel.shared.open(url: Constants.URL.gitHub, inApp: false)
+    OpenURLModel.shared.open(url: URLs.gitHub, inApp: false)
   }
 
   func shortMessage() {
@@ -28,11 +28,11 @@ struct AboutView: View {
   }
 
   func mail() {
-    OpenURLModel.shared.open(url: Constants.URL.mailTo, inApp: false)
+    OpenURLModel.shared.open(url: URLs.mailTo, inApp: false)
   }
 
   func doShare() {
-    self.activity.put(Constants.URL.testFlight)
+    self.activity.put(URLs.testFlight)
   }
 
   var version: String {

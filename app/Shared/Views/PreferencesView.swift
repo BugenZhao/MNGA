@@ -59,8 +59,8 @@ struct PreferencesInnerView: View {
   @ViewBuilder
   var connection: some View {
     Picker(selection: $pref.requestOption.baseURL, label: Label("Backend", systemImage: "server.rack")) {
-      ForEach(Constants.URL.hosts, id: \.self) { host in
-        Text(host).tag(Constants.URL.base(for: host)!.absoluteString)
+      ForEach(URLs.hosts, id: \.self) { host in
+        Text(host).tag(URLs.base(for: host)!.absoluteString)
       }
     }
 

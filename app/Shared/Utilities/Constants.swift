@@ -15,23 +15,6 @@ struct Constants {
     static let openForum = "\(base).openForum"
   }
 
-  struct URL {
-    static let defaultHost = "ngabbs.com"
-    static let hosts = ["bbs.ngacn.cc", "bbs.nga.cn", "nga.178.com", defaultHost]
-    
-    static func base(for host: String) -> Foundation.URL? {
-      Foundation.URL(string: "https://\(host)/")
-    }
-
-    static let defaultBase = base(for: defaultHost)!
-    static let base = base(for: defaultHost)! // todo: 
-    static let attachmentBase = Foundation.URL(string: "https://img.nga.178.com/attachments/")!
-    static let testFlight = Foundation.URL(string: "https://testflight.apple.com/join/qFDuytLt")!
-    static let gitHub = Foundation.URL(string: "https://github.com/BugenZhao/MNGA")!
-    static let mailTo = Foundation.URL(string: "mailto:mnga.feedback@bugenzhao.com")!
-    static let login = Foundation.URL(string: "/nuke.php?__lib=login&__act=account&login", relativeTo: base)!
-  }
-
   struct MNGA {
     static let scheme = "mnga"
     static let topicBase = "\(scheme)://topic/"

@@ -263,7 +263,7 @@ extension Topic {
 
 extension RequestOption {
   static let defaultValue: Self = .with {
-    $0.baseURL = Constants.URL.defaultBase.absoluteString
+    $0.baseURL = URLs.defaultBase.absoluteString
     $0.device = .apple
   }
 }

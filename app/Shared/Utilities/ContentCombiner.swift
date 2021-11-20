@@ -330,7 +330,7 @@ class ContentCombiner {
     guard case .plain(let plain) = value else { return }
 
     let urlText = plain.text
-    guard let url = URL(string: urlText, relativeTo: Constants.URL.attachmentBase) else { return }
+    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
 
     let onlyThumbs = self.inQuote && self.replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
@@ -455,7 +455,7 @@ class ContentCombiner {
 
     let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
       guard let urlString = urlString else { return }
-      guard let url = URL(string: urlString, relativeTo: Constants.URL.base) else { return }
+      guard let url = URL(string: urlString, relativeTo: URLs.base) else { return }
 
       switch url.mngaNavigationIdentifier {
       case .topicID(let tid, _):
@@ -543,7 +543,7 @@ class ContentCombiner {
     guard case .plain(let plain) = value else { return }
 
     let urlText = plain.text
-    guard let url = URL(string: urlText, relativeTo: Constants.URL.attachmentBase) else { return }
+    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
 
     let link = ContentButtonView(icon: "film", title: Text("View Video"), inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
@@ -559,7 +559,7 @@ class ContentCombiner {
     let duration = tokens.last { $0.contains("duration") }
 
     guard let urlText = tokens.first else { return }
-    guard let url = URL(string: urlText, relativeTo: Constants.URL.attachmentBase) else { return }
+    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
 
     let title: Text
     if let duration = extractQueryParams(query: duration ?? "", param: "duration") {
