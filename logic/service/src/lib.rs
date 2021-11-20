@@ -1,5 +1,6 @@
 mod attachment;
 mod auth;
+mod cache;
 mod clock_in;
 mod constants;
 mod dispatch;

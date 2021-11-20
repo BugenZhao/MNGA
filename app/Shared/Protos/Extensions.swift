@@ -267,3 +267,20 @@ extension RequestOption {
     $0.device = .apple
   }
 }
+
+extension CacheType {
+  var description: LocalizedStringKey {
+    switch self {
+    case .all:
+      return "All"
+    case .topicHistory:
+      return "Topic Histories"
+    case .topicDetails:
+      return "Topic Cache"
+    case .notification:
+      return "Notifications"
+    default:
+      return ""
+    }
+  }
+}

@@ -70,7 +70,7 @@ extension ToastModel.Message {
     case .error(let msg):
       return AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg)
     case .notification(let newCount):
-      return AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String.localizedStringWithFormat("%lld new unread notifications".localized, newCount))
+      return AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String(format: "%lld new unread notifications".localized, newCount))
     case .userSwitch(let user):
       return AlertToast(displayMode: displayMode, type: .systemImage("person.crop.circle.badge.checkmark", .accentColor), title: "Account Switched".localized, subTitle: user)
     case .clockIn(let msg):

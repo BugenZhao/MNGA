@@ -44,6 +44,7 @@ mod dispatch_async {
             short_message_post(r) => r!(handle_short_message_post(r)),
             topic_search(r) => r!(handle_topic_search(r)),
             clock_in(r) => r!(handle_clock_in(r)),
+            cache(r) => r!(handle_cache(r)),
         }
     }
 }

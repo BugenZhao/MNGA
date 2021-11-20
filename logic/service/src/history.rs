@@ -8,7 +8,7 @@ use protos::{
 };
 use std::cmp::Reverse;
 
-static TOPIC_SNAPSHOT_PREFIX: &str = "/snapshot/topic";
+pub static TOPIC_SNAPSHOT_PREFIX: &str = "/snapshot/topic";
 fn topic_snapshot_key(id: &str) -> String {
     format!("{}/{}", TOPIC_SNAPSHOT_PREFIX, id)
 }

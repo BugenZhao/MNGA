@@ -1,8 +1,9 @@
 use crate::{
+    cache::manipulate_cache,
+    clock_in::clock_in,
     error::ServiceResult,
     forum::{get_forum_list, search_forum, set_subforum_filter},
     history::get_topic_history,
-    clock_in::clock_in,
     msg::{get_short_msg_details, get_short_msg_list, post_short_msg},
     noti::fetch_notis,
     post::{
@@ -49,3 +50,4 @@ handle!(short_message_details, get_short_msg_details);
 handle!(short_message_post, post_short_msg);
 handle!(topic_search, search_topic);
 handle!(clock_in, clock_in);
+handle!(cache, manipulate_cache);

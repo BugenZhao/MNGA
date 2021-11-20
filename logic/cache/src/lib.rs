@@ -9,11 +9,11 @@ lazy_static! {
     pub static ref CACHE: Cache = {
         let (db, is_test) = match config::CONF.get().map(|c| &c.cache_path) {
             Some(path) => {
-                log::info!("open db at {:?}", path);
+                log::debug!("open db at {:?}", path);
                 let db = sled::Config::new()
                     .path(path)
-                    .flush_every_ms(Some(1000))
-                    .cache_capacity(50 * 1024 * 1024)
+                    .flush_every_ms(Some(3000))
+                    .cache_capacity(20 * 1024 * 1024)
                     .open()
                     .expect("cannot open or create cache db");
                 (db, false)
@@ -63,7 +63,7 @@ impl Cache {
         let key_bytes = key.as_bytes();
         let value = self.db.get(key_bytes)?;
         let value_msg = value.and_then(|ivec| M::parse_from_bytes(&ivec).ok());
-        log::info!(
+        log::debug!(
             "get: key={}, msg={}",
             key,
             if value_msg.is_some() { "Some" } else { "None" }
@@ -84,7 +84,7 @@ impl Cache {
             mutate(msg);
             let value = msg.write_to_bytes()?;
             self.db.insert(key_bytes, value)?;
-            log::info!("mutate: key={}", key);
+            log::debug!("mutate: key={}", key);
         }
 
         Ok(value_msg)
@@ -94,6 +94,19 @@ impl Cache {
         self.db
             .scan_prefix(prefix)
             .filter_map(|r| r.ok().map(|(_k, v)| M::parse_from_bytes(&v).ok()).flatten())
+    }
+
+    fn do_remove_prefix(&self, prefix: &str) -> CacheResult<usize> {
+        let mut batch = sled::Batch::default();
+        let mut count = 0;
+        for r in self.db.scan_prefix(prefix) {
+            let (k, _v) = r?;
+            batch.remove(k);
+            count += 1;
+        }
+        self.db.apply_batch(batch)?;
+        self.db.flush()?;
+        Ok(count)
     }
 
     #[allow(unused_results)]
@@ -134,5 +147,18 @@ impl Cache {
         } else {
             tokio::task::block_in_place(move || self.do_scan_msg(prefix))
         }
+    }
+
+    pub fn remove_prefix(&self, prefix: &str) -> CacheResult<usize> {
+        if self.is_test {
+            // using single threaded runtime
+            self.do_remove_prefix(prefix)
+        } else {
+            tokio::task::block_in_place(move || self.do_remove_prefix(prefix))
+        }
+    }
+
+    pub fn total_size(&self) -> CacheResult<u64> {
+        self.db.size_on_disk().map_err(Into::into)
     }
 }

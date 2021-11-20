@@ -179,3 +179,12 @@
 "Navigate" = "跳转";
 "Connection" = "连接";
 "Backend" = "后端";
+"Image" = "图片";
+"Data" = "数据";
+"All" = "全部";
+"Topic Histories" = "话题历史记录";
+"Topic Cache" = "话题缓存";
+"Are you sure to clear the cache?" = "您确定要清除缓存吗？";
+"This will take a while." = "这将花费一段时间。";
+"%llu items" = "%llu 项";
+"Clear" = "清除";
