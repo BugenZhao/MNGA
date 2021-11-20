@@ -152,7 +152,7 @@ struct TopicListView: View {
         }
       }
 
-      ShareLinksView(mnga: mngaSchemeURL, nga: webpageURL) { }
+      ShareLinksView(navigationID: navID) { }
 
       Section {
         if let subforums = dataSource.latestResponse?.subforums,
@@ -200,15 +200,22 @@ struct TopicListView: View {
   @ViewBuilder
   var subforum: some View {
     let destination = TopicListView.build(forum: self.currentShowingSubforum ?? Forum())
-    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { } .hidden()
+    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
+      .isDetailLink(false)
+      .hidden()
     NavigationLink(destination: EmptyView()) { } .hidden() // hack: unexpected pop
   }
 
   @ViewBuilder
   var navigations: some View {
-    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { } .hidden()
-    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { } .hidden()
-    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { } .hidden()
+    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { }
+      .isDetailLink(false)
+      .hidden()
+    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { }
+      .isDetailLink(false)
+      .hidden()
+    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { }
+      .hidden()
   }
 
   @ViewBuilder
@@ -276,21 +283,8 @@ struct TopicListView: View {
       .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
   }
 
-  var webpageURL: URL? {
-    switch forum.id.id! {
-    case .fid(let fid):
-      return URL(string: "thread.php?fid=\(fid)", relativeTo: Constants.URL.base)?.absoluteURL
-    case .stid(let stid):
-      return URL(string: "thread.php?stid=\(stid)", relativeTo: Constants.URL.base)?.absoluteURL
-    }
-  }
-  var mngaSchemeURL: URL? {
-    switch forum.id.id! {
-    case .fid(let fid):
-      return URL(string: fid, relativeTo: URL(string: Constants.MNGA.forumFBase)!)?.absoluteURL
-    case .stid(let stid):
-      return URL(string: stid, relativeTo: URL(string: Constants.MNGA.forumSTBase)!)?.absoluteURL
-    }
+  var navID: NavigationIdentifier {
+    return .forumID(forum.id)
   }
 
   func updateForumMeta(r: TopicListResponse?) {

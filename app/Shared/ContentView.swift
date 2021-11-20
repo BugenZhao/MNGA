@@ -24,20 +24,34 @@ struct ContentView: View {
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
+  var useColumnStyle: Bool {
+    UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac
+  }
+
+  var main: some View {
+    ForumListView()
+      .modifier(SchemesNavigationModifier(model: schemes))
+  }
+
   var body: some View {
-    NavigationView {
-      ForumListView()
-        .modifier(SchemesNavigationModifier(model: schemes))
-      if UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac {
-        if selectedForum.inner != Forum() {
-          TopicListView.build(forum: selectedForum.inner)
-        } else {
-          TopicListPlaceholderView()
+    Group {
+      if useColumnStyle {
+        NavigationView {
+          main
+          if selectedForum.inner != Forum() {
+            TopicListView.build(forum: selectedForum.inner)
+          } else {
+            TopicListPlaceholderView()
+          }
+          TopicDetailsPlaceholderView()
         }
-        TopicDetailsPlaceholderView()
+      } else {
+        NavigationView {
+          main
+        }
       }
     }
-      .onOpenURL { let _ = schemes.onOpenMNGAScheme($0) }
+      .onOpenURL { let _ = schemes.onNavigateToURL($0) }
       .overlay { ImageOverlay() }
       .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
@@ -45,8 +59,8 @@ struct ContentView: View {
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif
     .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
-        AppActivityView(activityItems: activity.activityItems ?? [])
-      })
+      AppActivityView(activityItems: activity.activityItems ?? [])
+    })
       .modifier(MainToastModifier())
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }

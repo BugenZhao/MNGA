@@ -48,8 +48,13 @@ struct TopicDetailsView: View {
     forceLocalMode || (dataSource.latestResponse?.isLocalCache == true)
   }
 
-  static func build(id: String) -> some View {
-    Self.build(topic: .with { $0.id = id })
+  static func build(id: String, fav: String? = nil) -> some View {
+    Self.build(topic: .with {
+      $0.id = id
+      if let fav = fav {
+        $0.fav = fav
+      }
+    })
   }
 
   static func build(onlyPost: (id: PostId, atPage: Int?)) -> some View {
@@ -179,9 +184,9 @@ struct TopicDetailsView: View {
       }
 
       #if os(iOS)
-        ShareLinksView(mnga: mngaSchemeURL, nga: webpageURL) {
+        ShareLinksView(navigationID: navID) {
           Button(action: self.shareAsImage) {
-            Label("As Image", systemImage: "text.below.photo")
+            Label("Screenshot (Beta)", systemImage: "text.below.photo")
           }
         }
       #endif
@@ -438,7 +443,7 @@ struct TopicDetailsView: View {
       .onChange(of: dataSource.latestResponse, perform: self.onNewResponse(response:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
-      .userActivity(Constants.Activity.openTopic) { $0.webpageURL = webpageURL }
+      .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
   }
 
   var maxFloor: Int {
@@ -458,11 +463,8 @@ struct TopicDetailsView: View {
     }
   }
 
-  var webpageURL: URL? {
-    URL(string: "read.php?tid=\(topic.id)" + (topic.hasFav ? "&fav=\(topic.fav)" : ""), relativeTo: Constants.URL.base)?.absoluteURL
-  }
-  var mngaSchemeURL: URL? {
-    URL(string: topic.id, relativeTo: URL(string: Constants.MNGA.topicBase)!)?.absoluteURL
+  var navID: NavigationIdentifier {
+    return .topicID(tid: topic.id, fav: topic.hasFav ? topic.fav : nil)
   }
 
   func toggleFavor() {

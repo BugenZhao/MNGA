@@ -11,21 +11,20 @@ import SwiftUI
 struct ShareLinksView<V: View>: View {
   @EnvironmentObject var activity: ActivityModel
 
-  let mnga: URL?
-  let nga: URL?
+  let navigationID: NavigationIdentifier
   @ViewBuilder let others: () -> V
 
   var body: some View {
     Menu {
-      Button(action: { self.activity.put(mnga) }) {
+      Button(action: { self.activity.put(navigationID.mngaURL) }) {
         Label("MNGA Link", systemImage: "m.circle")
       }
-      Button(action: { self.activity.put(nga) }) {
+      Button(action: { self.activity.put(navigationID.webpageURL) }) {
         Label("NGA Link", systemImage: "network")
       }
       if let o = others { o() }
     } label: {
-      Label("Share...", systemImage: "square.and.arrow.up")
+      Label("Share", systemImage: "square.and.arrow.up")
     }
   }
 }

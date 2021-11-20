@@ -170,8 +170,10 @@
 "Anonymous User" = "匿名用户";
 "Clock in" = "签到";
 "Clocked in Successfully" = "签到成功";
-"Share..." = "分享…";
+"Share" = "分享";
 "MNGA Link" = "MNGA 链接";
 "NGA Link" = "NGA 链接";
-"As Image" = "作为图片 (Beta)";
-"Navigated to Link" = "导航至链接";
+"Screenshot (Beta)" = "截图 (Beta)";
+"Navigated to Link" = "跳转至链接";
+"Navigate to Link from Pasteboard?" = "跳转至剪贴板中的链接？";
+"Navigate" = "跳转";
