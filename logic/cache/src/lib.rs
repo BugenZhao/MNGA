@@ -9,11 +9,11 @@ lazy_static! {
     pub static ref CACHE: Cache = {
         let (db, is_test) = match config::CONF.get().map(|c| &c.cache_path) {
             Some(path) => {
-                log::info!("open db at {:?}", path);
+                log::debug!("open db at {:?}", path);
                 let db = sled::Config::new()
                     .path(path)
-                    .flush_every_ms(Some(1000))
-                    .cache_capacity(50 * 1024 * 1024)
+                    .flush_every_ms(Some(3000))
+                    .cache_capacity(20 * 1024 * 1024)
                     .open()
                     .expect("cannot open or create cache db");
                 (db, false)
@@ -63,7 +63,7 @@ impl Cache {
         let key_bytes = key.as_bytes();
         let value = self.db.get(key_bytes)?;
         let value_msg = value.and_then(|ivec| M::parse_from_bytes(&ivec).ok());
-        log::info!(
+        log::debug!(
             "get: key={}, msg={}",
             key,
             if value_msg.is_some() { "Some" } else { "None" }
@@ -84,7 +84,7 @@ impl Cache {
             mutate(msg);
             let value = msg.write_to_bytes()?;
             self.db.insert(key_bytes, value)?;
-            log::info!("mutate: key={}", key);
+            log::debug!("mutate: key={}", key);
         }
 
         Ok(value_msg)
