@@ -456,18 +456,13 @@ class ContentCombiner {
     let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
       guard let urlString = urlString else { return }
       guard let url = URL(string: urlString, relativeTo: Constants.URL.base) else { return }
-      guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return }
 
-      if components.path.contains("read.php"),
-        let tid = components.queryItems?.first(where: { $0.name == "tid" })?.value {
+      switch url.mngaNavigationIdentifier {
+      case .topicID(let tid):
         self.actionModel?.navigateToTid = tid
-      } else if components.path.contains("thread.php"),
-        let stid = components.queryItems?.first(where: { $0.name == "stid" })?.value {
-        self.actionModel?.navigateToForum = Forum.with { $0.id.stid = stid }
-      } else if components.path.contains("thread.php"),
-        let fid = components.queryItems?.first(where: { $0.name == "fid" })?.value {
-        self.actionModel?.navigateToForum = Forum.with { $0.id.fid = fid }
-      } else {
+      case .forumID(let id):
+        self.actionModel?.navigateToForum = Forum.with { $0.id = id }
+      case .none:
         OpenURLModel.shared.open(url: url)
       }
     }

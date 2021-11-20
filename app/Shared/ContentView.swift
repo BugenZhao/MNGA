@@ -37,7 +37,7 @@ struct ContentView: View {
         TopicDetailsPlaceholderView()
       }
     }
-      .onOpenURL { let _ = schemes.onOpenMNGAScheme($0) }
+      .onOpenURL { let _ = schemes.onNavigateToURL($0) }
       .overlay { ImageOverlay() }
       .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
@@ -45,8 +45,8 @@ struct ContentView: View {
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif
     .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
-        AppActivityView(activityItems: activity.activityItems ?? [])
-      })
+      AppActivityView(activityItems: activity.activityItems ?? [])
+    })
       .modifier(MainToastModifier())
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }

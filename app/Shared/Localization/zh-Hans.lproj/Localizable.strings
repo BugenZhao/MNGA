@@ -174,4 +174,6 @@
 "MNGA Link" = "MNGA 链接";
 "NGA Link" = "NGA 链接";
 "As Image" = "作为图片 (Beta)";
-"Navigated to Link" = "导航至链接";
+"Navigated to Link" = "跳转至链接";
+"Navigate to Link from Pasteboard?" = "跳转至剪贴板中的链接？";
+"Navigate" = "跳转";
