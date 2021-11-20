@@ -62,10 +62,10 @@ struct ContentView: View {
       AppActivityView(activityItems: activity.activityItems ?? [])
     })
       .modifier(MainToastModifier())
-      .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
-      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
-      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView() }
+      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
+      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
+      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection) }
       .environmentObject(viewingImage)
       .environmentObject(activity)
       .environmentObject(postReply)
