@@ -20,6 +20,8 @@ message SyncRequest {
     SubjectParseRequest subject_parse = 5;
     // Mark some notifications as read.
     MarkNotificationReadRequest mark_noti_read = 6;
+    // Set options for requesting.
+    SetRequestOptionRequest set_request_option = 7;
   }
 }
 
@@ -48,6 +50,9 @@ message SubjectParseResponse { Subject subject = 1; }
 
 message MarkNotificationReadRequest { repeated string ids = 1; }
 message MarkNotificationReadResponse {}
+
+message SetRequestOptionRequest { RequestOption option = 1; }
+message SetRequestOptionResponse {}
 
 /*
  * Asynchronous services that are called in callback manner.

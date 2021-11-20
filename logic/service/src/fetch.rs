@@ -2,8 +2,9 @@ use std::time::Duration;
 
 use crate::{
     auth,
-    constants::{ANDROID_UA, APPLE_UA, DESKTOP_UA, URL_BASE},
+    constants::{ANDROID_UA, APPLE_UA, DESKTOP_UA},
     error::ServiceResult,
+    request,
     utils::extract_error,
 };
 use lazy_static::lazy_static;
@@ -11,11 +12,22 @@ use protos::DataModel::Device;
 use reqwest::{multipart, Client, RequestBuilder, Url};
 
 fn device_ua() -> &'static str {
-    match auth::AUTH_INFO.read().unwrap().get_device() {
+    match request::REQUEST_OPTION.read().unwrap().get_device() {
         Device::DESKTOP => DESKTOP_UA,
         Device::APPLE => APPLE_UA,
         Device::ANDROID => ANDROID_UA,
     }
+}
+
+fn resolve_url(api: &str) -> ServiceResult<Url> {
+    let url = Url::parse(api) // if absolute
+        .or_else(|_| -> ServiceResult<Url> {
+            let mut url = Url::parse(request::REQUEST_OPTION.read().unwrap().get_base_url())?;
+            url.set_path(api);
+            Ok(url)
+        })?;
+
+    Ok(url)
 }
 
 fn build_client() -> Client {
@@ -60,7 +72,7 @@ where
     RF: ResponseFormat,
     AF: FnOnce(RequestBuilder) -> RequestBuilder,
 {
-    let url = Url::parse(api).or_else(|_| Url::parse(&format!("{}/{}", URL_BASE, api)))?;
+    let url = resolve_url(api)?;
 
     let query = {
         query.push(RF::query_pair());

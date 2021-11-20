@@ -4,13 +4,10 @@ use std::sync::RwLock;
 
 #[cfg(test)]
 fn default_auth_info() -> AuthInfo {
-    use protos::DataModel::Device;
-
     dotenv::dotenv().ok();
     AuthInfo {
         uid: dotenv::var("AUTH_DEBUG_UID").unwrap_or("".to_owned()),
         token: dotenv::var("AUTH_DEBUG_TOKEN").unwrap_or("".to_owned()),
-        device: Device::APPLE,
         ..Default::default()
     }
 }

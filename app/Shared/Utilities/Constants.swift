@@ -16,10 +16,15 @@ struct Constants {
   }
 
   struct URL {
-    static let mainHost = "ngabbs.com"
-    static let hosts = ["bbs.ngacn.cc", "bbs.nga.cn", "nga.178.com", mainHost]
+    static let defaultHost = "ngabbs.com"
+    static let hosts = ["bbs.ngacn.cc", "bbs.nga.cn", "nga.178.com", defaultHost]
+    
+    static func base(for host: String) -> Foundation.URL? {
+      Foundation.URL(string: "https://\(host)/")
+    }
 
-    static let base = Foundation.URL(string: "https://\(mainHost)/")!
+    static let defaultBase = base(for: defaultHost)!
+    static let base = base(for: defaultHost)! // todo: 
     static let attachmentBase = Foundation.URL(string: "https://img.nga.178.com/attachments/")!
     static let testFlight = Foundation.URL(string: "https://testflight.apple.com/join/qFDuytLt")!
     static let gitHub = Foundation.URL(string: "https://github.com/BugenZhao/MNGA")!

@@ -11,6 +11,7 @@ mod macros;
 mod msg;
 mod noti;
 mod post;
+mod request;
 mod topic;
 mod user;
 mod utils;

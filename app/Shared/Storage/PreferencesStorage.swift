@@ -22,4 +22,17 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
   @AppStorage("themeColor") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
+
+  @AppStorage("requestOption") var requestOption = RequestOption.defaultValue {
+    didSet { syncRequestOptionWithLogic() }
+  }
+
+
+  init() {
+    syncRequestOptionWithLogic()
+  }
+
+  func syncRequestOptionWithLogic() {
+    let _: SetRequestOptionResponse = try! logicCall(.setRequestOption(.with { $0.option = self.requestOption }))
+  }
 }

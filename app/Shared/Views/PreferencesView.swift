@@ -10,7 +10,6 @@ import SwiftUI
 
 struct PreferencesInnerView: View {
   @StateObject var pref = PreferencesStorage.shared
-  @StateObject var auth = AuthStorage.shared
 
   @ViewBuilder
   var appearance: some View {
@@ -58,8 +57,14 @@ struct PreferencesInnerView: View {
   }
 
   @ViewBuilder
-  var posting: some View {
-    Picker(selection: $auth.authInfo.device, label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
+  var connection: some View {
+    Picker(selection: $pref.requestOption.baseURL, label: Label("Backend", systemImage: "server.rack")) {
+      ForEach(Constants.URL.hosts, id: \.self) { host in
+        Text(host).tag(Constants.URL.base(for: host)!.absoluteString)
+      }
+    }
+
+    Picker(selection: $pref.requestOption.device, label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
       ForEach(Device.allCases, id: \.self) { device in
         Label(device.description, systemImage: device.icon).tag(device)
       }
@@ -82,9 +87,9 @@ struct PreferencesInnerView: View {
         Form { reading }
           .tabItem { Label("Reading", systemImage: "eyeglasses") }
           .tag("reading")
-        Form { posting }
-          .tabItem { Label("Posting", systemImage: "paperplane") }
-          .tag("posting")
+        Form { connection }
+          .tabItem { Label("Connection", systemImage: "network") }
+          .tag("connection")
         Form { advanced }
           .tabItem { Label("Advanced", systemImage: "gearshape.2") }
           .tag("advanced")
@@ -107,8 +112,8 @@ struct PreferencesInnerView: View {
           reading
         }
 
-        Section(header: Text("Posting")) {
-          posting
+        Section(header: Text("Connection")) {
+          connection
         }
 
         Section(header: Text("Advanced"), footer: Text("Options here are experimental or unstable.")) {

@@ -1,5 +1,5 @@
 use crate::{
-    auth, error::ServiceResult, noti::mark_noti_read, topic::extract_topic_subject,
+    auth, error::ServiceResult, noti::mark_noti_read, request, topic::extract_topic_subject,
     user::UserController,
 };
 use log::info;
@@ -25,9 +25,7 @@ pub fn handle_local_user(request: LocalUserRequest) -> ServiceResult<LocalUserRe
 
 pub fn handle_auth(request: AuthRequest) -> ServiceResult<AuthResponse> {
     auth::set_auth(request.info.unwrap());
-    Ok(AuthResponse {
-        ..Default::default()
-    })
+    Ok(Default::default())
 }
 
 pub fn handle_content_parse(request: ContentParseRequest) -> ServiceResult<ContentParseResponse> {
@@ -58,4 +56,11 @@ pub fn handle_mark_noti_read(
     request: MarkNotificationReadRequest,
 ) -> ServiceResult<MarkNotificationReadResponse> {
     mark_noti_read(request)
+}
+
+pub fn handle_set_request_option(
+    request: SetRequestOptionRequest,
+) -> ServiceResult<SetRequestOptionResponse> {
+    request::set_request_option(request.option.unwrap());
+    Ok(Default::default())
 }

@@ -101,7 +101,21 @@ extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.Ra
 
 extension AuthInfo: RawRepresentable {
   public init?(rawValue: String) {
-    if let w = WrappedMessage<AuthInfo>(rawValue: rawValue) {
+    if let w = WrappedMessage<Self>(rawValue: rawValue) {
+      self = w.inner
+    } else {
+      return nil
+    }
+  }
+
+  public var rawValue: String {
+    WrappedMessage(inner: self).rawValue
+  }
+}
+
+extension RequestOption: RawRepresentable {
+  public init?(rawValue: String) {
+    if let w = WrappedMessage<Self>(rawValue: rawValue) {
       self = w.inner
     } else {
       return nil
