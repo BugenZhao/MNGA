@@ -67,7 +67,7 @@ extension NavigationIdentifier {
       }
     }
 
-    let url = components.url(relativeTo: Constants.URL.base)
+    let url = components.url(relativeTo: URLs.base)
     return url?.absoluteURL
   }
 }
@@ -95,7 +95,7 @@ extension URL {
       return nil
     }
 
-    if Constants.URL.hosts.contains(self.host ?? ""),
+    if URLs.hosts.contains(self.host ?? ""),
       let components = URLComponents(url: self, resolvingAgainstBaseURL: false) {
       if components.path.contains("read.php"),
         let tid = components.queryItems?.first(where: { $0.name == "tid" })?.value {

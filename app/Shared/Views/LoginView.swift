@@ -54,7 +54,7 @@ struct LoginView: View {
     WebView(webView: webViewStore.webView)
       .onAppear {
       self.delegate = .init(parent: self)
-      self.webViewStore.webView.load(URLRequest(url: Constants.URL.login))
+      self.webViewStore.webView.load(URLRequest(url: URLs.login))
       self.webViewStore.webView.uiDelegate = self.delegate
     }.onReceive(timer) { _ in
       self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)

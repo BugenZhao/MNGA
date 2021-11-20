@@ -216,7 +216,7 @@ extension User {
   var isAnonymous: Bool {
     self.name.isAnonymous
   }
-  
+
   var nameDisplayCompat: String {
     let new = self.name.display
     if new.isEmpty {
@@ -258,5 +258,12 @@ extension Topic {
     } else {
       return self.authorName
     }
+  }
+}
+
+extension RequestOption {
+  static let defaultValue: Self = .with {
+    $0.baseURL = URLs.defaultBase.absoluteString
+    $0.device = .apple
   }
 }

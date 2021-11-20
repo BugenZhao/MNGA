@@ -71,6 +71,7 @@ mod dispatch_sync {
             content_parse(r) => r!(handle_content_parse(r)),
             subject_parse(r) => r!(handle_subject_parse(r)),
             mark_noti_read(r) => r!(handle_mark_noti_read(r)),
+            set_request_option(r) => r!(handle_set_request_option(r)),
         }
     }
 }

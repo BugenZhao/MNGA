@@ -25,13 +25,14 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
   @State var parsedContent = PostContent()
 
   @StateObject var presendAttachments = PresendAttachmentsModel()
+  @StateObject var prefs = PreferencesStorage.shared
 
   var title: LocalizedStringKey {
     postReply.context?.task.actionTitle ?? "Editor"
   }
 
   var device: Device {
-    AuthStorage.shared.authInfo.device
+    prefs.requestOption.device
   }
 
   @ViewBuilder
