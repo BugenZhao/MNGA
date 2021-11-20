@@ -152,7 +152,7 @@ struct TopicListView: View {
         }
       }
 
-      ShareLinksView(mnga: mngaSchemeURL, nga: webpageURL) { }
+      ShareLinksView(navigationID: navID) { }
 
       Section {
         if let subforums = dataSource.latestResponse?.subforums,
@@ -276,21 +276,8 @@ struct TopicListView: View {
       .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
   }
 
-  var webpageURL: URL? {
-    switch forum.id.id! {
-    case .fid(let fid):
-      return URL(string: "thread.php?fid=\(fid)", relativeTo: Constants.URL.base)?.absoluteURL
-    case .stid(let stid):
-      return URL(string: "thread.php?stid=\(stid)", relativeTo: Constants.URL.base)?.absoluteURL
-    }
-  }
-  var mngaSchemeURL: URL? {
-    switch forum.id.id! {
-    case .fid(let fid):
-      return URL(string: fid, relativeTo: URL(string: Constants.MNGA.forumFBase)!)?.absoluteURL
-    case .stid(let stid):
-      return URL(string: stid, relativeTo: URL(string: Constants.MNGA.forumSTBase)!)?.absoluteURL
-    }
+  var navID: NavigationIdentifier {
+    return .forumID(forum.id)
   }
 
   func updateForumMeta(r: TopicListResponse?) {

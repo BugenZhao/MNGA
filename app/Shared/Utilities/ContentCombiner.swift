@@ -458,7 +458,7 @@ class ContentCombiner {
       guard let url = URL(string: urlString, relativeTo: Constants.URL.base) else { return }
 
       switch url.mngaNavigationIdentifier {
-      case .topicID(let tid):
+      case .topicID(let tid, _):
         self.actionModel?.navigateToTid = tid
       case .forumID(let id):
         self.actionModel?.navigateToForum = Forum.with { $0.id = id }
