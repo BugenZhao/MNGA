@@ -24,7 +24,7 @@ struct ShareLinksView<V: View>: View {
       }
       if let o = others { o() }
     } label: {
-      Label("Share...", systemImage: "square.and.arrow.up")
+      Label("Share", systemImage: "square.and.arrow.up")
     }
   }
 }

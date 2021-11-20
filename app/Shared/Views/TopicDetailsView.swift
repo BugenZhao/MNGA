@@ -186,7 +186,7 @@ struct TopicDetailsView: View {
       #if os(iOS)
         ShareLinksView(navigationID: navID) {
           Button(action: self.shareAsImage) {
-            Label("As Image", systemImage: "text.below.photo")
+            Label("Screenshot (Beta)", systemImage: "text.below.photo")
           }
         }
       #endif

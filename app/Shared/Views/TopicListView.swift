@@ -200,15 +200,22 @@ struct TopicListView: View {
   @ViewBuilder
   var subforum: some View {
     let destination = TopicListView.build(forum: self.currentShowingSubforum ?? Forum())
-    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { } .hidden()
+    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
+      .isDetailLink(false)
+      .hidden()
     NavigationLink(destination: EmptyView()) { } .hidden() // hack: unexpected pop
   }
 
   @ViewBuilder
   var navigations: some View {
-    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { } .hidden()
-    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { } .hidden()
-    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { } .hidden()
+    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { }
+      .isDetailLink(false)
+      .hidden()
+    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { }
+      .isDetailLink(false)
+      .hidden()
+    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { }
+      .hidden()
   }
 
   @ViewBuilder
