@@ -96,6 +96,19 @@ impl Cache {
             .filter_map(|r| r.ok().map(|(_k, v)| M::parse_from_bytes(&v).ok()).flatten())
     }
 
+    fn do_remove_prefix(&self, prefix: &str) -> CacheResult<usize> {
+        let mut batch = sled::Batch::default();
+        let mut count = 0;
+        for r in self.db.scan_prefix(prefix) {
+            let (k, _v) = r?;
+            batch.remove(k);
+            count += 1;
+        }
+        self.db.apply_batch(batch)?;
+        self.db.flush()?;
+        Ok(count)
+    }
+
     #[allow(unused_results)]
     pub fn insert_msg<M: protos::Message>(&self, key: &str, msg: &M) -> CacheResult<Option<M>> {
         if self.is_test {
@@ -134,5 +147,18 @@ impl Cache {
         } else {
             tokio::task::block_in_place(move || self.do_scan_msg(prefix))
         }
+    }
+
+    pub fn remove_prefix(&self, prefix: &str) -> CacheResult<usize> {
+        if self.is_test {
+            // using single threaded runtime
+            self.do_remove_prefix(prefix)
+        } else {
+            tokio::task::block_in_place(move || self.do_remove_prefix(prefix))
+        }
+    }
+
+    pub fn total_size(&self) -> CacheResult<u64> {
+        self.db.size_on_disk().map_err(Into::into)
     }
 }

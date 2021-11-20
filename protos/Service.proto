@@ -103,6 +103,8 @@ message AsyncRequest {
     TopicSearchRequest topic_search = 21;
     // Sign in (clock in) for today.
     ClockInRequest clock_in = 22;
+    // Clear or check the cache.
+    CacheRequest cache = 23;
   }
 }
 
@@ -292,4 +294,13 @@ message ClockInRequest {}
 message ClockInResponse {
   string date = 1;
   bool is_first_time = 2;
+}
+
+message CacheRequest {
+  CacheType type = 1;
+  CacheOperation operation = 2;
+}
+message CacheResponse {
+  uint64 items = 1;
+  uint64 total_size = 2;
 }

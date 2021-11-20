@@ -15,7 +15,7 @@ use crate::{
     user::extract_user_name,
 };
 
-static NOTI_PREFIX: &str = "/noti_v2";
+pub static NOTI_PREFIX: &str = "/noti_v2";
 fn noti_key(id: &str) -> String {
     format!("{}/{}", NOTI_PREFIX, id)
 }

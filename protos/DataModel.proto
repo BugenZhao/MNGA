@@ -267,3 +267,15 @@ message ShortMessagePostAction {
   string mid = 2;       // Message id to reply to, used if operation is `REPLY`.
   string single_to = 3; // UID to send to, used if operation is `NEW_SINGLE_TO`.
 }
+
+enum CacheType {
+  ALL = 0;
+  TOPIC_HISTORY = 1;
+  TOPIC_DETAILS = 2;
+  NOTIFICATION = 3;
+}
+
+enum CacheOperation {
+  CHECK = 0;
+  CLEAR = 1;
+}

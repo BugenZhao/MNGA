@@ -22,10 +22,12 @@ fn favor_response_key(topic_id: &str) -> String {
     format!("/favor_response/topic/{}", topic_id)
 }
 
+pub static TOPIC_DETAILS_PREFIX: &str = "/topic_details_response/topic";
 fn topic_details_response_key(request: &TopicDetailsRequest) -> Option<String> {
     if request.get_post_id().is_empty() && request.get_author_id().is_empty() {
         format!(
-            "/topic_details_response/topic/{}/page/{}",
+            "{}/{}/page/{}",
+            TOPIC_DETAILS_PREFIX,
             request.get_topic_id(),
             request.get_page()
         )
