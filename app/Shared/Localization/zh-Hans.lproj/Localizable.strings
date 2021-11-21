@@ -54,7 +54,7 @@
 "Edit" = "编辑";
 "Share" = "分享";
 "Notifications" = "通知";
-"Notifications (%lld)" = "通知（%lld）";
+"Notifications (%lld)" = "通知 (%lld)";
 "replied to your post" = "回复了你的回复";
 "replied to your topic" = "回复了你的话题";
 "Your post" = "你的回复";
@@ -190,3 +190,4 @@
 "Clear" = "清除";
 "View Attachment" = "查看附件";
 "Attachments" = "附件";
+"Attachments (%lld)" = "附件 (%lld)";

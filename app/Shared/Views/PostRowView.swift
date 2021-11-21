@@ -149,7 +149,7 @@ struct PostRowView: View {
       }
       if !attachments.items.isEmpty {
         Button(action: { showAttachments = true }) {
-          Label("Attachments", systemImage: "paperclip")
+          Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
         }
       }
     }
