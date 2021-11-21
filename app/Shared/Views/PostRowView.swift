@@ -22,7 +22,14 @@ struct PostRowView: View {
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var pref = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
-  @StateObject var attachments = AttachmentsModel()
+  @StateObject var attachments: AttachmentsModel
+
+  @State var showAttachments = false
+  
+  static func build(post: Post, vote: Binding<VotesModel.Vote>) -> Self {
+    let attachments = AttachmentsModel(post.attachments)
+    return .init(post: post, vote: vote, attachments: attachments)
+  }
 
   private var user: User? {
     self.users.localUser(id: self.post.authorID)
@@ -140,6 +147,11 @@ struct PostRowView: View {
       Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
         Label("Select Text", systemImage: "selection.pin.in.out")
       }
+      if !attachments.items.isEmpty {
+        Button(action: { showAttachments = true }) {
+          Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
+        }
+      }
     }
     if let model = postReply {
       Section {
@@ -182,7 +194,7 @@ struct PostRowView: View {
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .onAppear { self.post.attachments.map(\.url).forEach(attachments.add(_:)) }
+      .background { NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) { }.hidden() }
       .environmentObject(attachments)
 
     if #available(iOS 15.0, *), let model = postReply {

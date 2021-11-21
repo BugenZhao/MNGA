@@ -9,14 +9,14 @@ import Foundation
 import SwiftUI
 
 class AttachmentsModel: ObservableObject {
-  private var attachs = Set<String>()
+  var items: [Attachment]
 
-  func add(_ item: String) {
-    self.attachs.insert(item)
+  init(_ items: [Attachment] = []) {
+    self.items = items
   }
 
   func attachmentURL(for previewURL: URL) -> URL? {
-    guard let attach = attachs.first(where: { previewURL.absoluteString.contains($0) })
+    guard let attach = items.first(where: { previewURL.absoluteString.contains($0.url) })
       else { return nil }
     let url = URL(string: "\(attach)", relativeTo: URLs.attachmentBase)
     logger.debug("attachment: \(url as Any?) for \(previewURL)")

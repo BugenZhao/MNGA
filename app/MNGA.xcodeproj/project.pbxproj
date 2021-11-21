@@ -227,6 +227,9 @@
 		B4CF7E92270B2A8D00E7C374 /* RecommendedTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E90270B2A8C00E7C374 /* RecommendedTopicListView.swift */; };
 		B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D13B9D27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
+		B4D34D3A2749FF6D0068A23C /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = B4D34D392749FF6D0068A23C /* SwiftUINavigation */; };
+		B4D34D3C274A148F0068A23C /* AttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D34D3B274A148F0068A23C /* AttachmentsView.swift */; };
+		B4D34D3D274A148F0068A23C /* AttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D34D3B274A148F0068A23C /* AttachmentsView.swift */; };
 		B4DBF608268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
 		B4DBF609268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
 		B4DBF60C2689799F0027233F /* PostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF60B2689799F0027233F /* PostRowView.swift */; };
@@ -418,6 +421,7 @@
 		B4CF7E8A270AAF4500E7C374 /* UserSignatureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignatureView.swift; sourceTree = "<group>"; };
 		B4CF7E90270B2A8C00E7C374 /* RecommendedTopicListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendedTopicListView.swift; sourceTree = "<group>"; };
 		B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicPostRowView.swift; sourceTree = "<group>"; };
+		B4D34D3B274A148F0068A23C /* AttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsView.swift; sourceTree = "<group>"; };
 		B4DBF607268976470027233F /* DateFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatters.swift; sourceTree = "<group>"; };
 		B4DBF60B2689799F0027233F /* PostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRowView.swift; sourceTree = "<group>"; };
 		B4DBF60E268979C20027233F /* TopicDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDetailsView.swift; sourceTree = "<group>"; };
@@ -490,6 +494,7 @@
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
 				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
 				B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */,
+				B4D34D3A2749FF6D0068A23C /* SwiftUINavigation in Frameworks */,
 				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -755,6 +760,7 @@
 			isa = PBXGroup;
 			children = (
 				B447BC0F26F7033200BCC2E8 /* AboutView.swift */,
+				B4D34D3B274A148F0068A23C /* AttachmentsView.swift */,
 				B4DD2BDC26A490960030ADD8 /* BlockedView.swift */,
 				B4715CCD26A481FF0049D136 /* BlockWordListView.swift */,
 				B4DDFD9B26B1B602004FFB17 /* CacheView.swift */,
@@ -787,6 +793,7 @@
 				B4715CC426A413E00049D136 /* QuoteView.swift */,
 				B4CF7E90270B2A8C00E7C374 /* RecommendedTopicListView.swift */,
 				B40DC6B8270DF7A8002DC8A1 /* RepliesNumView.swift */,
+				B4BDE13C2746B7CA00F0607E /* ShareLinksView.swift */,
 				B41BC0E4271DD37100DD05F2 /* ShortMessageDetailsView.swift */,
 				B42BA74027205943004D46EB /* ShortMessageEditorView.swift */,
 				B40F1535271AC60F004CAB86 /* ShortMessageListView.swift */,
@@ -809,7 +816,6 @@
 				B4CF7E8A270AAF4500E7C374 /* UserSignatureView.swift */,
 				B402308426EBBA7A0077D3AA /* UserView.swift */,
 				B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */,
-				B4BDE13C2746B7CA00F0607E /* ShareLinksView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -894,6 +900,7 @@
 				B41BC0DC271C7E5D00DD05F2 /* CombineExt */,
 				B4EA154D2740F2F200C0308B /* AlertToast */,
 				B4BDE1372746A5F300F0607E /* Crossroad */,
+				B4D34D392749FF6D0068A23C /* SwiftUINavigation */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
@@ -973,6 +980,7 @@
 				B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */,
 				B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */,
 				B4BDE1362746A5F300F0607E /* XCRemoteSwiftPackageReference "Crossroad" */,
+				B4D34D382749FF6D0068A23C /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -1114,6 +1122,7 @@
 				B44059C527228C560034C032 /* Localization.swift in Sources */,
 				B4FBED7F26A6D70F006390A3 /* PreferencesView.swift in Sources */,
 				B4F2408426A30A8500D620B0 /* NotificationListView.swift in Sources */,
+				B4D34D3C274A148F0068A23C /* AttachmentsView.swift in Sources */,
 				B41BC0D9271C617C00DD05F2 /* NotificationModel.swift in Sources */,
 				B4920CDC269083BD00762FC9 /* OpenSourceStickers.swift in Sources */,
 				B42BA734271FDE3F004D46EB /* Appearance.swift in Sources */,
@@ -1297,6 +1306,7 @@
 				B44059C627228C560034C032 /* Localization.swift in Sources */,
 				B4CF7E92270B2A8D00E7C374 /* RecommendedTopicListView.swift in Sources */,
 				B41BC0E6271DD37100DD05F2 /* ShortMessageDetailsView.swift in Sources */,
+				B4D34D3D274A148F0068A23C /* AttachmentsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1800,6 +1810,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		B4D34D382749FF6D0068A23C /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 		B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kylehickinson/SwiftUI-WebView";
@@ -1923,6 +1941,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */;
 			productName = Colorful;
+		};
+		B4D34D392749FF6D0068A23C /* SwiftUINavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4D34D382749FF6D0068A23C /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
+			productName = SwiftUINavigation;
 		};
 		B4E10715268DADEE006C1742 /* WebView */ = {
 			isa = XCSwiftPackageProductDependency;
