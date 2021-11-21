@@ -318,6 +318,8 @@ class ContentCombiner {
       self.visit(collapsed: tagged)
     case "flash":
       self.visit(flash: tagged)
+    case "attach":
+      self.visit(attach: tagged)
     case "align":
       self.visit(align: tagged)
     default:
@@ -569,6 +571,19 @@ class ContentCombiner {
     }
 
     let link = ContentButtonView(icon: "waveform", title: title, inQuote: inQuote) {
+      OpenURLModel.shared.open(url: url, inApp: true)
+    }
+    self.append(link)
+  }
+
+  private func visit(attach: Span.Tagged) {
+    guard let value = attach.spans.first?.value else { return }
+    guard case .plain(let plain) = value else { return }
+
+    let urlText = plain.text
+    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
+
+    let link = ContentButtonView(icon: "paperclip", title: Text("View Attachment"), inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
     }
     self.append(link)
