@@ -248,7 +248,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   func buildRow(post: Post, withId: Bool = true) -> some View {
-    let row = PostRowView(post: post, vote: votes.binding(for: post))
+    let row = PostRowView.build(post: post, vote: votes.binding(for: post))
 
     if withId {
       row.id(post)

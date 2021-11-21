@@ -20,7 +20,7 @@ struct PostReplyChainView: View {
 
   @ViewBuilder
   func buildRow(post: Post) -> some View {
-    PostRowView(post: post, vote: votes.binding(for: post))
+    PostRowView.build(post: post, vote: votes.binding(for: post))
   }
 
   var body: some View {
