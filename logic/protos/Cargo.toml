@@ -9,4 +9,9 @@ cargo-emit = "0.2.1"
 protoc-rust = "2.25"
 
 [dependencies]
+base-62 = "0.1.1"
 protobuf = "2.25"
+ron = "0.7.0"
+serde = { version = "1.0.130", features = ["derive"] }
+
+[features]

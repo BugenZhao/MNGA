@@ -1,6 +1,7 @@
 use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
+    fetch::fetch_mock,
     fetch_package,
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
@@ -14,7 +15,7 @@ use crate::{
 use cache::CACHE;
 use chrono::Duration;
 use futures::TryFutureExt;
-use protos::{DataModel::*, Service::*, ToValue};
+use protos::{DataModel::*, MockRequest, Service::*, ToValue};
 use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
@@ -193,6 +194,11 @@ pub async fn get_favorite_topic_list(
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
+    if request.is_mock() {
+        let response = fetch_mock(&request).await?;
+        return Ok(response);
+    }
+
     let package = fetch_package(
         "thread.php",
         vec![
@@ -355,6 +361,19 @@ pub async fn get_topic_details(
         return get_local_cache();
     }
 
+    let save_history = |response: &TopicDetailsResponse| {
+        insert_topic_history(response.get_topic().to_owned()); // save history
+        if let Some(key) = key.as_ref() {
+            let _ = CACHE.insert_msg(key, response);
+        }
+    };
+
+    if request.is_mock() {
+        let response = fetch_mock(&request).await?;
+        save_history(&response);
+        return Ok(response);
+    }
+
     let package_result = fetch_package(
         "read.php",
         vec![
@@ -400,8 +419,6 @@ pub async fn get_topic_details(
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 
-    insert_topic_history(topic.clone()); // save history
-
     let response = TopicDetailsResponse {
         topic: Some(topic).into(),
         replies: replies.into(),
@@ -410,10 +427,8 @@ pub async fn get_topic_details(
         is_local_cache: false,
         ..Default::default()
     };
-    if let Some(key) = key {
-        let _ = CACHE.insert_msg(&key, &response);
-    }
 
+    save_history(&response);
     Ok(response)
 }
 
@@ -725,6 +740,40 @@ mod test {
                 assert_eq!(anony_name.chars().count(), 6);
             }
         }
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_mock_topic_details() -> ServiceResult<()> {
+        let response = get_topic_details(TopicDetailsRequest {
+            topic_id: "mnga_0".to_owned(),
+            page: 1,
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        assert!(!response.get_topic().get_id().is_empty());
+        assert!(!response.get_replies().is_empty());
+
+        assert!(response
+            .get_replies()
+            .first()
+            .unwrap()
+            .get_content()
+            .get_raw()
+            .contains("zsbd"));
+        assert_eq!(
+            response
+                .get_topic()
+                .get_subject()
+                .get_tags()
+                .first()
+                .unwrap(),
+            "测试"
+        );
 
         Ok(())
     }

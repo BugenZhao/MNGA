@@ -12,7 +12,7 @@ pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
 pub enum ServiceError {
     #[error("NGA: {} ({})", .0.get_info(), .0.get_code())]
     Nga(ErrorMessage),
-    #[error("MNGA: {}", .0.get_info())]
+    #[error("MNGA: {} ({})", .0.get_info(), .0.get_code())]
     Mnga(ErrorMessage),
     #[error("Missing field: {0}")]
     MissingField(String),
@@ -31,6 +31,8 @@ pub enum ServiceError {
     Parse(#[from] text::error::ParseError),
     #[error(transparent)]
     UrlParse(#[from] url::ParseError),
+    #[error(transparent)]
+    Protobuf(#[from] protos::ProtobufError),
 
     #[error("panic: {0}")]
     Panic(String),
