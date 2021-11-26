@@ -1,9 +1,6 @@
-use crate::{
-    auth, error::ServiceResult, noti::mark_noti_read, request, topic::extract_topic_subject,
-    user::UserController,
-};
+use crate::{auth, error::ServiceResult, noti::mark_noti_read, request, user::UserController};
 use log::info;
-use protos::{DataModel::PostContent, Service::*};
+use protos::Service::*;
 
 pub fn handle_configure(request: ConfigureRequest) -> ServiceResult<ConfigureResponse> {
     config::set_config(request.config.unwrap());
@@ -29,23 +26,15 @@ pub fn handle_auth(request: AuthRequest) -> ServiceResult<AuthResponse> {
 }
 
 pub fn handle_content_parse(request: ContentParseRequest) -> ServiceResult<ContentParseResponse> {
-    let result = text::parse_content(request.get_raw()).map_or_else(
-        |e| ContentParseResponse_oneof_result::error(e.to_string()),
-        |spans| {
-            ContentParseResponse_oneof_result::content(PostContent {
-                spans: spans.into(),
-                ..Default::default()
-            })
-        },
-    );
+    let content = text::parse_content(request.get_raw());
     Ok(ContentParseResponse {
-        result: Some(result).into(),
+        content: Some(content).into(),
         ..Default::default()
     })
 }
 
 pub fn handle_subject_parse(request: SubjectParseRequest) -> ServiceResult<SubjectParseResponse> {
-    let subject = extract_topic_subject(request.raw);
+    let subject = text::parse_subject(request.get_raw());
     Ok(SubjectParseResponse {
         subject: Some(subject).into(),
         ..Default::default()

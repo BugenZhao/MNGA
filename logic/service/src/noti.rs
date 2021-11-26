@@ -10,10 +10,7 @@ use protos::{
 };
 use serde_json::Value;
 
-use crate::{
-    error::ServiceResult, fetch::fetch_json_value, topic::extract_topic_subject,
-    user::extract_user_name,
-};
+use crate::{error::ServiceResult, fetch::fetch_json_value, user::extract_user_name};
 
 pub static NOTI_PREFIX: &str = "/noti_v2";
 fn noti_key(id: &str) -> String {
@@ -66,7 +63,7 @@ fn extract_noti(value: &Value) -> Option<Notification> {
         other_post_id.get_pid()
     );
 
-    let topic_subject = extract_topic_subject(get!(kvs, "5").unwrap_or_default());
+    let topic_subject = text::parse_subject(&get!(kvs, "5").unwrap_or_default());
 
     let noti = Notification {
         id,

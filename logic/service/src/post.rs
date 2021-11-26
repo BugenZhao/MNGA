@@ -20,36 +20,12 @@ fn vote_response_key(id: &PostId) -> String {
     format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)
 }
 
-pub fn extract_post_content(raw: String) -> PostContent {
-    let (spans, error) = match text::parse_content(&raw) {
-        Ok(spans) => (spans, None),
-        Err(ParseError::Content(error)) => {
-            let fallback_spans = vec![Span {
-                value: Some(Span_oneof_value::plain(Span_Plain {
-                    text: raw.replace("<br/>", "\n"), // todo: extract plain text
-                    ..Default::default()
-                })),
-                ..Default::default()
-            }];
-            (fallback_spans, Some(error))
-        }
-        Err(_) => unreachable!(),
-    };
-
-    PostContent {
-        spans: spans.into(),
-        raw,
-        error: error.unwrap_or_default(),
-        ..Default::default()
-    }
-}
-
 pub fn extract_post(node: Node, at_page: u32, context: &str) -> Option<Post> {
     use super::macros::get;
     let map = extract_kv(node);
 
     let raw_content = get!(map, "content")?;
-    let content = extract_post_content(raw_content);
+    let content = text::parse_content(&raw_content);
 
     let post_id = PostId {
         pid: get!(map, "pid")?,
@@ -134,7 +110,7 @@ fn extract_light_post(node: Node) -> Option<LightPost> {
     let map = extract_kv(node);
 
     let raw_content = get!(map, "content")?;
-    let content = extract_post_content(raw_content);
+    let content = text::parse_content(&raw_content);
 
     let post_id = PostId {
         pid: get!(map, "pid")?,

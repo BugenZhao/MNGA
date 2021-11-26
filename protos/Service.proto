@@ -38,12 +38,7 @@ message AuthRequest { AuthInfo info = 1; }
 message AuthResponse {}
 
 message ContentParseRequest { string raw = 1; }
-message ContentParseResponse {
-  oneof result {
-    PostContent content = 1;
-    string error = 2;
-  }
-}
+message ContentParseResponse { PostContent content = 1; }
 
 message SubjectParseRequest { string raw = 1; }
 message SubjectParseResponse { Subject subject = 1; }

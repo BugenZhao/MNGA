@@ -6,6 +6,7 @@ members = [
     "logic/cache",
     "logic/config",
     "logic/service",
+    "logic/mock_gen",
 ]
 
 [profile.release]

@@ -54,15 +54,6 @@ fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     Some(forum)
 }
 
-pub fn extract_topic_subject(raw: String) -> Subject {
-    let (tags, content) = text::parse_subject(&raw).unwrap_or_else(|_| (vec![], raw));
-    Subject {
-        tags: tags.into(),
-        content,
-        ..Default::default()
-    }
-}
-
 pub fn extract_topic(node: Node) -> Option<Topic> {
     fn extract_fav(url: &str) -> Option<&str> {
         use lazy_static::lazy_static;
@@ -78,7 +69,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
     let map = extract_kv(node);
 
     let subject_full = get!(map, "subject").map(|s| text::unescape(&s))?;
-    let subject = extract_topic_subject(subject_full);
+    let subject = text::parse_subject(&subject_full);
 
     let parent_forum = extract_node_rel(node, "./parent", extract_topic_parent_forum)
         .ok()

@@ -11,7 +11,6 @@ use sxd_xpath::nodeset::Node;
 use crate::{
     error::ServiceResult,
     fetch::fetch_package,
-    post::extract_post_content,
     user::extract_user_and_cache,
     utils::{extract_kv, extract_nodes, extract_string},
 };
@@ -73,7 +72,7 @@ fn extract_short_msg_post(node: Node) -> Option<ShortMessagePost> {
     let map = extract_kv(node);
 
     let raw_content = get!(map, "content")?;
-    let content = extract_post_content(raw_content);
+    let content = text::parse_content(&raw_content);
 
     let post = ShortMessagePost {
         id: get!(map, "id")?,

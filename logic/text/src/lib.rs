@@ -1,7 +1,8 @@
 use content::do_parse_content;
-use error::ParseResult;
-use protos::DataModel::Span;
+use protos::DataModel::{PostContent, Span, Span_Plain, Span_oneof_value, Subject};
 use subject::do_parse_subject;
+
+use crate::error::ParseError;
 
 mod content;
 pub mod error;
@@ -14,18 +15,42 @@ pub fn unescape(text: &str) -> String {
     second
 }
 
-pub fn parse_content(text: &str) -> ParseResult<Vec<Span>> {
+pub fn parse_content(text: &str) -> PostContent {
     let text = unescape(text);
-    let spans = do_parse_content(&text)?;
-    Ok(spans)
+    let (spans, error) = match do_parse_content(&text) {
+        Ok(spans) => (spans, None),
+        Err(ParseError::Content(error)) => {
+            let fallback_spans = vec![Span {
+                value: Some(Span_oneof_value::plain(Span_Plain {
+                    text: text.replace("<br/>", "\n"), // todo: extract plain text
+                    ..Default::default()
+                })),
+                ..Default::default()
+            }];
+            (fallback_spans, Some(error))
+        }
+        Err(_) => unreachable!(),
+    };
+
+    PostContent {
+        spans: spans.into(),
+        raw: text,
+        error: error.unwrap_or_default(),
+        ..Default::default()
+    }
 }
 
-pub fn parse_subject(text: &str) -> ParseResult<(Vec<String>, String)> {
+pub fn parse_subject(text: &str) -> Subject {
     let text = unescape(text);
-    let result = do_parse_subject(&text)
+    let (tags, content) = do_parse_subject(&text)
         .map(|(ts, c)| (ts.into_iter().map(|t| t.to_owned()).collect(), c.to_owned()))
         .unwrap_or_else(|_| (vec![], text));
-    Ok(result)
+
+    Subject {
+        tags: tags.into(),
+        content,
+        ..Default::default()
+    }
 }
 
 #[cfg(test)]
