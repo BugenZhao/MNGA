@@ -299,3 +299,13 @@ message CacheResponse {
   uint64 items = 1;
   uint64 total_size = 2;
 }
+
+message MockApi {
+  message TopicList { string id = 1; }
+  message TopicDetails { string id = 1; }
+
+  oneof value {
+    TopicList topic_list = 1;
+    TopicDetails topic_details = 2;
+  }
+}

@@ -1,7 +1,8 @@
 use anyhow::Result;
 use protos::{
+    mock_api,
     DataModel::{Device, Forum, ForumId, ForumId_oneof_id, Post, PostId, Topic, UserName},
-    Service::{TopicDetailsRequest, TopicDetailsResponse, TopicListRequest, TopicListResponse},
+    Service::{MockApi_TopicDetails, MockApi_TopicList, TopicDetailsResponse, TopicListResponse},
 };
 use serde::{Deserialize, Serialize};
 
@@ -81,11 +82,13 @@ impl Render for MockTopic {
         let topic = self.to_model();
         let id = topic.get_id().to_owned();
 
-        let req = TopicDetailsRequest {
-            topic_id: id.clone(),
-            page: 1,
-            ..Default::default()
-        };
+        let api = mock_api!(
+            set_topic_details,
+            MockApi_TopicDetails {
+                id: id.clone(),
+                ..Default::default()
+            }
+        );
 
         let res = TopicDetailsResponse {
             topic: Some(topic).into(),
@@ -99,7 +102,7 @@ impl Render for MockTopic {
             ..Default::default()
         };
 
-        renderer.render(&req, &res)?;
+        renderer.render(&api, &res)?;
         Ok(())
     }
 }
@@ -131,13 +134,14 @@ impl MockForum {
 impl Render for MockForum {
     fn render(&self, renderer: &mut Renderer) -> Result<()> {
         let forum = self.to_model();
-        let id = forum.get_id().to_owned();
 
-        let req = TopicListRequest {
-            id: Some(id).into(),
-            page: 1,
-            ..Default::default()
-        };
+        let api = mock_api!(
+            set_topic_list,
+            MockApi_TopicList {
+                id: self.id.clone(),
+                ..Default::default()
+            }
+        );
 
         let res = TopicListResponse {
             forum: Some(forum).into(),
@@ -146,7 +150,7 @@ impl Render for MockForum {
             ..Default::default()
         };
 
-        renderer.render(&req, &res)?;
+        renderer.render(&api, &res)?;
         for child in self.topics.iter() {
             child.render(renderer)?;
         }

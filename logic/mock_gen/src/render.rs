@@ -6,7 +6,7 @@ use std::{
 };
 
 use anyhow::Result;
-use protos::{MockRequest, MockResponse};
+use protos::{encode_api, MockResponse};
 
 #[derive(Default)]
 pub struct Renderer {
@@ -18,12 +18,11 @@ impl Renderer {
         Default::default()
     }
 
-    pub fn render<Req, Res>(&mut self, request: &Req, response: &Res) -> Result<()>
+    pub fn render<Res>(&mut self, api: &protos::Service::MockApi, response: &Res) -> Result<()>
     where
-        Req: MockRequest,
         Res: MockResponse,
     {
-        let name = request.to_encoded_mock_api();
+        let name = encode_api(api)?;
         let content = response.write_to_bytes()?.to_vec();
         self.files.insert(name, content);
         Ok(())

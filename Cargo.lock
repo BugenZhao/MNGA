@@ -1021,6 +1021,7 @@ version = "0.1.0"
 dependencies = [
  "base-62",
  "cargo-emit",
+ "paste",
  "protobuf",
  "protoc-rust",
  "ron",

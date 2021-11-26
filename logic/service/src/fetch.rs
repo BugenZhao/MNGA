@@ -249,7 +249,7 @@ mod mock {
         Req: MockRequest,
         Res: MockResponse,
     {
-        let api = format!("{}/{}", MOCK_BASE_URL, request.to_encoded_mock_api());
+        let api = format!("{}/{}", MOCK_BASE_URL, request.to_encoded_mock_api()?);
         let response = do_fetch(&api, vec![], Method::GET, |b| b)
             .await?
             .bytes()

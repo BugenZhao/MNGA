@@ -1,3 +1,5 @@
+use std::iter::once;
+
 use crate::{
     constants::FORUM_ICON_PATH,
     error::ServiceResult,
@@ -91,7 +93,21 @@ pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumLi
     .await?;
 
     let categories = extract_nodes(&package, "/root/data/item", |ns| {
-        ns.into_iter().filter_map(extract_category).collect()
+        let mnga_category = Category {
+            id: "mnga".to_owned(),
+            name: "MNGA".to_owned(),
+            forums: vec![Forum {
+                id: make_fid("mnga_root_0".to_owned()).into(),
+                name: "MNGA".to_owned(),
+                ..Default::default()
+            }]
+            .into(),
+            ..Default::default()
+        };
+
+        once(mnga_category)
+            .chain(ns.into_iter().filter_map(extract_category))
+            .collect()
     })?;
 
     Ok(ForumListResponse {
