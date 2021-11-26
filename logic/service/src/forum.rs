@@ -93,6 +93,7 @@ pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumLi
     .await?;
 
     let categories = extract_nodes(&package, "/root/data/item", |ns| {
+        // todo: dynamic
         let mnga_category = Category {
             id: "mnga".to_owned(),
             name: "MNGA".to_owned(),
