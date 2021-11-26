@@ -3,13 +3,13 @@ use std::time::Duration;
 use crate::{
     auth,
     constants::{ANDROID_UA, APPLE_UA, DESKTOP_UA},
-    error::ServiceResult,
+    error::{ServiceError, ServiceResult},
     request,
     utils::extract_error,
 };
 use lazy_static::lazy_static;
-use protos::DataModel::Device;
-use reqwest::{multipart, Client, RequestBuilder, Url};
+use protos::DataModel::{Device, ErrorMessage};
+use reqwest::{multipart, Client, Method, RequestBuilder, Response, Url};
 
 fn device_ua() -> &'static str {
     match request::REQUEST_OPTION.read().unwrap().get_device() {
@@ -58,24 +58,21 @@ pub async fn with_fetch_check<F: futures::Future>(
         .await
 }
 
-trait ResponseFormat: Sized {
-    fn query_pair() -> (&'static str, &'static str);
-    fn parse_response(response: String) -> ServiceResult<Self>;
-}
-
-async fn do_fetch<RF, AF>(
+async fn do_fetch<AF>(
     api: &str,
     mut query: Vec<(&str, &str)>,
+    method: Method,
     add_form: AF,
-) -> ServiceResult<RF>
+) -> ServiceResult<Response>
 where
-    RF: ResponseFormat,
     AF: FnOnce(RequestBuilder) -> RequestBuilder,
 {
     let url = resolve_url(api)?;
 
+    #[cfg(test)]
+    println!("request to url: {}", url);
+
     let query = {
-        query.push(RF::query_pair());
         query.push(("__inchst", "UTF8"));
         query
             .into_iter()
@@ -92,11 +89,44 @@ where
     let client = &CLIENT;
 
     let builder = client
-        .post(url)
+        .request(method, url)
         .query(&query)
         .header("X-User-Agent", device_ua());
     let builder = add_form(builder);
-    let response = builder.send().await?.text_with_charset("gb18030").await?;
+
+    let response = builder.send().await?;
+    if response.status().is_success() {
+        Ok(response)
+    } else {
+        Err(ServiceError::Mnga(ErrorMessage {
+            code: response.status().as_u16().to_string(),
+            info: response
+                .status()
+                .canonical_reason()
+                .unwrap_or_default()
+                .to_owned(),
+            ..Default::default()
+        }))
+    }
+}
+
+trait ResponseFormat: Sized {
+    fn query_pair() -> (&'static str, &'static str);
+    fn parse_response(response: String) -> ServiceResult<Self>;
+}
+
+async fn do_fetch_text<RF, AF>(
+    api: &str,
+    mut query: Vec<(&str, &str)>,
+    add_form: AF,
+) -> ServiceResult<RF>
+where
+    RF: ResponseFormat,
+    AF: FnOnce(RequestBuilder) -> RequestBuilder,
+{
+    query.push(RF::query_pair());
+    let response = do_fetch(api, query, Method::POST, add_form).await?;
+    let response = response.text_with_charset("gb18030").await?;
 
     #[cfg(test)]
     let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
@@ -105,7 +135,7 @@ where
 }
 
 #[inline]
-async fn fetch_generic<RF>(
+async fn fetch_text_with_auth<RF>(
     api: &str,
     query: Vec<(&str, &str)>,
     mut form: Vec<(&str, &str)>,
@@ -120,7 +150,7 @@ where
         form
     };
 
-    do_fetch(api, query, |b| b.form(&form)).await
+    do_fetch_text(api, query, |b| b.form(&form)).await
 }
 
 mod xml {
@@ -143,7 +173,7 @@ mod xml {
         query: Vec<(&str, &str)>,
         form: Vec<(&str, &str)>,
     ) -> ServiceResult<sxd_document::Package> {
-        fetch_generic(api, query, form).await
+        fetch_text_with_auth(api, query, form).await
     }
 
     pub async fn fetch_package_multipart(
@@ -157,7 +187,7 @@ mod xml {
             .text("access_token", auth_info.token) // todo: really needed ?
             .text("access_uid", auth_info.uid);
 
-        do_fetch(api, query, |b| b.multipart(form)).await
+        do_fetch_text(api, query, |b| b.multipart(form)).await
     }
 }
 
@@ -192,7 +222,7 @@ mod json {
         query: Vec<(&str, &str)>,
         form: Vec<(&str, &str)>,
     ) -> ServiceResult<serde_json::Value> {
-        fetch_generic(api, query, form).await
+        fetch_text_with_auth(api, query, form).await
     }
 
     #[cfg(test)]
@@ -208,5 +238,28 @@ mod json {
     }
 }
 
+mod mock {
+    use crate::constants::MOCK_BASE_URL;
+
+    use super::*;
+    use protos::{MockRequest, MockResponse};
+
+    pub async fn fetch_mock<Req, Res>(request: &Req) -> ServiceResult<Res>
+    where
+        Req: MockRequest,
+        Res: MockResponse,
+    {
+        let api = format!("{}/{}", MOCK_BASE_URL, request.to_encoded_mock_api()?);
+        let response = do_fetch(&api, vec![], Method::GET, |b| b)
+            .await?
+            .bytes()
+            .await?;
+
+        let response = Res::parse_from_bytes(&response)?;
+        Ok(response)
+    }
+}
+
 pub use self::json::*;
+pub use self::mock::*;
 pub use self::xml::*;

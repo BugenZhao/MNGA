@@ -38,12 +38,7 @@ message AuthRequest { AuthInfo info = 1; }
 message AuthResponse {}
 
 message ContentParseRequest { string raw = 1; }
-message ContentParseResponse {
-  oneof result {
-    PostContent content = 1;
-    string error = 2;
-  }
-}
+message ContentParseResponse { PostContent content = 1; }
 
 message SubjectParseRequest { string raw = 1; }
 message SubjectParseResponse { Subject subject = 1; }
@@ -303,4 +298,14 @@ message CacheRequest {
 message CacheResponse {
   uint64 items = 1;
   uint64 total_size = 2;
+}
+
+message MockApi {
+  message TopicList { string id = 1; }
+  message TopicDetails { string id = 1; }
+
+  oneof value {
+    TopicList topic_list = 1;
+    TopicDetails topic_details = 2;
+  }
 }

@@ -1,6 +1,7 @@
 use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
+    fetch::fetch_mock,
     fetch_package,
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
@@ -14,7 +15,7 @@ use crate::{
 use cache::CACHE;
 use chrono::Duration;
 use futures::TryFutureExt;
-use protos::{DataModel::*, Service::*, ToValue};
+use protos::{DataModel::*, MockRequest, Service::*, ToValue};
 use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
@@ -53,15 +54,6 @@ fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     Some(forum)
 }
 
-pub fn extract_topic_subject(raw: String) -> Subject {
-    let (tags, content) = text::parse_subject(&raw).unwrap_or_else(|_| (vec![], raw));
-    Subject {
-        tags: tags.into(),
-        content,
-        ..Default::default()
-    }
-}
-
 pub fn extract_topic(node: Node) -> Option<Topic> {
     fn extract_fav(url: &str) -> Option<&str> {
         use lazy_static::lazy_static;
@@ -77,7 +69,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
     let map = extract_kv(node);
 
     let subject_full = get!(map, "subject").map(|s| text::unescape(&s))?;
-    let subject = extract_topic_subject(subject_full);
+    let subject = text::parse_subject(&subject_full);
 
     let parent_forum = extract_node_rel(node, "./parent", extract_topic_parent_forum)
         .ok()
@@ -193,6 +185,11 @@ pub async fn get_favorite_topic_list(
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
+    if request.is_mock() {
+        let response = fetch_mock(&request).await?;
+        return Ok(response);
+    }
+
     let package = fetch_package(
         "thread.php",
         vec![
@@ -355,6 +352,19 @@ pub async fn get_topic_details(
         return get_local_cache();
     }
 
+    let save_history = |response: &TopicDetailsResponse| {
+        insert_topic_history(response.get_topic().to_owned()); // save history
+        if let Some(key) = key.as_ref() {
+            let _ = CACHE.insert_msg(key, response);
+        }
+    };
+
+    if request.is_mock() {
+        let response = fetch_mock(&request).await?;
+        save_history(&response);
+        return Ok(response);
+    }
+
     let package_result = fetch_package(
         "read.php",
         vec![
@@ -400,8 +410,6 @@ pub async fn get_topic_details(
 
     let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
 
-    insert_topic_history(topic.clone()); // save history
-
     let response = TopicDetailsResponse {
         topic: Some(topic).into(),
         replies: replies.into(),
@@ -410,10 +418,8 @@ pub async fn get_topic_details(
         is_local_cache: false,
         ..Default::default()
     };
-    if let Some(key) = key {
-        let _ = CACHE.insert_msg(&key, &response);
-    }
 
+    save_history(&response);
     Ok(response)
 }
 

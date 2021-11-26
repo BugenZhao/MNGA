@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use crate::{
     error::ServiceResult,
     fetch_package,
-    post::extract_post_content,
     utils::{extract_kv, extract_node},
 };
 use dashmap::DashMap;
@@ -118,7 +117,7 @@ fn extract_user(node: Node) -> Option<User> {
     let raw_signature = get!(map, "signature")
         .or_else(|| get!(map, "sign"))
         .unwrap_or_default();
-    let signature = extract_post_content(raw_signature);
+    let signature = text::parse_content(&raw_signature);
 
     let mute = get!(map, "buffs").unwrap_or_default().contains(MUTE_BUFF);
 

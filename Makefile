@@ -70,7 +70,7 @@ swift-pb:
 build-logic:
 	@echo ">>>>> Build liblogic.a for '${ALL_TARGETS}' in ${MODE} mode"
 	@for target in ${ALL_TARGETS}; do \
-		CMD="${CARGO} build --target $${target} ${CARGO_MODE_ARG}" ;\
+		CMD="${CARGO} build --package logic --target $${target} ${CARGO_MODE_ARG}" ;\
 		echo ">>> $${CMD}" ;\
 		$${CMD} ;\
 	done
@@ -79,7 +79,7 @@ build-logic:
 
 build-logic-lipo:
 	@echo ">>>>> Build liblogic.a for '${ALL_TARGETS}' in ${MODE} mode using lipo"
-	${CARGO} lipo --targets ${ALL_TARGETS} ${CARGO_MODE_ARG}
+	${CARGO} lipo --package logic --targets ${ALL_TARGETS} ${CARGO_MODE_ARG}
 	@echo ">>>>> Copy bindings"
 	cp logic/logic/bindings.h ${OUT_INCLUDE}
 
@@ -109,7 +109,7 @@ logic-android-%:
 	make logic-android MODE=$*
 logic-android:
 	@echo ">>>>> Build liblogic.so for Android in ${MODE} mode"
-	${CARGO} ndk --target arm64-v8a --target x86_64 --target x86 --platform 26 build ${CARGO_MODE_ARG}
+	${CARGO} ndk --package logic --target arm64-v8a --target x86_64 --target x86 --platform 26 build ${CARGO_MODE_ARG}
 	cp ${TARGET_DIR}/aarch64-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
 	cp ${TARGET_DIR}/x86_64-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
 	cp ${TARGET_DIR}/i686-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/x86/
