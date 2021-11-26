@@ -2,11 +2,11 @@
 id: mnga_root_0
 name: MNGA
 topics:
-  - subject: "[FAQ] MNGA 常见问题"
+  - subject: "[必读] MNGA 常见问题"
     posts:
-      - content: "First line here.\nSecond line here\n"
+      - content: "[b]MNGA 常见问题[/b]"
         author: Bugen from MNGA
   - subject: "MNGA 反馈渠道"
     posts:
-      - content: "First line here.\nSecond line here\n"
+      - content: "[b]MNGA 反馈渠道[/b]"
         author: Bugen from MNGA

@@ -2,6 +2,8 @@ mod model;
 mod render;
 mod utils;
 
+use std::{env, fs::read_to_string, process::exit};
+
 use anyhow::Result;
 
 use crate::{
@@ -10,12 +12,21 @@ use crate::{
 };
 
 fn main() -> Result<()> {
-    let source = include_str!("../examples/mock.yaml");
-    let forum: MockForum = serde_yaml::from_str(source)?;
+    let args = env::args().collect::<Vec<_>>();
+    if args.len() < 3 {
+        println!(
+            "usage: {} <forum-yaml> <api-dir>",
+            args.first().cloned().unwrap_or_default()
+        );
+        exit(1);
+    }
+
+    let source = read_to_string(&args[1])?;
+    let forum: MockForum = serde_yaml::from_str(&source)?;
 
     let mut renderer = Renderer::new();
     forum.render(&mut renderer)?;
-    renderer.write_to_dir("mock_out")?;
+    renderer.write_to_dir(&args[2])?;
 
     Ok(())
 }

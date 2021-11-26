@@ -1,0 +1,29 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+name: Mock Generation
+
+jobs:
+  mock-gen:
+    name: Mock Generation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: arduino/setup-protoc@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Build mock_gen
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --package mock_gen
+      - name: Run mock_gen
+        run: target/debug/mock_gen pages/forum.yaml pages/api
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: pages
