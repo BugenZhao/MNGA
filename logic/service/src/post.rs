@@ -14,7 +14,6 @@ use cache::CACHE;
 use protos::{DataModel::*, Service::*, ToValue};
 use reqwest::multipart;
 use sxd_xpath::nodeset::Node;
-use text::error::ParseError;
 
 fn vote_response_key(id: &PostId) -> String {
     format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)

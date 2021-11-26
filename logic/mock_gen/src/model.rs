@@ -13,7 +13,7 @@ use crate::{
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MockPost {
-    #[serde(skip, default = "get_unique_id")]
+    #[serde(skip_serializing, default = "get_unique_id")]
     pub id: String,
 
     pub content: String,
@@ -44,7 +44,7 @@ impl MockPost {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MockTopic {
-    #[serde(skip, default = "get_unique_id")]
+    #[serde(skip_serializing, default = "get_unique_id")]
     pub id: String,
 
     pub subject: String,
@@ -106,7 +106,7 @@ impl Render for MockTopic {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MockForum {
-    #[serde(skip, default = "get_unique_id")]
+    #[serde(skip_serializing, default = "get_unique_id")]
     pub id: String,
 
     pub name: String,

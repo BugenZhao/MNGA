@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 pub const DEFAULT_BASE_URL: &str = "https://ngabbs.com";
-pub const MOCK_BASE_URL: &str = "https://bugenzhao.com/mnga";
+pub const MOCK_BASE_URL: &str = "https://bugenzhao.com/MNGA/api";
 pub const FORUM_ICON_PATH: &str = "http://img4.ngacn.cc/ngabbs/nga_classic/f/app/";
 pub const SUCCESS_MSGS: &[&str] = &["完毕", "没有符合条件的结果", "今天已经签到"];
 pub const APPLE_UA: &str = "NGA_skull/7.2.4(iPhone13,2;iOS 14.6)";
