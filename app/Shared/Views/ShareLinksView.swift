@@ -19,8 +19,11 @@ struct ShareLinksView<V: View>: View {
       Button(action: { self.activity.put(navigationID.mngaURL) }) {
         Label("MNGA Link", systemImage: "m.circle")
       }
-      Button(action: { self.activity.put(navigationID.webpageURL) }) {
-        Label("NGA Link", systemImage: "network")
+
+      if !navigationID.isMNGAMockID {
+        Button(action: { self.activity.put(navigationID.webpageURL) }) {
+          Label("NGA Link", systemImage: "network")
+        }
       }
       if let o = others { o() }
     } label: {

@@ -322,6 +322,8 @@ class ContentCombiner {
       self.visit(attach: tagged)
     case "align":
       self.visit(align: tagged)
+    case "_mnga":
+      self.visit(mnga: tagged)
     default:
       self.visit(defaultTagged: tagged)
     }
@@ -624,6 +626,16 @@ class ContentCombiner {
       self.append(view)
     } else {
       self.append(inner)
+    }
+  }
+
+  private func visit(mnga: Span.Tagged) {
+    guard let fn = mnga.attributes.first else { return }
+    switch fn {
+    case "version":
+      self.append(Text(getVersionWithBuild()))
+    default:
+      break
     }
   }
 
