@@ -300,6 +300,9 @@ message CacheResponse {
   uint64 total_size = 2;
 }
 
+/*
+ * MNGA-only mock APIs.
+ */
 message MockApi {
   message TopicList { string id = 1; }
   message TopicDetails { string id = 1; }

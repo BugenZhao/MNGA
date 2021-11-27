@@ -261,13 +261,6 @@ extension Topic {
   }
 }
 
-extension RequestOption {
-  static let defaultValue: Self = .with {
-    $0.baseURL = URLs.defaultBase.absoluteString
-    $0.device = .apple
-  }
-}
-
 extension CacheType {
   var description: LocalizedStringKey {
     switch self {

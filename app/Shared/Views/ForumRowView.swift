@@ -18,7 +18,7 @@ struct ForumRowView: View {
       ForumIconView(iconURL: forum.iconURL)
 
       HStack {
-        Text(forum.name)
+        Text(forum.name.localized)
           .foregroundColor(.primary)
         if case .stid(_) = forum.id.id {
           Image(systemName: "arrow.uturn.right")
@@ -28,7 +28,7 @@ struct ForumRowView: View {
         Spacer()
 
         HStack {
-          Text(forum.info)
+          Text(forum.info.localized)
             .multilineTextAlignment(.trailing)
             .font(.footnote)
           if isFavorite {

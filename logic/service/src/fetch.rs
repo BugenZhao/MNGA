@@ -19,11 +19,16 @@ fn device_ua() -> &'static str {
     }
 }
 
-fn resolve_url(api: &str) -> ServiceResult<Url> {
+fn resolve_url(api: &str, mock: bool) -> ServiceResult<Url> {
     let url = Url::parse(api) // if absolute
         .or_else(|_| -> ServiceResult<Url> {
-            let mut url = Url::parse(request::REQUEST_OPTION.read().unwrap().get_base_url())?;
-            url.set_path(api);
+            let option = request::REQUEST_OPTION.read().unwrap();
+            let base = if mock {
+                option.get_mock_base_url()
+            } else {
+                option.get_base_url()
+            };
+            let url = Url::parse(&format!("{}/{}", base, api))?;
             Ok(url)
         })?;
 
@@ -60,6 +65,7 @@ pub async fn with_fetch_check<F: futures::Future>(
 
 async fn do_fetch<AF>(
     api: &str,
+    mock: bool,
     mut query: Vec<(&str, &str)>,
     method: Method,
     add_form: AF,
@@ -67,7 +73,7 @@ async fn do_fetch<AF>(
 where
     AF: FnOnce(RequestBuilder) -> RequestBuilder,
 {
-    let url = resolve_url(api)?;
+    let url = resolve_url(api, mock)?;
 
     #[cfg(test)]
     println!("request to url: {}", url);
@@ -125,7 +131,7 @@ where
     AF: FnOnce(RequestBuilder) -> RequestBuilder,
 {
     query.push(RF::query_pair());
-    let response = do_fetch(api, query, Method::POST, add_form).await?;
+    let response = do_fetch(api, false, query, Method::POST, add_form).await?;
     let response = response.text_with_charset("gb18030").await?;
 
     #[cfg(test)]
@@ -239,8 +245,6 @@ mod json {
 }
 
 mod mock {
-    use crate::constants::MOCK_BASE_URL;
-
     use super::*;
     use protos::{MockRequest, MockResponse};
 
@@ -249,8 +253,8 @@ mod mock {
         Req: MockRequest,
         Res: MockResponse,
     {
-        let api = format!("{}/{}", MOCK_BASE_URL, request.to_encoded_mock_api()?);
-        let response = do_fetch(&api, vec![], Method::GET, |b| b)
+        let api = request.to_encoded_mock_api()?;
+        let response = do_fetch(&api, true, vec![], Method::GET, |b| b)
             .await?
             .bytes()
             .await?;

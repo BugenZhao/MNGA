@@ -272,7 +272,7 @@ struct TopicListView: View {
       }
     }
       .searchable(model: searchModel, prompt: "Search Topics".localized, iOS15Only: true)
-      .navigationTitleLarge(string: forum.name)
+      .navigationTitleLarge(string: forum.name.localized)
       .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
       .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
       .background { subforum; navigations }

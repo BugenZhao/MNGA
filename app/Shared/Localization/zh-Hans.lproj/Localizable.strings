@@ -179,6 +179,7 @@
 "Navigate" = "跳转";
 "Connection" = "连接";
 "Backend" = "后端";
+"MNGA Backend" = "MNGA 后端";
 "Image" = "图片";
 "Data" = "数据";
 "All" = "全部";
@@ -191,3 +192,4 @@
 "View Attachment" = "查看附件";
 "Attachments" = "附件";
 "Attachments (%lld)" = "附件 (%lld)";
+"MNGA Development" = "MNGA 开发";
