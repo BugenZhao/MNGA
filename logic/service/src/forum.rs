@@ -99,7 +99,7 @@ pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumLi
             name: "MNGA".to_owned(),
             forums: vec![Forum {
                 id: make_fid("mnga_root_0".to_owned()).into(),
-                name: "MNGA Development".to_owned(),
+                name: "MNGA Meta".to_owned(),
                 icon_url: MNGA_ICON_PATH.to_owned(),
                 ..Default::default()
             }]

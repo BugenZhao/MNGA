@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-struct AboutView: View {
+struct OldAboutView: View {
   @StateObject var activity = ActivityModel()
   @EnvironmentObject var shortMessagePost: ShortMessagePostModel
 
@@ -125,8 +125,14 @@ struct AboutView: View {
       ToolbarItem(placement: .mayNavigationBarTrailing) { shareButton }
     }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
-        AppActivityView(activityItems: activity.activityItems ?? [])
-      })
+      AppActivityView(activityItems: activity.activityItems ?? [])
+    })
+  }
+}
+
+struct AboutView: View {
+  var body: some View {
+    TopicDetailsView.build(id: "mnga_about_feedback", fav: nil)
   }
 }
 

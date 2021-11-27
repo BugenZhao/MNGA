@@ -47,6 +47,9 @@ struct TopicDetailsView: View {
   var localMode: Bool {
     forceLocalMode || (dataSource.latestResponse?.isLocalCache == true)
   }
+  var mock: Bool {
+    topic.id.isMNGAMockID
+  }
 
   static func build(id: String, fav: String? = nil) -> some View {
     Self.build(topic: .with {
@@ -150,18 +153,22 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var replyButton: some View {
-    Button(action: { self.doReplyTopic() }) {
-      Label("Reply", systemImage: "arrowshape.turn.up.left")
+    if !mock {
+      Button(action: { self.doReplyTopic() }) {
+        Label("Reply", systemImage: "arrowshape.turn.up.left")
+      }
     }
   }
 
   @ViewBuilder
   var favoriteButton: some View {
-    Button(action: { toggleFavor() }) {
-      Label(
-        isFavored ? "Remove from Favorites" : "Mark as Favorite",
-        systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
-      )
+    if !mock {
+      Button(action: { toggleFavor() }) {
+        Label(
+          isFavored ? "Remove from Favorites" : "Mark as Favorite",
+          systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
+        )
+      }
     }
   }
 

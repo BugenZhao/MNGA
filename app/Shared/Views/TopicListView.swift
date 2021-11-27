@@ -39,6 +39,10 @@ struct TopicListView: View {
     default: fatalError()
     }
   }
+  
+  var mock: Bool {
+    self.forum.id.fid.isMNGAMockID
+  }
 
   var itemBindings: Binding<[Topic]> {
     switch order {
@@ -122,32 +126,34 @@ struct TopicListView: View {
   @ViewBuilder
   var moreMenu: some View {
     Menu {
-      #if os(iOS)
-        Section {
-          newTopicButton
-        }
-      #endif
-
-      Section {
-        Menu {
-          Picker(selection: $order, label: Text("Order")) {
-            ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
-              Label(order.description, systemImage: order.icon)
-                .tag(order as TopicListRequest.Order?)
-            }
+      if !mock {
+        #if os(iOS)
+          Section {
+            newTopicButton
           }
-        } label: {
-          Label("Order by", systemImage: (order ?? .lastPost).icon)
-        }
-        Button(action: { showingHotTopics = true }) {
-          Label("Hot Topics", systemImage: "flame")
-        }
-        Button(action: { showingRecommendedTopics = true }) {
-          Label("Recommended Topics", systemImage: "hand.thumbsup")
-        }
-        if let _ = toppedTopicID {
-          Button(action: { showingToppedTopic = true }) {
-            Label("Topped Topic", systemImage: "arrow.up.to.line")
+        #endif
+
+        Section {
+          Menu {
+            Picker(selection: $order, label: Text("Order")) {
+              ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
+                Label(order.description, systemImage: order.icon)
+                  .tag(order as TopicListRequest.Order?)
+              }
+            }
+          } label: {
+            Label("Order by", systemImage: (order ?? .lastPost).icon)
+          }
+          Button(action: { showingHotTopics = true }) {
+            Label("Hot Topics", systemImage: "flame")
+          }
+          Button(action: { showingRecommendedTopics = true }) {
+            Label("Recommended Topics", systemImage: "hand.thumbsup")
+          }
+          if let _ = toppedTopicID {
+            Button(action: { showingToppedTopic = true }) {
+              Label("Topped Topic", systemImage: "arrow.up.to.line")
+            }
           }
         }
       }

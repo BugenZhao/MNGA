@@ -25,7 +25,7 @@ struct PostRowView: View {
   @StateObject var attachments: AttachmentsModel
 
   @State var showAttachments = false
-  
+
   static func build(post: Post, vote: Binding<VotesModel.Vote>) -> Self {
     let attachments = AttachmentsModel(post.attachments)
     return .init(post: post, vote: vote, attachments: attachments)
@@ -33,6 +33,10 @@ struct PostRowView: View {
 
   private var user: User? {
     self.users.localUser(id: self.post.authorID)
+  }
+
+  var mock: Bool {
+    self.post.id.tid.isMNGAMockID
   }
 
   @ViewBuilder
@@ -153,7 +157,7 @@ struct PostRowView: View {
         }
       }
     }
-    if let model = postReply {
+    if let model = postReply, !mock {
       Section {
         Button(action: { doQuote(model: model) }) {
           Label("Quote", systemImage: "quote.bubble")
@@ -194,10 +198,10 @@ struct PostRowView: View {
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-      .background { NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) { }.hidden() }
+    .background { NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) { }.hidden() }
       .environmentObject(attachments)
 
-    if #available(iOS 15.0, *), let model = postReply {
+    if #available(iOS 15.0, *), let model = postReply, !mock {
       body
         .swipeActions(edge: .leading) { Button(action: { self.doQuote(model: model) }) { Image(systemName: "quote.bubble") } .tint(.accentColor) }
     } else {
@@ -213,6 +217,13 @@ struct PostRowView: View {
   }
 
   func doVote(_ operation: PostVoteRequest.Operation) {
+    if mock {
+      #if os(iOS)
+        HapticUtils.play(type: .warning)
+      #endif
+      return
+    }
+
     logicCallAsync(.postVote(.with {
       $0.postID = post.id
       $0.operation = operation

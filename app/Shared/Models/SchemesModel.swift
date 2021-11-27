@@ -16,6 +16,15 @@ enum NavigationIdentifier: Hashable {
 }
 
 extension NavigationIdentifier {
+  var isMNGAMockID: Bool {
+    switch self {
+    case .topicID(let tid, _):
+      return tid.isMNGAMockID
+    case .forumID(let forumID):
+      return forumID.fid.isMNGAMockID
+    }
+  }
+  
   var mngaURL: URL? {
     var components = URLComponents()
     var url: URL?
@@ -28,8 +37,8 @@ extension NavigationIdentifier {
       }
       url = components.url(relativeTo: URL(string: Constants.MNGA.topicBase))
 
-    case .forumID(let forumId):
-      switch forumId.id {
+    case .forumID(let forumID):
+      switch forumID.id {
       case .fid(let fid):
         components.path = fid
         url = components.url(relativeTo: URL(string: Constants.MNGA.forumFBase))

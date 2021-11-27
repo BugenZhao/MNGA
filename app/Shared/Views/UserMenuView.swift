@@ -20,7 +20,7 @@ struct UserMenuView: View {
   @State var showNotifications: Bool = false
   @State var showShortMessages: Bool = false
   @State var showPreferencesModal: Bool = false
-  @State var showSeparateAboutModal: Bool = false
+  @State var showAbout: Bool = false
   @State var showUserProfile: Bool = false
 
   var user: User? {
@@ -34,6 +34,7 @@ struct UserMenuView: View {
     NavigationLink(destination: NotificationListView(), isActive: $showNotifications) { } .hidden()
     NavigationLink(destination: ShortMessageListView.build(), isActive: $showShortMessages) { } .hidden()
     NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
+    NavigationLink(destination: AboutView(), isActive: $showAbout) { }.hidden()
   }
 
   @ViewBuilder
@@ -117,7 +118,7 @@ struct UserMenuView: View {
             Label("Preferences", systemImage: "gear")
           }
         #endif
-        Button(action: { showSeparateAboutModal = true }) {
+        Button(action: { showAbout = true }) {
           Label("About & Feedback", systemImage: "hands.sparkles")
         }
       }
@@ -138,7 +139,6 @@ struct UserMenuView: View {
       .onDisappear { notification.showing = false }
       .background { navigationBackgrounds }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
-      .sheet(isPresented: $showSeparateAboutModal) { NavigationView { AboutView() } }
   }
 
   func reSignIn() {
