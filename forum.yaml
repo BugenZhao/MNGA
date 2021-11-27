@@ -2,14 +2,41 @@
 id: mnga_root_0
 name: MNGA Development
 topics:
-  - subject: "[FAQ] MNGA 常见问题解答"
+  - id: mnga_faq
+    subject: "[FAQ] MNGA 常见问题解答"
     posts:
       - content: |
-          ===MNGA FAQ===
-          [b][*] 能不能自定义文字大小？[/b]
+          [b][*] 如何自定义文字大小？[/b]
           MNGA 遵循系统应用的规则，使用了预置的文字尺寸。iOS 15 可以在控制中心添加一个文字大小按钮，打开 App 后可以用它单独调整 MNGA 的文字大小。
-        author: Bugen from MNGA
-  - subject: "MNGA 关于 & 反馈"
+
+          [b][*] 开了去广告服务后，MNGA网络报错？[/b]
+          请更新到 1.0(38) 及以上版本，尝试在 [b]设置/后端[/b] 中使用其它域名。
+
+          [b][*] App随机性闪退，或屏幕内容显示有重叠、抖动等异常？[/b]
+          MNGA 采用 Apple 官方新推出的 SwiftUI 框架开发，在 iOS 15 上表现才能足够稳定。
+          如果您是 iOS 14 用户，建议更新到 iOS 15 后体验更加完整的功能及流畅的体验。MNGA 也将在不久后取消对 iOS 14 的支持。
+          如果您是 iOS Beta 版用户，欢迎通过各个渠道反馈。
+
+          ===参见===
+          [tid=mnga_about_feedback]MNGA 关于 & 反馈[/tid]
+        author: Bugen at MNGA
+
+  - id: mnga_about_feedback
+    subject: "MNGA 关于 & 反馈"
     posts:
-      - content: "[b]MNGA 反馈渠道[/b]"
-        author: Bugen from MNGA
+      - content: |
+          ===MNGA [_mnga=version][/_mnga]===
+          [b]Make NGA Great Again[/b]
+
+          MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过下方的选项进行反馈。
+          [url=https://qm.qq.com/cgi-bin/qm/qr?k=9gLuFKiijRDTR2UotaxuSV0kjPoh0bcG&jump_from=webapi][b]MNGA 吹水群（获取开发版）[/b][/url]
+          [url=mailto:mnga.feedback@bugenzhao.com][b]反馈邮箱[/b][/url]
+          [url=https://github.com/BugenZhao/MNGA/issues][b]GitHub Issues[/b][/url]
+
+          === MNGA TestFlight 链接 ===
+          欢迎分享 MNGA 的获取链接！
+          [url]https://testflight.apple.com/join/qFDuytLt[/url]
+
+          ===参见===
+          [tid=mnga_faq]MNGA 常见问题解答[/tid]
+        author: Bugen at MNGA
