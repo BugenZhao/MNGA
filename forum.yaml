@@ -1,12 +1,15 @@
 ---
 id: mnga_root_0
-name: MNGA
+name: MNGA Development
 topics:
-  - subject: "[必读] MNGA 常见问题"
+  - subject: "[FAQ] MNGA 常见问题解答"
     posts:
-      - content: "[b]MNGA 常见问题[/b]"
+      - content: |
+          ===MNGA FAQ===
+          [b][*] 能不能自定义文字大小？[/b]
+          MNGA 遵循系统应用的规则，使用了预置的文字尺寸。iOS 15 可以在控制中心添加一个文字大小按钮，打开 App 后可以用它单独调整 MNGA 的文字大小。
         author: Bugen from MNGA
-  - subject: "MNGA 反馈渠道"
+  - subject: "MNGA 关于 & 反馈"
     posts:
       - content: "[b]MNGA 反馈渠道[/b]"
         author: Bugen from MNGA

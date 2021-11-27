@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - mock-src
+      - main
   workflow_dispatch:
 name: Mock Generation
 
