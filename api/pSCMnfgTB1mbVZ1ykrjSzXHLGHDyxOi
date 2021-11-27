@@ -1,12 +1,13 @@
 
 J
 mnga_about_feedbackMNGA 关于 & 反馈z
-Bugen at MNGA(�ч�0�ч��2
-0mnga_about_feedbackmnga_3�
-"
-_divider
-
-MNGA
+Bugen at MNGA(�凍0�凍�2
+0mnga_about_feedbackmnga_3�
++")
+_divider	
+
+MNGA "
+_mngaversion
 
 
 
@@ -15,46 +16,35 @@ J
 b
 
 Make NGA Great Again
-�
-�
-�
+�
+�
+�
+
 MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过下方的选项进行反馈。
 
 �"�
 urlShttps://qm.qq.com/cgi-bin/qm/qr?k=9gLuFKiijRDTR2UotaxuSV0kjPoh0bcG&jump_from=webapi.",
 b'
 %
-#MNGA 吹水群（提供开发版）
+#MNGA 吹水群（获取开发版）
 
 
 
 
->"<
-url"mailto:mnga.feedback@bugenzhao.com"
-b
-
-
-邮件
+D"B
+url"mailto:mnga.feedback@bugenzhao.com"
+b
+
+反馈邮箱
 
 
 
 
-=";
-url!https://github.com/BugenZhao/MNGA"
-b
-
-
-GitHub
-
-
-
-
-T"R
-url4https://ngabbs.com/nuke.php?func=message#to=41417929"
-b
-
-
-NGA 私信
+K"I
+url(https://github.com/BugenZhao/MNGA/issues"
+b
+
+GitHub Issues
 
 
 
@@ -64,27 +54,50 @@ NGA 私信
 _divider
 
  MNGA TestFlight 链接 
-
-
-
+*
+(
+&
+欢迎分享 MNGA 的获取链接！
 
 7"5
 url.
 ,
 *https://testflight.apple.com/join/qFDuytLt
+
+
+
+
+
+"
+_divider
+
+
+参见
 
 
 
-�===MNGA===
+
+.",
+tidmnga_faq
+
+MNGA 常见问题解答
+
+
+
+�===MNGA [_mnga=version][/_mnga]===
 [b]Make NGA Great Again[/b]
+
 MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过下方的选项进行反馈。
-[url=https://qm.qq.com/cgi-bin/qm/qr?k=9gLuFKiijRDTR2UotaxuSV0kjPoh0bcG&jump_from=webapi][b]MNGA 吹水群（提供开发版）[/b][/url]
-[url=mailto:mnga.feedback@bugenzhao.com][b]邮件[/b][/url]
-[url=https://github.com/BugenZhao/MNGA][b]GitHub[/b][/url]
-[url=https://ngabbs.com/nuke.php?func=message#to=41417929][b]NGA 私信[/b][/url]
+[url=https://qm.qq.com/cgi-bin/qm/qr?k=9gLuFKiijRDTR2UotaxuSV0kjPoh0bcG&jump_from=webapi][b]MNGA 吹水群（获取开发版）[/b][/url]
+[url=mailto:mnga.feedback@bugenzhao.com][b]反馈邮箱[/b][/url]
+[url=https://github.com/BugenZhao/MNGA/issues][b]GitHub Issues[/b][/url]
 
 === MNGA TestFlight 链接 ===
+欢迎分享 MNGA 的获取链接！
 [url]https://testflight.apple.com/join/qFDuytLt[/url]
- �ч�(�X2$
+
+===参见===
+[tid=mnga_faq]MNGA 常见问题解答[/tid]
+ �凍(�X2$
 mnga_3B
 mnga_3Bugen at MNGA0�$
