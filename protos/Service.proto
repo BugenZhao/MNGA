@@ -136,6 +136,7 @@ message TopicDetailsResponse {
   string forum_name = 4;
   uint32 pages = 3;
   bool is_local_cache = 5; // Whether the replies are from local cache.
+  repeated User in_place_users = 6;
 }
 
 message SubforumFilterRequest {
@@ -300,6 +301,9 @@ message CacheResponse {
   uint64 total_size = 2;
 }
 
+/*
+ * MNGA-only mock APIs.
+ */
 message MockApi {
   message TopicList { string id = 1; }
   message TopicDetails { string id = 1; }

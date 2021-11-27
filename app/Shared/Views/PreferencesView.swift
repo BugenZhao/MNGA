@@ -58,11 +58,18 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var connection: some View {
-    Picker(selection: $pref.requestOption.baseURL, label: Label("Backend", systemImage: "server.rack")) {
-      ForEach(URLs.hosts, id: \.self) { host in
-        Text(host).tag(URLs.base(for: host)!.absoluteString)
+    Group {
+      Picker(selection: $pref.requestOption.baseURL, label: Label("Backend", systemImage: "server.rack")) {
+        ForEach(URLs.hosts, id: \.self) { host in
+          Text(host).tag(URLs.base(for: host)!.absoluteString)
+        }
       }
-    }
+      Picker(selection: $pref.requestOption.mockBaseURL, label: Label("MNGA Backend", systemImage: "server.rack")) {
+        ForEach(URLs.mockHosts, id: \.self) { host in
+          Text(host).tag(URLs.base(for: host)!.absoluteString)
+        }
+      }
+    } .lineLimit(1)
 
     Picker(selection: $pref.requestOption.device, label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
       ForEach(Device.allCases, id: \.self) { device in

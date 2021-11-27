@@ -1,7 +1,7 @@
 use std::iter::once;
 
 use crate::{
-    constants::FORUM_ICON_PATH,
+    constants::{FORUM_ICON_PATH, MNGA_ICON_PATH},
     error::ServiceResult,
     fetch_package,
     utils::{extract_kv, extract_nodes, extract_nodes_rel},
@@ -99,7 +99,8 @@ pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumLi
             name: "MNGA".to_owned(),
             forums: vec![Forum {
                 id: make_fid("mnga_root_0".to_owned()).into(),
-                name: "MNGA".to_owned(),
+                name: "MNGA Development".to_owned(),
+                icon_url: MNGA_ICON_PATH.to_owned(),
                 ..Default::default()
             }]
             .into(),

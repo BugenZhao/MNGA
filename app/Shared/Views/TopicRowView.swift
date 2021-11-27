@@ -49,11 +49,15 @@ struct TopicRowView: View {
     self.showIndicators = showIndicators
   }
 
+  var shouldDim: Bool {
+    dimmedSubject && !topic.id.isMNGAMockID && topic.hasRepliesNumLastVisit
+  }
+
   @ViewBuilder
   var subject: some View {
     BlockedView(content: topic.subject.full, revealOnTap: false) {
       TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: showIndicators)
-        .foregroundColor(dimmedSubject && topic.hasRepliesNumLastVisit ? .secondary : nil)
+        .foregroundColor(shouldDim ? .secondary : nil)
     }
   }
 

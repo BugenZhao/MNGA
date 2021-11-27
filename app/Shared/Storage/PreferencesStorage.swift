@@ -23,7 +23,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("themeColor") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
 
-  @AppStorage("requestOption") var requestOption = RequestOption.defaultValue {
+  @AppStorage("requestOption") var requestOption = RequestOption() {
     didSet { syncRequestOptionWithLogic() }
   }
 

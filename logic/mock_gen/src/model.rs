@@ -1,7 +1,7 @@
 use anyhow::Result;
 use protos::{
     mock_api,
-    DataModel::{Device, Forum, ForumId, ForumId_oneof_id, Post, PostId, Topic, UserName},
+    DataModel::{Device, Forum, ForumId, ForumId_oneof_id, Post, PostId, Topic, User, UserName},
     Service::{MockApi_TopicDetails, MockApi_TopicList, TopicDetailsResponse, TopicListResponse},
 };
 use serde::{Deserialize, Serialize};
@@ -16,6 +16,8 @@ use crate::{
 pub struct MockPost {
     #[serde(skip_serializing, default = "get_unique_id")]
     pub id: String,
+    #[serde(skip_serializing, default = "get_unique_id")]
+    pub author_id: String,
 
     pub content: String,
     pub author: String,
@@ -33,6 +35,7 @@ impl MockPost {
         Post {
             id: Some(id).into(),
             floor,
+            author_id: self.author_id.clone(),
             content: Some(content).into(),
             post_date: now(),
             score: 233,
@@ -90,6 +93,22 @@ impl Render for MockTopic {
             }
         );
 
+        let users = self
+            .posts
+            .iter()
+            .map(|p| User {
+                id: p.author_id.clone(),
+                name: Some(UserName {
+                    normal: p.author_id.clone(),
+                    anonymous: p.author.clone(),
+                    ..Default::default()
+                })
+                .into(),
+                fame: 2333,
+                ..Default::default()
+            })
+            .collect();
+
         let res = TopicDetailsResponse {
             topic: Some(topic).into(),
             replies: self
@@ -99,6 +118,7 @@ impl Render for MockTopic {
                 .map(|(i, p)| p.to_model(&id, i as u32))
                 .collect(),
             pages: 1,
+            in_place_users: users,
             ..Default::default()
         };
 
