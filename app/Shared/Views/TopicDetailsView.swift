@@ -78,6 +78,7 @@ struct TopicDetailsView: View {
       onResponse: { response in
         let items = response.replies
         let pages = response.pages
+        response.inPlaceUsers.forEach(UsersModel.shared.add(user:))
         return (items, Int(pages))
       },
       id: \.floor.description,

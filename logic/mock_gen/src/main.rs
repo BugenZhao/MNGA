@@ -51,6 +51,7 @@ mod test {
                 subject: "[FAQ] MNGA 常见问题".to_owned(),
                 posts: vec![MockPost {
                     id: get_unique_id(),
+                    author_id: get_unique_id(),
                     content: "First line here.\nSecond line here\n".to_owned(),
                     author: "Bugen from MNGA".to_owned(),
                 }],

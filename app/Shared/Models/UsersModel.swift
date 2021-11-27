@@ -24,4 +24,8 @@ class UsersModel: ObservableObject {
     }
     return self.users[id] ?? nil
   }
+  
+  func add(user: User) {
+    self.users[user.id] = user
+  }
 }
