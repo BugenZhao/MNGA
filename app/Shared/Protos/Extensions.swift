@@ -277,3 +277,9 @@ extension CacheType {
     }
   }
 }
+
+extension String {
+  var isMNGAMockID: Bool {
+    self.starts(with: "mnga_")
+  }
+}
