@@ -8,6 +8,72 @@
 import Foundation
 import SwiftUI
 
+fileprivate struct PostRowAppearanceView: View {
+  @ObservedObject var pref: PreferencesStorage
+
+  var body: some View {
+    Form {
+      Section(header: Text("Preview")) {
+        PostRowView.build(post: .dummy, vote: .constant((state: .up, delta: 0)))
+      }
+
+      Section {
+        Picker(selection: $pref.postRowSwipeActionLeading, label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")) {
+          Text("Leading").tag(true)
+          Text("Trailing").tag(false)
+        }
+
+        Picker(selection: $pref.postRowDateTimeStrategy.animation(), label: Label("Date Display", systemImage: "calendar")) {
+          ForEach(DateTimeTextView.Strategy.allCases, id: \.self) { s in
+            Text(s.description).tag(s)
+          }
+        }
+
+        Toggle(isOn: $pref.showSignature.animation()) {
+          Label("Show Signature", systemImage: "signature")
+        }
+
+        Toggle(isOn: $pref.showAvatar.animation()) {
+          Label("Show Avatar", systemImage: "person.crop.circle")
+        }
+      }
+
+      Section {
+        Toggle(isOn: $pref.postRowShowUserDetails.animation()) {
+          Text("Show User Details")
+        }
+        if pref.postRowShowUserDetails {
+          Toggle(isOn: $pref.postRowShowUserRegDate.animation()) {
+            Text("Show User Register Date")
+          }
+        }
+      }
+
+      Section {
+        Toggle(isOn: $pref.usePaginatedDetails) {
+          Label("Paginated Reading", systemImage: "square.stack")
+        }
+      }
+    } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+      .navigationTitleInline(string: "")
+  }
+}
+
+fileprivate struct TopicListAppearanceView: View {
+  @ObservedObject var pref: PreferencesStorage
+
+  var body: some View {
+    Form {
+      Picker(selection: $pref.defaultTopicListOrder, label: Label("Default Order", systemImage: "arrow.up.arrow.down")) {
+        ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
+          Label(order.description, systemImage: order.icon).tag(order)
+        }
+      }
+    } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+      .navigationTitleInline(string: "")
+  }
+}
+
 struct PreferencesInnerView: View {
   @StateObject var pref = PreferencesStorage.shared
 
@@ -30,29 +96,8 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var reading: some View {
-//    Toggle(isOn: $pref.showTopicSubject) {
-//      Label("Show Topic Subject", systemImage: "paragraphsign")
-//    }
-    Toggle(isOn: $pref.showSignature) {
-      Label("Show Signature", systemImage: "signature")
-    }
-    Toggle(isOn: $pref.showAvatar) {
-      Label("Show Avatar", systemImage: "person.circle")
-    }
-    Picker(selection: $pref.useRedact, label: Label("Collapsed Style", systemImage: "eye.slash")) {
-      Text("Redact").tag(true)
-      Text("Hidden").tag(false)
-    }
-    Toggle(isOn: $pref.usePaginatedDetails) {
-      Label("Use Paginated Details", systemImage: "square.stack")
-    }
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
-    }
-    Picker(selection: $pref.defaultTopicListOrder, label: Label("Default Topic List Order", systemImage: "arrow.up.arrow.down")) {
-      ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
-        Label(order.description, systemImage: order.icon).tag(order)
-      }
     }
   }
 
@@ -116,6 +161,12 @@ struct PreferencesInnerView: View {
           NavigationLink(destination: BlockWordListView()) {
             Label("Block Words", systemImage: "hand.raised")
           }
+          NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
+            Label("Topic List Appearance", systemImage: "list.dash")
+          }
+          NavigationLink(destination: PostRowAppearanceView(pref: pref)) {
+            Label("Topic Details Appearance", systemImage: "list.bullet.below.rectangle")
+          }
           reading
         }
 
@@ -142,5 +193,14 @@ struct PreferencesView: View {
     NavigationView {
       PreferencesInnerView()
     }
+  }
+}
+
+struct PreferencesView_Previews: PreviewProvider {
+  static let model = PostReplyModel()
+
+  static var previews: some View {
+    PreferencesView()
+      .environmentObject(model)
   }
 }

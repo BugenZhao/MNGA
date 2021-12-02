@@ -13,6 +13,10 @@ class UsersModel: ObservableObject {
 
   // CAVEATS: should not be @Published here, may lead to bad performance
   private var users = [String: User?]()
+  
+  init() {
+    users[User.dummyID] = User.dummy
+  }
 
   func localUser(id: String) -> User? {
     if self.users[id] == nil {

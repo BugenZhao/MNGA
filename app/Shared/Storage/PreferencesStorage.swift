@@ -15,7 +15,6 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("showTopicSubjectNew") var showTopicSubject = false
   @AppStorage("showSignatureNew") var showSignature = false
   @AppStorage("showAvatar") var showAvatar = true
-  @AppStorage("useRedactNew") var useRedact = false
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = false
   @AppStorage("useInAppSafari") var useInAppSafari = true
   @AppStorage("imageViewerEnableZoom") var imageViewerEnableZoom = true
@@ -27,6 +26,10 @@ class PreferencesStorage: ObservableObject {
     didSet { syncRequestOptionWithLogic() }
   }
 
+  @AppStorage("postRowSwipeActionLeading") var postRowSwipeActionLeading = true
+  @AppStorage("postRowShowUserDetails") var postRowShowUserDetails = true
+  @AppStorage("postRowShowUserRegDate") var postRowShowUserRegDate = false
+  @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategy = DateTimeTextView.Strategy.automatic
 
   init() {
     syncRequestOptionWithLogic()
