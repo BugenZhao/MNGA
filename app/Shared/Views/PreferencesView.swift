@@ -96,6 +96,16 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var reading: some View {
+    NavigationLink(destination: BlockWordListView()) {
+      Label("Block Words", systemImage: "hand.raised")
+    }
+    NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
+      Label("Topic List Appearance", systemImage: "list.dash")
+    }
+    NavigationLink(destination: PostRowAppearanceView(pref: pref)) {
+      Label("Topic Details Appearance", systemImage: "list.bullet.below.rectangle")
+    }
+
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
     }
@@ -158,15 +168,6 @@ struct PreferencesInnerView: View {
         }
 
         Section(header: Text("Reading")) {
-          NavigationLink(destination: BlockWordListView()) {
-            Label("Block Words", systemImage: "hand.raised")
-          }
-          NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
-            Label("Topic List Appearance", systemImage: "list.dash")
-          }
-          NavigationLink(destination: PostRowAppearanceView(pref: pref)) {
-            Label("Topic Details Appearance", systemImage: "list.bullet.below.rectangle")
-          }
           reading
         }
 
