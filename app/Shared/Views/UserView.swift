@@ -125,6 +125,24 @@ struct UserView: View {
   var shouldRedactInfo: Bool {
     shouldRedactName || isAnonymous
   }
+  
+  var showDetails: Bool {
+    style == .huge || (style == .normal && pref.postRowShowUserDetails)
+  }
+  var showRegDate: Bool {
+    style == .huge || (style == .normal && pref.postRowShowUserRegDate)
+  }
+  
+  var nameFont: Font {
+    switch style {
+    case .compact:
+      return .subheadline
+    case .normal:
+      return showDetails ? .subheadline : .callout
+    case .huge:
+      return .title
+    }
+  }
 
   var body: some View {
     HStack {
@@ -138,7 +156,7 @@ struct UserView: View {
             } else {
               Text(self.name)
             }
-          } .font(style == .huge ? .title : .subheadline, weight: style == .huge ? .bold : .medium)
+          } .font(nameFont, weight: style == .huge ? .bold : .medium)
 
           if user?.mute == true {
             Image(systemName: "mic.slash.fill")
@@ -148,7 +166,7 @@ struct UserView: View {
         } .onTapGesture { withAnimation { self.showId.toggle() } }
           .redacted(if: shouldRedactName)
 
-        if style != .compact {
+        if showDetails {
           HStack(spacing: 6) {
             HStack(spacing: 2) {
               Image(systemName: "text.bubble")
@@ -162,7 +180,7 @@ struct UserView: View {
                 .redacted(if: shouldRedactInfo)
             } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
 
-            if style == .huge {
+            if showRegDate {
               HStack(spacing: 2) {
                 Image(systemName: "calendar")
                 Text(Date(timeIntervalSince1970: TimeInterval(user?.regDate ?? 0)), style: .date)

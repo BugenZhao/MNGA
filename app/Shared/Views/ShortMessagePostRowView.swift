@@ -68,7 +68,6 @@ struct ShortMessagePostRowView: View {
   var content: some View {
     TopicSubjectContentInnerView(content: post.subject, lineLimit: nil)
     PostContentView(content: post.content)
-      .equatable()
   }
 
   @ViewBuilder

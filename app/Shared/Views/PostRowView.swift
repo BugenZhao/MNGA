@@ -38,6 +38,9 @@ struct PostRowView: View {
   var mock: Bool {
     self.post.id.tid.isMNGAMockID
   }
+  var dummy: Bool {
+    self.post.id == .dummy
+  }
 
   @ViewBuilder
   var floor: some View {
@@ -72,7 +75,7 @@ struct PostRowView: View {
       PostRowUserView(post: post)
       Spacer()
       floor
-      menuButton
+      if !dummy { menuButton }
     }
   }
 
@@ -86,6 +89,7 @@ struct PostRowView: View {
           Image(systemName: "pencil")
         }
         DateTimeTextView.build(timestamp: post.postDate)
+          .id(pref.postRowDateTimeStrategy)
         Image(systemName: post.device.icon)
           .frame(width: 10)
       } .foregroundColor(.secondary)
@@ -142,7 +146,6 @@ struct PostRowView: View {
   @ViewBuilder
   var content: some View {
     PostContentView(content: post.content, id: post.id)
-      .equatable()
   }
 
   @ViewBuilder
@@ -157,7 +160,7 @@ struct PostRowView: View {
         }
       }
     }
-    if let model = postReply, !mock {
+    if let model = postReply, !mock, !dummy {
       Section {
         Button(action: { doQuote(model: model) }) {
           Label("Quote", systemImage: "quote.bubble")
@@ -203,21 +206,18 @@ struct PostRowView: View {
 
     if #available(iOS 15.0, *), let model = postReply, !mock {
       body
-        .swipeActions(edge: .leading) { Button(action: { self.doQuote(model: model) }) { Image(systemName: "quote.bubble") } .tint(.accentColor) }
+        .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) {
+        Button(action: { self.doQuote(model: model) }) {
+          Image(systemName: "quote.bubble")
+        } .tint(.accentColor)
+      }
     } else {
       body
     }
   }
 
-  func onLongPress() {
-    if let model = postReply {
-      HapticUtils.play(style: .medium)
-      doQuote(model: model)
-    }
-  }
-
   func doVote(_ operation: PostVoteRequest.Operation) {
-    if mock {
+    if mock || dummy {
       #if os(iOS)
         HapticUtils.play(type: .warning)
       #endif
@@ -245,6 +245,8 @@ struct PostRowView: View {
   }
 
   func doQuote(model: PostReplyModel) {
+    if dummy { return }
+
     model.show(action: .with {
       $0.postID = self.post.id
       $0.forumID = .with { f in

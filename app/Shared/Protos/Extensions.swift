@@ -283,3 +283,63 @@ extension String {
     self.starts(with: "mnga_")
   }
 }
+
+extension PostId {
+  static var dummy: Self {
+    PostId.with {
+      $0.tid = "dummy"
+      $0.pid = "dummy"
+    }
+  }
+}
+
+extension Post {
+  static var dummy: Self {
+    let contentRes: ContentParseResponse? = try? logicCall(.contentParse(.with { r in
+      r.raw = "This is a post.".localized
+//      r.raw += "<br/>"
+//      r.raw += "[collapse]\("Collapsed here.".localized)[/collapse]"
+    }))
+    let commentRes: ContentParseResponse? = try? logicCall(.contentParse(.with { r in r.raw = "This is a comment.".localized }))
+
+    let recentDate = UInt64(Date().timeIntervalSince1970 - 10 * 60)
+    let oldDate = UInt64(1609502400)
+
+    return Post.with {
+      $0.id = .dummy
+      $0.score = 233
+      $0.authorID = User.dummyID
+      $0.content = contentRes?.content ?? .init()
+      $0.voteState = .up
+      $0.postDate = oldDate
+      $0.floor = 42
+
+      $0.comments = [Post.with { c in
+        c.id = .dummy
+        c.authorID = User.dummyID
+        c.content = commentRes?.content ?? .init()
+        c.postDate = recentDate
+      }]
+    }
+  }
+}
+
+extension User {
+  static var dummyID: String {
+    "dummy"
+  }
+
+  static var dummy: Self {
+    let signatureRes: ContentParseResponse? = try? logicCall(.contentParse(.with { r in r.raw = "This is a signature.".localized }))
+
+    return User.with {
+      $0.id = Self.dummyID
+      $0.name.normal = "Dummy User".localized
+      $0.fame = 25
+      $0.postNum = 2333
+      $0.regDate = 1609502400
+      $0.signature = signatureRes?.content ?? .init()
+      $0.avatarURL = "https://img.nga.178.com/avatars/2002/03a/000/000/58_0.jpg"
+    }
+  }
+}

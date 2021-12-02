@@ -36,7 +36,6 @@ struct PostCommentRowView: View {
   var content: some View {
     QuoteView(fullWidth: false) {
       PostContentView(spans: realSpans, defaultFont: .subheadline, initialInQuote: true)
-        .equatable()
     }
   }
 

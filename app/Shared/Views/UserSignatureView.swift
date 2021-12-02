@@ -19,8 +19,6 @@ struct UserSignatureView: View {
         .foregroundColor(.accentColor)
         .imageScale(.small)
       PostContentView(content: content, defaultFont: font, defaultColor: color)
-        .equatable()
-        .environment(\.useRedact, false)
     }
   }
 }

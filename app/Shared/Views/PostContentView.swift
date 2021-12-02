@@ -34,7 +34,7 @@ extension EnvironmentValues {
   }
 }
 
-struct PostContentView<S: Sequence & Equatable>: View, Equatable where S.Element == Span {
+struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
   let spans: S
   let error: String?
   let id: PostId?
@@ -73,10 +73,7 @@ struct PostContentView<S: Sequence & Equatable>: View, Equatable where S.Element
       }
       main
     } .fixedSize(horizontal: false, vertical: true)
-  }
-
-  static func == (lhs: PostContentView, rhs: PostContentView) -> Bool {
-    return lhs.spans == rhs.spans
+      .equatable(by: spans)
   }
 }
 

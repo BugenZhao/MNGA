@@ -68,7 +68,7 @@
 "New word" = "新关键词";
 "Preferences" = "设置";
 "Reading" = "阅读";
-"Show Signature" = "展示签名";
+"Show Signature" = "显示签名";
 "Show Avatar" = "显示头像";
 "Collapsed Style" = "折叠风格";
 "Redact" = "遮盖";
@@ -80,7 +80,7 @@
 "Share As Image" = "作为图片分享";
 "Page %lld" = "第 %lld 页";
 "Load This Page" = "加载本页";
-"Use Paginated Details" = "分页阅读话题";
+"Paginated Reading" = "分页阅读";
 "View Video" = "查看视频";
 "Always Use In-App Safari" = "始终使用内置 Safari";
 "Audio" = "音频";
@@ -115,7 +115,7 @@
 "Latest Topics by Last Reply Date" = "最新回复的话题";
 "Latest Topics by Topic Post Date" = "最新发表的话题";
 "Bad or Unsupported Post Content Format" = "不规范或尚未支持的帖子格式";
-"Default Topic List Order" = "默认话题列表排序方式";
+"Default Order" = "默认顺序";
 "Recommended Topics" = "推荐话题";
 "Topped Topic" = "版头";
 "Copy" = "拷贝";
@@ -193,3 +193,19 @@
 "Attachments" = "附件";
 "Attachments (%lld)" = "附件 (%lld)";
 "MNGA Development" = "MNGA 开发";
+"Post Appearance" = "回复外观";
+"Dummy User" = "某用户";
+"This is a post." = "这是一条回复。";
+"This is a comment." = "这是一个贴条。";
+"This is a signature." = "这是一个签名。";
+"Collapsed here." = "这里被折叠了。";
+"Swipe Trigger Edge" = "滑动触发边缘";
+"Leading" = "前";
+"Trailing" = "后";
+"Show User Details" = "显示用户详情";
+"Show User Register Date" = "显示用户注册时间";
+"Date Display" = "日期显示";
+"Detailed" = "详细";
+"Time Ago" = "时间差";
+"Topic List Appearance" = "帖子列表外观";
+"Topic Details Appearance" = "帖子详情外观";

@@ -72,7 +72,6 @@ struct ContentView: View {
       .environmentObject(shortMessagePost)
       .environmentObject(currentUser)
       .environmentObject(textSelection)
-      .environment(\.useRedact, prefs.useRedact)
       .preferredColorScheme(prefs.colorScheme.scheme)
   }
 }
