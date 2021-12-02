@@ -134,19 +134,12 @@ class SchemesModel: ObservableObject {
     self.navID = nil
   }
 
-  func navigateID(for url: URL) -> NavigationIdentifier? {
-    if let id = url.mngaNavigationIdentifier {
-      return id
-    }
-    return nil
-  }
-
   func canNavigateTo(_ url: URL) -> Bool {
-    navigateID(for: url) != nil
+    url.mngaNavigationIdentifier != nil
   }
 
   func onNavigateToURL(_ url: URL) -> Bool {
-    guard let id = navigateID(for: url) else { return false }
+    guard let id = url.mngaNavigationIdentifier else { return false }
 
     let action = { self.navID = id }
     DispatchQueue.main.async {
@@ -196,7 +189,9 @@ struct SchemesNavigationModifier: ViewModifier {
         UIPasteboard.general.detectPatterns(for: [.probableWebURL]) { result in
           switch result {
           case .success(_):
-            urlFromPasteboardForAlert = UIPasteboard.general.url
+            if let url = UIPasteboard.general.url, model.canNavigateTo(url) {
+              urlFromPasteboardForAlert = url
+            }
           default:
             break
           }
