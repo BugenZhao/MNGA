@@ -18,7 +18,7 @@ fn parse_from_j<T: Message>(env: &JNIEnv, data: jbyteArray) -> T {
 }
 
 #[no_mangle]
-pub extern "system" fn Java_com_bugenzhao_nga_LogicKt_rustCall(
+pub extern "system" fn Java_com_bugenzhao_mnga_LogicKt_rustCall(
     env: JNIEnv,
     _: JClass,
     data: jbyteArray,
@@ -31,14 +31,14 @@ pub extern "system" fn Java_com_bugenzhao_nga_LogicKt_rustCall(
     match response_buf {
         Ok(data) => env.byte_array_from_slice(&data).unwrap(),
         Err(err) => {
-            env.throw(err.to_string()).unwrap();
+            env.throw(err.to_app_string()).unwrap();
             unreachable!()
         }
     }
 }
 
 #[no_mangle]
-pub extern "system" fn Java_com_bugenzhao_nga_LogicKt_rustCallAsync(
+pub extern "system" fn Java_com_bugenzhao_mnga_LogicKt_rustCallAsync(
     env: JNIEnv,
     _: JClass,
     data: jbyteArray,

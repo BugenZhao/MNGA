@@ -68,7 +68,7 @@ extension ToastModel.Message {
     case .success(let msg):
       return AlertToast(displayMode: displayMode, type: .complete(.green), title: "Success".localized, subTitle: msg)
     case .error(let msg):
-      return AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg)
+      return AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg.errorLocalized)
     case .notification(let newCount):
       return AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String(format: "%lld new unread notifications".localized, newCount))
     case .userSwitch(let user):

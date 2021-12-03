@@ -32,7 +32,11 @@ where
                 response_buf
             })
             .map_err(|e| {
-                log::error!("error when serving async request #{}: {}", callback.id(), e);
+                log::error!(
+                    "error when serving async request #{}: {}",
+                    callback.id(),
+                    e.to_app_string()
+                );
                 e
             });
 

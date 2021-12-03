@@ -36,7 +36,7 @@ impl CallbackTrait for AndroidCallback {
                 [jdata.into(), JObject::null().into()]
             }
             Err(err) => {
-                let jerr = env.new_string(err.to_string()).unwrap();
+                let jerr = env.new_string(err.to_app_string()).unwrap();
                 [JObject::null().into(), jerr.into()]
             }
         };

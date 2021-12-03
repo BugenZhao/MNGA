@@ -10,11 +10,11 @@ pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
 #[allow(dead_code)]
 #[derive(Error, Debug)]
 pub enum ServiceError {
-    #[error("NGA: {} ({})", .0.get_info(), .0.get_code())]
+    #[error("{} ({})", .0.get_info(), .0.get_code())]
     Nga(ErrorMessage),
-    #[error("MNGA: {} ({})", .0.get_info(), .0.get_code())]
+    #[error("{} ({})", .0.get_info(), .0.get_code())]
     Mnga(ErrorMessage),
-    #[error("Missing field: {0}")]
+    #[error("{0}")]
     MissingField(String),
 
     #[error(transparent)]
@@ -28,14 +28,37 @@ pub enum ServiceError {
     #[error(transparent)]
     Cache(#[from] cache::CacheError),
     #[error(transparent)]
-    Parse(#[from] text::error::ParseError),
+    TextParse(#[from] text::error::ParseError),
     #[error(transparent)]
     UrlParse(#[from] url::ParseError),
     #[error(transparent)]
     Protobuf(#[from] protos::ProtobufError),
 
-    #[error("panic: {0}")]
+    #[error("{0}")]
     Panic(String),
+}
+
+impl ServiceError {
+    fn to_kind(&self) -> &'static str {
+        match self {
+            ServiceError::Nga(_) => "NGA",
+            ServiceError::Mnga(_) => "MNGA",
+            ServiceError::MissingField(_) => "Missing Field",
+            ServiceError::Reqwest(_) => "Network Connection",
+            ServiceError::XmlParse(_) => "XML Parse",
+            ServiceError::JsonParse(_) => "JSON Parse",
+            ServiceError::XPath(_) => "XPath Resolve",
+            ServiceError::Cache(_) => "Cache",
+            ServiceError::TextParse(_) => "Text Parse",
+            ServiceError::UrlParse(_) => "URL Parse",
+            ServiceError::Protobuf(_) => "Protocol Buffer Encoding",
+            ServiceError::Panic(_) => "Backend Panic",
+        }
+    }
+
+    pub fn to_app_string(&self) -> String {
+        format!("{}|{}", self.to_kind(), self)
+    }
 }
 
 pub type ServiceResult<T> = Result<T, ServiceError>;
