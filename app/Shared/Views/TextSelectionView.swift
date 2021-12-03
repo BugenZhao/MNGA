@@ -29,9 +29,9 @@ struct TextSelectionView: View {
     NavigationView {
       TextEditor(text: .constant(text))
         .introspectTextView { tv in
-        tv.isEditable = false
-        tv.selectAll(nil)
-      }
+          tv.isEditable = false
+          tv.selectAll(nil)
+        }
         .padding(.horizontal)
         .toolbarWithFix { ToolbarItem(placement: .status) { copyButton } }
         .navigationTitleInline(key: "Text Selection")
@@ -46,7 +46,7 @@ struct TextSelectionView_Preview: PreviewProvider {
     var body: some View {
       TextSelectionView()
         .environmentObject(model)
-        .onAppear { model.text = String.init(repeating: "Test String ", count: 1000) }
+        .onAppear { model.text = String(repeating: "Test String ", count: 1000) }
     }
   }
 

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 import SwiftUIX
 
 extension User {
@@ -51,11 +51,10 @@ struct UserView: View {
 
   init(user: User, style: Style, isAuthor: Bool = false) {
     self.user = user
-    self.id = user.id
+    id = user.id
     self.style = style
     self.isAuthor = isAuthor
   }
-
 
   private var avatarSize: CGFloat {
     switch style {
@@ -86,15 +85,15 @@ struct UserView: View {
       if style == .huge {
         Button(action: { if let url = avatarURL { viewingImage.show(url: url) } }) {
           avatarInner
-        } .buttonStyle(PlainButtonStyle())
+        }.buttonStyle(PlainButtonStyle())
       } else if let user = self.user, let action = self.action {
         Button(action: { action.showUserProfile = user }) {
           avatarInner
-        } .buttonStyle(PlainButtonStyle())
+        }.buttonStyle(PlainButtonStyle())
       } else {
         avatarInner
       }
-    } .clipShape(Circle())
+    }.clipShape(Circle())
       .frame(width: avatarSize, height: avatarSize)
       .foregroundColor(.accentColor)
   }
@@ -110,7 +109,7 @@ struct UserView: View {
   }
 
   var idDisplay: String {
-    if self.isAnonymous, let user = user {
+    if isAnonymous, let user = user {
       return user.name.normal
     } else {
       return id
@@ -122,20 +121,21 @@ struct UserView: View {
   }
 
   var shouldRedactName: Bool {
-    user == nil || user == User.init() || user == .anonymousExample
+    user == nil || user == User() || user == .anonymousExample
   }
 
   var shouldRedactInfo: Bool {
     shouldRedactName || isAnonymous
   }
-  
+
   var showDetails: Bool {
     style == .huge || (style == .normal && pref.postRowShowUserDetails)
   }
+
   var showRegDate: Bool {
     style == .huge || (style == .normal && pref.postRowShowUserRegDate)
   }
-  
+
   var nameFont: Font {
     switch style {
     case .compact:
@@ -159,20 +159,20 @@ struct UserView: View {
             } else {
               Text(self.name)
             }
-          } .font(nameFont, weight: style == .huge ? .bold : .medium)
+          }.font(nameFont, weight: style == .huge ? .bold : .medium)
 
           Group {
             if user?.mute == true {
               Image(systemName: "mic.slash.fill")
                 .foregroundColor(.red)
             }
-            if isAuthor && pref.postRowShowAuthorIndicator {
+            if isAuthor, pref.postRowShowAuthorIndicator {
               Image(systemName: "person.fill")
                 .foregroundColor(.secondary)
             }
-          } .font(style == .huge ? .body : .footnote)
-          
-        } .onTapGesture { withAnimation { self.showId.toggle() } }
+          }.font(style == .huge ? .body : .footnote)
+
+        }.onTapGesture { withAnimation { self.showId.toggle() } }
           .redacted(if: shouldRedactName)
 
         if showDetails {
@@ -181,13 +181,13 @@ struct UserView: View {
               Image(systemName: "text.bubble")
               Text("\(user?.postNum ?? 0)")
                 .redacted(if: shouldRedactInfo)
-            } .foregroundColor((1..<50 ~= user?.postNum ?? 50) ? .red : .secondary)
+            }.foregroundColor((1 ..< 50 ~= user?.postNum ?? 50) ? .red : .secondary)
 
             HStack(spacing: 2) {
               Image(systemName: "flag")
               Text(String(format: "%.01f", Double(user?.fame ?? 0) / 10.0))
                 .redacted(if: shouldRedactInfo)
-            } .foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
+            }.foregroundColor((user?.fame ?? 0 < 0) ? .red : .secondary)
 
             if showRegDate {
               HStack(spacing: 2) {
@@ -196,7 +196,7 @@ struct UserView: View {
                   .redacted(if: shouldRedactInfo)
               }
             }
-          } .font(.footnote)
+          }.font(.footnote)
             .foregroundColor(.secondary)
         }
       }

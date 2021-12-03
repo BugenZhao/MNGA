@@ -10,15 +10,15 @@ import SwiftUI
 
 extension Subject {
   var full: String {
-    self.tags.map { t in "[\(t)] " }.joined() + self.content
+    tags.map { t in "[\(t)] " }.joined() + content
   }
 }
 
 extension Forum {
   var idDescription: String {
-    switch self.id.id! {
-    case .fid(let fid): return "#\(fid)"
-    case .stid(let stid): return "##\(stid)"
+    switch id.id! {
+    case let .fid(fid): return "#\(fid)"
+    case let .stid(stid): return "##\(stid)"
     }
   }
 }
@@ -94,18 +94,18 @@ extension Device {
 
 extension PostReplyAction {
   var title: LocalizedStringKey {
-    switch self.operation {
+    switch operation {
     case .reply:
       return "Reply"
     case .quote:
       return "Quote"
     case .modify:
-      return self.verbatim.modifyAppend ? "Append" : "Edit"
+      return verbatim.modifyAppend ? "Append" : "Edit"
     case .comment:
       return "Comment"
     case .new:
       return "New Topic"
-    case .UNRECOGNIZED(_):
+    case .UNRECOGNIZED:
       return ""
     }
   }
@@ -113,7 +113,7 @@ extension PostReplyAction {
 
 extension Notification {
   var asTopic: Topic {
-      .with {
+    .with {
       $0.id = self.otherPostID.tid
       $0.subject = self.topicSubject
     }
@@ -131,7 +131,7 @@ extension Notification.TypeEnum {
       return "message"
     case .shortMessageStart:
       return "plus.message"
-    case .unknown, .UNRECOGNIZED(_):
+    case .unknown, .UNRECOGNIZED:
       return "questionmark.circle"
     }
   }
@@ -146,7 +146,7 @@ extension Notification.TypeEnum {
       return "received 10 more votes"
     case .shortMessage, .shortMessageStart:
       return "send you a short message"
-    case .unknown, .UNRECOGNIZED(_):
+    case .unknown, .UNRECOGNIZED:
       return ""
     }
   }
@@ -154,13 +154,13 @@ extension Notification.TypeEnum {
 
 extension Post {
   var idWithAlterInfo: String {
-    return self.id.debugDescription + self.alterInfo
+    id.debugDescription + alterInfo
   }
 }
 
 extension PostId: CustomStringConvertible {
   public var description: String {
-    "\(self.tid), \(self.pid)"
+    "\(tid), \(pid)"
   }
 }
 
@@ -201,12 +201,12 @@ extension TopicListRequest.Order {
 
 extension ShortMessagePostAction {
   var title: LocalizedStringKey {
-    switch self.operation {
+    switch operation {
     case .reply:
       return "Reply"
     case .new, .newSingleTo:
       return "New Short Message"
-    case .UNRECOGNIZED(_):
+    case .UNRECOGNIZED:
       return ""
     }
   }
@@ -214,13 +214,13 @@ extension ShortMessagePostAction {
 
 extension User {
   var isAnonymous: Bool {
-    self.name.isAnonymous
+    name.isAnonymous
   }
 
   var nameDisplayCompat: String {
-    let new = self.name.display
+    let new = name.display
     if new.isEmpty {
-      return self.nameRaw
+      return nameRaw
     } else {
       return new
     }
@@ -229,34 +229,34 @@ extension User {
 
 extension UserName {
   var isAnonymous: Bool {
-    self.anonymous != ""
+    anonymous != ""
   }
 
   var display: String {
-    self.anonymous.isEmpty ? self.normal : self.anonymous
+    anonymous.isEmpty ? normal : anonymous
   }
 }
 
 extension Topic {
   var authorNameDisplay: String {
-    let new = self.authorName.display
+    let new = authorName.display
 
     if new.isEmpty {
-      return self.authorNameRaw
+      return authorNameRaw
     } else {
       return new
     }
   }
 
   var authorNameCompat: UserName {
-    let new = self.authorName.display
+    let new = authorName.display
 
     if new.isEmpty {
       return .with {
         $0.normal = self.authorNameRaw
       }
     } else {
-      return self.authorName
+      return authorName
     }
   }
 }
@@ -280,7 +280,7 @@ extension CacheType {
 
 extension String {
   var isMNGAMockID: Bool {
-    self.starts(with: "mnga_")
+    starts(with: "mnga_")
   }
 }
 
@@ -303,7 +303,7 @@ extension Post {
     let commentRes: ContentParseResponse? = try? logicCall(.contentParse(.with { r in r.raw = "This is a comment.".localized }))
 
     let recentDate = UInt64(Date().timeIntervalSince1970 - 10 * 60)
-    let oldDate = UInt64(1609502400)
+    let oldDate = UInt64(1_609_502_400)
 
     return Post.with {
       $0.id = .dummy
@@ -337,7 +337,7 @@ extension User {
       $0.name.normal = "Dummy User".localized
       $0.fame = 25
       $0.postNum = 2333
-      $0.regDate = 1609502400
+      $0.regDate = 1_609_502_400
       $0.signature = signatureRes?.content ?? .init()
       $0.avatarURL = "https://img.nga.178.com/avatars/2002/03a/000/000/58_0.jpg"
     }

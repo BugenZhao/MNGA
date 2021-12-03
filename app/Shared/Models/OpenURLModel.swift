@@ -18,8 +18,8 @@ class OpenURLModel: ObservableObject {
   func open(url: URL, inApp: Bool? = nil) {
     logger.info("open url: \(url)")
     #if os(iOS)
-      if inApp ?? prefs.useInAppSafari && url.scheme?.starts(with: "http") == true {
-        self.inAppURL = url
+      if inApp ?? prefs.useInAppSafari, url.scheme?.starts(with: "http") == true {
+        inAppURL = url
       } else {
         UIApplication.shared.open(url)
       }

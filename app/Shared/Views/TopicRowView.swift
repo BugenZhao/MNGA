@@ -30,9 +30,9 @@ struct TopicLikeRowInnerView<S: View>: View {
         }
         Spacer()
         DateTimeTextView.build(timestamp: date, switchable: false)
-      } .foregroundColor(.secondary)
+      }.foregroundColor(.secondary)
         .font(.footnote)
-    } .padding(.vertical, 4)
+    }.padding(.vertical, 4)
   }
 }
 
@@ -83,7 +83,7 @@ struct TopicView_Previews: PreviewProvider {
     AuthedPreview {
       List {
         item(0); item(20); item(50); item(150); item(250); item(550)
-      } .mayGroupedListStyle()
+      }.mayGroupedListStyle()
     }
   }
 }

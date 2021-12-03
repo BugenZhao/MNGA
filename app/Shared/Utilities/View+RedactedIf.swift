@@ -8,8 +8,8 @@
 import Foundation
 import SwiftUI
 
-extension View {
-  public func redacted(if cond: Bool, reason: RedactionReasons = .placeholder) -> some View {
-    self.redacted(reason: cond ? reason : [])
+public extension View {
+  func redacted(if cond: Bool, reason: RedactionReasons = .placeholder) -> some View {
+    redacted(reason: cond ? reason : [])
   }
 }

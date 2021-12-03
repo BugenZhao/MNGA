@@ -12,7 +12,7 @@ import SwiftUIX
 extension View {
   func mayGroupedListStyle() -> some View {
     #if os(iOS)
-      self.listStyle(.grouped)
+      listStyle(.grouped)
     #else
       self
     #endif
@@ -20,7 +20,7 @@ extension View {
 
   func mayInsetGroupedListStyle() -> some View {
     #if os(iOS)
-      self.listStyle(.insetGrouped)
+      listStyle(.insetGrouped)
     #else
       self
     #endif
@@ -46,33 +46,33 @@ extension View {
 extension View {
   func navigationTitleInline<S>(string title: S) -> some View where S: StringProtocol {
     #if os(iOS)
-      self.navigationBarTitle(title, displayMode: .inline)
+      navigationBarTitle(title, displayMode: .inline)
     #elseif os(macOS)
-      self.navigationTitle(title)
+      navigationTitle(title)
     #endif
   }
 
   func navigationTitleInline(key title: LocalizedStringKey) -> some View {
     #if os(iOS)
-      self.navigationBarTitle(title, displayMode: .inline)
+      navigationBarTitle(title, displayMode: .inline)
     #elseif os(macOS)
-      self.navigationTitle(title)
+      navigationTitle(title)
     #endif
   }
 
   func navigationTitleLarge<S>(string title: S) -> some View where S: StringProtocol {
     #if os(iOS)
-      self.navigationBarTitle(title, displayMode: .large)
+      navigationBarTitle(title, displayMode: .large)
     #elseif os(macOS)
-      self.navigationTitle(title)
+      navigationTitle(title)
     #endif
   }
 
   func navigationTitleLarge(key title: LocalizedStringKey) -> some View {
     #if os(iOS)
-      self.navigationBarTitle(title, displayMode: .large)
+      navigationBarTitle(title, displayMode: .large)
     #elseif os(macOS)
-      self.navigationTitle(title)
+      navigationTitle(title)
     #endif
   }
 }

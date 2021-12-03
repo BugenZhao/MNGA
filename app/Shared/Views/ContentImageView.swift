@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 import SwiftUIX
 
 struct ContentImageView: View {
@@ -24,7 +24,7 @@ struct ContentImageView: View {
   init(url: URL, onlyThumbs: Bool = false) {
     self.url = url
     self.onlyThumbs = onlyThumbs
-    self.isOpenSourceStickers = openSourceStickersNames.contains(url.lastPathComponent)
+    isOpenSourceStickers = openSourceStickersNames.contains(url.lastPathComponent)
   }
 
   var body: some View {
@@ -43,7 +43,7 @@ struct ContentImageView: View {
           } else {
             WebOrAsyncImage(url: url, placeholder: nil)
           }
-        } .scaledToFit()
+        }.scaledToFit()
           .clipShape(RoundedRectangle(cornerRadius: 8))
           .onTapGesture(perform: self.showImage)
       }
@@ -52,7 +52,7 @@ struct ContentImageView: View {
 
   func showImage() {
     guard inRealPost else { return }
-    let attachURL = self.attachmentsModel?.attachmentURL(for: self.url) ?? self.url
-    self.viewingImage.show(url: attachURL)
+    let attachURL = attachmentsModel?.attachmentURL(for: url) ?? url
+    viewingImage.show(url: attachURL)
   }
 }

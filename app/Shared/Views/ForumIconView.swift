@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 
 struct ForumIconView: View {
   let iconURL: String

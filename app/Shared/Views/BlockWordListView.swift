@@ -6,16 +6,16 @@
 //
 
 import Foundation
-import SwiftUI
 import Introspect
+import SwiftUI
 
 struct BlockWordListView: View {
   @StateObject var storage = BlockWordsStorage.shared
   @State var newWord = nil as BlockWord?
 
   func commitNewWord() {
-    if let newWord = self.newWord, !newWord.word.isEmpty {
-      self.storage.add(newWord)
+    if let newWord = newWord, !newWord.word.isEmpty {
+      storage.add(newWord)
       self.newWord = nil
     }
   }
@@ -39,7 +39,7 @@ struct BlockWordListView: View {
 
       ForEach(storage.words, id: \.word) { bw in
         Text(bw.word)
-      } .onDelete { storage.words.remove(atOffsets: $0) }
+      }.onDelete { storage.words.remove(atOffsets: $0) }
     }
   }
 
@@ -59,17 +59,16 @@ struct BlockWordListView: View {
 
   var body: some View {
     Group {
-      if storage.words.isEmpty && newWord == nil {
+      if storage.words.isEmpty, newWord == nil {
         PlaceholderView(icon: nil, title: "No Block Words")
       } else {
         list
       }
-    } .mayInsetGroupedListStyle()
+    }.mayInsetGroupedListStyle()
       .toolbarWithFix { ToolbarItem(placement: .mayNavigationBarTrailing) { addButton } }
       .navigationTitle("Block Words")
   }
 }
-
 
 struct BlockWordListView_Previews: PreviewProvider {
   static var previews: some View {

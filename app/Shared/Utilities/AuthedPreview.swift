@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 struct AuthedPreview<Content: View>: View {
   #if DEBUG
     @StateObject var authStorage = AuthStorage(defaultAuthInfo: AUTH_INFO_DEBUG)

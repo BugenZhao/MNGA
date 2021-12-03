@@ -28,7 +28,7 @@ struct StickerInputView: View {
           }
         }
       }.padding(.horizontal)
-    } .foregroundColor(.primary)
+    }.foregroundColor(.primary)
       .frame(height: 240)
   }
 

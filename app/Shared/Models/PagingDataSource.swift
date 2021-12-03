@@ -5,8 +5,8 @@
 //  Created by Bugen Zhao on 6/27/21.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftProtobuf
 import SwiftUI
 
@@ -38,7 +38,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   var hasMore: Bool { loadedPage < totalPages }
   var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
   var isInitialLoading: Bool { isLoading && loadedPage == 0 }
-  var firstLoadedPage: Int? { itemToIndexAndPage.values.map { $0.page }.min() }
+  var firstLoadedPage: Int? { itemToIndexAndPage.values.map(\.page).min() }
   var notLoaded: Bool { items.isEmpty && lastRefreshTime == nil }
 
   init(
@@ -63,7 +63,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 
   func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
-    self.items.sorted { $0[keyPath: key] < $1[keyPath: key] }
+    items.sorted { $0[keyPath: key] < $1[keyPath: key] }
   }
 
   func itemsAtPage(_ page: Int) -> [Item] {
@@ -99,9 +99,9 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private func replaceItems<S>(_ items: S, page: Int) where S: Sequence, S.Element == Item {
     if neverRemove == false {
       self.items.removeAll()
-      self.itemToIndexAndPage.removeAll()
+      itemToIndexAndPage.removeAll()
     }
-    self.upsertItems(items, page: page)
+    upsertItems(items, page: page)
   }
 
   func loadMore(after: Double = 0.0) {
@@ -119,18 +119,18 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   private func mayFinishOnError() {
     if finishOnError {
-      self.totalPages = self.loadedPage
+      totalPages = loadedPage
     }
   }
 
   private func preRefresh(fromPage: Int) -> AsyncRequest.OneOf_Value? {
-    if self.isRefreshing || self.isLoading { return nil }
-    self.dataFlowId = UUID()
+    if isRefreshing || isLoading { return nil }
+    dataFlowId = UUID()
 
-    self.isLoading = true
-    self.isRefreshing = true
-    self.loadedPage = fromPage - 1
-    self.totalPages = fromPage
+    isLoading = true
+    isRefreshing = true
+    loadedPage = fromPage - 1
+    totalPages = fromPage
 
     let page = fromPage
     let request = buildRequest(page)
@@ -138,9 +138,9 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 
   private func onRefreshSuccess(response: Res, animated: Bool, fromPage: Int) {
-    self.latestResponse = response
-    let (newItems, newTotalPages) = self.onResponse(response)
-    logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
+    latestResponse = response
+    let (newItems, newTotalPages) = onResponse(response)
+    logger.debug("page \(loadedPage + 1), newItems \(newItems.count)")
 
     withAnimation(when: animated) {
       self.replaceItems(newItems, page: fromPage)
@@ -148,17 +148,17 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       self.isLoading = false
     }
 
-    self.totalPages = newTotalPages ?? self.totalPages
-    self.loadedPage += 1
-    self.lastRefreshTime = Date()
+    totalPages = newTotalPages ?? totalPages
+    loadedPage += 1
+    lastRefreshTime = Date()
   }
 
-  private func onRefreshError(e: LogicError, animated: Bool) {
+  private func onRefreshError(e _: LogicError, animated: Bool) {
     withAnimation(when: animated) {
       self.isRefreshing = false
       self.isLoading = false
     }
-    self.mayFinishOnError()
+    mayFinishOnError()
   }
 
   func refresh(animated: Bool = false, silentOnError: Bool = false, fromPage: Int = 1) {
@@ -181,9 +181,9 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
       DispatchQueue.main.sync {
         switch response {
-        case .success(let response):
+        case let .success(response):
           self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
-        case .failure(let e):
+        case let .failure(e):
           self.onRefreshError(e: e, animated: animated)
         }
       }
@@ -191,7 +191,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   #endif
 
   func initialLoad() {
-    if self.loadedPage == 0 {
+    if loadedPage == 0 {
       refresh(animated: true)
     }
   }
@@ -219,7 +219,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       }
       self.totalPages = newTotalPages ?? self.totalPages
       if let after = after { after() }
-    } onError: { e in
+    } onError: { _ in
       withAnimation {
         self.isLoading = false
       }
@@ -250,7 +250,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
-    } onError: { e in
+    } onError: { _ in
       withAnimation(when: self.items.isEmpty) {
         self.isLoading = false
       }
@@ -259,9 +259,8 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 }
 
-
 extension View {
-  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>, iOS15Only: Bool = false, refreshWhenEnterForeground: Bool = false) -> some View {
+  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>, iOS15Only: Bool = false, refreshWhenEnterForeground _: Bool = false) -> some View {
     #if canImport(SwiftUIRefresh)
       Group {
         if #available(iOS 15.0, *) {

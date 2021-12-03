@@ -8,11 +8,11 @@
 import Foundation
 import SwiftUI
 
-//struct StickerImageView: View {
+// struct StickerImageView: View {
 //  let name: String
 //
 //  var body: some View {
 //    Image(name)
 //      .renderingMode(name.starts(with: "a") ? .template : .original)
 //  }
-//}
+// }

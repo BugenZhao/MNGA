@@ -12,7 +12,7 @@ struct DateTimeTextView: View {
   enum Strategy: Int, CaseIterable {
     case automatic
     case detailed, timeAgo
-    
+
     var description: LocalizedStringKey {
       switch self {
       case .automatic:
@@ -41,7 +41,7 @@ struct DateTimeTextView: View {
       showDetailed = false
     }
 
-    return Self.init(timestamp: timestamp, switchable: switchable, showDetailed: showDetailed)
+    return Self(timestamp: timestamp, switchable: switchable, showDetailed: showDetailed)
   }
 
   var body: some View {

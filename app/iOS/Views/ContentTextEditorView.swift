@@ -19,15 +19,15 @@ struct ContentTextEditorView: UIViewRepresentable {
     let textView = UITextView()
     textView.delegate = context.coordinator
 
-    let inputView = UIInputView.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44), inputViewStyle: .keyboard)
+    let inputView = UIInputView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44), inputViewStyle: .keyboard)
 
     let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
     let flexButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
     let doneButton = UIBarButtonItem(image: UIImage(systemName: "keyboard.chevron.compact.down"), style: .done, target: self, action: #selector(textView.doneButtonTapped(button:)))
-    let stickerButton = UIBarButtonItem(image: UIImage(systemName: "face.smiling"), style: .plain, target: self.model, action: #selector(ContentEditorModel.showSticker))
-    let imageButton = UIBarButtonItem(image: UIImage(systemName: "photo"), style: .plain, target: self.model, action: #selector(ContentEditorModel.showImagePicker))
-    let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self.model, action: #selector(ContentEditorModel.appendBold))
-    let delButton = UIBarButtonItem(image: UIImage(systemName: "strikethrough"), style: .plain, target: self.model, action: #selector(ContentEditorModel.appendDel))
+    let stickerButton = UIBarButtonItem(image: UIImage(systemName: "face.smiling"), style: .plain, target: model, action: #selector(ContentEditorModel.showSticker))
+    let imageButton = UIBarButtonItem(image: UIImage(systemName: "photo"), style: .plain, target: model, action: #selector(ContentEditorModel.showImagePicker))
+    let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: model, action: #selector(ContentEditorModel.appendBold))
+    let delButton = UIBarButtonItem(image: UIImage(systemName: "strikethrough"), style: .plain, target: model, action: #selector(ContentEditorModel.appendDel))
     let sepButton = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
     sepButton.width = 12
 
@@ -48,7 +48,7 @@ struct ContentTextEditorView: UIViewRepresentable {
     return textView
   }
 
-  func updateUIView(_ textView: UITextView, context: Context) {
+  func updateUIView(_ textView: UITextView, context _: Context) {
     let text = model.text
     let selected = model.selected
 
@@ -59,7 +59,7 @@ struct ContentTextEditorView: UIViewRepresentable {
   }
 
   func makeCoordinator() -> Coordinator {
-    return Coordinator(model: model)
+    Coordinator(model: model)
   }
 
   class Coordinator: NSObject, UITextViewDelegate {
@@ -80,7 +80,7 @@ struct ContentTextEditorView: UIViewRepresentable {
 }
 
 extension UITextView {
-  @objc func doneButtonTapped(button: UIBarButtonItem) -> Void {
-    self.resignFirstResponder()
+  @objc func doneButtonTapped(button _: UIBarButtonItem) {
+    resignFirstResponder()
   }
 }

@@ -11,7 +11,7 @@ import SwiftUI
 extension Binding {
   @inlinable
   var w: Value {
-    get { self.wrappedValue }
+    get { wrappedValue }
     nonmutating set { self.wrappedValue = newValue }
   }
 }

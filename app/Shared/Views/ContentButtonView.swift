@@ -20,14 +20,14 @@ struct ContentButtonView<T: View>: View {
       HStack {
         Image(systemName: icon)
         title
-      } .foregroundColor(.accentColor)
+      }.foregroundColor(.accentColor)
         .font(.footnote)
         .lineLimit(3)
         .padding(.small)
         .background(
-        RoundedRectangle(cornerRadius: 12)
-          .fill(inQuote ? Color.secondarySystemGroupedBackground : Color.systemGroupedBackground)
-      )
-    } .buttonStyle(PlainButtonStyle())
+          RoundedRectangle(cornerRadius: 12)
+            .fill(inQuote ? Color.secondarySystemGroupedBackground : Color.systemGroupedBackground)
+        )
+    }.buttonStyle(PlainButtonStyle())
   }
 }

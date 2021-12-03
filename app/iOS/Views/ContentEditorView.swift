@@ -5,10 +5,10 @@
 //  Created by Bugen Zhao on 7/16/21.
 //
 
+import AlertToast
 import Foundation
 import SwiftUI
 import SwiftUIX
-import AlertToast
 
 struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   @Binding var context: M.Context
@@ -22,7 +22,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   static func build(context binding: Binding<M.Context>) -> Self {
     let context = binding.wrappedValue
     let model = ContentEditorModel(initialText: context.content ?? "")
-    return Self.init(context: binding, model: model)
+    return Self(context: binding, model: model)
   }
 
   @ViewBuilder
@@ -59,7 +59,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
               if first { tv.becomeFirstResponder(); first = false }
             }
             Text(model.text).opacity(0).padding(.all, 6)
-          } .font(.callout)
+          }.font(.callout)
             .frame(minHeight: 250)
         }
 
@@ -67,10 +67,10 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
           Section {
             Toggle(isOn: $context.anonymous ?? false) {
               Label("Anonymous", systemImage: "theatermasks")
-            } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+            }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
           }
         }
-      } .listStyle(GroupedListStyle())
+      }.listStyle(GroupedListStyle())
 
       if !keyboard.isShowing {
         switch model.showing {
@@ -79,11 +79,11 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
         }
       }
     }
-      .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
-      .onChange(of: model.text) { text in context.content = text }
-      .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 0.8)) }
-      .onChange(of: model.image) { image in uploadImageAttachment(data: image) }
-      .toast(isPresenting: $model.image.isNotNil()) { AlertToast(type: .loading) }
+    .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
+    .onChange(of: model.text) { text in context.content = text }
+    .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 0.8)) }
+    .onChange(of: model.image) { image in uploadImageAttachment(data: image) }
+    .toast(isPresenting: $model.image.isNotNil()) { AlertToast(type: .loading) }
   }
 
   func uploadImageAttachment(data: Data?) {
@@ -100,7 +100,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
       model.insert("\n[img]./\(attachment.url)[/img]")
       model.image = nil
-    } onError: { e in
+    } onError: { _ in
       model.image = nil
     }
   }
@@ -113,7 +113,7 @@ struct ContentEditorView_Previews: PreviewProvider {
     static func build(subject: String?) -> Self {
       let context = PostReplyModel.Context.dummy
       context.subject = subject
-      return Self.init(context: context)
+      return Self(context: context)
     }
 
     var body: some View {

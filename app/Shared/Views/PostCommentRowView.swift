@@ -43,6 +43,6 @@ struct PostCommentRowView: View {
     VStack(alignment: .leading, spacing: 4) {
       header
       content
-    } .padding(.vertical, 2)
+    }.padding(.vertical, 2)
   }
 }

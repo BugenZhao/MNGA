@@ -35,9 +35,9 @@ struct ForumListView: View {
     NavigationLink(destination: TopicListView.build(forum: forum)) {
       ForumRowView(forum: forum, isFavorite: isFavorite)
         .modifier(FavoriteModifier(
-        isFavorite: isFavorite,
-        toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-      ))
+          isFavorite: isFavorite,
+          toggleFavorite: { favorites.toggleFavorite(forum: forum) }
+        ))
     }
   }
 
@@ -54,9 +54,9 @@ struct ForumListView: View {
       } else {
         ForEach(favorites.favoriteForums, id: \.idDescription) { forum in
           buildFavoriteSectionLink(forum)
-        } .onDelete { offsets in
+        }.onDelete { offsets in
           favorites.favoriteForums.remove(atOffsets: offsets)
-        } .onMove { from, to in
+        }.onMove { from, to in
           favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
           withAnimation { self.favoriteEditing = false }
         }
@@ -105,7 +105,7 @@ struct ForumListView: View {
       }
     } label: {
       Label("Filters", systemImage: favorites.filterMode.filterIcon)
-    } .imageScale(.large)
+    }.imageScale(.large)
   }
 
   @ViewBuilder
@@ -130,7 +130,7 @@ struct ForumListView: View {
       }
     }
     #if os(iOS)
-      .environment(\.editMode, $editMode)
+    .environment(\.editMode, $editMode)
     #endif
   }
 
@@ -142,11 +142,11 @@ struct ForumListView: View {
         index
       }
     }
-      .searchable(model: searchModel, prompt: "Search".localized, alwaysShow: true, iOS15Only: true)
-      .onAppear { loadData() }
-      .navigationTitle("Forums")
-      .compatForumListListStyle()
-      .toolbar {
+    .searchable(model: searchModel, prompt: "Search".localized, alwaysShow: true, iOS15Only: true)
+    .onAppear { loadData() }
+    .navigationTitle("Forums")
+    .compatForumListListStyle()
+    .toolbar {
       ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }
       ToolbarItem(placement: .mayNavigationBarTrailing) { filter }
     }
@@ -155,8 +155,7 @@ struct ForumListView: View {
   func loadData() {
     guard categories.isEmpty else { return }
 
-    logicCallAsync(.forumList(.with { _ in }))
-    { (response: ForumListResponse) in
+    logicCallAsync(.forumList(.with { _ in })) { (response: ForumListResponse) in
       withAnimation {
         categories = response.categories
       }

@@ -24,7 +24,7 @@ struct OldAboutView: View {
       $0.operation = .newSingleTo
       $0.singleTo = "BugenZhao"
     })
-    self.presentation.dismiss()
+    presentation.dismiss()
   }
 
   func mail() {
@@ -32,7 +32,7 @@ struct OldAboutView: View {
   }
 
   func doShare() {
-    self.activity.put(URLs.testFlight)
+    activity.put(URLs.testFlight)
   }
 
   var version: String {
@@ -78,7 +78,7 @@ struct OldAboutView: View {
             .scaledToFit()
             .width(30)
         }
-      } .foregroundColor(.accentColor)
+      }.foregroundColor(.accentColor)
     }
   }
 
@@ -113,18 +113,18 @@ struct OldAboutView: View {
           header
           description
         }
-          .fixedSize(horizontal: false, vertical: true)
-          .padding()
-          .frame(width: geometry.size.width)
-          .frame(minHeight: geometry.size.height)
+        .fixedSize(horizontal: false, vertical: true)
+        .padding()
+        .frame(width: geometry.size.width)
+        .frame(minHeight: geometry.size.height)
       }
     }
-      .navigationTitleInline(key: "About & Feedback")
-      .toolbarWithFix {
+    .navigationTitleInline(key: "About & Feedback")
+    .toolbarWithFix {
       ToolbarItem(placement: .status) { footer }
       ToolbarItem(placement: .mayNavigationBarTrailing) { shareButton }
     }
-      .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
+    .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
       AppActivityView(activityItems: activity.activityItems ?? [])
     })
   }
@@ -136,11 +136,10 @@ struct AboutView: View {
   }
 }
 
-
 struct AboutView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {
       AboutView()
-    } .environmentObject(ShortMessagePostModel())
+    }.environmentObject(ShortMessagePostModel())
   }
 }

@@ -15,7 +15,7 @@ struct URLs {
 
   static let defaultHost = "ngabbs.com"
   static let hosts = [defaultHost, "bbs.nga.cn", "nga.178.com"]
-  
+
   static let defaultMockHost = "raw.fastgit.org/BugenZhao/MNGA/gh-pages/api"
   static let mockHosts = [defaultMockHost, "bugenzhao.com/MNGA/api", "raw.githubusercontent.com/BugenZhao/MNGA/gh-pages/api"]
 
@@ -28,6 +28,7 @@ struct URLs {
   static var base: URL {
     URL(string: PreferencesStorage.shared.requestOption.baseURL) ?? defaultBase
   }
+
   static var login: URL {
     URL(string: "/nuke.php?__lib=login&__act=account&login", relativeTo: base)!
   }

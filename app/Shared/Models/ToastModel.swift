@@ -5,10 +5,10 @@
 //  Created by Bugen Zhao on 7/14/21.
 //
 
+import AlertToast
+import Combine
 import Foundation
 import SwiftUI
-import Combine
-import AlertToast
 
 class ToastModel: ObservableObject {
   static let hud = ToastModel()
@@ -34,26 +34,26 @@ class ToastModel: ObservableObject {
       .removeDuplicates()
       .filter { $0 != nil }
       .sink { message in
-      #if os(iOS)
-        switch message! {
-        case .error(_):
-          HapticUtils.play(type: .error)
-        case .notification(_):
-          HapticUtils.play(type: .warning)
-        default:
-          HapticUtils.play(type: .success)
-        }
-      #endif
-    } .store(in: &cancellables)
+        #if os(iOS)
+          switch message! {
+          case .error:
+            HapticUtils.play(type: .error)
+          case .notification:
+            HapticUtils.play(type: .warning)
+          default:
+            HapticUtils.play(type: .success)
+          }
+        #endif
+      }.store(in: &cancellables)
   }
 
   static func showAuto(_ message: Message?) {
     switch message {
-    case .success(_), .error(_):
+    case .success, .error:
       ToastModel.banner.message = message
-    case .notification(_), .userSwitch(_), .clockIn(_):
+    case .notification, .userSwitch, .clockIn:
       ToastModel.hud.message = message
-    case .openURL(_):
+    case .openURL:
       ToastModel.alert.message = message
     case .none:
       break
@@ -61,21 +61,21 @@ class ToastModel: ObservableObject {
   }
 }
 
-extension ToastModel.Message: Equatable { }
+extension ToastModel.Message: Equatable {}
 extension ToastModel.Message {
   func toastView(for displayMode: AlertToast.DisplayMode) -> AlertToast {
     switch self {
-    case .success(let msg):
+    case let .success(msg):
       return AlertToast(displayMode: displayMode, type: .complete(.green), title: "Success".localized, subTitle: msg)
-    case .error(let msg):
+    case let .error(msg):
       return AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg.errorLocalized)
-    case .notification(let newCount):
+    case let .notification(newCount):
       return AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String(format: "%lld new unread notifications".localized, newCount))
-    case .userSwitch(let user):
+    case let .userSwitch(user):
       return AlertToast(displayMode: displayMode, type: .systemImage("person.crop.circle.badge.checkmark", .accentColor), title: "Account Switched".localized, subTitle: user)
-    case .clockIn(let msg):
+    case let .clockIn(msg):
       return AlertToast(displayMode: displayMode, type: .systemImage("lanyardcard", .accentColor), title: "Clocked in Successfully".localized, subTitle: msg)
-    case .openURL(let url):
+    case let .openURL(url):
       return AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
     }
   }

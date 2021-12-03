@@ -6,11 +6,11 @@
 //
 
 import Foundation
-import WebKit
 import SwiftUI
+import WebKit
 import WebView
 
-fileprivate class LoginViewUIDelegate: NSObject, WKUIDelegate {
+private class LoginViewUIDelegate: NSObject, WKUIDelegate {
   let parent: LoginView
 
   init(parent: LoginView) {
@@ -18,7 +18,7 @@ fileprivate class LoginViewUIDelegate: NSObject, WKUIDelegate {
     super.init()
   }
 
-  func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+  func webView(_: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame _: WKFrameInfo, completionHandler: @escaping () -> Void) {
     parent.alertCompletion = completionHandler
     parent.alertMessage = message
   }
@@ -40,7 +40,7 @@ struct LoginView: View {
     let configuration = WKWebViewConfiguration()
     configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
     let webView = WKWebView(frame: .zero, configuration: configuration)
-    self._webViewStore = StateObject(wrappedValue: WebViewStore(webView: webView))
+    _webViewStore = StateObject(wrappedValue: WebViewStore(webView: webView))
   }
 
   @ToolbarContentBuilder
@@ -53,12 +53,12 @@ struct LoginView: View {
   var inner: some View {
     WebView(webView: webViewStore.webView)
       .onAppear {
-      self.delegate = .init(parent: self)
-      self.webViewStore.webView.load(URLRequest(url: URLs.login))
-      self.webViewStore.webView.uiDelegate = self.delegate
-    }.onReceive(timer) { _ in
-      self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
-    } .navigationTitleInline(key: "Sign in to NGA")
+        self.delegate = .init(parent: self)
+        self.webViewStore.webView.load(URLRequest(url: URLs.login))
+        self.webViewStore.webView.uiDelegate = self.delegate
+      }.onReceive(timer) { _ in
+        self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
+      }.navigationTitleInline(key: "Sign in to NGA")
       .toolbar { toolbar }
       .alert(isPresented: $alertMessage.isNotNil()) { Alert(title: "From NGA".localized, message: alertMessage) }
       .onChange(of: alertMessage) { if $0 == nil, let c = alertCompletion { c(); alertCompletion = nil } }
@@ -90,7 +90,7 @@ struct LoginView: View {
   }
 }
 
-fileprivate struct LoginPreviewView: View {
+private struct LoginPreviewView: View {
   @EnvironmentObject var authStorage: AuthStorage
 
   var body: some View {
@@ -100,7 +100,7 @@ fileprivate struct LoginPreviewView: View {
         Button(action: { authStorage.clearCurrentAuth() }) {
           Text("Show")
         }
-      } .sheet(isPresented: $authStorage.isSigning, content: {
+      }.sheet(isPresented: $authStorage.isSigning, content: {
         LoginView()
       })
     }

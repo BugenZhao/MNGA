@@ -20,6 +20,6 @@ struct PlaceholderView: View {
       }
       Text(title)
         .font(.callout)
-    } .foregroundColor(.secondary)
+    }.foregroundColor(.secondary)
   }
 }

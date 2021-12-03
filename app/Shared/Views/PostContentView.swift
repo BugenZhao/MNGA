@@ -5,10 +5,10 @@
 //  Created by Bugen Zhao on 6/28/21.
 //
 
+import Colorful
 import Foundation
 import SwiftUI
 import SwiftUIX
-import Colorful
 
 extension View {
   func mayEnableTextSelection() -> some View {
@@ -68,26 +68,25 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
             + Text("\n") +
             Text(error)
             .font(.system(.footnote, design: .monospaced))
-        } .font(.footnote)
+        }.font(.footnote)
           .foregroundColor(.orangeRed)
       }
       main
-    } .fixedSize(horizontal: false, vertical: true)
+    }.fixedSize(horizontal: false, vertical: true)
       .equatable(by: spans)
   }
 }
 
 extension PostContentView where S == [Span] {
   init(content: PostContent, id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
-    self.spans = content.spans
-    self.error = content.error
+    spans = content.spans
+    error = content.error
     self.id = id
     self.defaultFont = defaultFont
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote
   }
 }
-
 
 struct PostContentView_Previews: PreviewProvider {
   static var spans: [Span] {
@@ -147,7 +146,7 @@ struct PostContentView_Previews: PreviewProvider {
     List {
       PostContentView(spans: spans + [image], error: "Test error")
     }
-      .mayGroupedListStyle()
-      .preferredColorScheme(.dark)
+    .mayGroupedListStyle()
+    .preferredColorScheme(.dark)
   }
 }

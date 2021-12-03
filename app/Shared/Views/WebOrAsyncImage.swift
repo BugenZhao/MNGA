@@ -6,15 +6,15 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 
 struct WebOrAsyncImage: View {
   let url: URL?
   let placeholder: Image?
 
   var body: some View {
-    if #available(iOS 15.0, *), false { // todo: use AsyncImage when ready
+    if #available(iOS 15.0, *), false { // TODO: use AsyncImage when ready
 //      AsyncImage(url: url, content: { $0.resizable() }, placeholder: {
 //          if let p = placeholder { p } else { ProgressView() }
 //        })

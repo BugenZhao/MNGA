@@ -20,6 +20,6 @@ struct LoadingRowView: View {
       Spacer()
       ProgressView()
       Spacer()
-    } .frame(minHeight: high ? 100 : 0)
+    }.frame(minHeight: high ? 100 : 0)
   }
 }

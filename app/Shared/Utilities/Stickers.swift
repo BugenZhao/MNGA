@@ -215,5 +215,5 @@ let stickerImageNames = [
 ]
 
 func stickerImageNameToCode(_ name: String) -> String {
-  return "[s:\(name.replacingOccurrences(of: "|", with: ":"))]"
+  "[s:\(name.replacingOccurrences(of: "|", with: ":"))]"
 }

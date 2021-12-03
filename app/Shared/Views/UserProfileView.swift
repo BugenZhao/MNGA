@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 
 struct UserProfileView: View {
   typealias TopicDataSource = PagingDataSource<UserTopicListResponse, Topic>
@@ -29,7 +29,7 @@ struct UserProfileView: View {
   static func build(user: User) -> Self {
     let topicDataSource = TopicDataSource(
       buildRequest: { page in
-        return .userTopicList(UserTopicListRequest.with {
+        .userTopicList(UserTopicListRequest.with {
           $0.authorID = user.id
           $0.page = UInt32(page)
         })
@@ -44,7 +44,7 @@ struct UserProfileView: View {
 
     let postDataSource = PostDataSource(
       buildRequest: { page in
-        return .userPostList(UserPostListRequest.with {
+        .userPostList(UserPostListRequest.with {
           $0.authorID = user.id
           $0.page = UInt32(page)
         })
@@ -57,7 +57,7 @@ struct UserProfileView: View {
       finishOnError: true
     )
 
-    return Self.init(user: user, topicDataSource: topicDataSource, postDataSource: postDataSource)
+    return Self(user: user, topicDataSource: topicDataSource, postDataSource: postDataSource)
   }
 
   var shouldShowList: Bool {
@@ -79,7 +79,7 @@ struct UserProfileView: View {
             ForEach($topicDataSource.items, id: \.id) { topic in
               NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
                 TopicRowView(topic: topic.w)
-              } .onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
+              }.onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
             }
           }
         }
@@ -96,7 +96,7 @@ struct UserProfileView: View {
             ForEach(postDataSource.items, id: \.post.id) { tp in
               NavigationLink(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: (id: tp.post.id, atPage: nil))) {
                 TopicPostRowView(topic: tp.topic, post: tp.post)
-              } .onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }
+              }.onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }
             }
           }
         }
@@ -112,7 +112,7 @@ struct UserProfileView: View {
           ForEach(Tab.allCases, id: \.self) {
             Text($0.rawValue).tag($0)
           }
-        } .pickerStyle(SegmentedPickerStyle())
+        }.pickerStyle(SegmentedPickerStyle())
           .frame(maxWidth: 200)
       }
     }
@@ -143,14 +143,14 @@ struct UserProfileView: View {
         list
       }
     }
-      .toolbarWithFix { toolbar }
-      .withTopicDetailsAction() // for signature only
+    .toolbarWithFix { toolbar }
+    .withTopicDetailsAction() // for signature only
     .mayGroupedListStyle()
-      .navigationTitleInline(string: title)
+    .navigationTitleInline(string: title)
   }
 
   func newShortMessage() {
-    self.postModel.show(action: .with {
+    postModel.show(action: .with {
       $0.operation = .newSingleTo
       $0.singleTo = user.name.normal
     })

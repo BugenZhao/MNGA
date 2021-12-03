@@ -19,11 +19,11 @@ public enum ArrayBuilder<Element> {
   }
 
   public static func buildExpression(_ expression: Expression?) -> Component {
-    expression.map({ [$0] }) ?? []
+    expression.map { [$0] } ?? []
   }
 
   public static func buildBlock(_ children: Component...) -> Component {
-    children.flatMap({ $0 })
+    children.flatMap { $0 }
   }
 
   public static func buildOptional(_ children: Component?) -> Component {

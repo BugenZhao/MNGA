@@ -22,10 +22,9 @@ class GlobalSearchModel: SearchModel<DataSource> {
 
   override func buildDataSource(text: String) -> DataSource {
     DataSource(
-
       forum: .init(
         buildRequest: { _ in
-          return .forumSearch(.with {
+          .forumSearch(.with {
             $0.key = text
           })
         },
@@ -38,7 +37,7 @@ class GlobalSearchModel: SearchModel<DataSource> {
 
       topic: .init(
         buildRequest: { page in
-          return .topicSearch(.with {
+          .topicSearch(.with {
             $0.key = text
             $0.searchContent = true
             $0.page = UInt32(page)
@@ -54,7 +53,7 @@ class GlobalSearchModel: SearchModel<DataSource> {
 
       user: .init(
         buildRequest: { _ in
-          return .remoteUser(.with {
+          .remoteUser(.with {
             $0.userName = text
           })
         },
@@ -67,7 +66,6 @@ class GlobalSearchModel: SearchModel<DataSource> {
         },
         id: \.id
       )
-
     )
   }
 }
@@ -83,9 +81,9 @@ struct ForumSearchView: View {
     NavigationLink(destination: TopicListView.build(forum: forum)) {
       ForumRowView(forum: forum, isFavorite: isFavorite)
         .modifier(FavoriteModifier(
-        isFavorite: isFavorite,
-        toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-      ))
+          isFavorite: isFavorite,
+          toggleFavorite: { favorites.toggleFavorite(forum: forum) }
+        ))
     }
   }
 
@@ -103,7 +101,7 @@ struct ForumSearchView: View {
           }
         }
       }
-    } .navigationTitle("Forum Search")
+    }.navigationTitle("Forum Search")
   }
 }
 
@@ -126,10 +124,9 @@ struct UserSearchView: View {
           }
         }
       }
-    } .navigationTitle("User Search")
+    }.navigationTitle("User Search")
   }
 }
-
 
 struct GlobalSearchView: View {
   @ObservedObject var model: GlobalSearchModel
@@ -149,6 +146,6 @@ struct GlobalSearchView: View {
           }
         }
       }
-    } .mayInsetGroupedListStyle()
+    }.mayInsetGroupedListStyle()
   }
 }

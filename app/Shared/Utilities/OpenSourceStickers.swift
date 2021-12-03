@@ -351,7 +351,7 @@ let openSourceStickersNames: Set<String> = [
   "-7_5118d1cacbf75.jpg",
   "1b82eab2748c69a301d176be0ab1d6d7.jpg",
   "837b686eee1d1338fb9a1012e00cab80.jpg",
-  
+
   // Stage1st mahjong
   "-9lddQ5-et2gK0Sw-w.png",
   "-9lddQ5-5tgxK0Sw-w.png",

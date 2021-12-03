@@ -19,7 +19,7 @@ struct ShortMessagePostRowView: View {
   @StateObject var attachments = AttachmentsModel()
 
   private var user: User? {
-    self.users.localUser(id: self.post.authorID)
+    users.localUser(id: post.authorID)
   }
 
   @ViewBuilder
@@ -59,7 +59,7 @@ struct ShortMessagePostRowView: View {
       Spacer()
       Group {
         DateTimeTextView.build(timestamp: post.postDate)
-      } .foregroundColor(.secondary)
+      }.foregroundColor(.secondary)
         .font(.footnote)
     }
   }
@@ -84,7 +84,7 @@ struct ShortMessagePostRowView: View {
       header
       content
       footer
-    } .padding(.vertical, 4)
+    }.padding(.vertical, 4)
       .fixedSize(horizontal: false, vertical: true)
     #if os(macOS)
       .contextMenu { menu }

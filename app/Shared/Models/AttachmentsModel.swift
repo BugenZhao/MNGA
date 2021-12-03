@@ -17,7 +17,7 @@ class AttachmentsModel: ObservableObject {
 
   func attachmentURL(for previewURL: URL) -> URL? {
     guard let attach = items.first(where: { previewURL.absoluteString.contains($0.url) })
-      else { return nil }
+    else { return nil }
     let url = URL(string: "\(attach)", relativeTo: URLs.attachmentBase)
     logger.debug("attachment: \(url as Any?) for \(previewURL)")
     return url

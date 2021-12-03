@@ -10,12 +10,11 @@ import UIKit
 
 struct HapticUtils {
   static let notification = UINotificationFeedbackGenerator()
-  
 
   static func play(type: UINotificationFeedbackGenerator.FeedbackType) {
     notification.notificationOccurred(type)
   }
-  
+
   static func play(style: UIImpactFeedbackGenerator.FeedbackStyle) {
     let generator = UIImpactFeedbackGenerator(style: style)
     generator.impactOccurred()

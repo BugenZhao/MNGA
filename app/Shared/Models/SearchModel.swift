@@ -5,9 +5,9 @@
 //  Created by Bugen Zhao on 7/12/21.
 //
 
+import Combine
 import Foundation
 import SwiftProtobuf
-import Combine
 import SwiftUI
 import SwiftUIX
 
@@ -19,7 +19,7 @@ class BasicSearchModel: ObservableObject {
 
   init() {
     $text
-      .filter { $0.isEmpty }
+      .filter(\.isEmpty)
       .sink { _ in self.commitedText = nil }
       .store(in: &cancellables)
   }
@@ -38,7 +38,7 @@ class SearchModel<DS>: BasicSearchModel {
 
   @Published var dataSource: DataSource? = nil
 
-  func buildDataSource(text: String) -> DataSource {
+  func buildDataSource(text _: String) -> DataSource {
     preconditionFailure()
   }
 
@@ -47,14 +47,14 @@ class SearchModel<DS>: BasicSearchModel {
 
     if commited {
       $commitedText
-        .map { (t) -> DataSource? in
-        if let t = t { return self.buildDataSource(text: t) }
-        else { return nil }
-      }
+        .map { t -> DataSource? in
+          if let t = t { return self.buildDataSource(text: t) }
+          else { return nil }
+        }
         .assign(to: &$dataSource)
     } else {
       $text
-        .map(self.buildDataSource(text:))
+        .map(buildDataSource(text:))
         .assign(to: &$dataSource)
     }
   }
@@ -65,7 +65,7 @@ class AutoSearchModel<DS>: BasicSearchModel {
 
   @Published var dataSource: DataSource? = nil
 
-  func buildDataSource(text: String) -> DataSource {
+  func buildDataSource(text _: String) -> DataSource {
     preconditionFailure()
   }
 
@@ -75,7 +75,7 @@ class AutoSearchModel<DS>: BasicSearchModel {
     $text
       .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
       .removeDuplicates()
-      .map(self.buildDataSource(text:))
+      .map(buildDataSource(text:))
       .assign(to: &$dataSource)
   }
 }
@@ -96,15 +96,15 @@ struct SearchableModifier: ViewModifier {
     } else {
       content
       #if os(iOS)
-        .navigationSearchBar {
-          SearchBar(
-            prompt,
-            text: $model.text,
-            onCommit: { model.commit() }
-          )
-            .onCancel { model.cancel() }
-        }
-          .navigationSearchBarHiddenWhenScrolling(!alwaysShow)
+      .navigationSearchBar {
+        SearchBar(
+          prompt,
+          text: $model.text,
+          onCommit: { model.commit() }
+        )
+        .onCancel { model.cancel() }
+      }
+      .navigationSearchBarHiddenWhenScrolling(!alwaysShow)
       #endif
     }
   }
@@ -112,7 +112,6 @@ struct SearchableModifier: ViewModifier {
 
 extension View {
   func searchable(model: BasicSearchModel, prompt: String, alwaysShow: Bool = false, iOS15Only: Bool = false) -> some View {
-    self
-      .modifier(SearchableModifier(model: model, prompt: prompt, alwaysShow: alwaysShow, iOS15Only: iOS15Only))
+    modifier(SearchableModifier(model: model, prompt: prompt, alwaysShow: alwaysShow, iOS15Only: iOS15Only))
   }
 }

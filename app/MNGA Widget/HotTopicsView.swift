@@ -17,9 +17,9 @@ struct HotTopicsView: View {
   var body: some View {
     ZStack {
       LinearGradient(gradient: Gradient(colors: [
-          .init("LightColor").opacity(0.2),
-          .init("DarkColor").opacity(0.6)
-        ]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        .init("LightColor").opacity(0.2),
+        .init("DarkColor").opacity(0.6),
+      ]), startPoint: .topLeading, endPoint: .bottomTrailing)
         .edgesIgnoringSafeArea(.all)
 
       VStack(alignment: .leading, spacing: 8) {
@@ -30,12 +30,12 @@ struct HotTopicsView: View {
             } else {
               Image("default_forum_icon").resizable()
             }
-          } .frame(width: 20, height: 20)
+          }.frame(width: 20, height: 20)
           Text(forum.name)
           Spacer()
           Text(time, style: .date)
             .opacity(0.4)
-        } .font(.footnote.bold())
+        }.font(.footnote.bold())
           .shadow(color: .black.opacity(0.4), radius: 8, x: 0, y: 0)
 
         Divider()
@@ -57,7 +57,7 @@ struct HotTopicsView: View {
             }
           }
         }
-      } .padding(.horizontal, 12)
+      }.padding(.horizontal, 12)
         .padding(.vertical, 12)
         .foregroundColor(.black)
     }

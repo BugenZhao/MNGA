@@ -13,21 +13,21 @@ struct ShortMessagePostTask: TaskProtocol, Hashable {
 
   var action: ShortMessagePostAction
 
-  init(action: ShortMessagePostAction, pageToReload: PageToReload? = nil) {
+  init(action: ShortMessagePostAction, pageToReload _: PageToReload? = nil) {
     self.action = action
   }
 
   var actionTitle: LocalizedStringKey {
-    self.action.title
+    action.title
   }
 
-  func buildUploadAttachmentRequest(data: Data) -> AsyncRequest.OneOf_Value? {
+  func buildUploadAttachmentRequest(data _: Data) -> AsyncRequest.OneOf_Value? {
     nil
   }
 }
 
 class ShortMessagePostModel: GenericPostModel<ShortMessagePostTask> {
-  override func buildContext(with task: ShortMessagePostTask, ignoreError: Bool = false) {
+  override func buildContext(with task: ShortMessagePostTask, ignoreError _: Bool = false) {
     let to: String?
     switch task.action.operation {
     case .new: to = ""
@@ -36,7 +36,7 @@ class ShortMessagePostModel: GenericPostModel<ShortMessagePostTask> {
     }
 
     let context = Context(task: task, to: to, subject: "From MNGA", content: "")
-    self.onBuildContextSuccess(task: task, context: context)
+    onBuildContextSuccess(task: task, context: context)
   }
 
   override func doSend(with context: GenericPostModel<ShortMessagePostTask>.Context) {
@@ -45,8 +45,7 @@ class ShortMessagePostModel: GenericPostModel<ShortMessagePostTask> {
       $0.to = context.to?.split(separator: " ").map(String.init) ?? []
       $0.subject = context.subject ?? "From MNGA"
       $0.content = context.content ?? ""
-    }), errorToastModel: ToastModel.editorAlert)
-    { (response: PostReplyResponse) in
+    }), errorToastModel: ToastModel.editorAlert) { (_: PostReplyResponse) in
       self.onSendSuccess(context: context)
     } onError: { e in
       self.onSendError(e)

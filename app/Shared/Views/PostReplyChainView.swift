@@ -35,7 +35,7 @@ struct PostReplyChainView: View {
             .onAppear { loadRemotePost(id: id) }
         }
       }
-    } .navigationTitle("Replies")
+    }.navigationTitle("Replies")
       .withTopicDetailsAction()
       .environment(\.enableShowReplyChain, false)
       .mayGroupedListStyle()

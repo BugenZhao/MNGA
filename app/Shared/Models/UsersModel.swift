@@ -13,23 +13,23 @@ class UsersModel: ObservableObject {
 
   // CAVEATS: should not be @Published here, may lead to bad performance
   private var users = [String: User?]()
-  
+
   init() {
     users[User.dummyID] = User.dummy
   }
 
   func localUser(id: String) -> User? {
-    if self.users[id] == nil {
+    if users[id] == nil {
       let localResponse: LocalUserResponse? =
         try? logicCall(.localUser(.with { $0.userID = id }))
       if let r = localResponse, r.hasUser {
-        self.users[id] = r.user
+        users[id] = r.user
       }
     }
-    return self.users[id] ?? nil
+    return users[id] ?? nil
   }
-  
+
   func add(user: User) {
-    self.users[user.id] = user
+    users[user.id] = user
   }
 }

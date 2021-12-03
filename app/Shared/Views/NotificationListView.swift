@@ -24,7 +24,7 @@ struct NotificationListView: View {
         default:
           TopicDetailsView.build(onlyPost: (id: notification.otherPostID, atPage: max(Int(notification.page), 1)))
         }
-      } .onAppear {
+      }.onAppear {
         binding.w.read = true // frontend
         let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] })) // backend
       }
@@ -37,13 +37,13 @@ struct NotificationListView: View {
   var markAllAsReadButton: some View {
     Button(action: { markAllAsRead() }) {
       Label("Mark All as Read", systemImage: "checkmark.circle")
-    } .disabled(dataSource.unreadCount == 0)
+    }.disabled(dataSource.unreadCount == 0)
   }
 
   func markAllAsRead() {
     DispatchQueue.global(qos: .background).async {
       let request = SyncRequest.OneOf_Value.markNotiRead(.with { n in
-        n.ids = dataSource.items.map { $0.id }
+        n.ids = dataSource.items.map(\.id)
       })
       let _: MarkNotificationReadResponse? = try? logicCall(request)
       DispatchQueue.main.async {
@@ -65,10 +65,10 @@ struct NotificationListView: View {
         }
       }
     }
-      .navigationTitle(dataSource.title)
-      .mayGroupedListStyle()
-      .refreshable(dataSource: dataSource)
-      .toolbarWithFix { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }
+    .navigationTitle(dataSource.title)
+    .mayGroupedListStyle()
+    .refreshable(dataSource: dataSource)
+    .toolbarWithFix { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }
   }
 }
 

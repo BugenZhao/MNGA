@@ -21,7 +21,7 @@ struct SubforumListView: View {
       $0.operation = show ? .show : .block
       $0.forumID = forum.id.fid
       $0.subforumFilterID = subforum.filterID
-    })) { (response: SubforumFilterResponse) in
+    })) { (_: SubforumFilterResponse) in
       refresh()
     }
   }
@@ -35,18 +35,18 @@ struct SubforumListView: View {
       HStack {
         Image(systemName: subforum.selected || !subforum.filterable ? "checkmark.circle.fill" : "circle")
           .onTapGesture {
-          if subforum.filterable {
-            setSubforumFilter(show: !subforum.selected, subforum: subforum)
+            if subforum.filterable {
+              setSubforumFilter(show: !subforum.selected, subforum: subforum)
+            }
           }
-        }
           .foregroundColor(subforum.filterable ? .accentColor : .secondary)
 
         ForumRowView(forum: forum, isFavorite: isFavorite)
       }
-        .modifier(FavoriteModifier(
+      .modifier(FavoriteModifier(
         isFavorite: favorites.isFavorite(id: forum.id),
         toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-        ))
+      ))
     }
   }
 
@@ -58,10 +58,10 @@ struct SubforumListView: View {
         }
       }
     }
-      .navigationTitle("Subforums of \(forum.name)")
+    .navigationTitle("Subforums of \(forum.name)")
     #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
-        .listStyle(InsetGroupedListStyle())
+      .listStyle(InsetGroupedListStyle())
     #endif
   }
 }

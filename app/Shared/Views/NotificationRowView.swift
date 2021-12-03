@@ -21,7 +21,7 @@ struct NotificationRowView: View {
         default:
           TopicSubjectView(topic: noti.asTopic, showIndicators: false)
         }
-      } .foregroundColor(noti.read ? .secondary : .primary)
+      }.foregroundColor(noti.read ? .secondary : .primary)
 
       HStack {
         HStack(alignment: .center) {
@@ -39,12 +39,11 @@ struct NotificationRowView: View {
         Text(noti.type.description)
         Spacer()
         DateTimeTextView.build(timestamp: noti.timestamp, switchable: false)
-      } .foregroundColor(.secondary)
+      }.foregroundColor(.secondary)
         .font(.footnote)
-    } .padding(.vertical, 4)
+    }.padding(.vertical, 4)
   }
 }
-
 
 struct NotificationRowView_Previews: PreviewProvider {
   static var previews: some View {
@@ -53,6 +52,6 @@ struct NotificationRowView_Previews: PreviewProvider {
       $0.otherUser = .with { u in u.name.normal = "Bugen" }
       $0.topicSubject = .with { s in s.content = "何方道友在西安渡劫？" }
       $0.timestamp = UInt64(Date().timeIntervalSince1970 - 60)
-    }) .background(.primary.opacity(0.1)).padding()
+    }).background(.primary.opacity(0.1)).padding()
   }
 }

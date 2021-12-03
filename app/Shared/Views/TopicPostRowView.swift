@@ -22,7 +22,7 @@ struct TopicPostRowView: View {
       return [
         Span.with { s in
           s.plain = .with { $0.text = "..." }
-        }
+        },
       ]
     } else {
       return spans
@@ -41,9 +41,9 @@ struct TopicPostRowView: View {
       HStack {
         Spacer()
         DateTimeTextView.build(timestamp: post.postDate, switchable: false)
-      } .foregroundColor(.secondary)
+      }.foregroundColor(.secondary)
         .font(.footnote)
-    } .fixedSize(horizontal: false, vertical: true)
+    }.fixedSize(horizontal: false, vertical: true)
       .padding(.vertical, 4)
   }
 }

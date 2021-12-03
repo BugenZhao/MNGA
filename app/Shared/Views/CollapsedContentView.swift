@@ -20,31 +20,30 @@ struct CollapsedContentView<Content: View>: View {
         HStack {
           Image(systemName: self.collapsed ? "chevron.down" : "chevron.up")
           Text(self.title)
-        } .padding(.bottom, 1)
+        }.padding(.bottom, 1)
           .foregroundColor(.accentColor)
           .font(.subheadline.bold())
-      } .buttonStyle(PlainButtonStyle())
+      }.buttonStyle(PlainButtonStyle())
 
       Group {
         if !self.collapsed {
           self.content()
         }
       }
-    } .fixedSize(horizontal: false, vertical: true)
+    }.fixedSize(horizontal: false, vertical: true)
   }
 }
-
 
 struct CollapsedContentView_Previews: PreviewProvider {
   static var previews: some View {
     List {
-      ForEach(1...10, id: \.self) { i in
+      ForEach(1 ... 10, id: \.self) { i in
         VStack(alignment: .leading) {
           Text(String(repeating: "Content \(i) ", count: 20))
           CollapsedContentView(title: "Title") {
             Text(String(repeating: "Collapsed \(i) ", count: 20))
           }
-        } .fixedSize(horizontal: false, vertical: true)
+        }.fixedSize(horizontal: false, vertical: true)
       }
     }
   }

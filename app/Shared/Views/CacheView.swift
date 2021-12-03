@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImage
+import SwiftUI
 
 struct CacheRowView: View {
   let text: LocalizedStringKey
@@ -36,7 +36,7 @@ struct CacheRowView: View {
       if let clear = clear {
         Button(action: { self.alertPresented = true }) {
           inner
-        } .alert(isPresented: $alertPresented) {
+        }.alert(isPresented: $alertPresented) {
           Alert(title: Text("Are you sure to clear the cache?"), message: Text("This will take a while."), primaryButton: .default(Text("Clear")) { clear() }, secondaryButton: .cancel())
         }
       } else {
@@ -54,17 +54,16 @@ struct CacheView: View {
   @ViewBuilder
   var list: some View {
     List {
-
       Section(header: Text("Image")) {
         CacheRowView(text: "Image Cache", status: imageStatus) {
           self.imageStatus = nil
           self.clearImageCache()
-        } .onAppear { if imageStatus == nil { loadImageCacheSize() } }
+        }.onAppear { if imageStatus == nil { loadImageCacheSize() } }
       }
 
       Section(header: Text("Data")) {
         ForEach(CacheType.allCases, id: \.self) { type in
-          let action = type == .all ? nil: {
+          let action = type == .all ? nil : {
             self.cacheStatus.removeValue(forKey: type)
             self.manipulateCache(for: type, operation: .clear)
           }
@@ -72,7 +71,6 @@ struct CacheView: View {
             .onAppear { manipulateCache(for: type, operation: .check) }
         }
       }
-
     }
   }
 
@@ -92,7 +90,7 @@ struct CacheView: View {
   }
 
   func loadImageCacheSize() {
-    SDImageCache.shared.calculateSize { fileCount, totalSize in
+    SDImageCache.shared.calculateSize { _, totalSize in
       self.imageStatus = ByteCountFormatter().string(fromByteCount: Int64(totalSize))
     }
   }

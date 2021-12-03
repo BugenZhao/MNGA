@@ -5,24 +5,24 @@
 //  Created by Bugen Zhao on 2021/10/6.
 //
 
-import WidgetKit
-import SwiftUI
-import SDWebImageSwiftUI
 import Intents
+import SDWebImageSwiftUI
+import SwiftUI
+import WidgetKit
 
 struct Provider: IntentTimelineProvider {
-  func placeholder(in context: Context) -> HotTopicsEntry {
-    return .placeholder
+  func placeholder(in _: Context) -> HotTopicsEntry {
+    .placeholder
   }
 
-  func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (HotTopicsEntry) -> ()) {
+  func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (HotTopicsEntry) -> Void) {
     getTimeline(for: configuration, in: context) { timeline in
       let entry = timeline.entries.first ?? .placeholder
       completion(entry)
     }
   }
 
-  func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+  func getTimeline(for configuration: ConfigurationIntent, in _: Context, completion: @escaping (Timeline<Entry>) -> Void) {
     logicInitialConfigure()
 
     let forum = configuration.forum ?? HotTopicsEntry.placeholder.forum.widgetForum
@@ -90,8 +90,8 @@ struct MNGA_Widget: Widget {
     IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
       MNGA_WidgetEntryView(entry: entry)
     }
-      .configurationDisplayName("My Widget")
-      .description("This is an example widget.")
+    .configurationDisplayName("My Widget")
+    .description("This is an example widget.")
   }
 }
 
@@ -108,14 +108,14 @@ struct MNGA_Widget_Previews: PreviewProvider {
 extension Forum {
   var widgetForum: WidgetForum {
     let wf = WidgetForum(
-      identifier: self.idDescription,
-      display: self.name,
-      subtitle: self.info,
+      identifier: idDescription,
+      display: name,
+      subtitle: info,
       image: nil
     )
-    wf.fid = self.id.fid
-    wf.stid = self.id.stid
-    wf.iconURL = self.iconURL
+    wf.fid = id.fid
+    wf.stid = id.stid
+    wf.iconURL = iconURL
     return wf
   }
 }

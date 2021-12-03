@@ -5,18 +5,18 @@
 //  Created by Bugen Zhao on 2021/10/17.
 //
 
-import Foundation
 import Combine
-import SwiftUI
 import CombineExt
+import Foundation
+import SwiftUI
 
 typealias NotificationDataSource = PagingDataSource<FetchNotificationResponse, Notification>
 
-fileprivate extension NotificationDataSource {
+private extension NotificationDataSource {
   static func build() -> NotificationDataSource {
-    NotificationDataSource.init(
+    NotificationDataSource(
       buildRequest: { _ in
-        return .fetchNotification(.with { _ in })
+        .fetchNotification(.with { _ in })
       },
       onResponse: { response in
         let items = response.notis
@@ -29,7 +29,7 @@ fileprivate extension NotificationDataSource {
 
 extension NotificationDataSource {
   var unreadCount: Int {
-    self.items.filter { $0.read == false }.count
+    items.filter { $0.read == false }.count
   }
 
   var title: LocalizedStringKey {
@@ -58,7 +58,7 @@ class NotificationModel: ObservableObject {
   var cancellables = Set<AnyCancellable>()
 
   private func refreshNotis() {
-    self.dataSource.refresh(silentOnError: true)
+    dataSource.refresh(silentOnError: true)
   }
 
   init() {
@@ -70,8 +70,8 @@ class NotificationModel: ObservableObject {
     // may buggy
     dataSource.objectWillChange
       .sink { [weak self] _ in
-      if self?.showing == true { self?.objectWillChange.send() }
-    } .store(in: &cancellables)
+        if self?.showing == true { self?.objectWillChange.send() }
+      }.store(in: &cancellables)
 
     dataSource.$lastRefreshTime
       .map { _ in self.dataSource.items.filter { n in n.read == false }.count }
