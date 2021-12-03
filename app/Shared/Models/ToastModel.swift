@@ -49,9 +49,9 @@ class ToastModel: ObservableObject {
 
   static func showAuto(_ message: Message?) {
     switch message {
-    case .success(_), .error:
+    case .success, .error:
       ToastModel.banner.message = message
-    case .notification(_), .userSwitch(_), .clockIn:
+    case .notification, .userSwitch, .clockIn:
       ToastModel.hud.message = message
     case .openURL:
       ToastModel.alert.message = message
