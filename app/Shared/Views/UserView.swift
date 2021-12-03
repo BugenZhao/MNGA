@@ -22,6 +22,7 @@ struct UserView: View {
     case compact
     case normal
     case huge
+    case vertical
   }
 
   @State var showId = false
@@ -30,12 +31,14 @@ struct UserView: View {
   @OptionalEnvironmentObject<TopicDetailsActionModel> var action
   @EnvironmentObject var viewingImage: ViewingImageModel
 
-  let user: User?
+  @State var user: User?
+
   let id: String
   let style: Style
   let isAuthor: Bool
+  let remote: Bool
 
-  init(id: String, nameHint: String? = nil, style: Style, isAuthor: Bool = false) {
+  init(id: String, nameHint: String? = nil, style: Style, isAuthor: Bool = false, remote: Bool = false) {
     var user = UsersModel.shared.localUser(id: id)
     if let nameHint = nameHint, user == nil {
       user = .with {
@@ -47,6 +50,7 @@ struct UserView: View {
     self.id = id
     self.style = style
     self.isAuthor = isAuthor
+    self.remote = remote
   }
 
   init(user: User, style: Style, isAuthor: Bool = false) {
@@ -54,6 +58,7 @@ struct UserView: View {
     id = user.id
     self.style = style
     self.isAuthor = isAuthor
+    remote = false
   }
 
   private var avatarSize: CGFloat {
@@ -63,7 +68,9 @@ struct UserView: View {
     case .normal:
       return 36
     case .huge:
-      return 54
+      return 56
+    case .vertical:
+      return 48
     }
   }
 
@@ -144,36 +151,56 @@ struct UserView: View {
       return showDetails ? .subheadline : .callout
     case .huge:
       return .title
+    case .vertical:
+      return .footnote
     }
   }
 
-  var body: some View {
+  @ViewBuilder
+  var nameView: some View {
+    HStack(spacing: 4) {
+      Group {
+        if showId {
+          Text(self.idDisplay)
+        } else {
+          Text(self.name)
+        }
+      }.font(nameFont, weight: style == .huge ? .bold : .medium)
+
+      if style != .vertical {
+        Group {
+          if user?.mute == true {
+            Image(systemName: "mic.slash.fill")
+              .foregroundColor(.red)
+          }
+          if isAuthor, pref.postRowShowAuthorIndicator {
+            Image(systemName: "person.fill")
+              .foregroundColor(.secondary)
+          }
+        }.font(style == .huge ? .body : .footnote)
+      }
+    }.onTapGesture { withAnimation { self.showId.toggle() } }
+      .redacted(if: shouldRedactName)
+  }
+
+  @ViewBuilder
+  var vertical: some View {
+    VStack {
+      avatar
+      nameView
+        .lineLimit(1)
+        .truncationMode(.middle)
+        .frame(width: avatarSize * 1.5)
+    }
+  }
+
+  @ViewBuilder
+  var horizontal: some View {
     HStack {
       avatar
 
       VStack(alignment: .leading, spacing: style == .huge ? 4 : 2) {
-        HStack(spacing: 4) {
-          Group {
-            if showId {
-              Text(self.idDisplay)
-            } else {
-              Text(self.name)
-            }
-          }.font(nameFont, weight: style == .huge ? .bold : .medium)
-
-          Group {
-            if user?.mute == true {
-              Image(systemName: "mic.slash.fill")
-                .foregroundColor(.red)
-            }
-            if isAuthor, pref.postRowShowAuthorIndicator {
-              Image(systemName: "person.fill")
-                .foregroundColor(.secondary)
-            }
-          }.font(style == .huge ? .body : .footnote)
-
-        }.onTapGesture { withAnimation { self.showId.toggle() } }
-          .redacted(if: shouldRedactName)
+        nameView
 
         if showDetails {
           HStack(spacing: 6) {
@@ -199,6 +226,20 @@ struct UserView: View {
           }.font(.footnote)
             .foregroundColor(.secondary)
         }
+      }
+    }
+  }
+
+  var body: some View {
+    Group {
+      if style == .vertical {
+        vertical
+      } else {
+        horizontal
+      }
+    }.task {
+      if remote, let remoteUser = await UsersModel.shared.remoteUser(id: id) {
+        withAnimation { user = remoteUser }
       }
     }
   }

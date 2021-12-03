@@ -15,7 +15,7 @@ class UsersModel: ObservableObject {
   private var users = [String: User?]()
 
   init() {
-    users[User.dummyID] = User.dummy
+    add(user: User.dummy)
   }
 
   func localUser(id: String) -> User? {
@@ -23,7 +23,18 @@ class UsersModel: ObservableObject {
       let localResponse: LocalUserResponse? =
         try? logicCall(.localUser(.with { $0.userID = id }))
       if let r = localResponse, r.hasUser {
-        users[id] = r.user
+        add(user: r.user)
+      }
+    }
+    return users[id] ?? nil
+  }
+
+  func remoteUser(id: String) async -> User? {
+    if users[id] == nil {
+      let req = RemoteUserRequest.with { $0.userID = id }
+      let res: Result<RemoteUserResponse, LogicError> = await logicCallAsync(.remoteUser(req), errorToastModel: nil)
+      if case let .success(r) = res, r.hasUser {
+        add(user: r.user)
       }
     }
     return users[id] ?? nil

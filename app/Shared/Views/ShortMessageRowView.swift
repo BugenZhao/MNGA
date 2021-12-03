@@ -17,6 +17,6 @@ struct ShortMessageRowView: View {
   }
 
   var body: some View {
-    TopicLikeRowInnerView(subjectView: { subjectView }, num: message.postNum, lastNum: nil, names: message.userNames.map { n in UserName.with { $0.normal = n } }, date: message.lastPostDate)
+    TopicLikeRowInnerView(subjectView: { subjectView }, num: message.postNum, lastNum: nil, names: message.userNames, date: message.lastPostDate)
   }
 }

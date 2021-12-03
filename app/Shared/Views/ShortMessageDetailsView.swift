@@ -50,9 +50,21 @@ struct ShortMessageDetailsView: View {
           .onAppear { dataSource.initialLoad() }
       } else {
         List {
-          ForEach(dataSource.items, id: \.id) { post in
-            ShortMessagePostRowView(post: post)
-              .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+          Section(header: "Participants") {
+            ScrollView(.horizontal) {
+              LazyHStack {
+                ForEach(dataSource.latestResponse?.ids ?? [], id: \.self) { userID in
+                  UserView(id: userID, style: .vertical, remote: true)
+                }
+              }
+            }
+          }
+
+          Section {
+            ForEach(dataSource.items, id: \.id) { post in
+              ShortMessagePostRowView(post: post)
+                .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+            }
           }
         }
       }
