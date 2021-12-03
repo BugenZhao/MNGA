@@ -211,3 +211,12 @@
 "Topic Details" = "话题详情";
 "Author Info" = "作者信息";
 "Show Author Indicator" = "显示作者图标";
+
+"Missing Field" = "缺少字段";
+"Network Connection" = "网络连接";
+"XML Parse" = "XML 解析";
+"JSON Parse" = "JSON 解析";
+"XPath Resolve" = "XPath 解析";
+"Text Parse" = "文本解析";
+"URL Parse" = "URL 解析";
+"Backend Panic" = "后端错误";

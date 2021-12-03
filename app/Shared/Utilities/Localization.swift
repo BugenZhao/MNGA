@@ -23,4 +23,12 @@ extension String {
   var localized: String {
     NSLocalizedString(self, comment: "")
   }
+
+  var errorLocalized: String {
+    let tokens = self.split(separator: "|", maxSplits: 2).map(String.init)
+    if tokens.count != 2 {
+      return self.localized
+    }
+    return "\(tokens[0].localized): \(tokens[1])"
+  }
 }
