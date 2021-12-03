@@ -21,6 +21,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
   @AppStorage("themeColor") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
+  @AppStorage("useInsetGrouped") var useInsetGrouped = false
 
   @AppStorage("requestOption") var requestOption = RequestOption() {
     didSet { syncRequestOptionWithLogic() }

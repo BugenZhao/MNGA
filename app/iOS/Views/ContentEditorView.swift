@@ -70,7 +70,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
             }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
           }
         }
-      }.listStyle(GroupedListStyle())
+      }
 
       if !keyboard.isShowing {
         switch model.showing {
