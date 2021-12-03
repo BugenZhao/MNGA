@@ -66,7 +66,6 @@
 		B40DC6AE270DD33C002DC8A1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED48269C5F78009C52F5 /* Constants.swift */; };
 		B40DC6AF270DDB90002DC8A1 /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45819BB268D7D7200999830 /* RawRepresentable.swift */; };
 		B40DC6B1270DDED1002DC8A1 /* HotTopicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40DC6B0270DDED1002DC8A1 /* HotTopicsView.swift */; };
-		B40DC6B2270DE8F4002DC8A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
 		B40DC6B4270DED7E002DC8A1 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B40DC6B3270DED7E002DC8A1 /* SDWebImageSwiftUI */; };
 		B40DC6B5270DEDD4002DC8A1 /* WebOrAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413D67D2705E47800993DA2 /* WebOrAsyncImage.swift */; };
 		B40DC6B6270DEDDC002DC8A1 /* ForumIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DF95AD26CADF5D0081ECBB /* ForumIconView.swift */; };
@@ -208,8 +207,6 @@
 		B4BDE13E2746B7CA00F0607E /* ShareLinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4BDE13C2746B7CA00F0607E /* ShareLinksView.swift */; };
 		B4C024D626884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
 		B4C024D726884FD700E53554 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024C226884FD600E53554 /* ContentView.swift */; };
-		B4C024D826884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
-		B4C024D926884FD700E53554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4C024C326884FD700E53554 /* Assets.xcassets */; };
 		B4C024E5268850AA00E53554 /* BasicLogicCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024E2268850AA00E53554 /* BasicLogicCall.swift */; };
 		B4C024E6268850AA00E53554 /* BasicLogicCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C024E2268850AA00E53554 /* BasicLogicCall.swift */; };
 		B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = B4C024EC268850E800E53554 /* SwiftProtobuf */; };
@@ -999,7 +996,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B40DC6B2270DE8F4002DC8A1 /* Assets.xcassets in Resources */,
 				B404C500270D9EBC00FF1743 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1015,7 +1011,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4C024D826884FD700E53554 /* Assets.xcassets in Resources */,
 				B4DCF4502688F68400EC78A4 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1024,7 +1019,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4C024D926884FD700E53554 /* Assets.xcassets in Resources */,
 				B4DCF4512688F68400EC78A4 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
