@@ -8,21 +8,21 @@
 import Foundation
 
 struct Constants {
-  struct Activity {
+  enum Activity {
     private static let base = "com.bugenzhao.NGA"
 
     static let openTopic = "\(base).openTopic"
     static let openForum = "\(base).openForum"
   }
 
-  struct MNGA {
+  enum MNGA {
     static let scheme = "mnga"
     static let topicBase = "\(scheme)://topic/"
     static let forumFBase = "\(scheme)://forum/f/"
     static let forumSTBase = "\(scheme)://forum/st/"
   }
 
-  struct Key {
+  enum Key {
     static let groupStore = "group.com.bugenzhao.MNGA"
     static let favoriteForums = "favoriteForums"
   }

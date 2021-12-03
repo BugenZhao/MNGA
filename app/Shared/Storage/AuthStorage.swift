@@ -5,8 +5,8 @@
 //  Created by Bugen Zhao on 7/1/21.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 class AuthStorage: ObservableObject {
@@ -21,12 +21,13 @@ class AuthStorage: ObservableObject {
       syncAuthWithLogic()
     }
   }
+
   @AppStorage("allAuthInfos") var allAuthInfos = Set<AuthInfo>()
 
   private var cancellables = Set<AnyCancellable>()
 
   init(defaultAuthInfo: AuthInfo? = nil) {
-    if signedIn && allAuthInfos.isEmpty {
+    if signedIn, allAuthInfos.isEmpty {
       allAuthInfos = [authInfo] // for backward compatibility
     }
 
@@ -43,18 +44,18 @@ class AuthStorage: ObservableObject {
   }
 
   func setCurrentAuth(_ authInfo: AuthInfo) {
-    if let old = self.allAuthInfos.first(where: { $0.uid == authInfo.uid }) {
-      self.allAuthInfos.remove(old)
+    if let old = allAuthInfos.first(where: { $0.uid == authInfo.uid }) {
+      allAuthInfos.remove(old)
     }
-    self.allAuthInfos.insert(authInfo)
+    allAuthInfos.insert(authInfo)
     self.authInfo = authInfo
     isSigning = false
   }
 
   func clearCurrentAuth() {
-    if let old = self.allAuthInfos.first(where: { $0.uid == authInfo.uid }) {
-      self.allAuthInfos.remove(old)
+    if let old = allAuthInfos.first(where: { $0.uid == authInfo.uid }) {
+      allAuthInfos.remove(old)
     }
-    self.authInfo = allAuthInfos.first ?? AuthInfo()
+    authInfo = allAuthInfos.first ?? AuthInfo()
   }
 }

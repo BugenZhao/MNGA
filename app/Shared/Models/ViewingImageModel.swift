@@ -5,16 +5,17 @@
 //  Created by Bugen Zhao on 7/7/21.
 //
 
-import Foundation
 import Combine
+import Foundation
+import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
-import SDWebImageSwiftUI
 
 class ViewingImageModel: ObservableObject {
   @Published var view: AnyView? {
-    didSet { self.id = UUID() }
+    didSet { id = UUID() }
   }
+
   @Published var id: UUID?
   @Published var imageData: Data?
 
@@ -31,10 +32,10 @@ class ViewingImageModel: ObservableObject {
     withAnimation {
       self.view = WebImage(url: url)
         .onSuccess { image, _, _ in
-        DispatchQueue.main.async {
-          self.imageData = image.sd_imageData()
+          DispatchQueue.main.async {
+            self.imageData = image.sd_imageData()
+          }
         }
-      }
         .resizable()
         .indicator(.progress)
         .eraseToAnyView()

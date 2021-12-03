@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-fileprivate struct PostRowAppearanceView: View {
+private struct PostRowAppearanceView: View {
   @ObservedObject var pref: PreferencesStorage
 
   var body: some View {
@@ -57,12 +57,12 @@ fileprivate struct PostRowAppearanceView: View {
           Label("Paginated Reading", systemImage: "square.stack")
         }
       }
-    } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+    }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
       .navigationTitleInline(string: "")
   }
 }
 
-fileprivate struct TopicListAppearanceView: View {
+private struct TopicListAppearanceView: View {
   @ObservedObject var pref: PreferencesStorage
 
   var body: some View {
@@ -72,7 +72,7 @@ fileprivate struct TopicListAppearanceView: View {
           Label(order.description, systemImage: order.icon).tag(order)
         }
       }
-    } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+    }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
       .navigationTitleInline(string: "")
   }
 }
@@ -92,7 +92,7 @@ struct PreferencesInnerView: View {
         Label(color.description) {
           Image(systemName: "circle.fill")
             .foregroundColor(color.color ?? Color("AccentColor"))
-        } .tag(color)
+        }.tag(color)
       }
     }
   }
@@ -127,7 +127,7 @@ struct PreferencesInnerView: View {
           Text(host).tag(URLs.base(for: host)!.absoluteString)
         }
       }
-    } .lineLimit(1)
+    }.lineLimit(1)
 
     Picker(selection: $pref.requestOption.device, label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
       ForEach(Device.allCases, id: \.self) { device in
@@ -158,7 +158,7 @@ struct PreferencesInnerView: View {
         Form { advanced }
           .tabItem { Label("Advanced", systemImage: "gearshape.2") }
           .tag("advanced")
-      } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+      }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
         .pickerStyle(InlinePickerStyle())
         .padding(20)
         .frame(width: 500)
@@ -184,7 +184,7 @@ struct PreferencesInnerView: View {
           }
           advanced
         }
-      } .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+      }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
         .mayInsetGroupedListStyle()
         .navigationTitle("Preferences")
         .preferredColorScheme(pref.colorScheme.scheme) // workaround

@@ -5,8 +5,8 @@
 //  Created by Bugen Zhao on 7/20/21.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 class PreferencesStorage: ObservableObject {

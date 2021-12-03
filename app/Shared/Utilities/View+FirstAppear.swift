@@ -31,7 +31,7 @@ extension View {
         queue.addOperation(appearOperation)
       }
     }
-      .onDisappear {
+    .onDisappear {
       queue.operations
         .first { $0.name == kAppearAction }?
         .cancel()

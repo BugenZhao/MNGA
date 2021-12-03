@@ -12,13 +12,13 @@ class FavoriteForumsStorage: ObservableObject {
   static let shared = FavoriteForumsStorage()
 
   init() {
-    if !oldFavoriteForums.isEmpty && favoriteForums.isEmpty {
+    if !oldFavoriteForums.isEmpty, favoriteForums.isEmpty {
       favoriteForums = oldFavoriteForums
       oldFavoriteForums.removeAll()
     }
   }
 
-  static private let groupStore = UserDefaults.init(suiteName: Constants.Key.groupStore)!
+  private static let groupStore = UserDefaults(suiteName: Constants.Key.groupStore)!
 
   enum FilterMode: String, CaseIterable {
     case favoritesOnly = "Favorites Only"

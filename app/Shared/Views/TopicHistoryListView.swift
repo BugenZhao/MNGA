@@ -15,7 +15,7 @@ struct TopicHistoryListView: View {
   static func build() -> Self {
     let dataSource = PagingDataSource<TopicHistoryResponse, TopicSnapshot>(
       buildRequest: { _ in
-        return .topicHistory(TopicHistoryRequest.with {
+        .topicHistory(TopicHistoryRequest.with {
           $0.limit = 1000
         })
       },
@@ -46,9 +46,9 @@ struct TopicHistoryListView: View {
         }
       }
     }
-      .navigationTitle("History")
-      .refreshable(dataSource: dataSource)
-      .mayGroupedListStyle()
-      .searchable(model: search, prompt: "Search History".localized, alwaysShow: true)
+    .navigationTitle("History")
+    .refreshable(dataSource: dataSource)
+    .mayGroupedListStyle()
+    .searchable(model: search, prompt: "Search History".localized, alwaysShow: true)
   }
 }

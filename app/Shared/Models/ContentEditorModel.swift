@@ -5,10 +5,10 @@
 //  Created by Bugen Zhao on 2021/10/20.
 //
 
+import AlertToast
 import Foundation
 import SwiftUI
 import SwiftUIX
-import AlertToast
 
 class ContentEditorModel: ObservableObject {
   enum Panel {
@@ -21,20 +21,20 @@ class ContentEditorModel: ObservableObject {
   @Published var showing = Panel.none {
     didSet { if showing != .none { keyboard.dismiss() } }
   }
+
   @Published var selected: NSRange
   @Published var text: String
 
   @Published var image: Data? = nil
   @Published var showingImagePicker = false
 
-
   @objc func showSticker() {
-    self.showing = .sticker
+    showing = .sticker
   }
 
   init(initialText: String) {
-    self._text = .init(initialValue: initialText)
-    self._selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
+    _text = .init(initialValue: initialText)
+    _selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
   }
 
   private func appendTag(_ tag: String) {
@@ -46,15 +46,15 @@ class ContentEditorModel: ObservableObject {
   }
 
   @objc func appendBold() {
-    self.appendTag("b")
+    appendTag("b")
   }
 
   @objc func appendDel() {
-    self.appendTag("del")
+    appendTag("del")
   }
 
   @objc func showImagePicker() {
-    self.showingImagePicker = true
+    showingImagePicker = true
   }
 
   func insert(_ string: String) {

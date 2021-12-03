@@ -13,12 +13,12 @@ class PresendAttachmentsModel: ObservableObject {
   private var attachs = [String: Data]()
 
   func add(url: String, data: Data) {
-    self.attachs[url] = data
+    attachs[url] = data
   }
 
   func image(for previewURL: URL) -> AppKitOrUIKitImage? {
     guard let data = attachs.first(where: { previewURL.absoluteString.contains($0.key) })?.value
-      else { return nil }
+    else { return nil }
     return AppKitOrUIKitImage(data: data)
   }
 }

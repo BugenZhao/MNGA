@@ -12,28 +12,28 @@ class IntentHandler: INExtension, ConfigurationIntentHandling {
     UserDefaults(suiteName: Constants.Key.groupStore)!
   }
 
-  func provideForumOptionsCollection(for intent: ConfigurationIntent, with completion: @escaping (INObjectCollection<WidgetForum>?, Error?) -> Void) {
+  func provideForumOptionsCollection(for _: ConfigurationIntent, with completion: @escaping (INObjectCollection<WidgetForum>?, Error?) -> Void) {
     let forums = [Forum](readFrom: groupStore, forKey: Constants.Key.favoriteForums) ?? []
     let items = forums.map(\.widgetForum)
     completion(INObjectCollection(items: items), nil)
   }
 
-  override func handler(for intent: INIntent) -> Any {
-    return self
+  override func handler(for _: INIntent) -> Any {
+    self
   }
 }
 
 extension Forum {
   var widgetForum: WidgetForum {
     let wf = WidgetForum(
-      identifier: self.idDescription,
-      display: self.name,
-      subtitle: self.info,
+      identifier: idDescription,
+      display: name,
+      subtitle: info,
       image: nil
     )
-    wf.fid = self.id.fid
-    wf.stid = self.id.stid
-    wf.iconURL = self.iconURL
+    wf.fid = id.fid
+    wf.stid = id.stid
+    wf.iconURL = iconURL
     return wf
   }
 }

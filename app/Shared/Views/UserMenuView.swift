@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 
 struct UserMenuView: View {
   @StateObject var notification = NotificationModel.shared
@@ -24,17 +24,17 @@ struct UserMenuView: View {
   @State var showUserProfile: Bool = false
 
   var user: User? {
-    self.model.user
+    model.user
   }
 
   @ViewBuilder
   var navigationBackgrounds: some View {
-    NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) { } .hidden()
-    NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) { } .hidden()
-    NavigationLink(destination: NotificationListView(), isActive: $showNotifications) { } .hidden()
-    NavigationLink(destination: ShortMessageListView.build(), isActive: $showShortMessages) { } .hidden()
-    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) { } .hidden()
-    NavigationLink(destination: AboutView(), isActive: $showAbout) { }.hidden()
+    NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) {}.hidden()
+    NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) {}.hidden()
+    NavigationLink(destination: NotificationListView(), isActive: $showNotifications) {}.hidden()
+    NavigationLink(destination: ShortMessageListView.build(), isActive: $showShortMessages) {}.hidden()
+    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) {}.hidden()
+    NavigationLink(destination: AboutView(), isActive: $showAbout) {}.hidden()
   }
 
   @ViewBuilder
@@ -54,7 +54,7 @@ struct UserMenuView: View {
   var notificationButton: some View {
     Button(action: { showNotifications = true }) {
       Label(notification.dataSource.title, systemImage: notification.dataSource.unreadCount > 0 ? "bell.badge.fill" : "bell")
-    } .maySymbolRenderingModeHierarchical()
+    }.maySymbolRenderingModeHierarchical()
   }
 
   @ViewBuilder
@@ -133,7 +133,7 @@ struct UserMenuView: View {
       if notification.dataSource.unreadCount > 0 {
         notificationButton
       }
-    } .imageScale(.large)
+    }.imageScale(.large)
       .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }

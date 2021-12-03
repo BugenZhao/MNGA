@@ -10,7 +10,7 @@ import SwiftProtobuf
 
 func logicInitialConfigure() {
   let configuration = Configuration.with { c in
-    c.documentDirPath = FileManager.default.urls(for: .documentDirectory, in: . userDomainMask)[0].path
+    c.documentDirPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].path
   }
 
   let _: ConfigureResponse = try! logicCall(.configure(.with {
@@ -26,13 +26,13 @@ struct LogicError: Error, LocalizedError {
   public let error: String
 
   var errorDescription: String? {
-    return error
+    error
   }
 }
 
 private func extractByteBuffer(_ bb: ByteBuffer) -> (Data?, LogicError?) {
-  var resError: LogicError? = nil
-  var resData: Data? = nil
+  var resError: LogicError?
+  var resData: Data?
 
   if let err = bb.err {
     resError = LogicError(error: String(cString: err)) // copied
@@ -64,7 +64,6 @@ func logicCall<Response: SwiftProtobuf.Message>(_ requestValue: SyncRequest.OneO
   }
 }
 
-
 // MARK: - Async
 
 private class WrappedDataCallback {
@@ -91,7 +90,7 @@ private class WrappedDataCallback {
   }
 }
 
-private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: ByteBuffer) -> Void {
+private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: ByteBuffer) {
   let (resData, resError) = extractByteBuffer(resByteBuffer)
   defer { rust_free(resByteBuffer) }
   let dataCallback: WrappedDataCallback = Unmanaged.fromOpaque(callbackPtr!).takeRetainedValue()

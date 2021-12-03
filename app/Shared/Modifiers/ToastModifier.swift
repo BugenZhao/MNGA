@@ -5,9 +5,9 @@
 //  Created by Bugen Zhao on 7/15/21.
 //
 
+import AlertToast
 import Foundation
 import SwiftUI
-import AlertToast
 
 struct MainToastModifier: ViewModifier {
   @StateObject var notis = NotificationModel.shared
@@ -15,8 +15,8 @@ struct MainToastModifier: ViewModifier {
   @StateObject var banner = ToastModel.banner
   @StateObject var alert = ToastModel.alert
 
-  var onTap: (() -> ())? {
-    if case .notification(_) = hud.message {
+  var onTap: (() -> Void)? {
+    if case .notification = hud.message {
       return { notis.showingSheet = true }
     }
     return nil
@@ -26,16 +26,16 @@ struct MainToastModifier: ViewModifier {
     content
 
       .toast(isPresenting: $hud.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
-      (hud.message ?? .success("")).toastView(for: .hud)
-    } onTap: { if let onTap = onTap { onTap() } }
+        (hud.message ?? .success("")).toastView(for: .hud)
+      } onTap: { if let onTap = onTap { onTap() } }
 
       .toast(isPresenting: $banner.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
-      (banner.message ?? .success("")).toastView(for: .banner(.pop))
-    } onTap: { if let onTap = onTap { onTap() } }
+        (banner.message ?? .success("")).toastView(for: .banner(.pop))
+      } onTap: { if let onTap = onTap { onTap() } }
 
       .toast(isPresenting: $alert.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
-      (alert.message ?? .success("")).toastView(for: .alert)
-    } onTap: { if let onTap = onTap { onTap() } }
+        (alert.message ?? .success("")).toastView(for: .alert)
+      } onTap: { if let onTap = onTap { onTap() } }
   }
 }
 
@@ -45,7 +45,7 @@ struct AlertToastModifier: ViewModifier {
   func body(content: Content) -> some View {
     content
       .toast(isPresenting: $alert.message.isNotNil(), duration: 3, tapToDismiss: true) {
-      (alert.message ?? .success("")).toastView(for: .alert)
-    }
+        (alert.message ?? .success("")).toastView(for: .alert)
+      }
   }
 }

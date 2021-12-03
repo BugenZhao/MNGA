@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: View {
+private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: View {
   enum DisplayMode: String, CaseIterable {
     case plain = "Plain"
     case preview = "Preview"
@@ -41,7 +41,7 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
       ForEach(DisplayMode.allCases, id: \.rawValue) {
         Text(LocalizedStringKey($0.rawValue)).tag($0)
       }
-    } .pickerStyle(SegmentedPickerStyle())
+    }.pickerStyle(SegmentedPickerStyle())
   }
 
   @ViewBuilder
@@ -66,7 +66,7 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
           .foregroundColor(.secondary)
           .font(.footnote)
       }
-    } .padding(.vertical, 4)
+    }.padding(.vertical, 4)
       .fixedSize(horizontal: false, vertical: true)
   }
 
@@ -76,7 +76,7 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
       Section(header: Text("Preview")) {
         previewInner
       }
-    } .mayGroupedListStyle()
+    }.mayGroupedListStyle()
       .onAppear { parseContent() }
       .environment(\.inRealPost, false)
   }
@@ -157,16 +157,17 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
         .navigationTitleInline(key: title)
         .environmentObject(presendAttachments)
         .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          switch displayMode {
-          case .plain: previewButton
-          case .preview: sendButton
+          ToolbarItem(placement: .confirmationAction) {
+            switch displayMode {
+            case .plain: previewButton
+            case .preview: sendButton
+            }
           }
+          ToolbarItem(placement: .cancellationAction) { discardButton }
+          ToolbarItem(placement: .bottomBar) { picker }
         }
-        ToolbarItem(placement: .cancellationAction) { discardButton }
-        ToolbarItem(placement: .bottomBar) { picker }
-      }
     }
+
   #elseif os(macOS)
     var body: some View {
       if let context = postReply.context {
@@ -194,7 +195,7 @@ fileprivate struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T
   #endif
 
   func doSend() {
-    self.postReply.send()
+    postReply.send()
   }
 }
 
@@ -221,9 +222,9 @@ struct GenericPostEditorView_Previews: PreviewProvider {
       GenericEditorView<PostReplyTask, PostReplyModel>()
         .environmentObject(postReply)
         .onAppear {
-        postReply.showEditor = true
-        postReply.context = .init(task: .init(action: .init(), pageToReload: nil), content: defaultText) // dummy
-      }
+          postReply.showEditor = true
+          postReply.context = .init(task: .init(action: .init(), pageToReload: nil), content: defaultText) // dummy
+        }
     }
   }
 

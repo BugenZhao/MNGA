@@ -5,9 +5,9 @@
 //  Created by Bugen Zhao on 2021/11/21.
 //
 
+import BetterSafariView
 import Foundation
 import SwiftUI
-import BetterSafariView
 import SwiftUIX
 
 struct AttachmentsView: View {
@@ -34,10 +34,10 @@ struct AttachmentsView: View {
             .lineLimit(1)
             .truncationMode(.middle)
         }
-          .buttonStyle(.plain)
+        .buttonStyle(.plain)
       }
     }
-      .navigationTitle("Attachments")
+    .navigationTitle("Attachments")
   }
 
   func show(_ attachment: Attachment) {

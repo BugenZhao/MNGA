@@ -20,7 +20,7 @@ struct HotTopicListInnerView: View {
   static func build(forum: Forum, range: DateRange) -> Self {
     let dataSource = DataSource(
       buildRequest: { _ in
-          .hotTopicList(HotTopicListRequest.with {
+        .hotTopicList(HotTopicListRequest.with {
           $0.id = forum.id
           $0.range = range
           $0.fetchPageLimit = 5
@@ -33,7 +33,7 @@ struct HotTopicListInnerView: View {
       id: \.id
     )
 
-    return Self.init(forum: forum, range: range, dataSource: dataSource)
+    return Self(forum: forum, range: range, dataSource: dataSource)
   }
 
   var body: some View {
@@ -49,7 +49,7 @@ struct HotTopicListInnerView: View {
             }
           }
         }
-      } .mayGroupedListStyle()
+      }.mayGroupedListStyle()
     }
   }
 }
@@ -60,7 +60,7 @@ struct HotTopicListView: View {
   @State var range = HotTopicListRequest.DateRange.day
 
   static func build(forum: Forum) -> Self {
-    return Self.init(forum: forum)
+    Self(forum: forum)
   }
 
   @ViewBuilder
@@ -73,13 +73,13 @@ struct HotTopicListView: View {
               Text(range.description)
               Spacer()
               Image(systemName: range.icon)
-            } .tag(range)
+            }.tag(range)
           }
         }
       }
     } label: {
       Label("Range", systemImage: "calendar")
-    } .imageScale(.large)
+    }.imageScale(.large)
   }
 
   var body: some View {

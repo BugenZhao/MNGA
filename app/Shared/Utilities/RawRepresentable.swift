@@ -11,23 +11,23 @@ import SwiftProtobuf
 extension Array: RawRepresentable where Element: SwiftProtobuf.Message {
   public init?(rawValue: String) {
     guard let data = rawValue.data(using: .utf8),
-      let strings = try? JSONDecoder().decode([String].self, from: data)
-      else {
+          let strings = try? JSONDecoder().decode([String].self, from: data)
+    else {
       return nil
     }
     let result = strings.compactMap { s in
-      try? Element.init(jsonString: s)
+      try? Element(jsonString: s)
     }
     self = result
   }
 
   public var rawValue: String {
-    let strings = self.compactMap { e in
+    let strings = compactMap { e in
       try? e.jsonString()
     }
     guard let data = try? JSONEncoder().encode(strings),
-      let result = String(data: data, encoding: .utf8)
-      else {
+          let result = String(data: data, encoding: .utf8)
+    else {
       return "[]"
     }
     return result
@@ -44,7 +44,7 @@ extension Set: RawRepresentable where Element: SwiftProtobuf.Message {
   }
 
   public var rawValue: String {
-    return Array(self).rawValue
+    Array(self).rawValue
   }
 }
 
@@ -54,25 +54,23 @@ public struct WrappedMessage<M> where M: SwiftProtobuf.Message {
 
 extension WrappedMessage: RawRepresentable {
   public init?(rawValue: String) {
-    guard let result = try? M.init(jsonString: rawValue)
-      else {
+    guard let result = try? M(jsonString: rawValue)
+    else {
       return nil
     }
-    self.inner = result
+    inner = result
   }
 
   public var rawValue: String {
-    guard let result = try? self.inner.jsonString()
-      else {
+    guard let result = try? inner.jsonString()
+    else {
       return "{}"
     }
     return result
   }
 }
 
-extension WrappedMessage: Equatable {
-
-}
+extension WrappedMessage: Equatable {}
 
 extension RawRepresentable where RawValue == String {
   init?(readFrom userDefaults: UserDefaults, forKey defaultName: String) {

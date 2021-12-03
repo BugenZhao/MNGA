@@ -18,7 +18,7 @@ struct RecommendedTopicListView: View {
   static func build(forum: Forum) -> Self {
     let dataSource = DataSource(
       buildRequest: { page in
-        return .topicList(TopicListRequest.with {
+        .topicList(TopicListRequest.with {
           $0.id = forum.id
           $0.page = UInt32(page)
           $0.order = .postDate
@@ -33,7 +33,7 @@ struct RecommendedTopicListView: View {
       id: \.id
     )
 
-    return Self.init(forum: forum, dataSource: dataSource)
+    return Self(forum: forum, dataSource: dataSource)
   }
 
   var body: some View {
@@ -46,11 +46,11 @@ struct RecommendedTopicListView: View {
           ForEach($dataSource.items, id: \.id) { topic in
             NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
               TopicRowView(topic: topic.w, useTopicPostDate: true)
-            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
         }
-          .mayGroupedListStyle()
+        .mayGroupedListStyle()
       }
-    } .navigationTitle("Recommended Topics")
+    }.navigationTitle("Recommended Topics")
   }
 }

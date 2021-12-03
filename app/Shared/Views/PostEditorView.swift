@@ -12,26 +12,26 @@ struct PostReplyTask: TaskProtocol {
   static var dummy: Self = .init(action: .init(), pageToReload: nil)
 
   static func == (lhs: Self, rhs: Self) -> Bool {
-    return lhs.action.operation == rhs.action.operation
+    lhs.action.operation == rhs.action.operation
       && lhs.action.forumID == rhs.action.forumID
       && lhs.action.postID == rhs.action.postID
   }
 
   func hash(into hasher: inout Hasher) {
-    self.action.operation.hash(into: &hasher)
-    self.action.forumID.hash(into: &hasher)
-    self.action.forumID.hash(into: &hasher)
+    action.operation.hash(into: &hasher)
+    action.forumID.hash(into: &hasher)
+    action.forumID.hash(into: &hasher)
   }
 
   var action: PostReplyAction
   let pageToReload: PageToReload?
 
   var actionTitle: LocalizedStringKey {
-    self.action.title
+    action.title
   }
 
   func buildUploadAttachmentRequest(data: Data) -> AsyncRequest.OneOf_Value? {
-    return .uploadAttachment(.with {
+    .uploadAttachment(.with {
       $0.action = self.action
       $0.file = data
     })
@@ -65,8 +65,7 @@ class PostReplyModel: GenericPostModel<PostReplyTask> {
       if let subject = context.subject { $0.subject = subject }
       $0.attachments = context.attachments
       $0.anonymous = context.anonymous!
-    }), errorToastModel: ToastModel.editorAlert)
-    { (response: PostReplyResponse) in
+    }), errorToastModel: ToastModel.editorAlert) { (_: PostReplyResponse) in
       self.onSendSuccess(context: context)
     } onError: { e in
       self.onSendError(e)

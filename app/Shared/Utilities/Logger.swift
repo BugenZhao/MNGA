@@ -12,4 +12,4 @@ let logger: Logger = {
   var logger = Logger(label: "App")
   logger.logLevel = .info
   return logger
-}();
+}()

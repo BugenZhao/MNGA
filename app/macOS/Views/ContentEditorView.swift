@@ -5,10 +5,10 @@
 //  Created by Bugen Zhao on 2021/10/5.
 //
 
+import AlertToast
 import Foundation
 import SwiftUI
 import SwiftUIX
-import AlertToast
 
 class ContentEditorModel: ObservableObject {
   @Published var selected: NSRange
@@ -17,8 +17,8 @@ class ContentEditorModel: ObservableObject {
   private let action: PostReplyAction
 
   init(initialText: String, action: PostReplyAction) {
-    self._text = .init(initialValue: initialText)
-    self._selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
+    _text = .init(initialValue: initialText)
+    _selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
     self.action = action
   }
 }
@@ -33,7 +33,7 @@ struct ContentEditorView: View {
   static func build(context binding: Binding<PostReplyModel.Context>) -> Self {
     let context = binding.wrappedValue
     let model = ContentEditorModel(initialText: context.content ?? "", action: context.task.action)
-    return Self.init(context: binding, model: model)
+    return Self(context: binding, model: model)
   }
 
   var body: some View {
@@ -54,6 +54,6 @@ struct ContentEditorView: View {
 //        .background(.secondarySystemGroupedBackground)
 //        .frame(maxHeight: 240)
     }
-      .onChange(of: model.text) { text in context.content = text }
+    .onChange(of: model.text) { text in context.content = text }
   }
 }

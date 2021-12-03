@@ -16,7 +16,7 @@ struct DismissableStubView: View {
       Text("Stub View")
       Button(action: { presentation.dismiss() }) {
         Text("Done")
-      } .keyboardShortcut(.defaultAction)
-    } .frame(width: 400, height: 300)
+      }.keyboardShortcut(.defaultAction)
+    }.frame(width: 400, height: 300)
   }
 }

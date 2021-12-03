@@ -33,14 +33,15 @@ struct PostRowView: View {
   }
 
   private var user: User? {
-    self.users.localUser(id: self.post.authorID)
+    users.localUser(id: post.authorID)
   }
 
   var mock: Bool {
-    self.post.id.tid.isMNGAMockID
+    post.id.tid.isMNGAMockID
   }
+
   var dummy: Bool {
-    self.post.id == .dummy
+    post.id == .dummy
   }
 
   @ViewBuilder
@@ -93,7 +94,7 @@ struct PostRowView: View {
           .id(pref.postRowDateTimeStrategy)
         Image(systemName: post.device.icon)
           .frame(width: 10)
-      } .foregroundColor(.secondary)
+      }.foregroundColor(.secondary)
         .font(.footnote)
     }
   }
@@ -121,7 +122,7 @@ struct PostRowView: View {
         Image(systemName: vote.state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
           .foregroundColor(vote.state == .up ? .accentColor : .secondary)
           .frame(height: 24)
-      } .buttonStyle(PlainButtonStyle())
+      }.buttonStyle(PlainButtonStyle())
 
       let font = Font.subheadline.monospacedDigit()
       Text("\(max(Int32(post.score) + vote.delta, 0))")
@@ -132,7 +133,7 @@ struct PostRowView: View {
         Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
           .foregroundColor(vote.state == .down ? .accentColor : .secondary)
           .frame(height: 24)
-      } .buttonStyle(PlainButtonStyle())
+      }.buttonStyle(PlainButtonStyle())
     }
   }
 
@@ -178,7 +179,7 @@ struct PostRowView: View {
     }
     if let action = action {
       Section {
-        if enableAuthorOnly && !(user?.isAnonymous ?? false) {
+        if enableAuthorOnly, !(user?.isAnonymous ?? false) {
           Button(action: { action.navigateToAuthorOnly = post.authorID }) {
             Label("This Author Only", systemImage: "person")
           }
@@ -190,7 +191,7 @@ struct PostRowView: View {
   @ViewBuilder
   var navigation: some View {
     if #available(iOS 15.0, *) {
-      NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) { }.hidden()
+      NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) {}.hidden()
     }
   }
 
@@ -201,24 +202,24 @@ struct PostRowView: View {
       footer
       comments
       signature
-    } .padding(.vertical, 4)
+    }.padding(.vertical, 4)
       .fixedSize(horizontal: false, vertical: true)
     #if os(macOS)
       .contextMenu { menu }
     #endif
     #if os(iOS)
-      .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
+    .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
     .background { navigation }
-      .environmentObject(attachments)
+    .environmentObject(attachments)
 
     if #available(iOS 15.0, *), let model = postReply, !mock {
       body
         .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) {
-        Button(action: { self.doQuote(model: model) }) {
-          Image(systemName: "quote.bubble")
-        } .tint(.accentColor)
-      }
+          Button(action: { self.doQuote(model: model) }) {
+            Image(systemName: "quote.bubble")
+          }.tint(.accentColor)
+        }
     } else {
       body
     }
@@ -271,7 +272,7 @@ struct PostRowView: View {
         f.fid = post.fid
       }
       $0.operation = .comment
-    }, pageToReload: .exact(Int(self.post.atPage)))
+    }, pageToReload: .exact(Int(post.atPage)))
   }
 
   func doEdit(model: PostReplyModel) {
@@ -281,6 +282,6 @@ struct PostRowView: View {
         f.fid = post.fid
       }
       $0.operation = .modify
-    }, pageToReload: .exact(Int(self.post.atPage)))
+    }, pageToReload: .exact(Int(post.atPage)))
   }
 }

@@ -18,9 +18,9 @@ struct ShortMessageDetailsView: View {
   @EnvironmentObject var postModel: ShortMessagePostModel
 
   static func build(mid: String) -> Self {
-    let dataSource = DataSource.init(
+    let dataSource = DataSource(
       buildRequest: { page in
-        return .shortMessageDetails(.with {
+        .shortMessageDetails(.with {
           $0.id = mid
           $0.page = UInt32(page)
         })
@@ -56,7 +56,7 @@ struct ShortMessageDetailsView: View {
           }
         }
       }
-    } .navigationTitleInline(key: "Short Message Details")
+    }.navigationTitleInline(key: "Short Message Details")
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()
@@ -65,7 +65,7 @@ struct ShortMessageDetailsView: View {
   }
 
   func doReply() {
-    self.postModel.show(action: .with {
+    postModel.show(action: .with {
       $0.operation = .reply
       $0.mid = mid
     })

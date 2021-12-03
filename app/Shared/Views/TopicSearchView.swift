@@ -19,7 +19,7 @@ class TopicSearchModel: SearchModel<PagingDataSource<TopicSearchResponse, Topic>
   override func buildDataSource(text: String) -> DataSource {
     DataSource(
       buildRequest: { page in
-        return .topicSearch(.with {
+        .topicSearch(.with {
           $0.id = self.id
           $0.key = text
           $0.searchContent = true
@@ -47,12 +47,11 @@ struct TopicSearchItemsView: View {
       ForEach($dataSource.items, id: \.id) { topic in
         NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
           TopicRowView(topic: topic.w)
-        } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+        }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
       }
     }
   }
 }
-
 
 struct TopicSearchView: View {
   @ObservedObject var dataSource: TopicSearchModel.DataSource
@@ -67,7 +66,7 @@ struct TopicSearchView: View {
           TopicSearchItemsView(dataSource: dataSource)
         }
       }
-        .mayGroupedListStyle()
+      .mayGroupedListStyle()
     }
   }
 }

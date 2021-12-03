@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public func withAnimation<Result>(_ animation: Animation? = .default, when condition: Bool, _ body: () throws -> Result) rethrows -> Result {
+public func withAnimation<Result>(_: Animation? = .default, when condition: Bool, _ body: () throws -> Result) rethrows -> Result {
   if condition {
     return withAnimation { try! body() }
   } else {

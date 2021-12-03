@@ -16,13 +16,13 @@ struct RepliesNumView: View {
     switch num {
     case 0:
       return (.subheadline.weight(.regular), .accentColor.opacity(0.0))
-    case 1..<40:
+    case 1 ..< 40:
       return (.callout.weight(.medium), .accentColor.opacity(0.8))
-    case 40..<100:
+    case 40 ..< 100:
       return (.callout.weight(.semibold), .accentColor.opacity(0.9))
-    case 100..<200:
+    case 100 ..< 200:
       return (.body.weight(.semibold), .accentColor)
-    case 200..<500:
+    case 200 ..< 500:
       return (.body.weight(.bold), .accentColor)
     case 500...:
       return (.body.weight(.heavy), .accentColor)

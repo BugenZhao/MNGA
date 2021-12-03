@@ -7,7 +7,7 @@
 
 import Foundation
 
-fileprivate let timeAgoFormatter = RelativeDateTimeFormatter()
+private let timeAgoFormatter = RelativeDateTimeFormatter()
 
 public func timeAgo(_ timestamp: UInt64) -> String {
   let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
@@ -15,7 +15,7 @@ public func timeAgo(_ timestamp: UInt64) -> String {
   return dateString
 }
 
-fileprivate let detailedFormatter: DateFormatter = {
+private let detailedFormatter: DateFormatter = {
   let f = DateFormatter()
   f.dateStyle = .long
   f.timeStyle = .short

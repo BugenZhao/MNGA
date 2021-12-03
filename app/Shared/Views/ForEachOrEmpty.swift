@@ -10,11 +10,11 @@ import SwiftUI
 
 struct EmptyRowView: View {
   let title: LocalizedStringKey
-  
+
   init(title: LocalizedStringKey = "Empty") {
     self.title = title
   }
-  
+
   var body: some View {
     HStack {
       Spacer()

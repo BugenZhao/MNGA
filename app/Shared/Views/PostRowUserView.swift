@@ -12,7 +12,7 @@ struct PostRowUserView: View, Equatable {
   @StateObject var users = UsersModel.shared
 
   static func == (lhs: PostRowUserView, rhs: PostRowUserView) -> Bool {
-    return lhs.post.id == rhs.post.id
+    lhs.post.id == rhs.post.id
   }
 
   let post: Post
@@ -20,11 +20,11 @@ struct PostRowUserView: View, Equatable {
   let isAuthor: Bool
 
   private var user: User? {
-    self.users.localUser(id: self.post.authorID)
+    users.localUser(id: post.authorID)
   }
-  
+
   private var style: UserView.Style {
-    self.compact ? .compact : .normal
+    compact ? .compact : .normal
   }
 
   var body: some View {

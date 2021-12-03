@@ -5,8 +5,8 @@
 //  Created by Bugen Zhao on 2021/9/11.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 class TopicDetailsActionModel: ObservableObject {
@@ -38,13 +38,14 @@ class TopicDetailsActionModel: ObservableObject {
   }
 
   func showReplyChain(from: PostId) {
-    self.showingReplyChain = replyChain(from: from)
+    showingReplyChain = replyChain(from: from)
   }
 }
 
 struct EnableAuthorOnlyKey: EnvironmentKey {
   static let defaultValue: Bool = true
 }
+
 extension EnvironmentValues {
   var enableAuthorOnly: Bool {
     get { self[EnableAuthorOnlyKey.self] }
@@ -55,6 +56,7 @@ extension EnvironmentValues {
 struct EnableShowReplyChainKey: EnvironmentKey {
   static let defaultValue: Bool = true
 }
+
 extension EnvironmentValues {
   var enableShowReplyChain: Bool {
     get { self[EnableShowReplyChainKey.self] }
@@ -65,6 +67,7 @@ extension EnvironmentValues {
 struct CurrentlyLocalModeKey: EnvironmentKey {
   static let defaultValue: Bool = false
 }
+
 extension EnvironmentValues {
   var currentlyLocalMode: Bool {
     get { self[CurrentlyLocalModeKey.self] }
@@ -85,10 +88,10 @@ struct TopicDetailsActionBasicNavigationView: View {
     let forum = self.action.navigateToForum ?? .init()
     let view = self.action.navigateToView ?? EmptyView().eraseToAnyView()
 
-    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) { } .hidden()
-    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) { } .hidden()
-    NavigationLink(destination: TopicListView.build(forum: forum), isActive: self.$action.navigateToForum.isNotNil()) { } .hidden()
-    NavigationLink(destination: view, isActive: self.$action.navigateToView.isNotNil()) { } .hidden()
+    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) {}.hidden()
+    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) {}.hidden()
+    NavigationLink(destination: TopicListView.build(forum: forum), isActive: self.$action.navigateToForum.isNotNil()) {}.hidden()
+    NavigationLink(destination: view, isActive: self.$action.navigateToView.isNotNil()) {}.hidden()
 
     let withPidTopic = Topic.with {
       if let tid = self.action.navigateToTidWithPidAndPage?.tid { $0.id = tid }
@@ -98,7 +101,7 @@ struct TopicDetailsActionBasicNavigationView: View {
       if let pid = self.action.navigateToTidWithPidAndPage?.pid { $0.pid = pid }
       $0.tid = withPidTopic.id
     }
-    NavigationLink(destination: TopicDetailsView.build(topic: withPidTopic, fromPage: page, postIdToJump: postId), isActive: self.$action.navigateToTidWithPidAndPage.isNotNil()) { }.hidden()
+    NavigationLink(destination: TopicDetailsView.build(topic: withPidTopic, fromPage: page, postIdToJump: postId), isActive: self.$action.navigateToTidWithPidAndPage.isNotNil()) {}.hidden()
   }
 }
 
@@ -116,9 +119,9 @@ extension View {
   @ViewBuilder
   func withTopicDetailsAction(action: TopicDetailsActionModel? = nil) -> some View {
     if let action = action {
-      self.modifier(TopicDetailsActionModifier(action: action))
+      modifier(TopicDetailsActionModifier(action: action))
     } else {
-      self.modifier(TopicDetailsActionModifier())
+      modifier(TopicDetailsActionModifier())
     }
   }
 }

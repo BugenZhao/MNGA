@@ -30,13 +30,13 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
     requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
     errorToastModel: ToastModel? = .banner
   ) async -> Result<Response, LogicError> {
-    return await withCheckedContinuation { (continuation: CheckedContinuation<Result<Response, LogicError>, Never>) in
+    await withCheckedContinuation { (continuation: CheckedContinuation<Result<Response, LogicError>, Never>) in
       logicCallAsync(requestValue, requestDispatchQueue: requestDispatchQueue, errorToastModel: errorToastModel)
-      { (res: Response) in
-        continuation.resume(returning: .success(res))
-      } onError: { err in
-        continuation.resume(returning: .failure(err))
-      }
+        { (res: Response) in
+          continuation.resume(returning: .success(res))
+        } onError: { err in
+          continuation.resume(returning: .failure(err))
+        }
     }
   }
 #endif

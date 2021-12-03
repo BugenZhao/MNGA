@@ -5,9 +5,9 @@
 //  Created by Bugen Zhao on 6/27/21.
 //
 
+import BetterSafariView
 import SwiftUI
 import SwiftUIX
-import BetterSafariView
 
 struct ContentView: View {
   @StateObject var viewingImage = ViewingImageModel()
@@ -51,28 +51,28 @@ struct ContentView: View {
         }
       }
     }
-      .onOpenURL { let _ = schemes.onNavigateToURL($0) }
-      .overlay { ImageOverlay() }
-      .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
-      .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
     #if os(iOS)
-      .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
+    .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif
+    .onOpenURL { _ = schemes.onNavigateToURL($0) }
+    .overlay { ImageOverlay() }
+    .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
+    .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
     .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
       AppActivityView(activityItems: activity.activityItems ?? [])
     })
-      .modifier(MainToastModifier())
-      .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
-      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
-      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
-      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection) }
-      .environmentObject(viewingImage)
-      .environmentObject(activity)
-      .environmentObject(postReply)
-      .environmentObject(shortMessagePost)
-      .environmentObject(currentUser)
-      .environmentObject(textSelection)
-      .preferredColorScheme(prefs.colorScheme.scheme)
+    .modifier(MainToastModifier())
+    .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
+    .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
+    .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
+    .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection) }
+    .environmentObject(viewingImage)
+    .environmentObject(activity)
+    .environmentObject(postReply)
+    .environmentObject(shortMessagePost)
+    .environmentObject(currentUser)
+    .environmentObject(textSelection)
+    .preferredColorScheme(prefs.colorScheme.scheme)
   }
 }
 

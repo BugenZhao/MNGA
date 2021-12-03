@@ -10,7 +10,7 @@ import SwiftUI
 
 struct AppActivityView: View {
   let activityItems: [Any]
-  
+
   var body: some View {
     DismissableStubView()
   }

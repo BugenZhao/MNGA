@@ -5,8 +5,8 @@
 //  Created by Bugen Zhao on 2021/10/20.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 enum PageToReload: Equatable, Hashable {
@@ -14,7 +14,7 @@ enum PageToReload: Equatable, Hashable {
   case exact(Int)
 
   static var first: Self {
-      .exact(1)
+    .exact(1)
   }
 }
 
@@ -51,25 +51,25 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
       self.task = task
       self.subject = subject
       self.content = content
-      self.attachments = []
+      attachments = []
       self.anonymous = anonymous
     }
 
     static var dummy: Context {
-      Context.init(task: .dummy)
+      Context(task: .dummy)
     }
   }
-
 
   // MARK: States
 
   @Published var showEditor = false {
     willSet {
-      if showEditor == true, newValue == false, self.context != nil, self.sent == nil {
+      if showEditor == true, newValue == false, context != nil, sent == nil {
         ToastModel.showAuto(.success("Draft Saved"))
       }
     }
   }
+
   @Published var context: Context? = nil
   @Published var isSending = false
   @Published var sent = nil as Context? {
@@ -78,13 +78,12 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
 
   private var contexts = [Task: Context]()
   private func reset() {
-    if let context = self.context {
-      self.contexts.removeValue(forKey: context.task)
+    if let context = context {
+      contexts.removeValue(forKey: context.task)
       self.context = nil
     }
-    self.isSending = false
+    isSending = false
   }
-
 
   // MARK: Interface
 
@@ -97,59 +96,58 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
   public func show(action: Task.Action, pageToReload: PageToReload? = nil) {
     let task = Task(action: action, pageToReload: pageToReload)
 
-    if self.showEditor { return }
-    self.context = nil
-    self.showEditor = true
+    if showEditor { return }
+    context = nil
+    showEditor = true
 
-    if let context = self.contexts[task] {
+    if let context = contexts[task] {
       self.context = context
     } else {
-      self.buildContext(with: task)
+      buildContext(with: task)
     }
   }
 
   public func discardCurrentContext() {
-    guard self.showEditor else { return }
+    guard showEditor else { return }
 
-    self.reset()
-    self.showEditor = false
+    reset()
+    showEditor = false
   }
 
   public func send() {
-    guard let context = self.context else { return }
-    self.isSending = true
-    self.doSend(with: context)
+    guard let context = context else { return }
+    isSending = true
+    doSend(with: context)
   }
 
   // MARK: Build Context
 
-  func buildContext(with task: Task, ignoreError: Bool = false) {
+  func buildContext(with _: Task, ignoreError _: Bool = false) {
     preconditionFailure()
   }
 
-  func onBuildContextError(_ e: Error) {
+  func onBuildContextError(_: Error) {
     DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { self.showEditor = false }
   }
 
   func onBuildContextSuccess(task: Task, context: Context) {
-    self.contexts[task] = context
+    contexts[task] = context
     withAnimation { self.context = context }
   }
 
-
   // MARK: Send Request
 
-  func doSend(with context: Context) {
+  func doSend(with _: Context) {
     preconditionFailure()
   }
 
-  func onSendError(_ e: Error) {
-    self.isSending = false
+  func onSendError(_: Error) {
+    isSending = false
   }
 
   func onSendSuccess(context: Context) {
-    self.sent = context
-    self.showEditor = false
+    sent = context
+    showEditor = false
     #if os(iOS)
       HapticUtils.play(type: .success)
     #endif

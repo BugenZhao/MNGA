@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 
 struct TopicListView: View {
   typealias DataSource = PagingDataSource<TopicListResponse, Topic>
@@ -39,9 +39,9 @@ struct TopicListView: View {
     default: fatalError()
     }
   }
-  
+
   var mock: Bool {
-    self.forum.id.fid.isMNGAMockID
+    forum.id.fid.isMNGAMockID
   }
 
   var itemBindings: Binding<[Topic]> {
@@ -64,7 +64,7 @@ struct TopicListView: View {
   static func build(forum: Forum) -> Self {
     let dataSourceLastPost = DataSource(
       buildRequest: { page in
-        return .topicList(TopicListRequest.with {
+        .topicList(TopicListRequest.with {
           $0.id = forum.id
           $0.page = UInt32(page)
           $0.order = .lastPost
@@ -79,7 +79,7 @@ struct TopicListView: View {
     )
     let dataSourcePostDate = DataSource(
       buildRequest: { page in
-        return .topicList(TopicListRequest.with {
+        .topicList(TopicListRequest.with {
           $0.id = forum.id
           $0.page = UInt32(page)
           $0.order = .postDate
@@ -92,7 +92,7 @@ struct TopicListView: View {
       },
       id: \.id
     )
-    return Self.init(
+    return Self(
       forum: forum,
       dataSourceLastPost: dataSourceLastPost,
       dataSourcePostDate: dataSourcePostDate,
@@ -101,7 +101,7 @@ struct TopicListView: View {
   }
 
   func newTopic() {
-    self.postReply.show(action: .with {
+    postReply.show(action: .with {
       $0.operation = .new
       $0.forumID = self.forum.id
     }, pageToReload: nil)
@@ -158,11 +158,12 @@ struct TopicListView: View {
         }
       }
 
-      ShareLinksView(navigationID: navID) { }
+      ShareLinksView(navigationID: navID) {}
 
       Section {
         if let subforums = dataSource.latestResponse?.subforums,
-          !subforums.isEmpty {
+           !subforums.isEmpty
+        {
           Button(action: { showingSubforumsModal = true }) {
             Label("Subforums (\(subforums.count))", systemImage: "list.triangle")
           }
@@ -206,21 +207,21 @@ struct TopicListView: View {
   @ViewBuilder
   var subforum: some View {
     let destination = TopicListView.build(forum: self.currentShowingSubforum ?? Forum())
-    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) { }
+    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) {}
       .isDetailLink(false)
       .hidden()
-    NavigationLink(destination: EmptyView()) { } .hidden() // hack: unexpected pop
+    NavigationLink(destination: EmptyView()) {}.hidden() // hack: unexpected pop
   }
 
   @ViewBuilder
   var navigations: some View {
-    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) { }
+    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) {}
       .isDetailLink(false)
       .hidden()
-    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) { }
+    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) {}
       .isDetailLink(false)
       .hidden()
-    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) { }
+    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) {}
       .hidden()
   }
 
@@ -250,23 +251,23 @@ struct TopicListView: View {
       if dataSource.notLoaded {
         ProgressView()
           .onAppear {
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation
-            self.dataSource.initialLoad()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation
+              self.dataSource.initialLoad()
+            }
           }
-        }
       } else {
         List {
           ForEach(itemBindings, id: \.id) { topic in
             NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
               TopicRowView(topic: topic.w, useTopicPostDate: order == .postDate)
-            } .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
-            .id(order)
+          .id(order)
         }
       }
     }
-      .refreshable(dataSource: dataSource, refreshWhenEnterForeground: true)
-      .mayGroupedListStyle()
+    .refreshable(dataSource: dataSource, refreshWhenEnterForeground: true)
+    .mayGroupedListStyle()
   }
 
   var body: some View {
@@ -277,20 +278,20 @@ struct TopicListView: View {
         list
       }
     }
-      .searchable(model: searchModel, prompt: "Search Topics".localized, iOS15Only: true)
-      .navigationTitleLarge(string: forum.name.localized)
-      .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
-      .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
-      .background { subforum; navigations }
-      .toolbarWithFix { toolbar }
-      .onAppear { selectedForum.inner = forum }
-      .onChange(of: prefs.defaultTopicListOrder) { if $0 != self.order { self.order = $0 } }
-      .onAppear { if self.order == nil { self.order = prefs.defaultTopicListOrder } }
-      .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
+    .searchable(model: searchModel, prompt: "Search Topics".localized, iOS15Only: true)
+    .navigationTitleLarge(string: forum.name.localized)
+    .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
+    .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
+    .background { subforum; navigations }
+    .toolbarWithFix { toolbar }
+    .onAppear { selectedForum.inner = forum }
+    .onChange(of: prefs.defaultTopicListOrder) { if $0 != self.order { self.order = $0 } }
+    .onAppear { if self.order == nil { self.order = prefs.defaultTopicListOrder } }
+    .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
   }
 
   var navID: NavigationIdentifier {
-    return .forumID(forum.id)
+    .forumID(forum.id)
   }
 
   func updateForumMeta(r: TopicListResponse?) {
@@ -305,12 +306,6 @@ struct TopicListView: View {
 
 struct TopicListView_Previews: PreviewProvider {
   static var previews: some View {
-    let _ = Forum.with {
-      $0.id = .with { i in i.fid = "-7" }
-      $0.name = "大漩涡"
-      $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/-7.png"
-    }
-
     let genshinForum = Forum.with {
       $0.id = .with { i in i.fid = "650" }
       $0.name = "原神"

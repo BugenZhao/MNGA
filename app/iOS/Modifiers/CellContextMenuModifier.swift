@@ -16,14 +16,14 @@ struct CellAction {
   static var separator = nil as CellAction?
 }
 
-fileprivate class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
+private class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
   let actions: [CellAction?]
 
   init(actions: [CellAction?]) {
     self.actions = actions
   }
 
-  func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+  func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration? {
     UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
       let actions = self.actions.map { action -> UIMenuElement? in
         guard let action = action else { return nil }
@@ -34,7 +34,7 @@ fileprivate class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
         )
       }
 
-      let children = actions.split(separator: nil).enumerated().flatMap { (i, actions) -> [UIMenuElement] in
+      let children = actions.split(separator: nil).enumerated().flatMap { i, actions -> [UIMenuElement] in
         let actions = actions.compactMap { $0 }
         if i == 0 {
           return actions
@@ -59,8 +59,8 @@ struct CellContextMenuModifier: ViewModifier {
   init(actions: [CellAction?]) {
     // CAVEATS: do not store `delegate` as @State or only add the interaction once,
     //          since the partial applied `self` (SwiftUI View) in callbacks may be stale after rebuilt
-    self.delegate = MenuDelegate(actions: actions)
-    self.interaction = UIContextMenuInteraction(delegate: self.delegate)
+    delegate = MenuDelegate(actions: actions)
+    interaction = UIContextMenuInteraction(delegate: delegate)
   }
 
   func body(content: Content) -> some View {
@@ -73,6 +73,6 @@ struct CellContextMenuModifier: ViewModifier {
 
 extension View {
   func cellContextMenu(actions: [CellAction?]) -> some View {
-    self.modifier(CellContextMenuModifier(actions: actions))
+    modifier(CellContextMenuModifier(actions: actions))
   }
 }

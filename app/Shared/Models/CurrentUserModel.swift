@@ -5,9 +5,9 @@
 //  Created by Bugen Zhao on 2021/10/23.
 //
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 class CurrentUserModel: ObservableObject {
   private let authStorage = AuthStorage.shared

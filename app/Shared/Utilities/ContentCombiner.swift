@@ -5,10 +5,10 @@
 //  Created by Bugen Zhao on 7/11/21.
 //
 
+import Colorful
 import Foundation
 import SwiftUI
 import SwiftUIX
-import Colorful
 
 class ContentCombiner {
   enum Subview {
@@ -24,18 +24,18 @@ class ContentCombiner {
     static let strikethrough = Self(rawValue: 1 << 1)
   }
 
-  static private let palette: [String: Color] = [
+  private static let palette: [String: Color] = [
     "skyblue": .skyBlue,
     "royalblue": .royalBlue,
-    "blue": .init(hex: 0x0066bb),
+    "blue": .init(hex: 0x0066BB),
     "darkblue": .darkBlue,
-    "orange": .init(hex: 0xa06700),
+    "orange": .init(hex: 0xA06700),
     "orangered": .orangeRed,
     "crimson": .crimson,
-    "red": .init(hex: 0xdd0000),
+    "red": .init(hex: 0xDD0000),
     "firebrick": .fireBrick,
     "darkred": .darkRed,
-    "green": .init(hex: 0x3d9f0e),
+    "green": .init(hex: 0x3D9F0E),
     "limegreen": .limeGreen,
     "seagreen": .seaGreen,
     "teal": .init(hex: 0x008080),
@@ -43,15 +43,15 @@ class ContentCombiner {
     "tomato": .tomato,
     "coral": .coral,
     "purple": .init(hex: 0x800080),
-    "indigo": .init(hex: 0x4b0082),
+    "indigo": .init(hex: 0x4B0082),
     "burlywood": .burleywood,
     "sandybrown": .sandyBrown,
     "chocolate": .chocolate,
     "sienna": .sienna,
     "silver": .init(hex: 0x888888),
   ]
-  static private let ignoredTags = [
-    "list"
+  private static let ignoredTags = [
+    "list",
   ]
 
   private let parent: ContentCombiner?
@@ -66,44 +66,50 @@ class ContentCombiner {
   private var envs = [String: Any]()
 
   private var font: Font? {
-    self.fontModifier(parent?.font)
+    fontModifier(parent?.font)
   }
+
   private var color: Color? {
-    self.colorModifier(parent?.color)
+    colorModifier(parent?.color)
   }
+
   private var otherStyles: OtherStyles {
-    self.otherStylesModifier(parent?.otherStyles ?? [])
+    otherStylesModifier(parent?.otherStyles ?? [])
   }
 
   private func setEnv(key: String, value: Any?) {
-    self.envs[key] = value
+    envs[key] = value
   }
+
   private func setEnv(key: String, globalValue: Any?) {
-    if self.parent == nil {
-      self.envs[key] = globalValue
+    if parent == nil {
+      envs[key] = globalValue
     } else {
-      self.parent?.setEnv(key: key, globalValue: globalValue)
+      parent?.setEnv(key: key, globalValue: globalValue)
     }
   }
+
   private func getEnv(key: String) -> Any? {
-    if let v = self.envs[key] {
+    if let v = envs[key] {
       return v
     } else {
-      return self.parent?.getEnv(key: key)
+      return parent?.getEnv(key: key)
     }
   }
 
   private var inQuote: Bool {
-    get { self.getEnv(key: "inQuote") != nil }
-    set { self.setEnv(key: "inQuote", value: newValue ? "true" : nil) }
+    get { getEnv(key: "inQuote") != nil }
+    set { setEnv(key: "inQuote", value: newValue ? "true" : nil) }
   }
+
   private var replyTo: PostId? {
-    get { self.getEnv(key: "replyTo") as! PostId? }
-    set { self.setEnv(key: "replyTo", value: newValue) }
+    get { getEnv(key: "replyTo") as! PostId? }
+    set { setEnv(key: "replyTo", value: newValue) }
   }
+
   private var selfId: PostId? {
-    get { self.getEnv(key: "id") as! PostId? }
-    set { self.setEnv(key: "id", value: newValue) }
+    get { getEnv(key: "id") as! PostId? }
+    set { setEnv(key: "id", value: newValue) }
   }
 
   init(
@@ -114,29 +120,29 @@ class ContentCombiner {
     overrideAlignment: HorizontalAlignment? = nil
   ) {
     self.parent = parent
-    self.actionModel = parent?.actionModel
-    self.fontModifier = font
-    self.colorModifier = color
-    self.otherStylesModifier = otherStyles
-    self.alignment = overrideAlignment ?? parent?.alignment ?? .leading
+    actionModel = parent?.actionModel
+    fontModifier = font
+    colorModifier = color
+    otherStylesModifier = otherStyles
+    alignment = overrideAlignment ?? parent?.alignment ?? .leading
   }
 
   init(actionModel: TopicDetailsActionModel?, id: PostId?, defaultFont: Font, defaultColor: Color, initialEnvs: [String: Any]? = nil) {
-    self.parent = nil
+    parent = nil
     self.actionModel = actionModel
-    self.fontModifier = { _ in defaultFont }
-    self.colorModifier = { _ in defaultColor }
-    self.otherStylesModifier = { $0 }
-    self.alignment = .leading
-    self.envs = initialEnvs ?? [:]
+    fontModifier = { _ in defaultFont }
+    colorModifier = { _ in defaultColor }
+    otherStylesModifier = { $0 }
+    alignment = .leading
+    envs = initialEnvs ?? [:]
 
-    self.selfId = id
+    selfId = id
   }
 
   private func styledText(_ text: Text, overridenFont: Font? = nil, overridenColor: Color? = nil) -> Text {
     var text: Text = text
-      .font(overridenFont ?? self.font)
-      .foregroundColor(overridenColor ?? self.color)
+      .font(overridenFont ?? font)
+      .foregroundColor(overridenColor ?? color)
 
     if otherStyles.contains(.underline) {
       text = text.underline()
@@ -152,7 +158,7 @@ class ContentCombiner {
     let subview: Subview
 
     if view is Text {
-      let text = self.styledText(view as! Text)
+      let text = styledText(view as! Text)
       subview = Subview.text(text)
     } else if view is AnyView {
       subview = Subview.other(view as! AnyView)
@@ -160,15 +166,15 @@ class ContentCombiner {
       subview = Subview.other(view.eraseToAnyView())
     }
 
-    self.subviews.append(subview)
+    subviews.append(subview)
   }
 
   private func append(_ subview: Subview) {
-    self.subviews.append(subview)
+    subviews.append(subview)
   }
 
   private func build() -> Subview {
-    var textBuffer: Text? = nil
+    var textBuffer: Text?
     var results = [AnyView]()
 
     func tryAppendTextBuffer() {
@@ -179,15 +185,15 @@ class ContentCombiner {
       }
     }
 
-    for subview in self.subviews {
+    for subview in subviews {
       switch subview {
-      case .text(let text):
+      case let .text(text):
         textBuffer = (textBuffer ?? Text("")) + text
       case .breakline:
         if textBuffer != nil {
           textBuffer = textBuffer! + Text("\n")
         }
-      case .other(let view):
+      case let .other(view):
         tryAppendTextBuffer()
         results.append(view)
       }
@@ -199,7 +205,7 @@ class ContentCombiner {
     } else {
       // complex view
       tryAppendTextBuffer()
-      let stack = VStack(alignment: self.alignment, spacing: 8) {
+      let stack = VStack(alignment: alignment, spacing: 8) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
@@ -211,13 +217,13 @@ class ContentCombiner {
 
   @ViewBuilder
   func buildView() -> some View {
-    switch self.build() {
-    case .text(let text):
+    switch build() {
+    case let .text(text):
       text
     case .breakline:
       // not reached
       EmptyView()
-    case .other(let any):
+    case let .other(any):
       any
     }
   }
@@ -230,14 +236,14 @@ class ContentCombiner {
     guard let value = span.value else { return }
 
     switch value {
-    case .breakLine(_):
-      self.append(.breakline)
-    case .plain(let plain):
-      self.visit(plain: plain)
-    case .sticker(let sticker):
-      self.visit(sticker: sticker)
-    case .tagged(let tagged):
-      self.visit(tagged: tagged)
+    case .breakLine:
+      append(.breakline)
+    case let .plain(plain):
+      visit(plain: plain)
+    case let .sticker(sticker):
+      visit(sticker: sticker)
+    case let .tagged(tagged):
+      visit(tagged: tagged)
     }
   }
 
@@ -252,7 +258,7 @@ class ContentCombiner {
     } else {
       text = Text(plain.text)
     }
-    self.append(text)
+    append(text)
   }
 
   private func visit(divider: Span.Tagged) {
@@ -263,7 +269,7 @@ class ContentCombiner {
     }
     combiner.append(Divider())
     let subview = combiner.build()
-    self.append(subview)
+    append(subview)
   }
 
   private func visit(sticker: Span.Sticker) {
@@ -281,64 +287,64 @@ class ContentCombiner {
       view = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
     }
 
-    self.append(view)
+    append(view)
   }
 
   private func visit(tagged: Span.Tagged) {
     switch tagged.tag {
     case "_divider":
-      self.visit(divider: tagged)
+      visit(divider: tagged)
     case "img":
-      self.visit(image: tagged)
+      visit(image: tagged)
     case "quote":
-      self.visit(quote: tagged)
+      visit(quote: tagged)
     case "b":
-      self.visit(bold: tagged)
+      visit(bold: tagged)
     case "uid":
-      self.visit(uid: tagged)
+      visit(uid: tagged)
     case "pid":
-      self.visit(pid: tagged)
+      visit(pid: tagged)
     case "tid":
-      self.visit(tid: tagged)
+      visit(tid: tagged)
     case "url":
-      self.visit(url: tagged)
+      visit(url: tagged)
     case "code":
-      self.visit(code: tagged)
+      visit(code: tagged)
     case "u":
-      self.visit(underlined: tagged)
+      visit(underlined: tagged)
     case "i":
-      self.visit(italic: tagged)
+      visit(italic: tagged)
     case "del":
-      self.visit(deleted: tagged)
+      visit(deleted: tagged)
     case "color":
-      self.visit(colored: tagged)
+      visit(colored: tagged)
     case "size":
-      self.visit(sized: tagged)
+      visit(sized: tagged)
     case "collapse":
-      self.visit(collapsed: tagged)
+      visit(collapsed: tagged)
     case "flash":
-      self.visit(flash: tagged)
+      visit(flash: tagged)
     case "attach":
-      self.visit(attach: tagged)
+      visit(attach: tagged)
     case "align":
-      self.visit(align: tagged)
+      visit(align: tagged)
     case "_mnga":
-      self.visit(mnga: tagged)
+      visit(mnga: tagged)
     default:
-      self.visit(defaultTagged: tagged)
+      visit(defaultTagged: tagged)
     }
   }
 
   private func visit(image: Span.Tagged) {
     guard let value = image.spans.first?.value else { return }
-    guard case .plain(let plain) = value else { return }
+    guard case let .plain(plain) = value else { return }
 
     let urlText = plain.text
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
 
-    let onlyThumbs = self.inQuote && self.replyTo != nil
+    let onlyThumbs = inQuote && replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
-    self.append(image)
+    append(image)
   }
 
   private func visit(quote: Span.Tagged) {
@@ -352,13 +358,13 @@ class ContentCombiner {
     metaCombiner.visit(spans: metaSpans)
 
     var tapAction: (() -> Void)?
-    var lineLimit: Int? = nil
+    var lineLimit: Int?
 
     if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
-      if let model = self.actionModel, let id = self.selfId {
+      if let model = actionModel, let id = selfId {
         model.recordReply(from: id, to: pid)
         tapAction = { model.showReplyChain(from: id) }
-        lineLimit = 5 // todo: add an option
+        lineLimit = 5 // TODO: add an option
       }
 
       let name = metaCombiner.getEnv(key: "username") as! String?
@@ -374,8 +380,8 @@ class ContentCombiner {
 
     let view = QuoteView(fullWidth: true) {
       combiner.buildView()
-    } .lineLimit(lineLimit)
-    self.append(view)
+    }.lineLimit(lineLimit)
+    append(view)
   }
 
   private func visit(bold: Span.Tagged) {
@@ -389,7 +395,7 @@ class ContentCombiner {
       combiner.visit(spans: bold.spans)
     }
 
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(uid: Span.Tagged) {
@@ -398,17 +404,17 @@ class ContentCombiner {
     combiner.visit(spans: uid.spans)
 
     var name: String?
-    if case .plain(let p) = uid.spans.first?.value, p.text != "" {
+    if case let .plain(p) = uid.spans.first?.value, p.text != "" {
       name = p.text
       self.setEnv(key: "username", globalValue: p.text)
     }
     if let uid = uid.attributes.first {
-      self.setEnv(key: "uid", globalValue: uid)
+      setEnv(key: "uid", globalValue: uid)
     } else if let name = name { // treat raw name as id, mainly for anonymous users
-      self.setEnv(key: "uid", globalValue: name)
+      setEnv(key: "uid", globalValue: name)
     }
 
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(pid: Span.Tagged) {
@@ -420,9 +426,9 @@ class ContentCombiner {
         $0.tid = pid.attributes[1]
       }
       combiner.append(Text(" #\(id.pid) "))
-      self.replyTo = id
+      replyTo = id
     }
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(tid: Span.Tagged) {
@@ -430,7 +436,7 @@ class ContentCombiner {
 //    combiner.append(Text("Topic"))
     if let tid = tid.attributes.first {
 //      combiner.append(Text(" #\(tid) "))
-      self.replyTo = .with {
+      replyTo = .with {
         $0.pid = "0"
         $0.tid = tid
       }
@@ -441,7 +447,7 @@ class ContentCombiner {
       $0.spans = tid.spans
       $0.attributes = ["read.php?tid=\(id)"]
     }
-    self.visit(url: url, defaultTitle: Text("Topic \(id)"))
+    visit(url: url, defaultTitle: Text("Topic \(id)"))
   }
 
   private func visit(url: Span.Tagged, defaultTitle: Text? = nil) {
@@ -462,47 +468,47 @@ class ContentCombiner {
       guard let url = URL(string: urlString, relativeTo: URLs.base) else { return }
 
       switch url.mngaNavigationIdentifier {
-      case .topicID(let tid, _):
+      case let .topicID(tid, _):
         self.actionModel?.navigateToTid = tid
-      case .forumID(let id):
+      case let .forumID(id):
         self.actionModel?.navigateToForum = Forum.with { $0.id = id }
       case .none:
         OpenURLModel.shared.open(url: url)
       }
     }
 
-    self.append(link)
+    append(link)
   }
 
   private func visit(code: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.system(.footnote, design: .monospaced) })
     combiner.visit(spans: code.spans)
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(underlined: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, otherStyles: { $0.union(.underline) })
     combiner.visit(spans: underlined.spans)
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(italic: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { $0?.italic() })
     combiner.visit(spans: italic.spans)
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(deleted: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, otherStyles: { $0.union(.strikethrough) })
     combiner.visit(spans: deleted.spans)
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(colored: Span.Tagged) {
     let color = colored.attributes.first.flatMap { Self.palette[$0] }
     let combiner = ContentCombiner(parent: self, color: { color ?? $0 })
     combiner.visit(spans: colored.spans)
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(sized: Span.Tagged) {
@@ -517,7 +523,7 @@ class ContentCombiner {
       return Font.custom("", fixedSize: newSize)
     })
     combiner.visit(spans: sized.spans)
-    self.append(combiner.build())
+    append(combiner.build())
   }
 
   private func visit(collapsed: Span.Tagged) {
@@ -528,23 +534,23 @@ class ContentCombiner {
     let content = combiner.buildView()
 
     let view = CollapsedContentView(title: title, content: { content })
-    self.append(view)
+    append(view)
   }
 
   private func visit(flash: Span.Tagged) {
     switch flash.attributes.first {
     case "video":
-      self.visitFlash(video: flash)
+      visitFlash(video: flash)
     case "audio":
-      self.visitFlash(audio: flash)
+      visitFlash(audio: flash)
     default: // treat as video
-      self.visitFlash(video: flash)
+      visitFlash(video: flash)
     }
   }
 
   private func visitFlash(video: Span.Tagged) {
     guard let value = video.spans.first?.value else { return }
-    guard case .plain(let plain) = value else { return }
+    guard case let .plain(plain) = value else { return }
 
     let urlText = plain.text
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
@@ -552,12 +558,12 @@ class ContentCombiner {
     let link = ContentButtonView(icon: "film", title: Text("View Video"), inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
     }
-    self.append(link)
+    append(link)
   }
 
   private func visitFlash(audio: Span.Tagged) {
     guard let value = audio.spans.first?.value else { return }
-    guard case .plain(let plain) = value else { return }
+    guard case let .plain(plain) = value else { return }
 
     let tokens = plain.text.split(separator: "?").map(String.init)
     let duration = tokens.last { $0.contains("duration") }
@@ -575,12 +581,12 @@ class ContentCombiner {
     let link = ContentButtonView(icon: "waveform", title: title, inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
     }
-    self.append(link)
+    append(link)
   }
 
   private func visit(attach: Span.Tagged) {
     guard let value = attach.spans.first?.value else { return }
-    guard case .plain(let plain) = value else { return }
+    guard case let .plain(plain) = value else { return }
 
     let urlText = plain.text
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
@@ -588,11 +594,11 @@ class ContentCombiner {
     let link = ContentButtonView(icon: "paperclip", title: Text("View Attachment"), inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
     }
-    self.append(link)
+    append(link)
   }
 
   private func visit(align: Span.Tagged) {
-    var alignment: HorizontalAlignment? = nil
+    var alignment: HorizontalAlignment?
     if align.attributes.first == "center" {
       alignment = .center
     } else if align.attributes.first == "left" {
@@ -611,21 +617,21 @@ class ContentCombiner {
         inner
         Spacer()
       }
-      self.append(view)
+      append(view)
     } else if align.attributes.first == "left" {
       let view = HStack {
         inner
         Spacer()
       }
-      self.append(view)
+      append(view)
     } else if align.attributes.first == "right" {
       let view = HStack {
         Spacer()
         inner
       }
-      self.append(view)
+      append(view)
     } else {
-      self.append(inner)
+      append(inner)
     }
   }
 
@@ -633,7 +639,7 @@ class ContentCombiner {
     guard let fn = mnga.attributes.first else { return }
     switch fn {
     case "version":
-      self.append(Text(getVersionWithBuild()))
+      append(Text(getVersionWithBuild()))
     default:
       break
     }
@@ -641,7 +647,7 @@ class ContentCombiner {
 
   private func visit(defaultTagged: Span.Tagged) {
     if Self.ignoredTags.contains(defaultTagged.tag) {
-      self.visit(spans: defaultTagged.spans)
+      visit(spans: defaultTagged.spans)
       return
     }
 
@@ -650,6 +656,6 @@ class ContentCombiner {
     combiner.append(Text("[\(defaultTagged.tag)]").font(tagFont))
     combiner.visit(spans: defaultTagged.spans)
     combiner.append(Text("[/\(defaultTagged.tag)]").font(tagFont))
-    self.append(combiner.build())
+    append(combiner.build())
   }
 }

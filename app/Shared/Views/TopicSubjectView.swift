@@ -36,13 +36,14 @@ struct TopicSubjectView: View {
       if topic.isFavored {
         Image(systemName: "bookmark")
       }
-    } .font(.footnote.bold())
+    }.font(.footnote.bold())
   }
 
   // for compatibility
   var tags: [String] {
     topic.subject.tags.isEmpty ? topic.tags : topic.subject.tags
   }
+
   var content: String {
     topic.subject.content.isEmpty ? topic.subjectContent : topic.subject.content
   }
@@ -65,7 +66,7 @@ struct TopicSubjectView: View {
           ForEach(tags, id: \.self) { tag in
             Text(tag)
           }
-        } .font(.footnote)
+        }.font(.footnote)
           .foregroundColor(.accentColor)
           .lineLimit(1)
       }

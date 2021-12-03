@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import SDWebImageSwiftUI
+import SwiftUI
 
 struct ForumRowView: View {
   let forum: Forum
@@ -20,7 +20,7 @@ struct ForumRowView: View {
       HStack {
         Text(forum.name.localized)
           .foregroundColor(.primary)
-        if case .stid(_) = forum.id.id {
+        if case .stid = forum.id.id {
           Image(systemName: "arrow.uturn.right")
             .font(.footnote)
             .foregroundColor(.secondary)
@@ -35,7 +35,7 @@ struct ForumRowView: View {
             Text(Image(systemName: "star.fill"))
               .font(.caption2)
           }
-        } .foregroundColor(.secondary)
+        }.foregroundColor(.secondary)
       }
     }
   }
@@ -48,15 +48,15 @@ struct FavoriteModifier: ViewModifier {
   func body(content: Content) -> some View {
     content
       .contextMenu(ContextMenu(menuItems: {
-      Button(action: {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          withAnimation { toggleFavorite() }
+        Button(action: {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            withAnimation { toggleFavorite() }
+          }
+        }) {
+          let text: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
+          let image = isFavorite ? "star.slash.fill" : "star"
+          Label(text, systemImage: image)
         }
-      }) {
-        let text: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
-        let image = isFavorite ? "star.slash.fill" : "star"
-        Label(text, systemImage: image)
-      }
-    }))
+      }))
   }
 }

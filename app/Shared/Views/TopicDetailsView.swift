@@ -47,6 +47,7 @@ struct TopicDetailsView: View {
   var localMode: Bool {
     forceLocalMode || (dataSource.latestResponse?.isLocalCache == true)
   }
+
   var mock: Bool {
     topic.id.isMNGAMockID
   }
@@ -70,7 +71,7 @@ struct TopicDetailsView: View {
 
     let dataSource = DataSource(
       buildRequest: { page in
-        return .topicDetails(TopicDetailsRequest.with {
+        .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
           if let pid = onlyPost.id?.pid { $0.postID = pid }
@@ -89,12 +90,12 @@ struct TopicDetailsView: View {
       loadFromPage: fromPage
     )
 
-    return Self.init(topic: topicBinding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, forceLocalMode: localMode, postIdToJump: postIdToJump)
+    return Self(topic: topicBinding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, forceLocalMode: localMode, postIdToJump: postIdToJump)
       .environment(\.enableAuthorOnly, !localMode)
   }
 
   static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
-    return StaticTopicDetailsView(topic: topic) { binding in
+    StaticTopicDetailsView(topic: topic) { binding in
       Self.build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
     }
   }
@@ -102,7 +103,7 @@ struct TopicDetailsView: View {
   static func build(topic: Topic, only authorID: String) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
-        return .topicDetails(TopicDetailsRequest.with {
+        .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
           $0.authorID = authorID
@@ -118,7 +119,7 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self.init(topic: binding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil), forceLocalMode: false)
+      Self(topic: binding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil), forceLocalMode: false)
         .environment(\.enableAuthorOnly, false)
     }
   }
@@ -176,7 +177,7 @@ struct TopicDetailsView: View {
   var moreMenu: some View {
     Menu {
       Section {
-        if enableAuthorOnly && !topic.authorName.isAnonymous {
+        if enableAuthorOnly, !topic.authorName.isAnonymous {
           Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
             Label("Author Only", systemImage: "person.fill")
           }
@@ -212,7 +213,7 @@ struct TopicDetailsView: View {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
         Label("#" + topic.id, systemImage: "number")
-        if topic.hasFav && topic.fav != "" {
+        if topic.hasFav, topic.fav != "" {
           Label(topic.fav, systemImage: "bookmark.fill")
         }
       }
@@ -235,14 +236,15 @@ struct TopicDetailsView: View {
           moreMenu
         }
       }
-    } .imageScale(.large)
+    }.imageScale(.large)
   }
 
   @ViewBuilder
   var mayLoadBackButton: some View {
     if let _ = dataSource.loadFromPage,
-      let prevPage = dataSource.firstLoadedPage?.advanced(by: -1), prevPage >= 1,
-      let currFirst = dataSource.items.min(by: { $0.floor < $1.floor }) {
+       let prevPage = dataSource.firstLoadedPage?.advanced(by: -1), prevPage >= 1,
+       let currFirst = dataSource.items.min(by: { $0.floor < $1.floor })
+    {
       Button(action: {
         self.action.scrollToFloor = Int(currFirst.floor) // scroll to first for fixing scroll position
         dataSource.reload(page: prevPage, evenIfNotLoaded: true) {
@@ -251,7 +253,7 @@ struct TopicDetailsView: View {
         }
       }) {
         Label("Load Page \(prevPage)", systemImage: "arrow.counterclockwise")
-      } .disabled(dataSource.isLoading)
+      }.disabled(dataSource.isLoading)
     }
   }
 
@@ -279,7 +281,7 @@ struct TopicDetailsView: View {
   var headerSection: some View {
     Section(header: Text("Topic")) {
       headerSectionInner
-    } .transition(.asymmetric(insertion: .scale, removal: .opacity))
+    }.transition(.asymmetric(insertion: .scale, removal: .opacity))
   }
 
   @ViewBuilder
@@ -312,13 +314,13 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var navigation: some View {
     let showingChain = self.action.showingReplyChain ?? .init()
-    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) { } .hidden()
+    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) {}.hidden()
 
     let authorOnlyView = TopicDetailsView.build(topic: topic, only: self.action.navigateToAuthorOnly ?? .init())
-    NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) { } .hidden()
+    NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) {}.hidden()
 
     let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
-    NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) { } .hidden()
+    NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) {}.hidden()
   }
 
   @ViewBuilder
@@ -356,7 +358,7 @@ struct TopicDetailsView: View {
           // Note that the `.id(_:)` on this section is necessary, or the `onAppear`
           // trigger can not be triggered again.
           LoadingRowView()
-        } .id("page\(nextPage)")
+        }.id("page\(nextPage)")
       }
     }
   }
@@ -423,21 +425,21 @@ struct TopicDetailsView: View {
   var main: some View {
     ScrollViewReader { proxy in
       Group {
-        if prefs.usePaginatedDetails && onlyPost.id == nil {
+        if prefs.usePaginatedDetails, onlyPost.id == nil {
           paginatedMain
         } else {
           listMain
         }
-      } .onReceive(action.$scrollToFloor) { floor in
+      }.onReceive(action.$scrollToFloor) { floor in
         guard let floor = floor else { return }
         let item = dataSource.items.first { $0.floor == UInt32(floor) }
         proxy.scrollTo(item, anchor: .top)
-      } .onReceive(action.$scrollToPid) { pid in
+      }.onReceive(action.$scrollToPid) { pid in
         guard let pid = pid else { return }
         let item = dataSource.items.first { $0.id.pid == pid }
         proxy.scrollTo(item, anchor: .top)
       }
-    } .mayGroupedListStyle()
+    }.mayGroupedListStyle()
       .withTopicDetailsAction(action: action)
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
       .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
@@ -473,7 +475,7 @@ struct TopicDetailsView: View {
   }
 
   var navID: NavigationIdentifier {
-    return .topicID(tid: topic.id, fav: topic.hasFav ? topic.fav : nil)
+    .topicID(tid: topic.id, fav: topic.hasFav ? topic.fav : nil)
   }
 
   func toggleFavor() {
@@ -489,7 +491,7 @@ struct TopicDetailsView: View {
   }
 
   func doReplyTopic() {
-    self.postReply.show(action: .with {
+    postReply.show(action: .with {
       $0.operation = .reply
       $0.forumID = .with { f in
         f.fid = topic.fid
@@ -505,7 +507,7 @@ struct TopicDetailsView: View {
     guard let sent = sent else { return }
 
     switch sent.task.pageToReload {
-    case .exact(let page):
+    case let .exact(page):
       dataSource.reload(page: page, evenIfNotLoaded: false)
     case .last:
       dataSource.reloadLastPages(evenIfNotLoaded: false)
@@ -520,21 +522,21 @@ struct TopicDetailsView: View {
 
     guard #available(iOS 15.0, *) else {
       // workaround for avoiding loading twice
-      if self.topic.authorID != newTopic.authorID {
-        self.topic.authorID = newTopic.authorID
+      if topic.authorID != newTopic.authorID {
+        topic.authorID = newTopic.authorID
       }
-      if self.topic.subject != newTopic.subject {
-        self.topic.subject = newTopic.subject
+      if topic.subject != newTopic.subject {
+        topic.subject = newTopic.subject
       }
       return
     }
 
     if newTopic.hasParentForum {
-      self.topic.parentForum = newTopic.parentForum
+      topic.parentForum = newTopic.parentForum
     }
-    self.topic.authorID = newTopic.authorID
-    self.topic.subject = newTopic.subject
-    self.topic.repliesNumLastVisit = newTopic.repliesNum // mark as read at frontend
+    topic.authorID = newTopic.authorID
+    topic.subject = newTopic.subject
+    topic.repliesNumLastVisit = newTopic.repliesNum // mark as read at frontend
 
 //    if let response = response {
 //      DispatchQueue.main.async {
@@ -559,7 +561,7 @@ struct TopicDetailsView: View {
           buildRow(post: post, withId: false)
         }
       } else if let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5),
-        !latestReplies.isEmpty
+                !latestReplies.isEmpty
       {
         Text("Replies")
           .font(.footnote)
@@ -570,12 +572,12 @@ struct TopicDetailsView: View {
         }
       }
     }
-      .padding()
-      .fixedSize(horizontal: false, vertical: true)
-      .frame(width: Screen.main.bounds.size.width)
-      .background(.secondarySystemGroupedBackground)
-      .withTopicDetailsAction(action: action)
-      .environmentObject(postReply)
+    .padding()
+    .fixedSize(horizontal: false, vertical: true)
+    .frame(width: Screen.main.bounds.size.width)
+    .background(.secondarySystemGroupedBackground)
+    .withTopicDetailsAction(action: action)
+    .environmentObject(postReply)
   }
 
   func shareAsImage() {
@@ -589,7 +591,6 @@ struct TopicDetailsView: View {
     }
   }
 }
-
 
 struct TopicDetailsView_Preview: PreviewProvider {
   static var previews: some View {

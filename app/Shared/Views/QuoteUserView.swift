@@ -24,9 +24,9 @@ struct QuoteUserView: View {
           HStack(spacing: 2) {
             Text("    ")
             Image(systemName: "chevron.right")
-          } .font(.callout)
+          }.font(.callout)
             .foregroundColor(.secondary)
-        } .buttonStyle(PlainButtonStyle())
+        }.buttonStyle(PlainButtonStyle())
       }
     }
   }

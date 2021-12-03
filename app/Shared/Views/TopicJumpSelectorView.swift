@@ -23,7 +23,7 @@ struct TopicJumpSelectorView: View {
     self.maxFloor = maxFloor
     self.floorToJump = floorToJump
     self.pageToJump = pageToJump
-    self._selectedFloor = .init(initialValue: initialFloor)
+    _selectedFloor = .init(initialValue: initialFloor)
   }
 
   var maxPage: Int { (maxFloor + Constants.postPerPage) / Constants.postPerPage }
@@ -35,7 +35,7 @@ struct TopicJumpSelectorView: View {
   @State var text = ""
 
   var selectedPage: Binding<Int> {
-      .init(get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage }, set: { selectedFloor = ($0 - 1) * Constants.postPerPage })
+    .init(get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage }, set: { selectedFloor = ($0 - 1) * Constants.postPerPage })
   }
 
   @ViewBuilder
@@ -66,7 +66,7 @@ struct TopicJumpSelectorView: View {
         Group {
           if maxFloor <= 799 {
             Picker("Floor", selection: $selectedFloor) {
-              ForEach(0..<maxFloor + 1) { i in
+              ForEach(0 ..< maxFloor + 1) { i in
                 Text("Floor \(i)").tag(i)
               }
             }
@@ -77,7 +77,7 @@ struct TopicJumpSelectorView: View {
               .frame(maxWidth: .infinity)
               .animation(nil)
           }
-        } .pickerStyle(.wheel)
+        }.pickerStyle(.wheel)
       }
 
       Section {
@@ -94,14 +94,14 @@ struct TopicJumpSelectorView: View {
         HStack {
           Button(action: { withAnimation { selectedFloor = 0 } }) {
             Image(systemName: "arrow.up.to.line")
-          } .frame(maxWidth: .infinity)
+          }.frame(maxWidth: .infinity)
           Divider()
           Button(action: { withAnimation { selectedFloor = maxFloor } }) {
             Image(systemName: "arrow.down.to.line")
-          } .frame(maxWidth: .infinity)
-        } .buttonStyle(.plain)
+          }.frame(maxWidth: .infinity)
+        }.buttonStyle(.plain)
           .foregroundColor(.accentColor)
-      } .onChange(of: text) { _ in parseText() }
+      }.onChange(of: text) { _ in parseText() }
         .onChange(of: mode) { _ in parseText() }
     }
   }

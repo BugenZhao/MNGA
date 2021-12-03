@@ -19,7 +19,7 @@ struct FavoriteTopicListView: View {
   static func build() -> Self {
     let dataSource = DataSource(
       buildRequest: { page in
-        return .favoriteTopicList(.with {
+        .favoriteTopicList(.with {
           $0.page = UInt32(page)
         })
       },
@@ -46,18 +46,18 @@ struct FavoriteTopicListView: View {
               TopicRowView(topic: topic.w, dimmedSubject: false, showIndicators: false)
                 .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
             }
-          } .onDelete { indexSet in deleteFavorites(at: indexSet) }
+          }.onDelete { indexSet in deleteFavorites(at: indexSet) }
         }
       }
     }
-      .navigationTitle("Favorite Topics")
-      .refreshable(dataSource: dataSource)
-      .mayGroupedListStyle()
+    .navigationTitle("Favorite Topics")
+    .refreshable(dataSource: dataSource)
+    .mayGroupedListStyle()
   }
 
   func deleteFavorites(at indexSet: IndexSet) {
     guard let firstIndex = indexSet.first else { return }
-    let topic = dataSource.items[firstIndex] // fixme: only first
+    let topic = dataSource.items[firstIndex] // FIXME: only first
 
     logicCallAsync(.topicFavor(.with {
       $0.topicID = topic.id
@@ -67,4 +67,3 @@ struct FavoriteTopicListView: View {
     }
   }
 }
-
