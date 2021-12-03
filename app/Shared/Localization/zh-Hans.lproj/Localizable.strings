@@ -207,5 +207,7 @@
 "Date Display" = "日期显示";
 "Detailed" = "详细";
 "Time Ago" = "时间差";
-"Topic List Appearance" = "帖子列表外观";
-"Topic Details Appearance" = "帖子详情外观";
+"Topic List" = "话题列表";
+"Topic Details" = "话题详情";
+"Author Info" = "作者信息";
+"Show Author Indicator" = "显示作者图标";

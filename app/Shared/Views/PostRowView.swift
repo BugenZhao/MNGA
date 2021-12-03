@@ -11,6 +11,7 @@ import SwiftUIX
 
 struct PostRowView: View {
   let post: Post
+  let isAuthor: Bool
 
   @Binding var vote: VotesModel.Vote
 
@@ -26,9 +27,9 @@ struct PostRowView: View {
 
   @State var showAttachments = false
 
-  static func build(post: Post, vote: Binding<VotesModel.Vote>) -> Self {
+  static func build(post: Post, isAuthor: Bool = false, vote: Binding<VotesModel.Vote>) -> Self {
     let attachments = AttachmentsModel(post.attachments)
-    return .init(post: post, vote: vote, attachments: attachments)
+    return .init(post: post, isAuthor: isAuthor, vote: vote, attachments: attachments)
   }
 
   private var user: User? {
@@ -72,7 +73,7 @@ struct PostRowView: View {
   @ViewBuilder
   var header: some View {
     HStack {
-      PostRowUserView(post: post)
+      PostRowUserView(post: post, compact: false, isAuthor: isAuthor)
       Spacer()
       floor
       if !dummy { menuButton }

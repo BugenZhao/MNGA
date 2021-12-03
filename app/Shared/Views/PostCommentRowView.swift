@@ -14,7 +14,7 @@ struct PostCommentRowView: View {
   @ViewBuilder
   var header: some View {
     HStack {
-      PostRowUserView(post: comment, compact: true)
+      PostRowUserView(post: comment, compact: true, isAuthor: false)
         .equatable()
       Spacer()
       DateTimeTextView.build(timestamp: comment.postDate)
