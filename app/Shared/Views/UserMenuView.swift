@@ -124,7 +124,7 @@ struct UserMenuView: View {
       }
     } label: {
       icon
-    } .imageScale(.large)
+    }
   }
 
   var body: some View {
@@ -133,7 +133,7 @@ struct UserMenuView: View {
       if notification.dataSource.unreadCount > 0 {
         notificationButton
       }
-    }
+    } .imageScale(.large)
       .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }

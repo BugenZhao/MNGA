@@ -132,12 +132,6 @@ struct UserSearchView: View {
 
 
 struct GlobalSearchView: View {
-  enum Mode: Equatable {
-    case topic
-    case forum
-    case user
-  }
-
   @ObservedObject var model: GlobalSearchModel
 
   var body: some View {

@@ -155,7 +155,7 @@ struct PostRowView: View {
       Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
         Label("Select Text", systemImage: "selection.pin.in.out")
       }
-      if !attachments.items.isEmpty {
+      if #available(iOS 15.0, *), !attachments.items.isEmpty {
         Button(action: { showAttachments = true }) {
           Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
         }
@@ -187,6 +187,13 @@ struct PostRowView: View {
     }
   }
 
+  @ViewBuilder
+  var navigation: some View {
+    if #available(iOS 15.0, *) {
+      NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) { }.hidden()
+    }
+  }
+
   var body: some View {
     let body = VStack(alignment: .leading, spacing: 10) {
       header
@@ -202,7 +209,7 @@ struct PostRowView: View {
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .background { NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) { }.hidden() }
+    .background { navigation }
       .environmentObject(attachments)
 
     if #available(iOS 15.0, *), let model = postReply, !mock {

@@ -142,9 +142,10 @@ struct ForumListView: View {
         index
       }
     }
-      .searchable(model: searchModel, prompt: "Search".localized, alwaysShow: true)
+      .searchable(model: searchModel, prompt: "Search".localized, alwaysShow: true, iOS15Only: true)
       .onAppear { loadData() }
       .navigationTitle("Forums")
+      .compatForumListListStyle()
       .toolbar {
       ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }
       ToolbarItem(placement: .mayNavigationBarTrailing) { filter }

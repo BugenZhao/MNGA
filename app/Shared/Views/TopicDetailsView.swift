@@ -218,23 +218,24 @@ struct TopicDetailsView: View {
       }
     } label: {
       Label("More", systemImage: "ellipsis.circle")
-        .imageScale(.large)
     }
   }
 
   @ViewBuilder
   var menu: some View {
-    if let postId = onlyPost.id {
-      let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
-      Button(action: { action.navigateToView = view }) {
-        Label("See Full Topic", systemImage: "doc.richtext")
+    Group {
+      if let postId = onlyPost.id {
+        let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
+        Button(action: { action.navigateToView = view }) {
+          Label("See Full Topic", systemImage: "doc.richtext")
+        }
+      } else {
+        HStack {
+          replyButton
+          moreMenu
+        }
       }
-    } else {
-      HStack {
-        replyButton
-        moreMenu
-      }
-    }
+    } .imageScale(.large)
   }
 
   @ViewBuilder

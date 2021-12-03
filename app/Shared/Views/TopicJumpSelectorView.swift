@@ -44,6 +44,22 @@ struct TopicJumpSelectorView: View {
   }
 
   @ViewBuilder
+  var modePicker: some View {
+    Picker("Mode", selection: $mode) {
+      ForEach(Mode.allCases, id: \.rawValue) {
+        Text(LocalizedStringKey($0.rawValue)).tag($0)
+      }
+    }
+  }
+
+  @ViewBuilder
+  var inputField: some View {
+    TextField("Type here...".localized, text: $text)
+      .keyboardType(.numberPad)
+      .multilineTextAlignment(.trailing)
+  }
+
+  @ViewBuilder
   var main: some View {
     List {
       Section(header: Text("Jump to...")) {
@@ -65,18 +81,15 @@ struct TopicJumpSelectorView: View {
       }
 
       Section {
-        HStack {
-          Picker("", selection: $mode) {
-            ForEach(Mode.allCases, id: \.rawValue) {
-              Text(LocalizedStringKey($0.rawValue)).tag($0)
-            }
-          } .pickerStyle(MenuPickerStyle())
-
-          TextField("Type here...".localized, text: $text)
-            .keyboardType(.numberPad)
-            .multilineTextAlignment(.trailing)
-        } .onChange(of: text) { _ in parseText() }
-          .onChange(of: mode) { _ in parseText() }
+        if #available(iOS 15.0, *) {
+          HStack {
+            modePicker.pickerStyle(.menu)
+            inputField
+          }
+        } else {
+          modePicker.pickerStyle(.inline)
+          inputField
+        }
 
         HStack {
           Button(action: { withAnimation { selectedFloor = 0 } }) {
@@ -88,7 +101,8 @@ struct TopicJumpSelectorView: View {
           } .frame(maxWidth: .infinity)
         } .buttonStyle(.plain)
           .foregroundColor(.accentColor)
-      }
+      } .onChange(of: text) { _ in parseText() }
+        .onChange(of: mode) { _ in parseText() }
     }
   }
 
@@ -116,6 +130,7 @@ struct TopicJumpSelectorView: View {
   var body: some View {
     NavigationView {
       main
+        .mayInsetGroupedListStyle()
         .toolbarWithFix { ToolbarItem(placement: .primaryAction) { jumpButton } }
     }
   }
