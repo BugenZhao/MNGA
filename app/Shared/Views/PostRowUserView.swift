@@ -17,11 +17,7 @@ struct PostRowUserView: View, Equatable {
 
   let post: Post
   let compact: Bool
-
-  init(post: Post, compact: Bool = false) {
-    self.post = post
-    self.compact = compact
-  }
+  let isAuthor: Bool
 
   private var user: User? {
     self.users.localUser(id: self.post.authorID)
@@ -33,9 +29,9 @@ struct PostRowUserView: View, Equatable {
 
   var body: some View {
     if let user = self.user {
-      UserView(user: user, style: style)
+      UserView(user: user, style: style, isAuthor: isAuthor)
     } else {
-      UserView(id: post.authorID, style: style)
+      UserView(id: post.authorID, style: style, isAuthor: isAuthor)
     }
   }
 }

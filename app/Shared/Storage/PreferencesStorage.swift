@@ -30,6 +30,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("postRowShowUserDetails") var postRowShowUserDetails = true
   @AppStorage("postRowShowUserRegDate") var postRowShowUserRegDate = false
   @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategy = DateTimeTextView.Strategy.automatic
+  @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicator = true
 
   init() {
     syncRequestOptionWithLogic()

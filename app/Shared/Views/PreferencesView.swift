@@ -14,7 +14,7 @@ fileprivate struct PostRowAppearanceView: View {
   var body: some View {
     Form {
       Section(header: Text("Preview")) {
-        PostRowView.build(post: .dummy, vote: .constant((state: .up, delta: 0)))
+        PostRowView.build(post: .dummy, isAuthor: true, vote: .constant((state: .up, delta: 0)))
       }
 
       Section {
@@ -39,6 +39,9 @@ fileprivate struct PostRowAppearanceView: View {
       }
 
       Section {
+        Toggle(isOn: $pref.postRowShowAuthorIndicator.animation()) {
+          Text("Show Author Indicator")
+        }
         Toggle(isOn: $pref.postRowShowUserDetails.animation()) {
           Text("Show User Details")
         }
@@ -100,10 +103,10 @@ struct PreferencesInnerView: View {
       Label("Block Words", systemImage: "hand.raised")
     }
     NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
-      Label("Topic List Appearance", systemImage: "list.dash")
+      Label("Topic List", systemImage: "list.dash")
     }
     NavigationLink(destination: PostRowAppearanceView(pref: pref)) {
-      Label("Topic Details Appearance", systemImage: "list.bullet.below.rectangle")
+      Label("Topic Details", systemImage: "list.bullet.below.rectangle")
     }
 
     Toggle(isOn: $pref.useInAppSafari) {

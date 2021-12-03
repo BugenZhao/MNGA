@@ -33,8 +33,9 @@ struct UserView: View {
   let user: User?
   let id: String
   let style: Style
+  let isAuthor: Bool
 
-  init(id: String, nameHint: String? = nil, style: Style) {
+  init(id: String, nameHint: String? = nil, style: Style, isAuthor: Bool = false) {
     var user = UsersModel.shared.localUser(id: id)
     if let nameHint = nameHint, user == nil {
       user = .with {
@@ -45,12 +46,14 @@ struct UserView: View {
     self.user = user
     self.id = id
     self.style = style
+    self.isAuthor = isAuthor
   }
 
-  init(user: User, style: Style) {
+  init(user: User, style: Style, isAuthor: Bool = false) {
     self.user = user
     self.id = user.id
     self.style = style
+    self.isAuthor = isAuthor
   }
 
 
@@ -149,7 +152,7 @@ struct UserView: View {
       avatar
 
       VStack(alignment: .leading, spacing: style == .huge ? 4 : 2) {
-        HStack {
+        HStack(spacing: 4) {
           Group {
             if showId {
               Text(self.idDisplay)
@@ -158,11 +161,17 @@ struct UserView: View {
             }
           } .font(nameFont, weight: style == .huge ? .bold : .medium)
 
-          if user?.mute == true {
-            Image(systemName: "mic.slash.fill")
-              .font(style == .huge ? .body : .footnote)
-              .foregroundColor(.red)
-          }
+          Group {
+            if user?.mute == true {
+              Image(systemName: "mic.slash.fill")
+                .foregroundColor(.red)
+            }
+            if isAuthor && pref.postRowShowAuthorIndicator {
+              Image(systemName: "person.fill")
+                .foregroundColor(.secondary)
+            }
+          } .font(style == .huge ? .body : .footnote)
+          
         } .onTapGesture { withAnimation { self.showId.toggle() } }
           .redacted(if: shouldRedactName)
 
