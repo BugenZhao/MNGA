@@ -19,6 +19,18 @@ fn extract_short_msg(node: Node) -> Option<ShortMessage> {
     use super::macros::get;
     let map = extract_kv(node);
 
+    let user_names = get!(map, "all_user")
+        .map(|s| {
+            s.split("\t")
+                .collect::<Vec<_>>()
+                .chunks(2)
+                .flat_map(|c| c.last())
+                .filter(|s| !s.is_empty())
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+
     let short_msg = ShortMessage {
         id: get!(map, "mid")?,
         subject: get!(map, "subject").unwrap_or_default(),
@@ -27,6 +39,7 @@ fn extract_short_msg(node: Node) -> Option<ShortMessage> {
         post_date: get!(map, "time", _).unwrap_or_default(),
         last_post_date: get!(map, "last_modify", _).unwrap_or_default(),
         post_num: get!(map, "posts", _).unwrap_or_default(),
+        user_names: user_names.into(),
         ..Default::default()
     };
 
@@ -168,11 +181,14 @@ mod test {
 
         println!("response: {:?}", response);
 
-        let msg_exists = response
+        let msg = response
             .get_messages()
             .iter()
-            .any(|m| m.subject == "For Logic Test");
-        assert!(msg_exists);
+            .find(|m| m.subject == "For Logic Test");
+        assert!(msg.is_some());
+
+        let msg = msg.unwrap();
+        assert_eq!(msg.get_user_names().len(), 2);
 
         Ok(())
     }

@@ -248,6 +248,7 @@ message ShortMessage {
   uint64 post_date = 5;
   uint64 last_post_date = 6;
   uint32 post_num = 7;
+  repeated string user_names = 8;
 }
 
 message ShortMessagePost {
