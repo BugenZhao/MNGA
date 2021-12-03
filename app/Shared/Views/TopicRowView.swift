@@ -12,7 +12,7 @@ struct TopicLikeRowInnerView<S: View>: View {
   let subjectView: () -> S
   let num: UInt32
   let lastNum: UInt32?
-  let name: UserName
+  let names: [UserName]
   let date: UInt64
 
   var body: some View {
@@ -25,8 +25,17 @@ struct TopicLikeRowInnerView<S: View>: View {
 
       HStack {
         HStack(alignment: .center) {
-          Image(systemName: name.isAnonymous ? "theatermasks.circle" : "person")
-          Text(name.display)
+          switch names.count {
+          case 0:
+            EmptyView()
+          case 1:
+            let name = names.first!
+            Image(systemName: name.isAnonymous ? "theatermasks.circle" : "person")
+            Text(name.display)
+          default:
+            Image(systemName: "person.2")
+            Text(names.map(\.display).joined(separator: ", "))
+          }
         }
         Spacer()
         DateTimeTextView.build(timestamp: date, switchable: false)
@@ -62,7 +71,7 @@ struct TopicRowView: View {
   }
 
   var body: some View {
-    TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, name: topic.authorNameCompat, date: useTopicPostDate ? topic.postDate : topic.lastPostDate)
+    TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, names: [topic.authorNameCompat], date: useTopicPostDate ? topic.postDate : topic.lastPostDate)
   }
 }
 

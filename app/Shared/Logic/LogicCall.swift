@@ -17,7 +17,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
 ) {
   let errorCallback = { (e: LogicError) in
     logger.error("logicCallAsync: \(e)")
-    if let tm = errorToastModel { tm.message = .error(e.error.trimmingCharacters(in: .whitespacesAndNewlines)) }
+    if let tm = errorToastModel { tm.message = .error(e.error) }
     onError(e)
   }
   basicLogicCallAsync(requestValue, requestDispatchQueue: requestDispatchQueue, onSuccess: onSuccess, onError: errorCallback)

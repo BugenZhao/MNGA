@@ -1,5 +1,5 @@
 use protos::{
-    DataModel::{ShortMessage, ShortMessagePost},
+    DataModel::{ShortMessage, ShortMessagePost, UserName},
     Service::{
         ShortMessageDetailsRequest, ShortMessageDetailsResponse, ShortMessageListRequest,
         ShortMessageListResponse, ShortMessagePostRequest, ShortMessagePostResponse,
@@ -11,13 +11,28 @@ use sxd_xpath::nodeset::Node;
 use crate::{
     error::ServiceResult,
     fetch::fetch_package,
-    user::extract_user_and_cache,
+    user::{extract_user_and_cache, extract_user_name},
     utils::{extract_kv, extract_nodes, extract_string},
 };
+
+fn extract_all_users(raw: &str) -> (Vec<String>, Vec<UserName>) {
+    raw.split("\t")
+        .collect::<Vec<_>>()
+        .chunks(2)
+        .filter(|c| c.len() == 2)
+        .map(|c| (c[0], c[1]))
+        .filter(|(_id, name)| !name.is_empty())
+        .map(|(id, name)| (id.to_owned(), extract_user_name(name.to_owned())))
+        .unzip()
+}
 
 fn extract_short_msg(node: Node) -> Option<ShortMessage> {
     use super::macros::get;
     let map = extract_kv(node);
+
+    let (ids, user_names) = get!(map, "all_user")
+        .map(|r| extract_all_users(&r))
+        .unwrap_or_default();
 
     let short_msg = ShortMessage {
         id: get!(map, "mid")?,
@@ -27,6 +42,8 @@ fn extract_short_msg(node: Node) -> Option<ShortMessage> {
         post_date: get!(map, "time", _).unwrap_or_default(),
         last_post_date: get!(map, "last_modify", _).unwrap_or_default(),
         post_num: get!(map, "posts", _).unwrap_or_default(),
+        ids: ids.into(),
+        user_names: user_names.into(),
         ..Default::default()
     };
 
@@ -120,9 +137,15 @@ pub async fn get_short_msg_details(
         request.page
     };
 
+    let (ids, user_names) = extract_string(&package, "/root/data/item/allUsers")
+        .map(|r| extract_all_users(&r))
+        .unwrap_or_default();
+
     let response = ShortMessageDetailsResponse {
         posts: posts.into(),
         pages,
+        ids: ids.into(),
+        user_names: user_names.into(),
         ..Default::default()
     };
     Ok(response)
@@ -168,11 +191,14 @@ mod test {
 
         println!("response: {:?}", response);
 
-        let msg_exists = response
+        let msg = response
             .get_messages()
             .iter()
-            .any(|m| m.subject == "For Logic Test");
-        assert!(msg_exists);
+            .find(|m| m.subject == "For Logic Test");
+        assert!(msg.is_some());
+
+        let msg = msg.unwrap();
+        assert_eq!(msg.get_user_names().len(), 2);
 
         Ok(())
     }

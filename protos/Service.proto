@@ -264,6 +264,8 @@ message ShortMessageDetailsRequest {
 message ShortMessageDetailsResponse {
   repeated ShortMessagePost posts = 1;
   uint32 pages = 2;
+  repeated string ids = 3;
+  repeated UserName user_names = 4;
 }
 
 message ShortMessagePostRequest {
