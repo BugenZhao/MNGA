@@ -12,8 +12,7 @@ import SwiftUIX
 extension View {
   func mayGroupedListStyle() -> some View {
     #if os(iOS)
-      self
-        .listStyle(GroupedListStyle())
+      self.listStyle(.grouped)
     #else
       self
     #endif
@@ -21,8 +20,23 @@ extension View {
 
   func mayInsetGroupedListStyle() -> some View {
     #if os(iOS)
+      self.listStyle(.insetGrouped)
+    #else
       self
-        .listStyle(InsetGroupedListStyle())
+    #endif
+  }
+
+  func compatForumListListStyle() -> some View {
+    #if os(iOS)
+      Group {
+        if #available(iOS 15.0, *) {
+          self
+        } else if UserInterfaceIdiom.current == .pad {
+          self.listStyle(.sidebar)
+        } else {
+          self.listStyle(.insetGrouped)
+        }
+      }
     #else
       self
     #endif
