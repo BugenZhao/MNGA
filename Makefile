@@ -1,5 +1,6 @@
 CARGO ?= $(shell which cargo)
 XARGO ?= $(shell which xargo)
+SWIFTFORMAT ?= $(shell which swiftformat)
 TARGET_DIR = target
 OUT_LIBS_ANDROID ?= out/libs/jniLibs
 OUT_INCLUDE ?= out/include
@@ -113,6 +114,14 @@ logic-android:
 	cp ${TARGET_DIR}/aarch64-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/arm64-v8a/
 	cp ${TARGET_DIR}/x86_64-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/x86_64/
 	cp ${TARGET_DIR}/i686-linux-android/${MODE}/liblogic.so ${OUT_LIBS_ANDROID}/x86/
+
+
+swiftformat:
+	@if [ -z "${SWIFTFORMAT}" ]; then \
+		echo "warning: swiftformat not installed, skip" ;\
+	else \
+		${SWIFTFORMAT} --indent 2 --swiftversion 5.5 . ;\
+	fi
 
 
 nightly:
