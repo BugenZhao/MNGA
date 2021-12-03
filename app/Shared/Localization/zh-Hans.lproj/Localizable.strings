@@ -207,12 +207,15 @@
 "Date Display" = "日期显示";
 "Detailed" = "详细";
 "Time Ago" = "时间差";
-"Topic List" = "话题列表";
-"Topic Details" = "话题详情";
+"Topic List Style" = "话题列表样式";
+"Topic Details Style" = "话题详情样式";
 "Author Info" = "作者信息";
 "Show Author Indicator" = "显示作者图标";
 "Mode" = "模式";
 "Participants" = "参与者";
+"List Style" = "列表样式";
+"Compact" = "紧凑";
+"Modern" = "现代";
 
 "Missing Field" = "缺少字段";
 "Network Connection" = "网络连接";

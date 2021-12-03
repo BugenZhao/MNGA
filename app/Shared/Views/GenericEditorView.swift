@@ -76,8 +76,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
       Section(header: Text("Preview")) {
         previewInner
       }
-    }.mayGroupedListStyle()
-      .onAppear { parseContent() }
+    }.onAppear { parseContent() }
       .environment(\.inRealPost, false)
   }
 
@@ -153,6 +152,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
   #if os(iOS)
     var body: some View {
       inner
+        .mayGroupedListStyle()
         .modifier(AlertToastModifier())
         .navigationTitleInline(key: title)
         .environmentObject(presendAttachments)

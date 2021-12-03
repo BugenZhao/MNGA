@@ -9,15 +9,29 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-extension View {
-  func mayGroupedListStyle() -> some View {
+private struct MayGroupedListStyleModifier: ViewModifier {
+  @StateObject var pref = PreferencesStorage.shared
+
+  func body(content: Content) -> some View {
     #if os(iOS)
-      listStyle(.grouped)
+      if self.pref.useInsetGrouped {
+        content.listStyle(.insetGrouped)
+      } else {
+        content.listStyle(.grouped)
+      }
     #else
-      self
+      content
     #endif
   }
+}
 
+extension View {
+  @ViewBuilder
+  func mayGroupedListStyle() -> some View {
+    modifier(MayGroupedListStyleModifier())
+  }
+
+  @ViewBuilder
   func mayInsetGroupedListStyle() -> some View {
     #if os(iOS)
       listStyle(.insetGrouped)
@@ -26,16 +40,15 @@ extension View {
     #endif
   }
 
+  @ViewBuilder
   func compatForumListListStyle() -> some View {
     #if os(iOS)
-      Group {
-        if #available(iOS 15.0, *) {
-          self
-        } else if UserInterfaceIdiom.current == .pad {
-          self.listStyle(.sidebar)
-        } else {
-          self.listStyle(.insetGrouped)
-        }
+      if #available(iOS 15.0, *) {
+        self
+      } else if UserInterfaceIdiom.current == .pad {
+        self.listStyle(.sidebar)
+      } else {
+        self.listStyle(.insetGrouped)
       }
     #else
       self

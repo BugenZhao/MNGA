@@ -95,6 +95,10 @@ struct PreferencesInnerView: View {
         }.tag(color)
       }
     }
+    Picker(selection: $pref.useInsetGrouped, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
+      Text("Compact").tag(false)
+      Text("Modern").tag(true)
+    }
   }
 
   @ViewBuilder
@@ -103,10 +107,10 @@ struct PreferencesInnerView: View {
       Label("Block Words", systemImage: "hand.raised")
     }
     NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
-      Label("Topic List", systemImage: "list.dash")
+      Label("Topic List Style", systemImage: "list.dash")
     }
     NavigationLink(destination: PostRowAppearanceView(pref: pref)) {
-      Label("Topic Details", systemImage: "list.bullet.below.rectangle")
+      Label("Topic Details Style", systemImage: "list.bullet.below.rectangle")
     }
 
     Toggle(isOn: $pref.useInAppSafari) {
