@@ -9,7 +9,8 @@ members = [
     "logic/mock_gen",
 ]
 
-[profile.release]
+[profile.production]
+inherits = "release"
 opt-level = "s"   # Optimize for size.
 lto = true        # Enable link time optimization
 codegen-units = 1

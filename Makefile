@@ -20,10 +20,10 @@ CATALYST_TARGET = x86_64-apple-ios-macabi
 ALL_TARGETS ?= unspecified-target
 MODE ?= debug
 
-ifeq (${MODE}, release)
-	CARGO_MODE_ARG = --release
+ifeq (${MODE}, debug)
+	CARGO_MODE_ARG = --profile dev
 else
-	CARGO_MODE_ARG =
+	CARGO_MODE_ARG = --profile ${MODE}
 endif
 
 ifneq (,$(findstring ios, $(ALL_TARGETS)))
@@ -34,8 +34,8 @@ endif
 
 .PHONY: logic
 
-ios: logic-ios-release
-macos: logic-macos-release
+ios: logic-ios-production
+macos: logic-macos-production
 
 logic-ios-%:
 	make logic-ios MODE=$*
@@ -45,7 +45,7 @@ logic-ios:
 logic-sim:
 	make logic ALL_TARGETS="${IOS_SIM_TARGET}" MODE=debug
 logic-deploy:
-	make logic ALL_TARGETS="${IOS_TARGET}" MODE=release
+	make logic ALL_TARGETS="${IOS_TARGET}" MODE=production
 
 logic-macos-%:
 	make logic-macos MODE=$*
@@ -89,7 +89,7 @@ create-framework:
 	@CMD="xcodebuild -create-xcframework" ;\
 	for target in ${ALL_TARGETS}; do \
 		logic_lib="${TARGET_DIR}/$${target}/${MODE}/liblogic.a" ;\
-		if [[ ${MODE} = "release" ]]; then \
+		if [[ ${MODE} != "debug" ]]; then \
 			strip_cmd="strip $${logic_lib}" ;\
 			echo ">>> $${strip_cmd}" ;\
 			$${strip_cmd} >/dev/null 2>&1 || true ;\
