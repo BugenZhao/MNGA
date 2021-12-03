@@ -1,5 +1,7 @@
 use std::{ffi, mem, os::raw::c_char, ptr};
 
+use service::error::ServiceResult;
+
 #[repr(C)]
 #[derive(Debug)]
 pub struct ByteBuffer {
@@ -25,8 +27,8 @@ impl From<Vec<u8>> for ByteBuffer {
 }
 
 impl ByteBuffer {
-    fn from_err<E: ToString>(e: E) -> Self {
-        let err_string = ffi::CString::new(e.to_string()).unwrap();
+    fn from_err_string(string: String) -> Self {
+        let err_string = ffi::CString::new(string).unwrap();
         Self {
             ptr: ptr::null(),
             len: 0,
@@ -36,11 +38,11 @@ impl ByteBuffer {
     }
 }
 
-impl<E: ToString> From<Result<Vec<u8>, E>> for ByteBuffer {
-    fn from(result: Result<Vec<u8>, E>) -> Self {
+impl From<ServiceResult<Vec<u8>>> for ByteBuffer {
+    fn from(result: ServiceResult<Vec<u8>>) -> Self {
         match result {
             Ok(v) => Self::from(v),
-            Err(e) => Self::from_err(e),
+            Err(e) => Self::from_err_string(e.to_app_string()),
         }
     }
 }

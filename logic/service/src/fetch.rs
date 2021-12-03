@@ -68,6 +68,7 @@ async fn do_fetch<AF>(
     mock: bool,
     mut query: Vec<(&str, &str)>,
     method: Method,
+    check_status: bool,
     add_form: AF,
 ) -> ServiceResult<Response>
 where
@@ -101,7 +102,7 @@ where
     let builder = add_form(builder);
 
     let response = builder.send().await?;
-    if response.status().is_success() {
+    if !check_status || response.status().is_success() {
         Ok(response)
     } else {
         Err(ServiceError::Mnga(ErrorMessage {
@@ -131,7 +132,7 @@ where
     AF: FnOnce(RequestBuilder) -> RequestBuilder,
 {
     query.push(RF::query_pair());
-    let response = do_fetch(api, false, query, Method::POST, add_form).await?;
+    let response = do_fetch(api, false, query, Method::POST, false, add_form).await?;
     let response = response.text_with_charset("gb18030").await?;
 
     #[cfg(test)]
@@ -254,7 +255,7 @@ mod mock {
         Res: MockResponse,
     {
         let api = request.to_encoded_mock_api()?;
-        let response = do_fetch(&api, true, vec![], Method::GET, |b| b)
+        let response = do_fetch(&api, true, vec![], Method::GET, true, |b| b)
             .await?
             .bytes()
             .await?;
