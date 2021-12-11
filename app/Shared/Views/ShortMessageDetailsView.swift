@@ -50,7 +50,7 @@ struct ShortMessageDetailsView: View {
           .onAppear { dataSource.initialLoad() }
       } else {
         List {
-          Section(header: "Participants") {
+          Section(header: Text("Participants")) {
             ScrollView(.horizontal) {
               LazyHStack {
                 ForEach(dataSource.latestResponse?.ids ?? [], id: \.self) { userID in
