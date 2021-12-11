@@ -32,27 +32,27 @@
 ### iOS
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/135757461-8d85b17e-452b-4006-86bc-e0f122c7f59b.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/126900260-55949320-f6a9-4cab-a098-cc02edefdc1f.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/135757470-91a3539e-71fb-4d4c-b42d-5cf096b99eb1.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/126900264-726e5878-a1e0-4f38-b64a-9e9d76bf3206.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/133466845-2c65b772-485b-483e-8e30-f0d36c292510.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/135757485-65a8427b-7b55-4dbe-b91a-3f133ec1e303.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/133466841-047bef9a-b39f-4951-a9a6-6be14f8a7c35.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/133466833-c81aac7b-18f7-4238-8123-7f8445287563.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/135757479-20c416c7-fe66-4ddd-83a7-f97c5d1a8878.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145673784-f079df83-741e-4f95-91bd-58cbea256e00.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145673788-dcc7fd14-533b-4bad-9ee7-a4dc9fd786f0.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145674014-bab62ff3-f7d9-4787-bc0a-7ea79b840d3e.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145673806-7f2ee397-dc99-49d4-9470-9b7c885fd7bb.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145674986-dc7447d8-9d4a-42e9-89df-1653d0812a43.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145673808-e1a295fc-c90d-4dd0-bdef-ed500fd29f9a.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145673820-94fdace7-10be-4c7d-beb3-0676ebf20951.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145673816-bd74b0dd-7d89-4470-ab4c-76bb8000e15b.PNG" width="32%" />
+  <img src="https://user-images.githubusercontent.com/25862682/145673812-3e221651-0824-4545-b8c8-93b860227838.PNG" width="32%" />
 </p>
 
 ### iPadOS
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/136158984-cee02ee8-c3d2-4bb6-a302-6fcb2a219c57.PNG" width="96%"/>
+  <img src="https://user-images.githubusercontent.com/25862682/145675012-50ad7b2d-e841-4788-9505-b1a299c05df3.PNG"/>
 </p>
 
 ### macOS
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/136158065-d6df1506-6192-4360-9d96-d850126ae339.png" width="100%"/>
+  <img src="https://user-images.githubusercontent.com/25862682/136158065-d6df1506-6192-4360-9d96-d850126ae339.png"/>
 </p>
 
 ## Build the Project
