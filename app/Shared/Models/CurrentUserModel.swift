@@ -59,7 +59,10 @@ class CurrentUserModel: ObservableObject {
   }
 
   func clockIn() {
-    logicCallAsync(.clockIn(.init())) { (response: ClockInResponse) in
+    let uid = authStorage.authInfo.uid
+    if uid.isEmpty { return }
+
+    logicCallAsync(.clockIn(.init()), errorToastModel: nil) { (response: ClockInResponse) in
       if response.isFirstTime {
         ToastModel.showAuto(.clockIn("\(self.user?.name.display ?? "???") @ \(response.date)"))
       }
