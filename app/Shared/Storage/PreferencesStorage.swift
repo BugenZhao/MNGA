@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 class PreferencesStorage: ObservableObject {
   static let shared = PreferencesStorage()
@@ -21,7 +22,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
   @AppStorage("themeColor") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
-  @AppStorage("useInsetGrouped") var useInsetGrouped = false
+  @AppStorage("useInsetGrouped") var useInsetGrouped = [.pad, .mac].contains(UserInterfaceIdiom.current)
 
   @AppStorage("requestOption") var requestOption = RequestOption() {
     didSet { syncRequestOptionWithLogic() }
