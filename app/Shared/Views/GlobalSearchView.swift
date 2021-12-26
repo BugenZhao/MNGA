@@ -71,20 +71,11 @@ class GlobalSearchModel: SearchModel<DataSource> {
 }
 
 struct ForumSearchView: View {
-  @StateObject var favorites = FavoriteForumsStorage.shared
   @ObservedObject var dataSource: PagingDataSource<ForumSearchResponse, Forum>
 
   @ViewBuilder
   func buildLink(_ forum: Forum) -> some View {
-    let isFavorite = favorites.isFavorite(id: forum.id)
-
-    NavigationLink(destination: TopicListView.build(forum: forum)) {
-      ForumRowView(forum: forum, isFavorite: isFavorite)
-        .modifier(FavoriteModifier(
-          isFavorite: isFavorite,
-          toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-        ))
-    }
+    ForumRowLinkView(forum: forum, showFavorite: true)
   }
 
   var body: some View {
@@ -137,13 +128,13 @@ struct GlobalSearchView: View {
         Section(header: Text("Search \"\(model.text)\" in...")) {
           NavigationLink(destination: ForumSearchView(dataSource: ds.forum)) {
             Label("All Forums", systemImage: "square.stack.3d.down.right")
-          }
+          }.isDetailLink(false)
           NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search")) {
             Label("All Topics", systemImage: "doc.richtext")
-          }
+          }.isDetailLink(false)
           NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
             Label("All Users", systemImage: "person.2")
-          }
+          }.isDetailLink(false)
         }
       }
     }.mayInsetGroupedListStyle()

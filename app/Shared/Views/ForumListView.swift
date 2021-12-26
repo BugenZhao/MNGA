@@ -23,22 +23,12 @@ struct ForumListView: View {
 
   @ViewBuilder
   func buildFavoriteSectionLink(_ forum: Forum) -> some View {
-    NavigationLink(destination: TopicListView.build(forum: forum)) {
-      ForumRowView(forum: forum, isFavorite: false)
-    }
+    ForumRowLinkView(forum: forum, showFavorite: false)
   }
 
   @ViewBuilder
   func buildNormalLink(_ forum: Forum) -> some View {
-    let isFavorite = favorites.isFavorite(id: forum.id)
-
-    NavigationLink(destination: TopicListView.build(forum: forum)) {
-      ForumRowView(forum: forum, isFavorite: isFavorite)
-        .modifier(FavoriteModifier(
-          isFavorite: isFavorite,
-          toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-        ))
-    }
+    ForumRowLinkView(forum: forum, showFavorite: true)
   }
 
   var favoritesSection: some View {
@@ -46,9 +36,13 @@ struct ForumListView: View {
       if favorites.favoriteForums.isEmpty {
         HStack {
           Spacer()
-          Text("No Favorites")
-            .font(.footnote)
-            .foregroundColor(.secondary)
+          VStack(alignment: .center) {
+            Text("No Favorites")
+              .font(.callout)
+            Spacer().height(2)
+            Text("Swipe a forum to mark it as favorite")
+              .font(.footnote)
+          }.foregroundColor(.secondary)
           Spacer()
         }
       } else {

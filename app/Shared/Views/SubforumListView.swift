@@ -43,19 +43,13 @@ struct SubforumListView: View {
 
         ForumRowView(forum: forum, isFavorite: isFavorite)
       }
-      .modifier(FavoriteModifier(
-        isFavorite: favorites.isFavorite(id: forum.id),
-        toggleFavorite: { favorites.toggleFavorite(forum: forum) }
-      ))
-    }
+    }.modifier(FavoriteModifier(forum: forum))
   }
 
   var body: some View {
     List {
-      Section(footer: Text("Press and hold a subforum to mark it as favorite.")) {
-        ForEach(subforums, id: \.forum.idDescription) { subforum in
-          buildLink(subforum)
-        }
+      ForEach(subforums, id: \.forum.idDescription) { subforum in
+        buildLink(subforum)
       }
     }
     .navigationTitle("Subforums of \(forum.name)")

@@ -14,7 +14,7 @@ private struct MayGroupedListStyleModifier: ViewModifier {
 
   func body(content: Content) -> some View {
     #if os(iOS)
-      if self.pref.useInsetGrouped {
+      if pref.useInsetGrouped {
         content.listStyle(.insetGrouped)
       } else {
         content.listStyle(.grouped)
@@ -46,9 +46,9 @@ extension View {
       if #available(iOS 15.0, *) {
         self
       } else if UserInterfaceIdiom.current == .pad {
-        self.listStyle(.sidebar)
+        listStyle(.sidebar)
       } else {
-        self.listStyle(.insetGrouped)
+        listStyle(.insetGrouped)
       }
     #else
       self
