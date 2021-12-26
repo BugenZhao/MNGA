@@ -30,8 +30,8 @@
 "Sign in to NGA" = "登录到 NGA";
 "From NGA" = "来自 NGA";
 "Cancel" = "取消";
-"Subforums of %@" = "%@ - 子版块";
-"Press and hold a subforum to mark it as favorite." = "长按子版块以收藏。";
+"Subforums of %@" = "“%@”的子版块";
+"Swipe a forum to mark it as favorite" = "滑动版块以收藏";
 "History" = "浏览历史";
 "Hot Topics" = "热门话题";
 "Last 24 hours" = "最近24小时";

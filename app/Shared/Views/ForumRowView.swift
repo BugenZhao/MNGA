@@ -9,6 +9,33 @@ import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
 
+struct ForumRowLinkView: View {
+  let forum: Forum
+  let showFavorite: Bool
+
+  @StateObject var favorites = FavoriteForumsStorage.shared
+
+  var isFavorite: Bool {
+    favorites.isFavorite(id: forum.id)
+  }
+
+  @ViewBuilder
+  var link: some View {
+    NavigationLink(destination: TopicListView.build(forum: forum)) {
+      ForumRowView(forum: forum, isFavorite: showFavorite && isFavorite)
+    }
+  }
+
+  var body: some View {
+    if showFavorite {
+      link
+        .modifier(FavoriteModifier(forum: forum))
+    } else {
+      link
+    }
+  }
+}
+
 struct ForumRowView: View {
   let forum: Forum
   let isFavorite: Bool
@@ -42,21 +69,18 @@ struct ForumRowView: View {
 }
 
 struct FavoriteModifier: ViewModifier {
-  let isFavorite: Bool
-  let toggleFavorite: () -> Void
+  let forum: Forum
+
+  @StateObject var favorites = FavoriteForumsStorage.shared
 
   func body(content: Content) -> some View {
     content
-      .contextMenu(ContextMenu(menuItems: {
-        Button(action: {
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            withAnimation { toggleFavorite() }
-          }
-        }) {
-          let text: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
+      .swipeActions(edge: .trailing) {
+        Button(action: { withAnimation { favorites.toggleFavorite(forum: forum) } }) {
+          let isFavorite = favorites.isFavorite(id: forum.id)
           let image = isFavorite ? "star.slash.fill" : "star"
-          Label(text, systemImage: image)
-        }
-      }))
+          Image(systemName: image)
+        }.tint(.accentColor)
+      }
   }
 }
