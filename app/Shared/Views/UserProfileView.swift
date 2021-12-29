@@ -124,10 +124,25 @@ struct UserProfileView: View {
     }
 
     ToolbarItem(placement: .mayNavigationBarTrailing) {
-      if !user.isAnonymous {
-        Button(action: { self.newShortMessage() }) {
-          Label("New Short Message", systemImage: "message")
+      Menu {
+        if !user.isAnonymous {
+          Section {
+            Button(action: { self.newShortMessage() }) {
+              Label("New Short Message", systemImage: "message")
+            }
+          }
         }
+        Section {
+          Button(role: blocked ? nil : .destructive, action: { self.blockWords.toggle(user: user.name) }) {
+            if blocked {
+              Label("Unblock This User", systemImage: "hand.raised")
+            } else {
+              Label("Block This User", systemImage: "hand.raised")
+            }
+          }
+        }
+      } label: {
+        Label("More", systemImage: "ellipsis.circle")
       }
     }
   }

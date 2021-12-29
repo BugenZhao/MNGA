@@ -65,7 +65,7 @@
 "Subject" = "主题";
 "Content" = "内容";
 "Comment" = "贴条";
-"Block Words" = "屏蔽词";
+"Block Contents" = "屏蔽内容";
 "Blocked" = "已屏蔽";
 "No Block Words" = "没有屏蔽词";
 "New word" = "新关键词";
@@ -220,6 +220,8 @@
 "Compact" = "紧凑";
 "Modern" = "现代";
 "Report" = "举报";
+"Block This User" = "屏蔽此用户";
+"Unblock This User" = "取消屏蔽此用户";
 
 "Missing Field" = "缺少字段";
 "Network Connection" = "网络连接";
