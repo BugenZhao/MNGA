@@ -66,6 +66,7 @@
 "Content" = "内容";
 "Comment" = "贴条";
 "Block Words" = "屏蔽词";
+"Blocked" = "已屏蔽";
 "No Block Words" = "没有屏蔽词";
 "New word" = "新关键词";
 "Preferences" = "设置";

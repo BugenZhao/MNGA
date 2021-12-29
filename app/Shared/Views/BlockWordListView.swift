@@ -38,7 +38,16 @@ struct BlockWordListView: View {
       }
 
       ForEach(storage.words, id: \.word) { bw in
-        Text(bw.word)
+        HStack {
+          if let user = bw.userName {
+            Text(user)
+            Spacer()
+            Image(systemName: "person.crop.circle")
+              .foregroundColor(.secondary)
+          } else {
+            Text(bw.word)
+          }
+        }
       }.onDelete { storage.words.remove(atOffsets: $0) }
     }
   }

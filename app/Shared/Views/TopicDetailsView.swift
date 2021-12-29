@@ -270,8 +270,11 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var headerSectionInner: some View {
-    TopicSubjectView(topic: topic, lineLimit: nil)
-      .fixedSize(horizontal: false, vertical: true)
+    BlockedView(content: BlockWordsStorage.content(user: topic.authorName, content: topic.subjectContent), revealOnTap: false) {
+      TopicSubjectView(topic: topic, lineLimit: nil)
+    }
+    .fixedSize(horizontal: false, vertical: true)
+
     if let first = self.first {
       buildRow(post: first)
     }

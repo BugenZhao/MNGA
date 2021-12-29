@@ -22,7 +22,9 @@ struct UserProfileView: View {
 
   @StateObject var topicDataSource: TopicDataSource
   @StateObject var postDataSource: PostDataSource
+
   @EnvironmentObject var postModel: ShortMessagePostModel
+  @StateObject var blockWords = BlockWordsStorage.shared
 
   @State var tab = Tab.topics
 
@@ -60,8 +62,12 @@ struct UserProfileView: View {
     return Self(user: user, topicDataSource: topicDataSource, postDataSource: postDataSource)
   }
 
+  var blocked: Bool {
+    !user.id.isEmpty && blockWords.blocked(user: user.name)
+  }
+
   var shouldShowList: Bool {
-    !user.id.isEmpty && !user.isAnonymous
+    !user.id.isEmpty && !user.isAnonymous && !blocked
   }
 
   @ViewBuilder
@@ -134,13 +140,15 @@ struct UserProfileView: View {
     List {
       Section(header: Text("User Profile")) {
         UserView(user: user, style: .huge)
-        if let sig = user.signature, !sig.spans.isEmpty {
+        if let sig = user.signature, !sig.spans.isEmpty, !blocked {
           UserSignatureView(content: sig, font: .callout, color: .primary)
         }
       }
 
       if shouldShowList {
         list
+      } else if blocked {
+        EmptyRowView(title: "Blocked")
       }
     }
     .toolbarWithFix { toolbar }

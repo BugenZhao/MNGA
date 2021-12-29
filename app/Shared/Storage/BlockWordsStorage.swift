@@ -18,9 +18,17 @@ class BlockWordsStorage: ObservableObject {
     words.contains { content.contains($0.word) }
   }
 
+  func blocked(user: UserName) -> Bool {
+    words.contains(BlockWord.fromUser(user))
+  }
+
   func add(_ word: BlockWord) {
     if !words.contains(word) {
       words.insert(word, at: 0) // oops
     }
+  }
+
+  static func content(user: UserName, content: String) -> String {
+    "\(BlockWord.fromUser(user))|\(content)"
   }
 }

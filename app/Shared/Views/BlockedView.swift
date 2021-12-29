@@ -26,7 +26,7 @@ struct BlockedView<Content>: View where Content: View {
 
     if revealOnTap {
       view
-        .onTapGesture { if revealOnTap { withAnimation { hidden = false } } }
+        .onTapGesture { withAnimation { hidden = false } }
     } else {
       view
     }

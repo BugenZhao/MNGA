@@ -345,3 +345,19 @@ extension User {
     }
   }
 }
+
+extension BlockWord {
+  static let userPrefix = "User: "
+
+  static func fromUser(_ user: UserName) -> Self {
+    Self.with { $0.word = "\(userPrefix)\(user.display)" }
+  }
+
+  var userName: String? {
+    if word.starts(with: Self.userPrefix) {
+      return String(word.dropFirst(Self.userPrefix.count))
+    } else {
+      return nil
+    }
+  }
+}
