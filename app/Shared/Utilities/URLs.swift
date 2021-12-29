@@ -36,7 +36,7 @@ struct URLs {
   static var agreement: URL {
     URL(string: "/misc/agreement.html", relativeTo: base)!
   }
-  
+
   static var privacy: URL {
     URL(string: "/misc/privacy.html", relativeTo: base)!
   }
