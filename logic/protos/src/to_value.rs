@@ -33,6 +33,7 @@ impl ToValue for PostReplyAction_Operation {
             PostReplyAction_Operation::MODIFY => "modify",
             PostReplyAction_Operation::COMMENT => "reply",
             PostReplyAction_Operation::NEW => "new",
+            PostReplyAction_Operation::REPORT => unreachable!(),
         }
     }
 }

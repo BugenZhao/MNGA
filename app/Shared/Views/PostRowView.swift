@@ -147,7 +147,9 @@ struct PostRowView: View {
 
   @ViewBuilder
   var content: some View {
-    PostContentView(content: post.content, id: post.id)
+    BlockedView(content: BlockWordsStorage.content(user: user?.name ?? .init(), content: post.content.raw), revealOnTap: false) {
+      PostContentView(content: post.content, id: post.id)
+    }
   }
 
   @ViewBuilder
@@ -174,6 +176,9 @@ struct PostRowView: View {
           Button(action: { doEdit(model: model) }) {
             Label("Edit", systemImage: "pencil")
           }
+        }
+        Button(role: .destructive, action: { doReport(model: model) }) {
+          Label("Report", systemImage: "exclamationmark.bubble")
         }
       }
     }
@@ -283,5 +288,12 @@ struct PostRowView: View {
       }
       $0.operation = .modify
     }, pageToReload: .exact(Int(post.atPage)))
+  }
+
+  func doReport(model: PostReplyModel) {
+    model.show(action: .with {
+      $0.postID = self.post.id
+      $0.operation = .report
+    })
   }
 }

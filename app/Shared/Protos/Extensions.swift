@@ -105,6 +105,8 @@ extension PostReplyAction {
       return "Comment"
     case .new:
       return "New Topic"
+    case .report:
+      return "Report"
     case .UNRECOGNIZED:
       return ""
     }
@@ -340,6 +342,22 @@ extension User {
       $0.regDate = 1_609_502_400
       $0.signature = signatureRes?.content ?? .init()
       $0.avatarURL = "https://img.nga.178.com/avatars/2002/03a/000/000/58_0.jpg"
+    }
+  }
+}
+
+extension BlockWord {
+  static let userPrefix = "User: "
+
+  static func fromUser(_ user: UserName) -> Self {
+    Self.with { $0.word = "\(userPrefix)\(user.display)" }
+  }
+
+  var userName: String? {
+    if word.starts(with: Self.userPrefix) {
+      return String(word.dropFirst(Self.userPrefix.count))
+    } else {
+      return nil
     }
   }
 }

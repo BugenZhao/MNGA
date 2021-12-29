@@ -48,7 +48,8 @@ class PostReplyModel: GenericPostModel<PostReplyTask> {
       task.action.verbatim = response.verbatim
       let subject = (response.hasSubject || task.action.operation == .new) ? response.subject : nil
       let content = response.content
-      let context = Context(task: task, subject: subject, content: content, anonymous: false)
+      let anonymous = task.action.operation == .report ? nil : false
+      let context = Context(task: task, subject: subject, content: content, anonymous: anonymous)
 
       self.onBuildContextSuccess(task: task, context: context)
     } onError: { e in
@@ -64,7 +65,7 @@ class PostReplyModel: GenericPostModel<PostReplyTask> {
       $0.content = context.content!
       if let subject = context.subject { $0.subject = subject }
       $0.attachments = context.attachments
-      $0.anonymous = context.anonymous!
+      $0.anonymous = context.anonymous ?? false
     }), errorToastModel: ToastModel.editorAlert) { (_: PostReplyResponse) in
       self.onSendSuccess(context: context)
     } onError: { e in

@@ -104,7 +104,7 @@ struct PreferencesInnerView: View {
   @ViewBuilder
   var reading: some View {
     NavigationLink(destination: BlockWordListView()) {
-      Label("Block Words", systemImage: "hand.raised")
+      Label("Block Contents", systemImage: "hand.raised")
     }
     NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
       Label("Topic List Style", systemImage: "list.dash")
