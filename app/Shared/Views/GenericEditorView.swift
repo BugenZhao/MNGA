@@ -144,8 +144,8 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @ViewBuilder
   var discardButton: some View {
-    Button(action: { self.postReply.discardCurrentContext() }) {
-      Text("Discard").foregroundColor(.red)
+    Button(role: .destructive, action: { self.postReply.discardCurrentContext() }) {
+      Text("Discard").foregroundColor(.red).bold()
     }
   }
 

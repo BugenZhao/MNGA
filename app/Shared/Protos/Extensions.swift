@@ -105,6 +105,8 @@ extension PostReplyAction {
       return "Comment"
     case .new:
       return "New Topic"
+    case .report:
+      return "Report"
     case .UNRECOGNIZED:
       return ""
     }

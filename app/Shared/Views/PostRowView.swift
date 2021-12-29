@@ -175,6 +175,9 @@ struct PostRowView: View {
             Label("Edit", systemImage: "pencil")
           }
         }
+        Button(role: .destructive, action: { doReport(model: model) }) {
+          Label("Report", systemImage: "exclamationmark.bubble")
+        }
       }
     }
     if let action = action {
@@ -283,5 +286,12 @@ struct PostRowView: View {
       }
       $0.operation = .modify
     }, pageToReload: .exact(Int(post.atPage)))
+  }
+
+  func doReport(model: PostReplyModel) {
+    model.show(action: .with {
+      $0.postID = self.post.id
+      $0.operation = .report
+    })
   }
 }
