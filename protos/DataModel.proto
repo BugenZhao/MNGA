@@ -203,6 +203,7 @@ message PostReplyAction {
     MODIFY = 2;
     COMMENT = 3;
     NEW = 4;
+    REPORT = 5;
   }
   Operation operation = 1;
   PostId post_id = 2;   // Used if operation is not `NEW`.

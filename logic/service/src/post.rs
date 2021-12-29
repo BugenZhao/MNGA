@@ -184,7 +184,7 @@ macro_rules! query_insert_id {
     ($query:expr, $request:expr) => {{
         use PostReplyAction_Operation::*;
         match $request.get_action().get_operation() {
-            REPLY | QUOTE | MODIFY | COMMENT => {
+            REPLY | QUOTE | MODIFY | COMMENT | REPORT => {
                 $query.push(("tid", $request.get_action().get_post_id().get_tid()));
                 $query.push(("pid", $request.get_action().get_post_id().get_pid()));
             }
@@ -201,6 +201,22 @@ macro_rules! query_insert_id {
 }
 
 pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
+    if matches!(
+        request.get_action().get_operation(),
+        PostReplyAction_Operation::REPORT
+    ) {
+        let mut query = vec![
+            ("__lib", "log_post"),
+            ("__act", "report"),
+            ("raw", "3"),
+            ("info", request.get_content()),
+        ];
+        query_insert_id!(query, request);
+
+        let _package = fetch_package("nuke.php", query, vec![]).await?;
+        return Ok(PostReplyResponse::new());
+    }
+
     let action = request.get_action().get_operation().to_value();
 
     let attachments = request
@@ -250,6 +266,16 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
 pub async fn post_reply_fetch_content(
     request: PostReplyFetchContentRequest,
 ) -> ServiceResult<PostReplyFetchContentResponse> {
+    if matches!(
+        request.get_action().get_operation(),
+        PostReplyAction_Operation::REPORT
+    ) {
+        return Ok(PostReplyFetchContentResponse {
+            content: "".to_owned(),
+            ..Default::default()
+        });
+    }
+
     let action = request.get_action().get_operation().to_value();
 
     let query = {
@@ -526,6 +552,29 @@ mod test {
         .await?;
 
         assert!(!response.get_tps().is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_post_report() -> ServiceResult<()> {
+        let _response = post_reply(PostReplyRequest {
+            action: Some(PostReplyAction {
+                operation: PostReplyAction_Operation::REPORT,
+                post_id: Some(PostId {
+                    tid: "28706792".to_owned(),
+                    pid: "0".to_owned(),
+                    ..Default::default()
+                })
+                .into(),
+                ..Default::default()
+            })
+            .into(),
+            content: "测试举报".to_owned(),
+            ..Default::default()
+        })
+        .await?;
 
         Ok(())
     }
