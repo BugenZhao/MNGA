@@ -32,4 +32,12 @@ struct URLs {
   static var login: URL {
     URL(string: "/nuke.php?__lib=login&__act=account&login", relativeTo: base)!
   }
+
+  static var agreement: URL {
+    URL(string: "/misc/agreement.html", relativeTo: base)!
+  }
+
+  static var privacy: URL {
+    URL(string: "/misc/privacy.html", relativeTo: base)!
+  }
 }
