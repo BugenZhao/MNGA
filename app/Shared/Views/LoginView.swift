@@ -10,7 +10,7 @@ import SwiftUI
 import WebKit
 import WebView
 
-private class LoginViewUIDelegate: NSObject, WKUIDelegate {
+private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate {
   let parent: LoginView
 
   init(parent: LoginView) {
@@ -22,6 +22,48 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate {
     parent.alertCompletion = completionHandler
     parent.alertMessage = message
   }
+
+  func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
+    setLoading(loading: true)
+  }
+
+  func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
+    guard webView.url?.absoluteString == URLs.login.absoluteString else {
+      setLoading(loading: false)
+      return
+    }
+
+    let hideLoginElement = """
+    function getElementByXpath(document, path) {
+      return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    }
+    let iframe = document.getElementById("iff")
+
+    let xpaths = [
+      '//*[@id="main"]/div/div[last()-1]', // Register
+      '//*[@id="main"]/div/span[last()]',  // EULA
+      '//*[@id="main"]/div/a[2]',          // QRCode login
+      '//*[@id="main"]/div/div[last()]',   // 3rd party login
+    ]
+
+    for (let xpath of xpaths) {
+      let element = getElementByXpath(iframe.contentDocument, xpath)
+      element.parentElement.removeChild(element)
+    }
+    """
+
+    webView.evaluateJavaScript(hideLoginElement) { _, _ in
+      self.setLoading(loading: false)
+    }
+  }
+
+  func setLoading(loading: Bool) {
+    DispatchQueue.main.async {
+      withAnimation {
+        self.parent.loading = loading
+      }
+    }
+  }
 }
 
 struct LoginView: View {
@@ -29,6 +71,7 @@ struct LoginView: View {
   @StateObject var webViewStore: WebViewStore
 
   @State var authing = false
+  @State var loading = true
 
   @State private var delegate: LoginViewUIDelegate? = nil
   @State var alertMessage: String? = nil
@@ -47,19 +90,35 @@ struct LoginView: View {
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) { Button(action: close) { Text("Cancel") } }
     ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
+    ToolbarItem(placement: .status) { Button(action: { self.load(url: URLs.login) }) { Text("Sign In") } }
+    ToolbarItem(placement: .status) { Button(action: { self.load(url: URLs.agreement) }) { Text("Agreement") } }
+    ToolbarItem(placement: .status) { Button(action: { self.load(url: URLs.privacy) }) { Text("Privacy") } }
+  }
+
+  func load(url: URL) {
+    webViewStore.webView.load(URLRequest(url: url))
   }
 
   @ViewBuilder
-  var inner: some View {
+  var webView: some View {
     WebView(webView: webViewStore.webView)
       .onAppear {
         self.delegate = .init(parent: self)
         self.webViewStore.webView.load(URLRequest(url: URLs.login))
         self.webViewStore.webView.uiDelegate = self.delegate
+        self.webViewStore.webView.navigationDelegate = self.delegate
+        self.load(url: URLs.login)
       }.onReceive(timer) { _ in
         self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
       }.navigationTitleInline(key: "Sign in to NGA")
-      .toolbar { toolbar }
+  }
+
+  @ViewBuilder
+  var inner: some View {
+    ZStack {
+      webView.opacity(loading ? 0.0 : 1.0)
+      ProgressView().hidden(!loading)
+    }.toolbar { toolbar }
       .alert(isPresented: $alertMessage.isNotNil()) { Alert(title: "From NGA".localized, message: alertMessage) }
       .onChange(of: alertMessage) { if $0 == nil, let c = alertCompletion { c(); alertCompletion = nil } }
   }
@@ -97,7 +156,7 @@ private struct LoginPreviewView: View {
     NavigationView {
       VStack {
         Text("Authed as '\(authStorage.authInfo.uid)'")
-        Button(action: { authStorage.clearCurrentAuth() }) {
+        Button(action: { authStorage.isSigning = true }) {
           Text("Show")
         }
       }.sheet(isPresented: $authStorage.isSigning, content: {
