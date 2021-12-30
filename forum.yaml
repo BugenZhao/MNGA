@@ -12,11 +12,6 @@ topics:
           [b][*] 开了去广告服务后，MNGA网络报错？[/b]
           请更新到 1.0(38) 及以上版本，尝试在 [b]设置/后端[/b] 中使用其它域名。
 
-          [b][*] App随机性闪退，或屏幕内容显示有重叠、抖动等异常？[/b]
-          MNGA 采用 Apple 官方新推出的 SwiftUI 框架开发，在 iOS 15 上表现才能足够稳定。
-          如果您是 iOS 14 用户，建议更新到 iOS 15 后体验更加完整的功能及流畅的体验。MNGA 也将在不久后取消对 iOS 14 的支持。
-          如果您是 iOS Beta 版用户，欢迎通过各个渠道反馈。
-
           ===参见===
           [tid=mnga_about_feedback]MNGA 关于 & 反馈[/tid]
         author: Bugen at MNGA
@@ -29,12 +24,13 @@ topics:
           [b]Make NGA Great Again[/b]
 
           MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过下方的选项进行反馈。
-          [url=https://qm.qq.com/cgi-bin/qm/qr?k=9gLuFKiijRDTR2UotaxuSV0kjPoh0bcG&jump_from=webapi][b]MNGA 吹水群（获取开发版）[/b][/url]
-          [url=mailto:mnga.feedback@bugenzhao.com][b]反馈邮箱[/b][/url]
           [url=https://github.com/BugenZhao/MNGA/issues][b]GitHub Issues[/b][/url]
+          [url=mailto:mnga.feedback@bugenzhao.com][b]反馈邮箱[/b][/url]
+          [url=https://apps.apple.com/cn/app/mnga/id1586461246?l=zh][b]App Store 评论区[/b][/url]
 
-          === MNGA TestFlight 链接 ===
-          欢迎分享 MNGA 的获取链接！[url]https://testflight.apple.com/join/qFDuytLt[/url]
+          === MNGA TestFlight 版本 ===
+          MNGA TestFlight 版本提供更快的迭代速度，如果您喜爱尝鲜，可以在 MNGA GitHub 项目首页获取 TestFlight 邀请链接。
+          [url]https://github.com/BugenZhao/MNGA[/url]
 
           ===参见===
           [tid=mnga_faq]MNGA 常见问题解答[/tid]
