@@ -14,6 +14,11 @@
 
 ## Get the App
 
+- App Store
+
+  <a href="https://apps.apple.com/cn/app/mnga/id1586461246">
+  <img src="https://user-images.githubusercontent.com/25862682/147930330-3076005c-7525-452b-abcf-bef264f7e462.png" width="200"></img></a>
+
 - TestFlight Public Link for iOS
 
   | Stable Channel （稳定版）  | Nightly Channel （开发版）  |
@@ -105,3 +110,4 @@
 [stable-link]: https://testflight.apple.com/join/w9duC4Du
 [nightly-link]: https://testflight.apple.com/join/UL8mvVKt
 [tf-image]: https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png
+[as-image]: https://user-images.githubusercontent.com/25862682/147930330-3076005c-7525-452b-abcf-bef264f7e462.png
