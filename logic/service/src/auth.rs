@@ -6,8 +6,8 @@ use std::sync::RwLock;
 fn default_auth_info() -> AuthInfo {
     dotenv::dotenv().ok();
     AuthInfo {
-        uid: dotenv::var("AUTH_DEBUG_UID").unwrap_or("".to_owned()),
-        token: dotenv::var("AUTH_DEBUG_TOKEN").unwrap_or("".to_owned()),
+        uid: dotenv::var("AUTH_DEBUG_UID").expect("uid for debug is not set"),
+        token: dotenv::var("AUTH_DEBUG_TOKEN").expect("token for debug is not set"),
         ..Default::default()
     }
 }
