@@ -193,7 +193,7 @@ struct SchemesNavigationModifier: ViewModifier {
       .onChange(of: urlFromPasteboardForAlert) { if $0 == nil { copyToPasteboard(string: "") } }
       .onReceive(NotificationCenter.default.publisher(for: AppKitOrUIKitApplication.didBecomeActiveNotification)) { _ in
         #if os(iOS)
-          UIPasteboard.general.detectPatterns(for: [.probableWebURL]) { result in
+          UIPasteboard.general.detectPatterns(for: [\.probableWebURL]) { result in
             switch result {
             case .success:
               if let url = UIPasteboard.general.url, model.canNavigateTo(url) {
