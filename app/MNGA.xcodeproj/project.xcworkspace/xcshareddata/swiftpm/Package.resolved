@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CombineCommunity/CombineExt",
       "state" : {
-        "revision" : "0880829102152185190064fd17847a7c681d2127",
-        "version" : "1.5.1"
+        "revision" : "dcfb8a8208ed21c2267ffd93f4ab38743a9aedd7",
+        "version" : "1.6.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "241301b67d8551c26d8f09bd2c0e52cc49f18007",
-        "version" : "0.8.0"
+        "revision" : "ce9c0d897db8a840c39de64caaa9b60119cf4be8",
+        "version" : "0.8.1"
       }
     },
     {
