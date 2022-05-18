@@ -39,6 +39,10 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
     }
     let iframe = document.getElementById("iff")
 
+    let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
+    let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
+    loginElement.click()
+
     let xpaths = [
       '//*[@id="main"]/div/div[last()-1]', // Register
       '//*[@id="main"]/div/span[last()]',  // EULA
