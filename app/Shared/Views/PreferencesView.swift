@@ -147,6 +147,15 @@ struct PreferencesInnerView: View {
     }
   }
 
+  @ViewBuilder
+  var special: some View {
+    Group {
+      Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
+        Label("Auto Open in Browser when Banned", systemImage: "network")
+      }
+    }
+  }
+
   #if os(macOS)
     var body: some View {
       TabView {
@@ -170,6 +179,10 @@ struct PreferencesInnerView: View {
   #else
     var body: some View {
       Form {
+        Section(header: Text("Special"), footer: Text("NGA Workaround")) {
+          special
+        }
+
         Section(header: Text("Appearance")) {
           appearance
         }

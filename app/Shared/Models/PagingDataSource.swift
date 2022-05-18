@@ -26,6 +26,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   @Published var isLoading = false
   @Published var isRefreshing = false
   @Published var latestResponse: Res?
+  @Published var latestError: LogicError?
   @Published var lastRefreshTime: Date?
   @Published var loadFromPage: Int?
 
@@ -117,10 +118,11 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  private func mayFinishOnError() {
+  private func onError(_ e: LogicError) {
     if finishOnError {
       totalPages = loadedPage
     }
+    latestError = e
   }
 
   private func preRefresh(fromPage: Int) -> AsyncRequest.OneOf_Value? {
@@ -139,6 +141,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   private func onRefreshSuccess(response: Res, animated: Bool, fromPage: Int) {
     latestResponse = response
+    latestError = nil
     let (newItems, newTotalPages) = onResponse(response)
     logger.debug("page \(loadedPage + 1), newItems \(newItems.count)")
 
@@ -153,12 +156,12 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     lastRefreshTime = Date()
   }
 
-  private func onRefreshError(e _: LogicError, animated: Bool) {
+  private func onRefreshError(_ e: LogicError, animated: Bool) {
     withAnimation(when: animated) {
       self.isRefreshing = false
       self.isLoading = false
     }
-    mayFinishOnError()
+    onError(e)
   }
 
   func refresh(animated: Bool = false, silentOnError: Bool = false, fromPage: Int = 1) {
@@ -167,7 +170,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     logicCallAsync(request, errorToastModel: silentOnError ? nil : .banner) { (response: Res) in
       self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
     } onError: { e in
-      self.onRefreshError(e: e, animated: animated)
+      self.onRefreshError(e, animated: animated)
     }
   }
 
@@ -184,14 +187,14 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
         case let .success(response):
           self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
         case let .failure(e):
-          self.onRefreshError(e: e, animated: animated)
+          self.onRefreshError(e, animated: animated)
         }
       }
     }
   #endif
 
   func initialLoad() {
-    if loadedPage == 0 {
+    if loadedPage == 0, latestError == nil {
       refresh(animated: true)
     }
   }
@@ -211,6 +214,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       guard currentId == self.dataFlowId else { return }
 
       self.latestResponse = response
+      self.latestError = nil
       let (newItems, newTotalPages) = self.onResponse(response)
 
       withAnimation(when: animated) {
@@ -219,11 +223,11 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       }
       self.totalPages = newTotalPages ?? self.totalPages
       if let after = after { after() }
-    } onError: { _ in
+    } onError: { e in
       withAnimation {
         self.isLoading = false
       }
-      self.mayFinishOnError()
+      self.onError(e)
     }
   }
 
@@ -241,6 +245,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       guard currentId == self.dataFlowId else { return }
 
       self.latestResponse = response
+      self.latestError = nil
       let (newItems, newTotalPages) = self.onResponse(response)
       logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
@@ -250,11 +255,11 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       }
       self.totalPages = newTotalPages ?? self.totalPages
       self.loadedPage += 1
-    } onError: { _ in
+    } onError: { e in
       withAnimation(when: self.items.isEmpty) {
         self.isLoading = false
       }
-      self.mayFinishOnError()
+      self.onError(e)
     }
   }
 }

@@ -33,11 +33,13 @@ class PreferencesStorage: ObservableObject {
     set { requestOptionWrapper.inner = newValue }
   }
 
-  @AppStorage("postRowSwipeActionLeading") var postRowSwipeActionLeading = true
+  @AppStorage("postRowSwipeActionLeading") var postRowSwipeActionLeading = false
   @AppStorage("postRowShowUserDetails") var postRowShowUserDetails = true
   @AppStorage("postRowShowUserRegDate") var postRowShowUserRegDate = false
   @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategy = DateTimeTextView.Strategy.automatic
   @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicator = true
+
+  @AppStorage("autoOpenInBrowserWhenBanned") var autoOpenInBrowserWhenBanned = true
 
   init() {
     syncRequestOptionWithLogic()
