@@ -16,10 +16,15 @@ class AuthStorage: ObservableObject {
   @Published var authResponse: AuthResponse? = nil
 
   // do not set this as value other than members in `allAuthInfos`
-  @AppStorage("authInfo") var authInfo = AuthInfo() {
+  @AppStorage("authInfo") var authInfoWrapper = WrappedMessage(inner: AuthInfo()) {
     didSet {
       syncAuthWithLogic()
     }
+  }
+
+  var authInfo: AuthInfo {
+    get { authInfoWrapper.inner }
+    set { authInfoWrapper.inner = newValue }
   }
 
   @AppStorage("allAuthInfos") var allAuthInfos = Set<AuthInfo>()
