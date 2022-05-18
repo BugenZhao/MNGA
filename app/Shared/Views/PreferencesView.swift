@@ -153,6 +153,10 @@ struct PreferencesInnerView: View {
       Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
         Label("Auto Open in Browser when Banned", systemImage: "network")
       }
+
+      Toggle(isOn: $pref.requestOption.randomUa) {
+        Label("Random Device Identity", systemImage: "ipad.and.iphone")
+      }
     }
   }
 
