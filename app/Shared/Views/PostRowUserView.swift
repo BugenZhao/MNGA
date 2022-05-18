@@ -8,12 +8,8 @@
 import Foundation
 import SwiftUI
 
-struct PostRowUserView: View, Equatable {
+struct PostRowUserView: View {
   @StateObject var users = UsersModel.shared
-
-  static func == (lhs: PostRowUserView, rhs: PostRowUserView) -> Bool {
-    lhs.post.id == rhs.post.id
-  }
 
   let post: Post
   let compact: Bool

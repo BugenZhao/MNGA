@@ -66,16 +66,17 @@ struct TopicJumpSelectorView: View {
         Group {
           if maxFloor <= 799 {
             Picker("Floor", selection: $selectedFloor) {
-              ForEach(0 ..< maxFloor + 1) { i in
+              ForEach(0 ..< maxFloor + 1, id: \.self) { i in
                 Text("Floor \(i)").tag(i)
               }
             }
           } else {
-            Text("Floor \(selectedFloor)")
-              .font(.title3)
-              .multilineTextAlignment(.center)
-              .frame(maxWidth: .infinity)
-              .animation(nil)
+            withAnimation(nil) {
+              Text("Floor \(selectedFloor)")
+                .font(.title3)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+            }
           }
         }.pickerStyle(.wheel)
       }

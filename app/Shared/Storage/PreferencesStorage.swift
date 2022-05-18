@@ -24,8 +24,13 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGrouped") var useInsetGrouped = [.pad, .mac].contains(UserInterfaceIdiom.current)
 
-  @AppStorage("requestOption") var requestOption = RequestOption() {
+  @AppStorage("requestOption") var requestOptionWrapper = WrappedMessage(inner: RequestOption()) {
     didSet { syncRequestOptionWithLogic() }
+  }
+
+  var requestOption: RequestOption {
+    get { requestOptionWrapper.inner }
+    set { requestOptionWrapper.inner = newValue }
   }
 
   @AppStorage("postRowSwipeActionLeading") var postRowSwipeActionLeading = true
