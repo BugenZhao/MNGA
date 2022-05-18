@@ -222,10 +222,13 @@
 "Report" = "举报";
 "Block This User" = "屏蔽此用户";
 "Unblock This User" = "取消屏蔽此用户";
+"Auto Open in Browser when Banned" = "封禁时自动访问网页版";
+"NGA Workaround" = "本 App 不被 NGA 官方支持。为了避免 NGA 的干扰和封禁，可能需要尝试这些应对措施。";
+"Special" = "特殊";
 
 "Missing Field" = "缺少字段";
 "Network Connection" = "网络连接";
-"XML Parse" = "XML 解析";
+"XML Parse" = "XML 解析（NGA 官方封禁访问）";
 "JSON Parse" = "JSON 解析";
 "XPath Resolve" = "XPath 解析";
 "Text Parse" = "文本解析";

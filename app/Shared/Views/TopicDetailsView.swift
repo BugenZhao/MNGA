@@ -425,10 +425,24 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  var xmlParseErrorMain: some View {
+    List {
+      headerSection
+      Section {
+        Button(action: { openInAppSafari() }) {
+          Label("Open in Browser", systemImage: "network")
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
   var main: some View {
     ScrollViewReader { proxy in
       Group {
-        if prefs.usePaginatedDetails, onlyPost.id == nil {
+        if dataSource.latestResponse == nil, let error = dataSource.latestError, error.isXMLParseError {
+          xmlParseErrorMain
+        } else if prefs.usePaginatedDetails, onlyPost.id == nil {
           paginatedMain
         } else {
           listMain
@@ -455,6 +469,7 @@ struct TopicDetailsView: View {
       .background { navigation }
       .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
       .onChange(of: dataSource.latestResponse, perform: self.onNewResponse(response:))
+      .onChange(of: dataSource.latestError, perform: self.onError(e:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
@@ -590,6 +605,21 @@ struct TopicDetailsView: View {
         self.alert.message = .error("Contents are too large to take a screenshot.".localized)
       } else {
         viewingImage.show(image: image)
+      }
+    }
+  }
+
+  func openInAppSafari() {
+    if let url = navID.webpageURL {
+      OpenURLModel.shared.open(url: url, inApp: true)
+    }
+  }
+
+  func onError(e: LogicError?) {
+    guard let e = e else { return }
+    if e.isXMLParseError, prefs.autoOpenInBrowserWhenBanned {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+        openInAppSafari()
       }
     }
   }

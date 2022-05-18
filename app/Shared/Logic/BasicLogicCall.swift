@@ -22,11 +22,15 @@ func logicInitialConfigure() {
   }))
 }
 
-struct LogicError: Error, LocalizedError {
+struct LogicError: Error, LocalizedError, Equatable {
   public let error: String
 
   var errorDescription: String? {
     error
+  }
+
+  var isXMLParseError: Bool {
+    error.starts(with: "XML Parse")
   }
 }
 

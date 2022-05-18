@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{
     error::ServiceResult,
     fetch_package,
-    utils::{extract_kv, extract_node},
+    utils::{extract_kv, extract_node, extract_string},
 };
 use dashmap::DashMap;
 use lazy_static::lazy_static;
@@ -140,17 +140,19 @@ fn extract_user(node: Node) -> Option<User> {
     Some(user)
 }
 
-pub fn extract_user_and_cache(node: Node, context: Option<&str>) -> Option<User> {
-    let mut user = extract_user(node)?;
-
+fn cache_user(mut user: User, context: Option<&str>) -> User {
     let controller = UserController::get();
     match (user.get_name().get_anonymous() != "", context) {
         (true, Some(context)) => user = controller.add_anonymous_user(user.clone(), context),
         (true, None) => {}
         (false, _) => controller.update_user(user.clone()),
     }
+    user
+}
 
-    Some(user)
+pub fn extract_user_and_cache(node: Node, context: Option<&str>) -> Option<User> {
+    let user = extract_user(node)?;
+    Some(cache_user(user, context))
 }
 
 pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<RemoteUserResponse> {
@@ -161,6 +163,21 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
             ..Default::default()
         });
     }
+
+    let avatar_url = {
+        let avatar_package = fetch_package(
+            "nuke.php",
+            vec![
+                ("__lib", "ucp"),
+                ("__act", "get_avatar"),
+                ("uid", &user_id),
+                ("username", request.get_user_name()),
+            ],
+            vec![],
+        )
+        .await?;
+        extract_string(&avatar_package, "/root/data/item").unwrap_or_default()
+    };
 
     let package = fetch_package(
         "nuke.php",
@@ -175,7 +192,11 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
     .await?;
 
     let user = extract_node(&package, "/root/data/item", |n| {
-        extract_user_and_cache(n, None)
+        let mut user = extract_user(n)?;
+        if user.avatar_url.is_empty() {
+            user.avatar_url = avatar_url.clone();
+        }
+        Some(cache_user(user, None))
     })?
     .flatten();
 
