@@ -31,9 +31,9 @@ fn resolve_url(api: &str, mock: bool) -> ServiceResult<Url> {
         .or_else(|_| -> ServiceResult<Url> {
             let option = request::REQUEST_OPTION.read().unwrap();
             let base = if mock {
-                option.get_mock_base_url()
+                option.get_mock_base_url_v2()
             } else {
-                option.get_base_url()
+                option.get_base_url_v2()
             };
             let url = Url::parse(&format!("{}/{}", base, api))?;
             Ok(url)

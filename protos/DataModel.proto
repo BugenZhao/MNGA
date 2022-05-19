@@ -165,9 +165,9 @@ message AuthInfo {
 }
 
 message RequestOption {
-  string base_url = 1;
+  string base_url_v2 = 1;
   Device device = 2;
-  string mock_base_url = 3;
+  string mock_base_url_v2 = 3;
   bool random_ua = 4;
 }
 

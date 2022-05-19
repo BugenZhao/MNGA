@@ -1,7 +1,7 @@
 #![allow(unused)]
 
-pub const DEFAULT_BASE_URL: &str = "https://ngabbs.com";
-pub const DEFAULT_MOCK_BASE_URL: &str = "https://raw.fastgit.org/BugenZhao/MNGA/gh-pages/api";
+pub const DEFAULT_BASE_URL: &str = "https://nga.178.com";
+pub const DEFAULT_MOCK_BASE_URL: &str = "https://bugenzhao.com/MNGA/api";
 pub const FORUM_ICON_PATH: &str = "http://img4.ngacn.cc/ngabbs/nga_classic/f/app/";
 pub const MNGA_ICON_PATH: &str = "https://raw.githubusercontent.com/BugenZhao/MNGA/main/app/Shared/Assets.xcassets/RoundedIcon.imageset/RoundedIcon-Mac.png";
 pub const SUCCESS_MSGS: &[&str] = &["完毕", "没有符合条件的结果", "今天已经签到"];
