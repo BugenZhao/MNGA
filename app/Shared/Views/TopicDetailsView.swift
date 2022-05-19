@@ -429,7 +429,7 @@ struct TopicDetailsView: View {
     List {
       headerSection
       Section {
-        Button(action: { openInAppSafari() }) {
+        Button(action: { openInBrowser() }) {
           Label("Open in Browser", systemImage: "network")
         }
       }
@@ -609,9 +609,9 @@ struct TopicDetailsView: View {
     }
   }
 
-  func openInAppSafari() {
+  func openInBrowser() {
     if let url = navID.webpageURL {
-      OpenURLModel.shared.open(url: url, inApp: true)
+      OpenURLModel.shared.open(url: url)
     }
   }
 
@@ -619,7 +619,7 @@ struct TopicDetailsView: View {
     guard let e = e else { return }
     if e.isXMLParseError, prefs.autoOpenInBrowserWhenBanned {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-        openInAppSafari()
+        openInBrowser()
       }
     }
   }
