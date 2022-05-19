@@ -116,6 +116,9 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
     }
+    Toggle(isOn: $pref.hideMNGAMeta) {
+      Label("Hide MNGA Meta", systemImage: "eye.slash")
+    }
   }
 
   @ViewBuilder
