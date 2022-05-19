@@ -107,9 +107,8 @@ pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumLi
             ..Default::default()
         };
 
-        ns.into_iter()
-            .filter_map(extract_category)
-            .chain(once(mnga_category))
+        once(mnga_category)
+            .chain(ns.into_iter().filter_map(extract_category))
             .collect()
     })?;
 

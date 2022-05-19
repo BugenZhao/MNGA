@@ -23,6 +23,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("themeColor") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGrouped") var useInsetGrouped = [.pad, .mac].contains(UserInterfaceIdiom.current)
+  @AppStorage("hideMNGAMeta") var hideMNGAMeta = false
 
   @AppStorage("requestOption") var requestOptionWrapper = WrappedMessage(inner: RequestOption()) {
     didSet { syncRequestOptionWithLogic() }

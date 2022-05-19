@@ -116,17 +116,20 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
     }
+    Toggle(isOn: $pref.hideMNGAMeta) {
+      Label("Hide MNGA Meta", systemImage: "eye.slash")
+    }
   }
 
   @ViewBuilder
   var connection: some View {
     Group {
-      Picker(selection: $pref.requestOption.baseURL, label: Label("Backend", systemImage: "server.rack")) {
+      Picker(selection: $pref.requestOption.baseURLV2, label: Label("Backend", systemImage: "server.rack")) {
         ForEach(URLs.hosts, id: \.self) { host in
           Text(host).tag(URLs.base(for: host)!.absoluteString)
         }
       }
-      Picker(selection: $pref.requestOption.mockBaseURL, label: Label("MNGA Backend", systemImage: "server.rack")) {
+      Picker(selection: $pref.requestOption.mockBaseURLV2, label: Label("MNGA Backend", systemImage: "server.rack")) {
         ForEach(URLs.mockHosts, id: \.self) { host in
           Text(host).tag(URLs.base(for: host)!.absoluteString)
         }
@@ -137,7 +140,7 @@ struct PreferencesInnerView: View {
       ForEach(Device.allCases, id: \.self) { device in
         Label(device.description, systemImage: device.icon).tag(device)
       }
-    }
+    }.disabled(pref.requestOption.randomUa)
   }
 
   @ViewBuilder
@@ -152,6 +155,10 @@ struct PreferencesInnerView: View {
     Group {
       Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
         Label("Auto Open in Browser when Banned", systemImage: "network")
+      }
+
+      Toggle(isOn: $pref.requestOption.randomUa) {
+        Label("Random Device Identity", systemImage: "ipad.and.iphone")
       }
     }
   }

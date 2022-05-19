@@ -13,11 +13,11 @@ struct URLs {
   static let gitHub = URL(string: "https://github.com/BugenZhao/MNGA")!
   static let mailTo = URL(string: "mailto:mnga.feedback@bugenzhao.com")!
 
-  static let defaultHost = "ngabbs.com"
-  static let hosts = [defaultHost, "bbs.nga.cn", "nga.178.com"]
+  static let defaultHost = "nga.178.com"
+  static let hosts = [defaultHost, "bbs.nga.cn", "ngabbs.com"]
 
-  static let defaultMockHost = "raw.fastgit.org/BugenZhao/MNGA/gh-pages/api"
-  static let mockHosts = [defaultMockHost, "bugenzhao.com/MNGA/api", "raw.githubusercontent.com/BugenZhao/MNGA/gh-pages/api"]
+  static let defaultMockHost = "bugenzhao.com/MNGA/api"
+  static let mockHosts = [defaultMockHost, "raw.fastgit.org/BugenZhao/MNGA/gh-pages/api", "raw.githubusercontent.com/BugenZhao/MNGA/gh-pages/api"]
 
   static func base(for host: String) -> URL? {
     URL(string: "https://\(host)/")
@@ -26,7 +26,7 @@ struct URLs {
   static let defaultBase = base(for: defaultHost)!
 
   static var base: URL {
-    URL(string: PreferencesStorage.shared.requestOption.baseURL) ?? defaultBase
+    URL(string: PreferencesStorage.shared.requestOption.baseURLV2) ?? defaultBase
   }
 
   static var login: URL {

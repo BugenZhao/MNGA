@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{borrow::Cow, time::Duration};
 
 use crate::{
     auth,
@@ -11,11 +11,18 @@ use lazy_static::lazy_static;
 use protos::DataModel::{Device, ErrorMessage};
 use reqwest::{multipart, Client, Method, RequestBuilder, Response, Url};
 
-fn device_ua() -> &'static str {
-    match request::REQUEST_OPTION.read().unwrap().get_device() {
-        Device::DESKTOP => DESKTOP_UA,
-        Device::APPLE => APPLE_UA,
-        Device::ANDROID => ANDROID_UA,
+fn device_ua() -> Cow<'static, str> {
+    let option = request::REQUEST_OPTION.read().unwrap();
+
+    if option.get_random_ua() {
+        randua::new().to_string().into()
+    } else {
+        match option.get_device() {
+            Device::DESKTOP => DESKTOP_UA,
+            Device::APPLE => APPLE_UA,
+            Device::ANDROID => ANDROID_UA,
+        }
+        .into()
     }
 }
 
@@ -24,9 +31,9 @@ fn resolve_url(api: &str, mock: bool) -> ServiceResult<Url> {
         .or_else(|_| -> ServiceResult<Url> {
             let option = request::REQUEST_OPTION.read().unwrap();
             let base = if mock {
-                option.get_mock_base_url()
+                option.get_mock_base_url_v2()
             } else {
-                option.get_base_url()
+                option.get_base_url_v2()
             };
             let url = Url::parse(&format!("{}/{}", base, api))?;
             Ok(url)
@@ -98,7 +105,7 @@ where
     let builder = client
         .request(method, url)
         .query(&query)
-        .header("X-User-Agent", device_ua());
+        .header("X-User-Agent", device_ua().as_ref());
     let builder = add_form(builder);
 
     let response = builder.send().await?;

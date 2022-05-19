@@ -12,6 +12,7 @@ import SwiftUIX
 struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = GlobalSearchModel()
+  @StateObject var prefs = PreferencesStorage.shared
 
   @State var categories = [Category]()
   @State var favoriteEditing = false
@@ -58,12 +59,16 @@ struct ForumListView: View {
     }
   }
 
+  var filteredCategories: [Category] {
+    categories.filter { !(prefs.hideMNGAMeta && $0.id == "mnga") }
+  }
+
   var allForumsSection: some View {
     Group {
       if categories.isEmpty {
         LoadingRowView()
       } else {
-        ForEach(categories, id: \.id) { category in
+        ForEach(filteredCategories, id: \.id) { category in
           Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
             ForEach(category.forums, id: \.idDescription) { forum in
               buildNormalLink(forum)
