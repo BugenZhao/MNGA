@@ -1,10 +1,11 @@
+use std::collections::HashMap;
 use crate::{
-    attachment::extract_attachment,
+    attachment::{extract_attachment, extract_attachment_json},
     error::ServiceResult,
     fetch::fetch_package_multipart,
     fetch_package,
     topic::extract_topic,
-    user,
+    user::{self, extract_user_json_and_cache},
     utils::{
         extract_kv, extract_node_rel, extract_nodes, extract_nodes_rel, extract_string,
         get_unique_id,
@@ -14,6 +15,7 @@ use cache::CACHE;
 use protos::{DataModel::*, Service::*, ToValue};
 use reqwest::multipart;
 use sxd_xpath::nodeset::Node;
+use serde_json::Value;
 
 fn vote_response_key(id: &PostId) -> String {
     format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)
@@ -90,6 +92,92 @@ pub fn extract_post(node: Node, at_page: u32, context: &str) -> Option<Post> {
         content: Some(content).into(),
         post_date: get!(map, "postdatetimestamp", _)?,
         score: get!(map, "score", _)?,
+        vote_state,
+        hot_replies: hot_replies.into(),
+        comments: comments.into(),
+        device,
+        alter_info: get!(map, "alterinfo").unwrap_or_default(),
+        attachments: attachments.into(),
+        fid: get!(map, "fid")?,
+        at_page,
+        ..Default::default()
+    };
+
+    Some(post)
+}
+
+pub fn extract_post_json(hot_replies: Vec<Post>, value: &Value, at_page: u32, context: &str) -> Option<Post> {
+    use super::macros::get;
+    let map = value
+        .as_object()
+        .cloned()
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(k, v)| {
+            (
+                k,
+                v.as_str().map_or_else(|| v.to_string(), |s| s.to_owned()),
+            )
+        })
+        .collect::<HashMap<_, _>>();
+
+    extract_user_json_and_cache(&value["author"], Some(&context));
+    let raw_content = get!(map, "content")?;
+    let content = text::parse_content(&raw_content);
+
+    let post_id = PostId {
+        pid: get!(map, "pid")?,
+        tid: get!(map, "tid")?,
+        ..Default::default()
+    };
+
+    let vote_state = CACHE
+        .get_msg::<PostVoteResponse>(&vote_response_key(&post_id))
+        .ok()
+        .flatten()
+        .map(|r| r.state)
+        .unwrap_or(VoteState::NONE);
+
+    let comments = value["comments"].as_array().map(|comments| {
+        comments.iter()
+            .filter_map(|v| extract_post_json(Vec::new(), v, 1, context))
+            .collect::<Vec<_>>()
+    })
+    .unwrap_or_default();
+
+    let device = {
+        let device = value["from_client"].as_str().unwrap_or_default();
+        if device.contains("android") {
+            Device::ANDROID
+        } else if device.contains("ios") {
+            Device::APPLE
+        } else {
+            Device::DESKTOP
+        }
+    };
+    let attachments = value["attches"].as_array().map(|comments| {
+        comments.iter()
+            .filter_map(|v| extract_attachment_json(v))
+            .collect::<Vec<_>>()
+    })
+    .unwrap_or_default();
+
+    let author_id = {
+        let id = value["author"]["uid"].to_string();
+        if id.starts_with("-") {
+            user::attach_context_to_id(&id, context)
+        } else {
+            id
+        }
+    };
+
+    let post = Post {
+        id: Some(post_id).into(),
+        floor: get!(map, "lou", u32)?,
+        author_id,
+        content: Some(content).into(),
+        post_date: get!(map, "postdatetimestamp", _)?,
+        score: get!(map, "vote_good", _)?,
         vote_state,
         hot_replies: hot_replies.into(),
         comments: comments.into(),

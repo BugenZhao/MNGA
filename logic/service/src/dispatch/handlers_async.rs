@@ -10,7 +10,7 @@ use crate::{
         get_user_post_list, post_reply, post_reply_fetch_content, post_vote, upload_attachment,
     },
     topic::{
-        get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list,
+        get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_details_json, get_topic_list,
         get_user_topic_list, search_topic, topic_favor,
     },
     user::get_remote_user,
@@ -29,7 +29,7 @@ macro_rules! handle {
 }
 
 handle!(topic_list, get_topic_list);
-handle!(topic_details, get_topic_details);
+handle!(topic_details, get_topic_details_json);
 handle!(subforum_filter, set_subforum_filter);
 handle!(forum_list, get_forum_list);
 handle!(remote_user, get_remote_user);

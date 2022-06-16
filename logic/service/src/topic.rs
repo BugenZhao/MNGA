@@ -1,11 +1,11 @@
 use crate::{
+    auth,
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
-    fetch::fetch_mock,
-    fetch_package,
+    fetch::{fetch_mock, fetch_package, fetch_json_value_official_app_api},
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
-    post::extract_post,
+    post::{extract_post, extract_post_json},
     user::{extract_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
@@ -16,8 +16,12 @@ use cache::CACHE;
 use chrono::Duration;
 use futures::TryFutureExt;
 use protos::{DataModel::*, MockRequest, Service::*, ToValue};
+use serde_json::Value;
 use std::cmp::Reverse;
+use std::time::{SystemTime, UNIX_EPOCH};
 use sxd_xpath::nodeset::Node;
+use md5::{Md5, Digest};
+use hex::{ToHex};
 
 fn favor_response_key(topic_id: &str) -> String {
     format!("/favor_response/topic/{}", topic_id)
@@ -106,6 +110,67 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         post_date: get!(map, "postdate", _)?,
         last_post_date: get!(map, "lastpost", _)?,
         replies_num: get!(map, "replies", _)?,
+        _parent_forum: parent_forum,
+        _fav: fav,
+        is_favored,
+        _replies_num_last_visit: replies_num_last_visit,
+        fid,
+        ..Default::default()
+    };
+
+    Some(topic)
+}
+
+pub fn extract_topic_json(value: &Value, post: &Post) -> Option<Topic> {
+    fn extract_fav(url: &str) -> Option<&str> {
+        use lazy_static::lazy_static;
+        use regex::Regex;
+        lazy_static! {
+            static ref RE: Regex = Regex::new(r"fav=(?P<fav>[a-fA-F0-9]+)").unwrap();
+        }
+        RE.captures(url)
+            .and_then(|cs| cs.name("fav").map(|m| m.as_str()))
+    }
+
+    let subject_full = value["tsubject"].as_str().map(|s| text::unescape(&s))?;
+    let subject = text::parse_subject(&subject_full);
+
+    // todo 没有找到对应的字段
+    let parent_forum: Option<Topic_oneof__parent_forum> = None;
+    // let parent_forum = extract_node_rel(node, "./parent", extract_topic_parent_forum)
+    //     .ok()
+    //     .flatten()
+    //     .flatten()
+    //     .map(Topic_oneof__parent_forum::parent_forum);
+
+    // todo 没有找到对应的字段
+    let fav = value["tpcurl"]
+        .as_str()
+        .and_then(|s| extract_fav(&s).map(ToOwned::to_owned))
+        .map(Topic_oneof__fav::fav);
+
+    let id = post.id.clone().unwrap_or_default().get_tid().to_string();
+
+    let is_favored = CACHE
+        .get_msg::<TopicFavorResponse>(&favor_response_key(&id))
+        .ok()
+        .flatten()
+        .map(|r| r.is_favored)
+        .unwrap_or(false);
+
+    let replies_num_last_visit = find_topic_history(&id)
+        .map(|s| s.get_topic_snapshot().get_replies_num())
+        .map(Topic_oneof__replies_num_last_visit::replies_num_last_visit);
+    let fid = value["fid"].to_string();
+    let author_name: Option<String> = Some(value["tauthor"].to_string());
+    let topic = Topic {
+        id,
+        subject: Some(subject).into(),
+        author_id: value["tauthorid"].as_str().unwrap_or_default().to_string(), // fix 0730 bug
+        author_name: author_name.map(extract_user_name).into(), // fix 0730 bug
+        post_date: post.post_date,
+        last_post_date: 0, // todo 没有找到对应的字段
+        replies_num: value["vrows"].as_u64()?.try_into().unwrap_or_default(),
         _parent_forum: parent_forum,
         _fav: fav,
         is_favored,
@@ -423,6 +488,137 @@ pub async fn get_topic_details(
     Ok(response)
 }
 
+pub async fn get_topic_details_json(
+    request: TopicDetailsRequest,
+) -> ServiceResult<TopicDetailsResponse> {
+    let key = topic_details_response_key(&request);
+
+    let get_local_cache = || {
+        key.as_ref()
+            .and_then(|key| CACHE.get_msg::<TopicDetailsResponse>(&key).ok())
+            .flatten()
+            .ok_or_else(|| {
+                ServiceError::Mnga(ErrorMessage {
+                    info: "No local cache found".to_owned(),
+                    ..Default::default()
+                })
+            })
+            .map(|mut r| {
+                r.is_local_cache = true;
+                r
+            })
+    };
+
+    if request.get_local_cache() {
+        return get_local_cache();
+    }
+
+    let save_history = |response: &TopicDetailsResponse| {
+        insert_topic_history(response.get_topic().to_owned()); // save history
+        if let Some(key) = key.as_ref() {
+            let _ = CACHE.insert_msg(key, response);
+        }
+    };
+
+    if request.is_mock() {
+        let response = fetch_mock(&request).await?;
+        save_history(&response);
+        return Ok(response);
+    }
+
+    let app_id = "1010";
+    let auth_info = auth::AUTH_INFO.read().unwrap().clone();
+    let access_uid = auth_info.get_uid();
+    let access_token = auth_info.get_token();
+    let timestamp: String = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs()
+        .to_string();
+    let mut hasher = Md5::new();
+    hasher.update(format!(
+        "{}{}{}{}{}{}",
+        app_id, 
+        access_uid,
+        access_token, 
+        request.get_topic_id(), 
+        timestamp, 
+        "392e916a6d1d8b7523e2701470000c30bc2165a1"
+    ));
+    let result = hasher.finalize().to_vec();
+    let sign = result.encode_hex::<String>();
+    let json_value_result = fetch_json_value_official_app_api(
+        "app_api.php",
+        vec![
+            ("__lib", "post"),
+            ("__act", "list")
+        ],
+        vec![
+            ("access_token", access_token),
+            ("access_uid", access_uid),
+            ("tid", request.get_topic_id()),
+            ("page", &request.get_page().to_string()),
+            ("app_id", app_id),
+            ("t", &timestamp),
+            ("sign", &sign),
+            ("pid", request.get_post_id()),
+            ("uid", request.get_author_id()),
+        ],
+    )
+    .await;
+
+    if let Err(e @ ServiceError::Nga(_)) = json_value_result {
+        match get_local_cache() {
+            Ok(response) => return Ok(response),
+            Err(_) => return Err(e),
+        }
+    }
+    let value = json_value_result?;
+        
+    let user_context = get_unique_id();
+    let reps: Vec<Value> = value["result"].as_array()
+        .ok_or_else(|| ServiceError::MissingField("result".to_owned()))?
+        .to_vec();
+    let hot_replies = value["hot_reply"].as_array().map(|hot_reply| {
+        hot_reply.iter()
+            .filter_map(|v| extract_post_json(Vec::new(), v, 1, &user_context))
+            .collect::<Vec<_>>()
+    })
+    .unwrap_or_default();
+    let replies = reps.into_iter()
+        .filter_map(|n| extract_post_json(hot_replies.clone(), &n, request.get_page(), &user_context))
+        .collect::<Vec<_>>();
+
+    let first_post = replies.get(0)
+        .ok_or_else(|| ServiceError::MissingField("topic".to_owned()))?;
+    let mut topic = extract_topic_json(&value, first_post)
+        .ok_or_else(|| ServiceError::MissingField("topic".to_owned()))?;
+    topic.set_fav(request.get_fav().to_owned());
+
+    let forum_name = value["forum_name"]
+        .as_str()
+        .unwrap_or_default()
+        .to_string();
+
+    let pages = value["totalPage"]
+        .as_u64()
+        .unwrap_or_default()
+        .try_into()
+        .unwrap_or_default();
+
+    let response = TopicDetailsResponse {
+        topic: Some(topic).into(),
+        replies: replies.into(),
+        forum_name,
+        pages: pages,
+        is_local_cache: false,
+        ..Default::default()
+    };
+
+    save_history(&response);
+    Ok(response)
+}
+
 pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavorResponse> {
     let (action, tid_key, is_favored) = match request.get_operation() {
         TopicFavorRequest_Operation::ADD => ("add", "tid", true),
@@ -501,7 +697,7 @@ mod test {
 
     #[tokio::test]
     async fn test_topic_details() -> ServiceResult<()> {
-        let response = get_topic_details(TopicDetailsRequest {
+        let response = get_topic_details_json(TopicDetailsRequest {
             topic_id: "27455825".to_owned(),
             page: 1,
             ..Default::default()
@@ -573,7 +769,7 @@ mod test {
 
     #[tokio::test]
     async fn test_specific_post() -> ServiceResult<()> {
-        let response = get_topic_details(TopicDetailsRequest {
+        let response = get_topic_details_json(TopicDetailsRequest {
             post_id: "531589220".to_owned(),
             ..Default::default()
         })
@@ -596,7 +792,7 @@ mod test {
         // https://ngabbs.com/read.php?tid=28454798&authorid=62765271
         let author_id = "62765271";
 
-        let response = get_topic_details(TopicDetailsRequest {
+        let response = get_topic_details_json(TopicDetailsRequest {
             topic_id: "28454798".to_owned(),
             author_id: author_id.to_owned(),
             page: 1,
@@ -648,7 +844,7 @@ mod test {
         let cases = [("29094948", "手机研究所"), ("29100260", "原神")];
 
         for (id, name) in cases {
-            let response = get_topic_details(TopicDetailsRequest {
+            let response = get_topic_details_json(TopicDetailsRequest {
                 topic_id: id.to_owned(),
                 page: 1,
                 ..Default::default()
@@ -708,7 +904,7 @@ mod test {
     #[tokio::test]
     async fn test_anonymous_names() -> ServiceResult<()> {
         for page in [1, 2] {
-            let response = get_topic_details(TopicDetailsRequest {
+            let response = get_topic_details_json(TopicDetailsRequest {
                 topic_id: "17169610".to_owned(),
                 page,
                 ..Default::default()

@@ -12,6 +12,7 @@ use protos::{
     Service::{RemoteUserRequest, RemoteUserResponse, RemoteUserResponse_oneof__user},
 };
 use sxd_xpath::nodeset::Node;
+use serde_json::Value;
 
 lazy_static! {
     static ref USER_CONTROLLER: UserController = Default::default();
@@ -140,6 +141,40 @@ fn extract_user(node: Node) -> Option<User> {
     Some(user)
 }
 
+fn extract_user_json(value: &Value) -> Option<User> {
+    static MUTE_BUFF: &'static str = "105";
+    let name = extract_user_name(
+        value["username"].as_str().unwrap_or_default().to_string()
+    );
+
+    let raw_signature = value["signature"].as_str()
+        .or_else(|| value["sign"].as_str())
+        .unwrap_or_default();
+    let signature = text::parse_content(&raw_signature);
+
+    let mute = value["buffs"].as_str().unwrap_or_default().contains(MUTE_BUFF);
+
+    let user = User {
+        id: value["uid"].to_string(),
+        name: Some(name).into(),
+        avatar_url: value["avatar"].as_str().unwrap_or_default().to_string(),
+        reg_date: value["regdate"].as_u64().unwrap_or_default(),
+        post_num: value["postnum"]
+            .as_u64()
+            .or_else(|| value["posts"].as_u64())
+            .unwrap_or_default()
+            as u32,
+        fame: value["fame"]
+            .as_i64()
+            .or_else(|| value["rvrc"].as_i64())
+            .unwrap_or_default(),
+        signature: Some(signature).into(),
+        mute,
+        ..Default::default()
+    };
+    Some(user)
+}
+
 fn cache_user(mut user: User, context: Option<&str>) -> User {
     let controller = UserController::get();
     match (user.get_name().get_anonymous() != "", context) {
@@ -152,6 +187,11 @@ fn cache_user(mut user: User, context: Option<&str>) -> User {
 
 pub fn extract_user_and_cache(node: Node, context: Option<&str>) -> Option<User> {
     let user = extract_user(node)?;
+    Some(cache_user(user, context))
+}
+
+pub fn extract_user_json_and_cache(value: &Value, context: Option<&str>) -> Option<User> {
+    let user = extract_user_json(value)?;
     Some(cache_user(user, context))
 }
 

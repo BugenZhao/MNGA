@@ -239,6 +239,21 @@ mod json {
         fetch_text_with_auth(api, query, form).await
     }
 
+    pub async fn fetch_json_value_official_app_api(
+        api: &str,
+        query: Vec<(&str, &str)>,
+        form: Vec<(&str, &str)>,
+    ) -> ServiceResult<serde_json::Value> {
+        let response = do_fetch(api, false, query, Method::POST, false, |b| b.form(&form)).await?;
+        let response = response.text_with_charset("utf-8").await?;
+    
+        #[cfg(test)]
+        let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
+    
+        let value = serde_json::from_str::<serde_json::Value>(&response)?;
+        Ok(value)
+    }
+
     #[cfg(test)]
     mod test {
         use super::*;

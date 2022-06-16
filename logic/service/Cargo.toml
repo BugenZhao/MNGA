@@ -32,6 +32,8 @@ url = "2.2.2"
 serde_json = "1.0.68"
 paste = "1.0.6"
 randua = "0.1.6"
+md-5 = "0.10.1"
+hex = "0.4"
 
 [dev-dependencies]
 dotenv = "0.15.0"

@@ -17,9 +17,9 @@ peg::parser! {
         rule digit() = ['0'..='9']
         rule alpha() = ['a'..='z' | 'A'..='Z' | '_']
         rule aldig() = alpha() / digit()
-        rule left_bracket() = "["
-        rule right_bracket() = "]"
-        rule left_close_bracket() = "[/"
+        rule left_bracket() = ['[' | '<']
+        rule right_bracket() = [']' | '>']
+        rule left_close_bracket() = "[/" / "</"
         rule left_sticker_bracket() = "[s:"
         rule equal() = "="
         rule comma() = ","
@@ -118,6 +118,24 @@ pub fn do_parse_content(text: &str) -> ParseResult<Vec<Span>> {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_reply_angle_bracket() {
+        let text = r#"
+        <b>Reply to [pid=618531937,32339526,1]Reply[\/pid] Post by [uid=34387419]熊233[\/uid] (2022-06-16 12:11)<\/b>实付款46是怎么做到的?
+        "#;
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_reply_square_bracket() {
+        let text = r#"
+        [b]Reply to [pid=618531937,32339526,1]Reply[/pid] Post by [uid=34387419]熊233[/uid] (2022-06-16 12:11)[/b]实付款46是怎么做到的?
+        "#;
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
 
     #[test]
     fn test_quote() {
