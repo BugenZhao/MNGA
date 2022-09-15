@@ -77,7 +77,7 @@ where
         .evaluate(&context, node)
         .map_err(sxd_xpath::Error::Executing)?;
     let extracted = if let sxd_xpath::Value::Nodeset(nodeset) = item {
-        nodeset.into_iter().next().map(|node| f(node))
+        nodeset.into_iter().next().map(f)
     } else {
         None
     };
@@ -97,12 +97,12 @@ pub fn extract_pages(
     rows_per_page_xpath: &str,
     default_per_page: u32,
 ) -> ServiceResult<u32> {
-    let rows = extract_string(&package, rows_xpath)?
+    let rows = extract_string(package, rows_xpath)?
         .parse::<u32>()
         .ok()
         .unwrap_or(1);
 
-    let rows_per_page = extract_string(&package, rows_per_page_xpath)?
+    let rows_per_page = extract_string(package, rows_per_page_xpath)?
         .parse::<u32>()
         .ok()
         .unwrap_or(default_per_page);

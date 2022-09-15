@@ -1,3 +1,5 @@
+#![allow(clippy::declare_interior_mutable_const)]
+
 use std::{borrow::Cow, time::Duration};
 
 use crate::{
@@ -177,7 +179,7 @@ mod xml {
 
         fn parse_response(response: String) -> ServiceResult<Self> {
             let package = sxd_document::parser::parse(&response)?;
-            let _ = extract_error(&package)?;
+            extract_error(&package)?;
             Ok(package)
         }
     }

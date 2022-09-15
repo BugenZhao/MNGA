@@ -139,7 +139,7 @@ pub struct MockForum {
 impl MockForum {
     fn to_model(&self) -> Forum {
         let id = ForumId {
-            id: Some(ForumId_oneof_id::fid(self.id.clone())).into(),
+            id: Some(ForumId_oneof_id::fid(self.id.clone())),
             ..Default::default()
         };
 

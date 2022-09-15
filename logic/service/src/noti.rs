@@ -49,7 +49,7 @@ fn extract_noti(value: &Value) -> Option<Notification> {
         ..Default::default()
     };
     let other_post_id = PostId {
-        tid: topic_id.clone(),
+        tid: topic_id,
         pid: get!(kvs, "7").unwrap_or_else(|| "0".to_owned()),
         ..Default::default()
     };
@@ -102,7 +102,7 @@ pub async fn fetch_notis(
             let iter = value
                 .pointer(pointer)
                 .and_then(|v| v.as_array())
-                .map(|vs| vs.iter().filter_map(|v| extract_noti(v)));
+                .map(|vs| vs.iter().filter_map(extract_noti));
             if let Some(iter) = iter {
                 notis.extend(iter);
             }
@@ -177,8 +177,7 @@ mod test {
                 .iter()
                 .find(|noti| noti.id == id)
                 .unwrap()
-                .read
-                == true;
+                .read;
             assert!(marked);
         }
 

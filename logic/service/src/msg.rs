@@ -16,7 +16,7 @@ use crate::{
 };
 
 fn extract_all_users(raw: &str) -> (Vec<String>, Vec<UserName>) {
-    raw.split("\t")
+    raw.split('\t')
         .collect::<Vec<_>>()
         .chunks(2)
         .filter(|c| c.len() == 2)
