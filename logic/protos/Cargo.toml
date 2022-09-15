@@ -6,13 +6,12 @@ edition = "2021"
 
 [build-dependencies]
 cargo-emit = "0.2.1"
-protoc-rust = "2.25"
+protoc-rust = "2.27"
 
 [dependencies]
-base-62 = "0.1.1"
-paste = "1.0.6"
-protobuf = "2.25"
-ron = "0.7.0"
-serde = { version = "1.0.130", features = ["derive"] }
+base-62 = "0.1"
+paste = "1.0"
+protobuf = "2.27"
+serde = { version = "1.0", features = ["derive"] }
 
 [features]

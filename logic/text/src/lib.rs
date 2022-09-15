@@ -16,7 +16,7 @@ pub fn unescape(text: &str) -> String {
 }
 
 pub fn parse_content(text: &str) -> PostContent {
-    let text = unescape(text).replace("\n", "<br/>");
+    let text = unescape(text).replace('\n', "<br/>");
 
     let (spans, error) = match do_parse_content(&text) {
         Ok(spans) => (spans, None),
