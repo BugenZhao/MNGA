@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-thiserror = "1.0.26"
+thiserror = "1.0"
 
 protos = { path = "../protos" }
-peg = "0.7.0"
-html-escape = "0.2.9"
+peg = "0.8"
+html-escape = "0.2"

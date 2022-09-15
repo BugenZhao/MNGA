@@ -319,7 +319,7 @@ size=百分比]
 
     #[test]
     fn test_too_many_divider() {
-        let text = &"======".repeat(10000).to_string();
+        let text = &"======".repeat(10000);
         let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }

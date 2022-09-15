@@ -17,7 +17,7 @@ use sxd_xpath::nodeset::Node;
 
 #[inline]
 pub fn make_fid(id: String) -> Option<ForumId> {
-    if id != "" && id != "0" {
+    if !id.is_empty() && id != "0" {
         ForumId {
             id: Some(ForumId_oneof_id::fid(id)),
             ..Default::default()
@@ -30,7 +30,7 @@ pub fn make_fid(id: String) -> Option<ForumId> {
 
 #[inline]
 pub fn make_stid(id: String) -> Option<ForumId> {
-    if id != "" && id != "0" {
+    if !id.is_empty() && id != "0" {
         ForumId {
             id: Some(ForumId_oneof_id::stid(id)),
             ..Default::default()

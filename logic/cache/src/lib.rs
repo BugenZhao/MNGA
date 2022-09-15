@@ -93,7 +93,7 @@ impl Cache {
     fn do_scan_msg<M: protos::Message>(&self, prefix: &str) -> impl Iterator<Item = M> {
         self.db
             .scan_prefix(prefix)
-            .filter_map(|r| r.ok().map(|(_k, v)| M::parse_from_bytes(&v).ok()).flatten())
+            .filter_map(|r| r.ok().and_then(|(_k, v)| M::parse_from_bytes(&v).ok()))
     }
 
     fn do_remove_prefix(&self, prefix: &str) -> CacheResult<usize> {

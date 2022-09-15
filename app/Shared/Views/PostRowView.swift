@@ -207,7 +207,7 @@ struct PostRowView: View {
       footer
       comments
       signature
-    }.padding(.vertical, 4)
+    }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
     #if os(macOS)
       .contextMenu { menu }

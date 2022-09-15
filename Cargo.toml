@@ -1,12 +1,13 @@
 [workspace]
 members = [
-    "logic/logic",
-    "logic/protos",
-    "logic/text",
     "logic/cache",
     "logic/config",
-    "logic/service",
+    "logic/logic",
     "logic/mock_gen",
+    "logic/protos",
+    "logic/service",
+    "logic/text",
+    "logic/workspace-hack",
 ]
 
 [profile.production]

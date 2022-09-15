@@ -76,7 +76,7 @@ pub fn extract_post(node: Node, at_page: u32, context: &str) -> Option<Post> {
 
     let author_id = {
         let id = get!(map, "authorid")?;
-        if id.starts_with("-") {
+        if id.starts_with('-') {
             user::attach_context_to_id(&id, context)
         } else {
             id
@@ -339,7 +339,7 @@ pub async fn upload_attachment(
             "attachment_file1",
             multipart::Part::bytes(file)
                 .file_name(name.clone())
-                .mime_str(&"image/jpeg")
+                .mime_str("image/jpeg")
                 .unwrap(),
         );
 
@@ -370,7 +370,7 @@ pub async fn get_user_post_list(
         "thread.php",
         vec![
             ("searchpost", "1"),
-            ("authorid", &request.get_author_id()),
+            ("authorid", request.get_author_id()),
             ("page", &request.page.to_string()),
         ],
         vec![],

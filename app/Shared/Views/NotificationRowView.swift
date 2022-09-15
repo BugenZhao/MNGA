@@ -41,7 +41,7 @@ struct NotificationRowView: View {
         DateTimeTextView.build(timestamp: noti.timestamp, switchable: false)
       }.foregroundColor(.secondary)
         .font(.footnote)
-    }.padding(.vertical, 4)
+    }.padding(.vertical, 2)
   }
 }
 

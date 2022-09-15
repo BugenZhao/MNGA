@@ -46,7 +46,7 @@ impl UserController {
     }
 
     pub fn get_by_id(&self, id: &str) -> Option<User> {
-        if id.contains(",") {
+        if id.contains(',') {
             let context: String = id.chars().take_while(|c| *c != ',').collect();
             let map = self.anonymous.get(&context)?;
             let user = map.get(id)?;
@@ -65,9 +65,9 @@ impl UserController {
 }
 
 pub fn extract_user_name(original_name: String) -> UserName {
-    static PREFIX: &'static str = "#anony_";
-    static PART_A: &'static str = "甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥";
-    static PART_B: &'static str = "王李张刘陈杨黄吴赵周徐孙马朱胡林郭何高罗郑梁谢宋唐许邓冯韩曹曾彭萧蔡潘田董袁于余叶蒋杜苏魏程吕丁沈任姚卢傅钟姜崔谭廖范汪陆金石戴贾韦夏邱方侯邹熊孟秦白江阎薛尹段雷黎史龙陶贺顾毛郝龚邵万钱严赖覃洪武莫孔汤向常温康施文牛樊葛邢安齐易乔伍庞颜倪庄聂章鲁岳翟殷詹申欧耿关兰焦俞左柳甘祝包宁尚符舒阮柯纪梅童凌毕单季裴霍涂成苗谷盛曲翁冉骆蓝路游辛靳管柴蒙鲍华喻祁蒲房滕屈饶解牟艾尤阳时穆农司卓古吉缪简车项连芦麦褚娄窦戚岑景党宫费卜冷晏席卫米柏宗瞿桂全佟应臧闵苟邬边卞姬师和仇栾隋商刁沙荣巫寇桑郎甄丛仲虞敖巩明佘池查麻苑迟邝";
+    static PREFIX: &str = "#anony_";
+    static PART_A: &str = "甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥";
+    static PART_B: &str = "王李张刘陈杨黄吴赵周徐孙马朱胡林郭何高罗郑梁谢宋唐许邓冯韩曹曾彭萧蔡潘田董袁于余叶蒋杜苏魏程吕丁沈任姚卢傅钟姜崔谭廖范汪陆金石戴贾韦夏邱方侯邹熊孟秦白江阎薛尹段雷黎史龙陶贺顾毛郝龚邵万钱严赖覃洪武莫孔汤向常温康施文牛樊葛邢安齐易乔伍庞颜倪庄聂章鲁岳翟殷詹申欧耿关兰焦俞左柳甘祝包宁尚符舒阮柯纪梅童凌毕单季裴霍涂成苗谷盛曲翁冉骆蓝路游辛靳管柴蒙鲍华喻祁蒲房滕屈饶解牟艾尤阳时穆农司卓古吉缪简车项连芦麦褚娄窦戚岑景党宫费卜冷晏席卫米柏宗瞿桂全佟应臧闵苟邬边卞姬师和仇栾隋商刁沙荣巫寇桑郎甄丛仲虞敖巩明佘池查麻苑迟邝";
 
     let mut user_name = UserName::default();
     user_name.set_normal(original_name);
@@ -107,7 +107,7 @@ pub fn extract_user_name(original_name: String) -> UserName {
 }
 
 fn extract_user(node: Node) -> Option<User> {
-    static MUTE_BUFF: &'static str = "105";
+    static MUTE_BUFF: &str = "105";
 
     use super::macros::get;
     let map = extract_kv(node);
@@ -159,7 +159,7 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
     let user_id = request.get_user_id();
     if let Some(user) = UserController::get().get_by_id(user_id) {
         return Ok(RemoteUserResponse {
-            _user: Some(RemoteUserResponse_oneof__user::user(user.to_owned())),
+            _user: Some(RemoteUserResponse_oneof__user::user(user)),
             ..Default::default()
         });
     }
@@ -170,7 +170,7 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
             vec![
                 ("__lib", "ucp"),
                 ("__act", "get_avatar"),
-                ("uid", &user_id),
+                ("uid", user_id),
                 ("username", request.get_user_name()),
             ],
             vec![],
@@ -184,7 +184,7 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
         vec![
             ("__lib", "ucp"),
             ("__act", "get"),
-            ("uid", &user_id),
+            ("uid", user_id),
             ("username", request.get_user_name()),
         ],
         vec![],

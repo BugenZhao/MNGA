@@ -57,7 +57,7 @@ private struct PostRowAppearanceView: View {
           Label("Paginated Reading", systemImage: "square.stack")
         }
       }
-    }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+    }.tint(.accentColor)
       .navigationTitleInline(string: "")
   }
 }
@@ -72,7 +72,7 @@ private struct TopicListAppearanceView: View {
           Label(order.description, systemImage: order.icon).tag(order)
         }
       }
-    }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+    }.tint(.accentColor)
       .navigationTitleInline(string: "")
   }
 }
@@ -90,8 +90,8 @@ struct PreferencesInnerView: View {
     Picker(selection: $pref.themeColor, label: Label("Theme Color", systemImage: "circle")) {
       ForEach(ThemeColor.allCases, id: \.self) { color in
         Label(color.description) {
-          Image(systemName: "circle.fill")
-            .foregroundColor(color.color ?? Color("AccentColor"))
+//          Image(systemName: "circle.fill")
+//            .foregroundColor(color.color ?? Color("AccentColor"))
         }.tag(color)
       }
     }
@@ -131,7 +131,8 @@ struct PreferencesInnerView: View {
       }
       Picker(selection: $pref.requestOption.mockBaseURLV2, label: Label("MNGA Backend", systemImage: "server.rack")) {
         ForEach(URLs.mockHosts, id: \.self) { host in
-          Text(host).tag(URLs.base(for: host)!.absoluteString)
+          let url = URLs.base(for: host)!
+          Text(url.host!).tag(url.absoluteString)
         }
       }
     }.lineLimit(1)
@@ -178,7 +179,7 @@ struct PreferencesInnerView: View {
         Form { advanced }
           .tabItem { Label("Advanced", systemImage: "gearshape.2") }
           .tag("advanced")
-      }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
+      }.tint(.accentColor)
         .pickerStyle(InlinePickerStyle())
         .padding(20)
         .frame(width: 500)
@@ -208,10 +209,11 @@ struct PreferencesInnerView: View {
           }
           advanced
         }
-      }.toggleStyle(SwitchToggleStyle(tint: .accentColor))
-        .mayInsetGroupedListStyle()
-        .navigationTitle("Preferences")
-        .preferredColorScheme(pref.colorScheme.scheme) // workaround
+      }
+      .tint(.accentColor)
+      .mayInsetGroupedListStyle()
+      .navigationTitle("Preferences")
+      .preferredColorScheme(pref.colorScheme.scheme) // workaround
     }
   #endif
 }

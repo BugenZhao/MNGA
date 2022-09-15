@@ -84,7 +84,7 @@ struct ShortMessagePostRowView: View {
       header
       content
       footer
-    }.padding(.vertical, 4)
+    }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
     #if os(macOS)
       .contextMenu { menu }

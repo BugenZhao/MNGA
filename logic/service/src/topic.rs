@@ -82,7 +82,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         .map(Topic_oneof__fav::fav);
 
     let id = get!(map, "quote_from")
-        .filter(|q| q != "" && q != "0")
+        .filter(|q| !q.is_empty() && q != "0")
         .or_else(|| get!(map, "tid"))?;
 
     let is_favored = CACHE
@@ -334,7 +334,7 @@ pub async fn get_topic_details(
 
     let get_local_cache = || {
         key.as_ref()
-            .and_then(|key| CACHE.get_msg::<TopicDetailsResponse>(&key).ok())
+            .and_then(|key| CACHE.get_msg::<TopicDetailsResponse>(key).ok())
             .flatten()
             .ok_or_else(|| {
                 ServiceError::Mnga(ErrorMessage {
@@ -455,7 +455,7 @@ pub async fn get_user_topic_list(
     let package = fetch_package(
         "thread.php",
         vec![
-            ("authorid", &request.get_author_id()),
+            ("authorid", request.get_author_id()),
             ("page", &request.page.to_string()),
         ],
         vec![],
@@ -719,10 +719,10 @@ mod test {
                 .replies
                 .into_iter()
                 .map(|p| p.author_id)
-                .filter(|id| id.contains(","))
+                .filter(|id| id.contains(','))
                 .collect::<Vec<_>>();
 
-            assert!(anony_ids.len() > 0);
+            assert!(!anony_ids.is_empty());
 
             for id in anony_ids {
                 let user = UserController::get().get_by_id(&id).unwrap();

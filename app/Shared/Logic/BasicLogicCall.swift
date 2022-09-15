@@ -135,7 +135,7 @@ func basicLogicCallAsync<Response: SwiftProtobuf.Message>(
     let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()
     let rustCallback = Callback(user_data: dataCallbackPtr, callback: byteBufferCallback)
 
-    reqData.withUnsafeBytes { ptr -> Void in
+    reqData.withUnsafeBytes { ptr in
       let ptr = ptr.bindMemory(to: UInt8.self).baseAddress
       rust_call_async(ptr, UInt(reqData.count), rustCallback)
     }

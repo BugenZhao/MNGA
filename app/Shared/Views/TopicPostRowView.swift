@@ -44,6 +44,6 @@ struct TopicPostRowView: View {
       }.foregroundColor(.secondary)
         .font(.footnote)
     }.fixedSize(horizontal: false, vertical: true)
-      .padding(.vertical, 4)
+      .padding(.vertical, 2)
   }
 }
