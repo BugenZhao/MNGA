@@ -41,7 +41,7 @@ struct TopicLikeRowInnerView<S: View>: View {
         DateTimeTextView.build(timestamp: date, switchable: false)
       }.foregroundColor(.secondary)
         .font(.footnote)
-    }.padding(.vertical, 4)
+    }.padding(.vertical, 2)
   }
 }
 

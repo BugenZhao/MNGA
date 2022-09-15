@@ -66,7 +66,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
           .foregroundColor(.secondary)
           .font(.footnote)
       }
-    }.padding(.vertical, 4)
+    }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
   }
 
