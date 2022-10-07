@@ -35,8 +35,6 @@ jobs:
       - run: fastlane beta
         working-directory: app
         env:
-          FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT: 1, # workaround fastlane/20371
-          FASTLANE_ITUNES_TRANSPORTER_PATH: /Applications/Transporter.app/Contents/itms # workaround fastlane/20371
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
           GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
