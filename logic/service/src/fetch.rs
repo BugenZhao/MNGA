@@ -4,7 +4,7 @@ use std::{borrow::Cow, time::Duration};
 
 use crate::{
     auth,
-    constants::{ANDROID_UA, APPLE_UA, DESKTOP_UA},
+    constants::{ANDROID_UA, APPLE_UA, DESKTOP_UA, WINDOWS_PHONE_UA},
     error::{ServiceError, ServiceResult},
     request,
     utils::extract_error,
@@ -23,6 +23,9 @@ fn device_ua() -> Cow<'static, str> {
             Device::DESKTOP => DESKTOP_UA,
             Device::APPLE => APPLE_UA,
             Device::ANDROID => ANDROID_UA,
+            Device::WINDOWS_PHONE => WINDOWS_PHONE_UA,
+            // Use `custom_ua` if `device` is `CUSTOM`
+            Device::CUSTOM => return option.get_custom_ua().to_owned().into(),
         }
         .into()
     }

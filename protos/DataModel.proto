@@ -55,6 +55,8 @@ enum Device {
   APPLE = 0; // From official NGA iOS App or MNGA (by default).
   ANDROID = 1;
   DESKTOP = 2;
+  WINDOWS_PHONE = 3;
+  CUSTOM = 100; // Used for custom User-Agent.
 }
 
 message Post {
@@ -169,6 +171,8 @@ message RequestOption {
   Device device = 2;
   string mock_base_url_v2 = 3;
   bool random_ua = 4;
+  string custom_ua = 5; // Only used when `device` is `CUSTOM` and `random_ua`
+                        // is false.
 }
 
 enum VoteState {

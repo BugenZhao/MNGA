@@ -137,9 +137,16 @@ struct PreferencesInnerView: View {
       }
     }.lineLimit(1)
 
-    Picker(selection: $pref.requestOption.device, label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
-      ForEach(Device.allCases, id: \.self) { device in
-        Label(device.description, systemImage: device.icon).tag(device)
+    Group {
+      Picker(selection: $pref.requestOption.device.animation(), label: Label("Device Identity", systemImage: "ipad.and.iphone")) {
+        ForEach(Device.allCases, id: \.self) { device in
+          Label(device.description, systemImage: device.icon).tag(device)
+        }
+      }
+
+      if pref.requestOption.device == .custom, !pref.requestOption.randomUa {
+        TextField("Custom User Agent", text: $pref.requestOption.customUa)
+          .autocorrectionDisabled(true)
       }
     }.disabled(pref.requestOption.randomUa)
   }
@@ -158,7 +165,7 @@ struct PreferencesInnerView: View {
         Label("Auto Open in Browser when Banned", systemImage: "network")
       }
 
-      Toggle(isOn: $pref.requestOption.randomUa) {
+      Toggle(isOn: $pref.requestOption.randomUa.animation()) {
         Label("Random Device Identity", systemImage: "ipad.and.iphone")
       }
     }
