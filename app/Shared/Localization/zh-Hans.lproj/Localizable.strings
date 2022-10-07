@@ -228,6 +228,7 @@
 "Random Device Identity" = "随机设备身份";
 "Hide MNGA Meta" = "隐藏 MNGA Meta 版块";
 "Custom" = "自定义";
+"Custom User-Agent" = "自定义 User-Agent";
 
 "Missing Field" = "缺少字段";
 "Network Connection" = "网络连接";
