@@ -2,6 +2,21 @@
 id: mnga_root_0
 name: MNGA Meta
 topics:
+  - id: mnga_water_section_on_reply
+    subject: "MNGA 部分版块无法获取话题回复的解决方法"
+    posts:
+      - content: |
+          出于不明原因，NGA 官方对网页版访问某些版块的回复增加了限制，这也影响到了使用网页版接口进行访问的各第三方客户端。
+          MNGA 无法彻底解决该问题，只能通过一些手段绕过限制，在[b]更新到 1.1.2 及以上版本后[/b]，可以通过在设置中调整以下选项尝试是否能够缓解：
+
+          [*] 特殊 => 设备身份
+          选择 Windows Phone / iOS / Android 设备身份，以模拟使用官方客户端进行接口访问，也可以选择“自定义”来手动指定接口请求时使用的 User-Agent。
+          若选项为禁用状态，请先关闭“特殊 => 随机设备身份”。
+
+          ===参见===
+          [url=https://github.com/BugenZhao/MNGA/issues/126]GitHub Issue 讨论页面[/url]
+        author: Bugen
+
   - id: mnga_xml_parse_error
     subject: "MNGA 频繁报告 XML 解析错误解决方法"
     posts:
@@ -23,6 +38,7 @@ topics:
 
           ===参见===
           [url=https://github.com/BugenZhao/MNGA]在 MNGA 的 GitHub 主页获取开发版 TestFlight 链接[/url]
+          [url=https://github.com/BugenZhao/MNGA/issues/104]GitHub Issue 讨论页面[/url]
         author: Bugen
 
   - id: mnga_faq
