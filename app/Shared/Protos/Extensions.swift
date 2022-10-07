@@ -75,6 +75,10 @@ extension Device {
       return "Android"
     case .desktop:
       return "Desktop"
+    case .windowsPhone:
+      return "Windows Phone"
+    case .custom:
+      return "Custom"
     default:
       return "Unknown"
     }
@@ -86,6 +90,12 @@ extension Device {
       return "applelogo"
     case .android:
       return "candybarphone"
+    case .desktop:
+      return "pc"
+    case .windowsPhone:
+      return "flipphone"
+    case .custom:
+      return "questionmark.square.dashed"
     default:
       return "pc"
     }

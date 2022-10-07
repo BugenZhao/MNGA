@@ -10,6 +10,7 @@ fn default_request_option() -> RequestOption {
         device: Device::APPLE,
         mock_base_url_v2: DEFAULT_MOCK_BASE_URL.to_owned(),
         random_ua: false,
+        custom_ua: "".to_owned(),
         ..Default::default()
     }
 }
