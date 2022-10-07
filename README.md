@@ -27,6 +27,14 @@
 
 - Or build the project yourself, check instructions below.
 
+## Donation
+
+如果你喜欢 MNGA，欢迎通过下面的二维码捐赠支持。由于 NGA 官方封锁限制不断加深，我们只能尽最大努力来维持 App 的基本可用性，对于一些无能为力的问题还请谅解，谢谢。
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/25862682/194579914-d27a025c-f00a-44d6-b0e6-ec73f8d16fb9.PNG" width="300"></img>
+</p>
+
 ## Features
 
 - Built with SwiftUI which provides awesome UX feelings for **multiple platforms** like iOS, iPadOS and macOS
