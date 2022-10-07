@@ -145,7 +145,7 @@ struct PreferencesInnerView: View {
       }
 
       if pref.requestOption.device == .custom, !pref.requestOption.randomUa {
-        TextField("Custom User Agent", text: $pref.requestOption.customUa)
+        TextField("Custom User-Agent", text: $pref.requestOption.customUa)
           .autocorrectionDisabled(true)
       }
     }.disabled(pref.requestOption.randomUa)
