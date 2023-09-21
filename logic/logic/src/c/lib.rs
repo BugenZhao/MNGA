@@ -1,7 +1,6 @@
 use super::{byte_buffer::ByteBuffer, callback::Callback};
 use crate::{
-    callback_trait::CallbackTrait, init::may_init, r#async::serve_request_async,
-    sync::serve_request_sync,
+    callback_trait::CallbackTrait, r#async::serve_request_async, sync::serve_request_sync,
 };
 use protos::{
     Message,
@@ -18,7 +17,6 @@ unsafe fn parse_from_raw<T: Message>(data: *const u8, len: usize) -> T {
 /// totally unsafe
 #[no_mangle]
 pub unsafe extern "C" fn rust_call(data: *const u8, len: usize) -> ByteBuffer {
-    may_init();
     let request = parse_from_raw::<SyncRequest>(data, len);
     log::info!("request {:?}", request);
     let response_buf = serve_request_sync(request);
@@ -29,7 +27,6 @@ pub unsafe extern "C" fn rust_call(data: *const u8, len: usize) -> ByteBuffer {
 /// totally unsafe
 #[no_mangle]
 pub unsafe extern "C" fn rust_call_async(data: *const u8, len: usize, callback: Callback) {
-    may_init();
     log::trace!("get {:?} at {:?}", callback, &callback as *const _);
     let request = parse_from_raw::<AsyncRequest>(data, len);
     log::info!("async request #{} {:?}", callback.id(), request);
@@ -40,7 +37,6 @@ pub unsafe extern "C" fn rust_call_async(data: *const u8, len: usize, callback: 
 /// totally unsafe
 #[no_mangle]
 pub unsafe extern "C" fn rust_free(byte_buffer: ByteBuffer) {
-    may_init();
     log::trace!("free buffer {:?}", byte_buffer);
     let ByteBuffer { ptr, len, cap, err } = byte_buffer;
 

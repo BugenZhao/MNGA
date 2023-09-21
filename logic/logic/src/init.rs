@@ -1,6 +1,5 @@
-use std::sync::Once;
-
-fn do_init() {
+#[ctor::ctor]
+fn init() {
     #[cfg(not(target_os = "android"))]
     env_logger::builder()
         .filter_level(log::LevelFilter::Info)
@@ -8,9 +7,6 @@ fn do_init() {
 
     #[cfg(target_os = "android")]
     android_logger::init_once(android_logger::Config::default().with_min_level(log::Level::Debug));
-}
 
-pub fn may_init() {
-    static INIT: Once = Once::new();
-    INIT.call_once(do_init)
+    log::info!("initialized logic");
 }
