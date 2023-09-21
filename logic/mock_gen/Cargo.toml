@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0"
+anyhow = "1"
 protos = { path = "../protos" }
-serde = { version = "1.0", features = ["derive"] }
+serde = { workspace = true }
 serde_yaml = "0.9"
 text = { path = "../text" }
 

@@ -7,9 +7,9 @@ edition = "2021"
 
 [dependencies]
 config = { path = "../config" }
-lazy_static = "1.4"
+lazy_static = "1"
 log = "0.4"
 protos = { path = "../protos" }
 sled = { git = "https://github.com/spacejam/sled", rev = "95a883f" }
-thiserror = "1.0"
-tokio = { version = "1.21", features = ["rt-multi-thread", "macros", "time"] }
+thiserror = "1"
+tokio = { workspace = true }

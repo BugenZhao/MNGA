@@ -6,30 +6,30 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dashmap = "5.4"
+dashmap = "5"
 futures = "0.3"
-lazy_static = "1.4"
+lazy_static = "1"
 log = "0.4"
 reqwest = { version = "0.11", features = [
     "rustls-tls",
     "multipart",
 ], default-features = false }
-serde = { version = "1.0", features = ["derive"] }
+serde = { workspace = true }
 sxd-document = "0.3"
 sxd-xpath = "0.4"
-thiserror = "1.0"
-tokio = { version = "1.21", features = ["rt-multi-thread", "macros", "time"] }
+thiserror = "1"
+tokio = { workspace = true }
 chrono = "0.4"
-regex = "1.6"
-uuid = { version = "1.1", features = ["v4"] }
+regex = "1"
+uuid = { version = "1", features = ["v4"] }
 protos = { path = "../protos" }
 text = { path = "../text" }
 cache = { path = "../cache" }
 config = { path = "../config" }
-atomic = "0.5"
-url = "2.3"
-serde_json = "1.0"
-paste = "1.0"
+atomic = "0.6"
+url = "2"
+serde_json = "1"
+paste = "1"
 randua = "0.1"
 
 [dev-dependencies]
