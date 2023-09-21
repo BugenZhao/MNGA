@@ -3,7 +3,7 @@ use std::env;
 fn open(path: &str, flush: bool) -> sled::Db {
     sled::Config::new()
         .path(path)
-        .flush_every_ms(flush.then(|| 1000))
+        .flush_every_ms(flush.then_some(1000))
         .cache_capacity(50 * 1024 * 1024)
         .open()
         .expect("cannot open or create cache db")

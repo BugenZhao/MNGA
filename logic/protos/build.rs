@@ -6,8 +6,8 @@ fn main() {
 
     protoc_rust::Codegen::new()
         .out_dir("src/generated")
-        .includes(&["../../protos"])
-        .inputs(&["../../protos/Service.proto", "../../protos/DataModel.proto"])
+        .includes(["../../protos"])
+        .inputs(["../../protos/Service.proto", "../../protos/DataModel.proto"])
         .customize(Customize {
             // serde_derive: Some(true),
             gen_mod_rs: Some(true),
