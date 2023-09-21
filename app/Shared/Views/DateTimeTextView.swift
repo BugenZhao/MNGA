@@ -16,11 +16,11 @@ struct DateTimeTextView: View {
     var description: LocalizedStringKey {
       switch self {
       case .automatic:
-        return "Auto"
+        "Auto"
       case .detailed:
-        return "Detailed"
+        "Detailed"
       case .timeAgo:
-        return "Time Ago"
+        "Time Ago"
       }
     }
   }
@@ -31,14 +31,13 @@ struct DateTimeTextView: View {
   @State var showDetailed: Bool
 
   static func build(timestamp: UInt64, switchable: Bool = true) -> Self {
-    let showDetailed: Bool
-    switch PreferencesStorage.shared.postRowDateTimeStrategy {
+    let showDetailed: Bool = switch PreferencesStorage.shared.postRowDateTimeStrategy {
     case .automatic:
-      showDetailed = (Date().timeIntervalSince1970 - TimeInterval(timestamp)) > 30 * 24 * 3600
+      (Date().timeIntervalSince1970 - TimeInterval(timestamp)) > 30 * 24 * 3600
     case .detailed:
-      showDetailed = true
+      true
     case .timeAgo:
-      showDetailed = false
+      false
     }
 
     return Self(timestamp: timestamp, switchable: switchable, showDetailed: showDetailed)

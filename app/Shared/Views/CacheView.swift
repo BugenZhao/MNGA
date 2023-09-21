@@ -22,7 +22,7 @@ struct CacheRowView: View {
       Text(text)
         .foregroundColor(clear == nil ? .secondary : .primary)
       Spacer()
-      if let status = status {
+      if let status {
         Text(status)
           .foregroundColor(.secondary)
       } else {
@@ -33,7 +33,7 @@ struct CacheRowView: View {
 
   var body: some View {
     Group {
-      if let clear = clear {
+      if let clear {
         Button(action: { alertPresented = true }) {
           inner
         }.alert(isPresented: $alertPresented) {

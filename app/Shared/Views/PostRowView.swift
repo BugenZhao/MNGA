@@ -182,7 +182,7 @@ struct PostRowView: View {
         }
       }
     }
-    if let action = action {
+    if let action {
       Section {
         if enableAuthorOnly, !(user?.isAnonymous ?? false) {
           Button(action: { action.navigateToAuthorOnly = post.authorID }) {

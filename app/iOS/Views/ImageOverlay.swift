@@ -36,7 +36,7 @@ struct ImageViewer<Content: View>: View {
 
   @ViewBuilder
   public var body: some View {
-    if let view = view {
+    if let view {
       Group {
         if prefs.imageViewerEnableZoom {
           ZoomableScrollView(scale: $scale) {

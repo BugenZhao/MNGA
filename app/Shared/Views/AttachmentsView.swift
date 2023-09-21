@@ -19,9 +19,9 @@ struct AttachmentsView: View {
   func image(for attachment: Attachment) -> String {
     switch attachment.type {
     case "img":
-      return "photo"
+      "photo"
     default:
-      return "link"
+      "link"
     }
   }
 
@@ -42,7 +42,7 @@ struct AttachmentsView: View {
 
   func show(_ attachment: Attachment) {
     let url = URL(string: attachment.url, relativeTo: URLs.attachmentBase)
-    guard let url = url else { return }
+    guard let url else { return }
 
     if attachment.type == "img" {
       image?.show(url: url)

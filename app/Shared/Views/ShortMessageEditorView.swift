@@ -28,11 +28,10 @@ struct ShortMessagePostTask: TaskProtocol, Hashable {
 
 class ShortMessagePostModel: GenericPostModel<ShortMessagePostTask> {
   override func buildContext(with task: ShortMessagePostTask, ignoreError _: Bool = false) {
-    let to: String?
-    switch task.action.operation {
-    case .new: to = ""
-    case .newSingleTo: to = task.action.singleTo
-    default: to = nil
+    let to: String? = switch task.action.operation {
+    case .new: ""
+    case .newSingleTo: task.action.singleTo
+    default: nil
     }
 
     let context = Context(task: task, to: to, subject: "From MNGA", content: "")

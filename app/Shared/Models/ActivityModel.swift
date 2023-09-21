@@ -11,7 +11,7 @@ import Foundation
 class ActivityModel: ObservableObject {
   @Published var activityItems: [Any]? = nil
 
-  func put<Item>(_ item: Item) {
+  func put(_ item: some Any) {
     activityItems = [item as Any]
   }
 }

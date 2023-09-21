@@ -19,9 +19,9 @@ extension NavigationIdentifier {
   var isMNGAMockID: Bool {
     switch self {
     case let .topicID(tid, _):
-      return tid.isMNGAMockID
+      tid.isMNGAMockID
     case let .forumID(forumID):
-      return forumID.fid.isMNGAMockID
+      forumID.fid.isMNGAMockID
     }
   }
 
@@ -32,7 +32,7 @@ extension NavigationIdentifier {
     switch self {
     case let .topicID(tid, fav):
       components.path = tid
-      if let fav = fav {
+      if let fav {
         components.queryItems = [.init(name: "fav", value: fav)]
       }
       url = components.url(relativeTo: URL(string: Constants.MNGA.topicBase))
@@ -60,7 +60,7 @@ extension NavigationIdentifier {
     case let .topicID(tid, fav):
       components.path = "read.php"
       components.queryItems = [.init(name: "tid", value: tid)]
-      if let fav = fav {
+      if let fav {
         components.queryItems!.append(.init(name: "fav", value: fav))
       }
 
@@ -169,15 +169,13 @@ struct SchemesNavigationModifier: ViewModifier {
   @State var urlFromPasteboardForAlert: URL?
 
   var navigation: some View {
-    let view: AnyView
-
-    switch model.navID {
+    let view: AnyView = switch model.navID {
     case let .topicID(tid, fav):
-      view = TopicDetailsView.build(id: tid, fav: fav).eraseToAnyView()
+      TopicDetailsView.build(id: tid, fav: fav).eraseToAnyView()
     case let .forumID(forumID):
-      view = TopicListView.build(id: forumID).eraseToAnyView()
+      TopicListView.build(id: forumID).eraseToAnyView()
     case .none:
-      view = EmptyView().eraseToAnyView()
+      EmptyView().eraseToAnyView()
     }
 
     return NavigationLink(destination: view, isActive: $model.navID.isNotNil()) {}.hidden()
@@ -188,7 +186,7 @@ struct SchemesNavigationModifier: ViewModifier {
       .background { navigation }
       .alert(isPresented: $urlFromPasteboardForAlert.isNotNil()) {
         let url = urlFromPasteboardForAlert
-        return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url = url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
+        return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
       }
       .onChange(of: urlFromPasteboardForAlert) { if $0 == nil { copyToPasteboard(string: "") } }
       .onReceive(NotificationCenter.default.publisher(for: AppKitOrUIKitApplication.didBecomeActiveNotification)) { _ in

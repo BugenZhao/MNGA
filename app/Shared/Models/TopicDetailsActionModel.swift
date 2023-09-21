@@ -118,7 +118,7 @@ struct TopicDetailsActionModifier: ViewModifier {
 extension View {
   @ViewBuilder
   func withTopicDetailsAction(action: TopicDetailsActionModel? = nil) -> some View {
-    if let action = action {
+    if let action {
       modifier(TopicDetailsActionModifier(action: action))
     } else {
       modifier(TopicDetailsActionModifier())

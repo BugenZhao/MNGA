@@ -46,7 +46,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @ViewBuilder
   var previewInner: some View {
-    if let subject = subject {
+    if let subject {
       TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
     }
 

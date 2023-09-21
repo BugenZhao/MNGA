@@ -48,8 +48,8 @@ class SearchModel<DS>: BasicSearchModel {
     if commited {
       $commitedText
         .map { t -> DataSource? in
-          if let t = t { return self.buildDataSource(text: t) }
-          else { return nil }
+          if let t { self.buildDataSource(text: t) }
+          else { nil }
         }
         .assign(to: &$dataSource)
     } else {

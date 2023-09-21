@@ -57,7 +57,7 @@ extension View {
 }
 
 extension View {
-  func navigationTitleInline<S>(string title: S) -> some View where S: StringProtocol {
+  func navigationTitleInline(string title: some StringProtocol) -> some View {
     #if os(iOS)
       navigationBarTitle(title, displayMode: .inline)
     #elseif os(macOS)
@@ -73,7 +73,7 @@ extension View {
     #endif
   }
 
-  func navigationTitleLarge<S>(string title: S) -> some View where S: StringProtocol {
+  func navigationTitleLarge(string title: some StringProtocol) -> some View {
     #if os(iOS)
       navigationBarTitle(title, displayMode: .large)
     #elseif os(macOS)

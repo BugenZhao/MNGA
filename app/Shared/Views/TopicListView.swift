@@ -34,8 +34,8 @@ struct TopicListView: View {
 
   var dataSource: DataSource {
     switch order {
-    case .lastPost, .none: return dataSourceLastPost
-    case .postDate: return dataSourcePostDate
+    case .lastPost, .none: dataSourceLastPost
+    case .postDate: dataSourcePostDate
     default: fatalError()
     }
   }
@@ -47,9 +47,9 @@ struct TopicListView: View {
   var itemBindings: Binding<[Topic]> {
     switch order {
     case .lastPost, .none:
-      return $dataSourceLastPost.items
+      $dataSourceLastPost.items
     case .postDate:
-      return $dataSourcePostDate.items
+      $dataSourcePostDate.items
     default: fatalError()
     }
   }
@@ -281,21 +281,21 @@ struct TopicListView: View {
     .searchable(model: searchModel, prompt: "Search Topics".localized, iOS15Only: true)
     .navigationTitleLarge(string: forum.name.localized)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
-    .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
+    .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .background { subforum; navigations }
     .toolbarWithFix { toolbar }
     .onAppear { selectedForum.inner = forum }
-    .onChange(of: prefs.defaultTopicListOrder) { if $0 != order { order = $0 } }
+    .onChange(of: prefs.defaultTopicListOrder) { _, new in if new != order { order = new } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
-    .onChange(of: dataSource.latestResponse, perform: updateForumMeta(r:))
+    .onChange(of: dataSource.latestResponse) { _, new in updateForumMeta(new) }
   }
 
   var navID: NavigationIdentifier {
     .forumID(forum.id)
   }
 
-  func updateForumMeta(r: TopicListResponse?) {
-    guard let r = r else { return }
+  func updateForumMeta(_ r: TopicListResponse?) {
+    guard let r else { return }
     if forum.name.isEmpty {
       forum.name = r.forum.name
       forum.info = r.forum.info

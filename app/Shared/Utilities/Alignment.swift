@@ -11,10 +11,10 @@ import SwiftUI
 extension HorizontalAlignment {
   var textAlignment: TextAlignment {
     switch self {
-    case .leading: return .leading
-    case .center: return .center
-    case .trailing: return .trailing
-    default: return .leading
+    case .leading: .leading
+    case .center: .center
+    case .trailing: .trailing
+    default: .leading
     }
   }
 }

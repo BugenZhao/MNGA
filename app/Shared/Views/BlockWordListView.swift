@@ -14,7 +14,7 @@ struct BlockWordListView: View {
   @State var newWord = nil as BlockWord?
 
   func commitNewWord() {
-    if let newWord = newWord, !newWord.word.isEmpty {
+    if let newWord, !newWord.word.isEmpty {
       storage.add(newWord)
       self.newWord = nil
     }
@@ -56,7 +56,7 @@ struct BlockWordListView: View {
   var addButton: some View {
     Button(action: {
       withAnimation {
-        if let newWord = newWord, !newWord.word.isEmpty {
+        if let newWord, !newWord.word.isEmpty {
           storage.add(newWord)
         }
         newWord = .init()

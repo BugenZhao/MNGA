@@ -17,8 +17,8 @@ extension Subject {
 extension Forum {
   var idDescription: String {
     switch id.id! {
-    case let .fid(fid): return "#\(fid)"
-    case let .stid(stid): return "##\(stid)"
+    case let .fid(fid): "#\(fid)"
+    case let .stid(stid): "##\(stid)"
     }
   }
 }
@@ -27,26 +27,26 @@ extension HotTopicListRequest.DateRange {
   var description: LocalizedStringKey {
     switch self {
     case .day:
-      return "Last 24 hours"
+      "Last 24 hours"
     case .week:
-      return "Last week"
+      "Last week"
     case .month:
-      return "Last month"
+      "Last month"
     default:
-      return ""
+      ""
     }
   }
 
   var icon: String {
     switch self {
     case .day:
-      return "1.circle"
+      "1.circle"
     case .week:
-      return "7.circle"
+      "7.circle"
     case .month:
-      return "30.circle"
+      "30.circle"
     default:
-      return ""
+      ""
     }
   }
 }
@@ -55,13 +55,13 @@ extension VoteState {
   var defaultDelta: Int32 {
     switch self {
     case .none:
-      return 0
+      0
     case .up:
-      return 1
+      1
     case .down:
-      return -1
+      -1
     default:
-      return 0
+      0
     }
   }
 }
@@ -70,34 +70,34 @@ extension Device {
   var description: LocalizedStringKey {
     switch self {
     case .apple:
-      return "iOS"
+      "iOS"
     case .android:
-      return "Android"
+      "Android"
     case .desktop:
-      return "Desktop"
+      "Desktop"
     case .windowsPhone:
-      return "Windows Phone"
+      "Windows Phone"
     case .custom:
-      return "Custom"
+      "Custom"
     default:
-      return "Unknown"
+      "Unknown"
     }
   }
 
   var icon: String {
     switch self {
     case .apple:
-      return "applelogo"
+      "applelogo"
     case .android:
-      return "candybarphone"
+      "candybarphone"
     case .desktop:
-      return "pc"
+      "pc"
     case .windowsPhone:
-      return "flipphone"
+      "flipphone"
     case .custom:
-      return "questionmark.square.dashed"
+      "questionmark.square.dashed"
     default:
-      return "pc"
+      "pc"
     }
   }
 }
@@ -106,19 +106,19 @@ extension PostReplyAction {
   var title: LocalizedStringKey {
     switch operation {
     case .reply:
-      return "Reply"
+      "Reply"
     case .quote:
-      return "Quote"
+      "Quote"
     case .modify:
-      return verbatim.modifyAppend ? "Append" : "Edit"
+      verbatim.modifyAppend ? "Append" : "Edit"
     case .comment:
-      return "Comment"
+      "Comment"
     case .new:
-      return "New Topic"
+      "New Topic"
     case .report:
-      return "Report"
+      "Report"
     case .UNRECOGNIZED:
-      return ""
+      ""
     }
   }
 }
@@ -136,30 +136,30 @@ extension Notification.TypeEnum {
   var icon: String {
     switch self {
     case .replyPost, .replyTopic:
-      return "arrowshape.turn.up.left"
+      "arrowshape.turn.up.left"
     case .vote:
-      return "hand.thumbsup"
+      "hand.thumbsup"
     case .shortMessage:
-      return "message"
+      "message"
     case .shortMessageStart:
-      return "plus.message"
+      "plus.message"
     case .unknown, .UNRECOGNIZED:
-      return "questionmark.circle"
+      "questionmark.circle"
     }
   }
 
   var description: LocalizedStringKey {
     switch self {
     case .replyPost:
-      return "replied to your post"
+      "replied to your post"
     case .replyTopic:
-      return "replied to your topic"
+      "replied to your topic"
     case .vote:
-      return "received 10 more votes"
+      "received 10 more votes"
     case .shortMessage, .shortMessageStart:
-      return "send you a short message"
+      "send you a short message"
     case .unknown, .UNRECOGNIZED:
-      return ""
+      ""
     }
   }
 }
@@ -180,33 +180,33 @@ extension TopicListRequest.Order {
   var description: LocalizedStringKey {
     switch self {
     case .lastPost:
-      return "Last Reply"
+      "Last Reply"
     case .postDate:
-      return "Topic Post"
+      "Topic Post"
     default:
-      return ""
+      ""
     }
   }
 
   var latestTopicsDescription: LocalizedStringKey {
     switch self {
     case .lastPost:
-      return "Latest Topics by Last Reply Date"
+      "Latest Topics by Last Reply Date"
     case .postDate:
-      return "Latest Topics by Topic Post Date"
+      "Latest Topics by Topic Post Date"
     default:
-      return ""
+      ""
     }
   }
 
   var icon: String {
     switch self {
     case .lastPost:
-      return "p.circle"
+      "p.circle"
     case .postDate:
-      return "t.circle"
+      "t.circle"
     default:
-      return ""
+      ""
     }
   }
 }
@@ -215,11 +215,11 @@ extension ShortMessagePostAction {
   var title: LocalizedStringKey {
     switch operation {
     case .reply:
-      return "Reply"
+      "Reply"
     case .new, .newSingleTo:
-      return "New Short Message"
+      "New Short Message"
     case .UNRECOGNIZED:
-      return ""
+      ""
     }
   }
 }
@@ -277,15 +277,15 @@ extension CacheType {
   var description: LocalizedStringKey {
     switch self {
     case .all:
-      return "All"
+      "All"
     case .topicHistory:
-      return "Topic Histories"
+      "Topic Histories"
     case .topicDetails:
-      return "Topic Cache"
+      "Topic Cache"
     case .notification:
-      return "Notifications"
+      "Notifications"
     default:
-      return ""
+      ""
     }
   }
 }

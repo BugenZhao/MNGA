@@ -87,7 +87,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   }
 
   func uploadImageAttachment(data: Data?) {
-    guard let data = data else { return }
+    guard let data else { return }
     guard let request = context.task.buildUploadAttachmentRequest(data: data) else {
       model.image = nil
       return

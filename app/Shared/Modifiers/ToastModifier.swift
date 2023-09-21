@@ -27,15 +27,15 @@ struct MainToastModifier: ViewModifier {
 
       .toast(isPresenting: $hud.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
         (hud.message ?? .success("")).toastView(for: .hud)
-      } onTap: { if let onTap = onTap { onTap() } }
+      } onTap: { if let onTap { onTap() } }
 
       .toast(isPresenting: $banner.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
         (banner.message ?? .success("")).toastView(for: .banner(.pop))
-      } onTap: { if let onTap = onTap { onTap() } }
+      } onTap: { if let onTap { onTap() } }
 
       .toast(isPresenting: $alert.message.isNotNil(), duration: 3, tapToDismiss: onTap == nil) {
         (alert.message ?? .success("")).toastView(for: .alert)
-      } onTap: { if let onTap = onTap { onTap() } }
+      } onTap: { if let onTap { onTap() } }
   }
 }
 

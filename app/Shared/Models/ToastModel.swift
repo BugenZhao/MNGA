@@ -66,17 +66,17 @@ extension ToastModel.Message {
   func toastView(for displayMode: AlertToast.DisplayMode) -> AlertToast {
     switch self {
     case let .success(msg):
-      return AlertToast(displayMode: displayMode, type: .complete(.green), title: "Success".localized, subTitle: msg)
+      AlertToast(displayMode: displayMode, type: .complete(.green), title: "Success".localized, subTitle: msg)
     case let .error(msg):
-      return AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg.errorLocalized)
+      AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg.errorLocalized)
     case let .notification(newCount):
-      return AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String(format: "%lld new unread notifications".localized, newCount))
+      AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String(format: "%lld new unread notifications".localized, newCount))
     case let .userSwitch(user):
-      return AlertToast(displayMode: displayMode, type: .systemImage("person.crop.circle.badge.checkmark", .accentColor), title: "Account Switched".localized, subTitle: user)
+      AlertToast(displayMode: displayMode, type: .systemImage("person.crop.circle.badge.checkmark", .accentColor), title: "Account Switched".localized, subTitle: user)
     case let .clockIn(msg):
-      return AlertToast(displayMode: displayMode, type: .systemImage("lanyardcard", .accentColor), title: "Clocked in Successfully".localized, subTitle: msg)
+      AlertToast(displayMode: displayMode, type: .systemImage("lanyardcard", .accentColor), title: "Clocked in Successfully".localized, subTitle: msg)
     case let .openURL(url):
-      return AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
+      AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
     }
   }
 }

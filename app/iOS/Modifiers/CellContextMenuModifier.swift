@@ -26,7 +26,7 @@ private class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
   func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration? {
     UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
       let actions = self.actions.map { action -> UIMenuElement? in
-        guard let action = action else { return nil }
+        guard let action else { return nil }
         return UIAction(
           title: action.title.localized,
           image: UIImage(systemName: action.systemImage),

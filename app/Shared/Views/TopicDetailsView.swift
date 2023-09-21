@@ -55,7 +55,7 @@ struct TopicDetailsView: View {
   static func build(id: String, fav: String? = nil) -> some View {
     build(topic: .with {
       $0.id = id
-      if let fav = fav {
+      if let fav {
         $0.fav = fav
       }
     })
@@ -201,7 +201,7 @@ struct TopicDetailsView: View {
       #endif
 
       Section {
-        if let atForum = atForum {
+        if let atForum {
           Button(action: { action.navigateToForum = atForum }) {
             Label("Goto \(atForum.name)", systemImage: "list.triangle")
           }
@@ -275,7 +275,7 @@ struct TopicDetailsView: View {
     }
     .fixedSize(horizontal: false, vertical: true)
 
-    if let first = first {
+    if let first {
       buildRow(post: first)
     }
   }
@@ -377,15 +377,15 @@ struct TopicDetailsView: View {
 
   var title: String {
     if forceLocalMode {
-      return "Topic".localized
+      "Topic".localized
     } else if !enableAuthorOnly {
-      return "Author Only".localized
+      "Author Only".localized
     } else if onlyPost.id != nil {
-      return "Reply".localized
+      "Reply".localized
     } else if prefs.showTopicSubject {
-      return topic.subject.content
+      topic.subject.content
     } else {
-      return "Topic".localized
+      "Topic".localized
     }
   }
 
@@ -448,11 +448,11 @@ struct TopicDetailsView: View {
           listMain
         }
       }.onReceive(action.$scrollToFloor) { floor in
-        guard let floor = floor else { return }
+        guard let floor else { return }
         let item = dataSource.items.first { $0.floor == UInt32(floor) }
         proxy.scrollTo(item, anchor: .top)
       }.onReceive(action.$scrollToPid) { pid in
-        guard let pid = pid else { return }
+        guard let pid else { return }
         let item = dataSource.items.first { $0.id.pid == pid }
         proxy.scrollTo(item, anchor: .top)
       }
@@ -522,7 +522,7 @@ struct TopicDetailsView: View {
   }
 
   func reloadPageAfter(sent: PostReplyModel.Context?) {
-    guard let sent = sent else { return }
+    guard let sent else { return }
 
     switch sent.task.pageToReload {
     case let .exact(page):
@@ -535,7 +535,7 @@ struct TopicDetailsView: View {
   }
 
   func onNewResponse(response: TopicDetailsResponse?) {
-    guard let response = response else { return }
+    guard let response else { return }
     let newTopic = response.topic
 
     guard #available(iOS 15.0, *) else {
@@ -618,7 +618,7 @@ struct TopicDetailsView: View {
   }
 
   func onError(e: LogicError?) {
-    guard let e = e else { return }
+    guard let e else { return }
     if e.isXMLParseError, prefs.autoOpenInBrowserWhenBanned {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
         openInBrowser()

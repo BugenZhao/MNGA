@@ -60,7 +60,7 @@ func logicCall<Response: SwiftProtobuf.Message>(_ requestValue: SyncRequest.OneO
   let (resData, resError) = extractByteBuffer(resByteBuffer)
   defer { rust_free(resByteBuffer) }
 
-  if let resData = resData {
+  if let resData {
     let res = try Response(serializedData: resData)
     return res
   } else {
@@ -85,7 +85,7 @@ private class WrappedDataCallback {
   func run(_ data: Data?, _ error: LogicError?) {
     DispatchQueue.main.async {
       logger.debug("running callback on thread `\(Thread.current)`")
-      if let error = error {
+      if let error {
         self.errorCallback(error)
       } else {
         self.callback(data!)

@@ -24,7 +24,7 @@ struct PostRowUserView: View {
   }
 
   var body: some View {
-    if let user = user {
+    if let user {
       UserView(user: user, style: style, isAuthor: isAuthor)
     } else {
       UserView(id: post.authorID, style: style, isAuthor: isAuthor)
