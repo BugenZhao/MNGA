@@ -11,3 +11,4 @@ thiserror = "1"
 protos = { path = "../protos" }
 peg = "0.8"
 html-escape = "0.2"
+workspace-hack = { version = "0.1", path = "../workspace-hack" }

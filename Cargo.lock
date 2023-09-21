@@ -174,6 +174,7 @@ dependencies = [
  "sled",
  "thiserror",
  "tokio",
+ "workspace-hack",
 ]
 
 [[package]]
@@ -277,6 +278,7 @@ dependencies = [
  "log",
  "once_cell",
  "protos",
+ "workspace-hack",
 ]
 
 [[package]]
@@ -873,6 +875,7 @@ dependencies = [
  "protos",
  "service",
  "tokio",
+ "workspace-hack",
 ]
 
 [[package]]
@@ -926,6 +929,7 @@ dependencies = [
  "serde",
  "serde_yaml",
  "text",
+ "workspace-hack",
 ]
 
 [[package]]
@@ -1146,6 +1150,7 @@ dependencies = [
  "protobuf",
  "protoc-rust",
  "serde",
+ "workspace-hack",
 ]
 
 [[package]]
@@ -1494,6 +1499,7 @@ dependencies = [
  "tokio",
  "url",
  "uuid",
+ "workspace-hack",
 ]
 
 [[package]]
@@ -1651,6 +1657,7 @@ dependencies = [
  "peg",
  "protos",
  "thiserror",
+ "workspace-hack",
 ]
 
 [[package]]
@@ -2124,11 +2131,10 @@ dependencies = [
 name = "workspace-hack"
 version = "0.1.0"
 dependencies = [
- "hashbrown 0.12.3",
- "libc",
+ "hashbrown 0.14.0",
  "log",
- "memchr",
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+ "syn 2.0.37",
 ]

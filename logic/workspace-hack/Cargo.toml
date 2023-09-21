@@ -14,17 +14,14 @@ publish = false
 
 ### BEGIN HAKARI SECTION
 [dependencies]
-hashbrown = { version = "0.12", default-features = false, features = ["raw"] }
-libc = { version = "0.2", features = ["std"] }
+hashbrown = { version = "0.14", default-features = false, features = ["raw"] }
 log = { version = "0.4", default-features = false, features = ["std"] }
-memchr = { version = "2", features = ["std"] }
 
 [build-dependencies]
-hashbrown = { version = "0.12", default-features = false, features = ["raw"] }
-libc = { version = "0.2", features = ["std"] }
 log = { version = "0.4", default-features = false, features = ["std"] }
-proc-macro2 = { version = "1", features = ["proc-macro"] }
-quote = { version = "1", features = ["proc-macro"] }
-syn = { version = "1", features = ["clone-impls", "derive", "extra-traits", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
+proc-macro2 = { version = "1" }
+quote = { version = "1" }
+syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["extra-traits", "fold", "full", "visit"] }
+syn-f595c2ba2a3f28df = { package = "syn", version = "2", features = ["full"] }
 
 ### END HAKARI SECTION
