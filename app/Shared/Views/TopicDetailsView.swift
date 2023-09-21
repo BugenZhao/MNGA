@@ -53,7 +53,7 @@ struct TopicDetailsView: View {
   }
 
   static func build(id: String, fav: String? = nil) -> some View {
-    Self.build(topic: .with {
+    build(topic: .with {
       $0.id = id
       if let fav = fav {
         $0.fav = fav
@@ -96,7 +96,7 @@ struct TopicDetailsView: View {
 
   static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
     StaticTopicDetailsView(topic: topic) { binding in
-      Self.build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
+      build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
     }
   }
 
@@ -155,7 +155,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var replyButton: some View {
     if !mock {
-      Button(action: { self.doReplyTopic() }) {
+      Button(action: { doReplyTopic() }) {
         Label("Reply", systemImage: "arrowshape.turn.up.left")
       }
     }
@@ -178,15 +178,15 @@ struct TopicDetailsView: View {
     Menu {
       Section {
         if enableAuthorOnly, !topic.authorName.isAnonymous {
-          Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
+          Button(action: { action.navigateToAuthorOnly = topic.authorID }) {
             Label("Author Only", systemImage: "person.fill")
           }
         }
         if !localMode {
-          Button(action: { self.action.navigateToLocalMode = true }) {
+          Button(action: { action.navigateToLocalMode = true }) {
             Label("View Cached Topic", systemImage: "clock")
           }
-          Button(action: { self.showJumpSelector = true }) {
+          Button(action: { showJumpSelector = true }) {
             Label("Jump to...", systemImage: "arrow.up.arrow.down")
           }
         }
@@ -194,7 +194,7 @@ struct TopicDetailsView: View {
 
       #if os(iOS)
         ShareLinksView(navigationID: navID) {
-          Button(action: self.shareAsImage) {
+          Button(action: shareAsImage) {
             Label("Screenshot (Beta)", systemImage: "text.below.photo")
           }
         }
@@ -202,14 +202,14 @@ struct TopicDetailsView: View {
 
       Section {
         if let atForum = atForum {
-          Button(action: { self.action.navigateToForum = atForum }) {
+          Button(action: { action.navigateToForum = atForum }) {
             Label("Goto \(atForum.name)", systemImage: "list.triangle")
           }
         }
         #if os(iOS)
           favoriteButton
         #endif
-        Button(action: { self.dataSource.refresh() }) {
+        Button(action: { dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
         Label("#" + topic.id, systemImage: "number")
@@ -246,10 +246,10 @@ struct TopicDetailsView: View {
        let currFirst = dataSource.items.min(by: { $0.floor < $1.floor })
     {
       Button(action: {
-        self.action.scrollToFloor = Int(currFirst.floor) // scroll to first for fixing scroll position
+        action.scrollToFloor = Int(currFirst.floor) // scroll to first for fixing scroll position
         dataSource.reload(page: prevPage, evenIfNotLoaded: true) {
           guard let floor = dataSource.itemsAtPage(prevPage).map(\.floor).max() else { return }
-          DispatchQueue.main.async { self.action.scrollToFloor = Int(floor) } // scroll to last of prev page
+          DispatchQueue.main.async { action.scrollToFloor = Int(floor) } // scroll to last of prev page
         }
       }) {
         Label("Load Page \(prevPage)", systemImage: "arrow.counterclockwise")
@@ -275,7 +275,7 @@ struct TopicDetailsView: View {
     }
     .fixedSize(horizontal: false, vertical: true)
 
-    if let first = self.first {
+    if let first = first {
       buildRow(post: first)
     }
   }
@@ -289,7 +289,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var hotRepliesSection: some View {
-    if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
+    if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
       Section(header: Text("Hot Replies")) {
         ForEach(hotReplies, id: \.id.pid) { post in
           buildRow(post: post, withId: false)
@@ -316,14 +316,14 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var navigation: some View {
-    let showingChain = self.action.showingReplyChain ?? .init()
-    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) {}.hidden()
+    let showingChain = action.showingReplyChain ?? .init()
+    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: $action.showingReplyChain.isNotNil()) {}.hidden()
 
-    let authorOnlyView = TopicDetailsView.build(topic: topic, only: self.action.navigateToAuthorOnly ?? .init())
-    NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) {}.hidden()
+    let authorOnlyView = TopicDetailsView.build(topic: topic, only: action.navigateToAuthorOnly ?? .init())
+    NavigationLink(destination: authorOnlyView, isActive: $action.navigateToAuthorOnly.isNotNil()) {}.hidden()
 
     let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
-    NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) {}.hidden()
+    NavigationLink(destination: localCacheView, isActive: $action.navigateToLocalMode) {}.hidden()
   }
 
   @ViewBuilder
@@ -467,9 +467,9 @@ struct TopicDetailsView: View {
       .navigationTitleInline(string: title)
       .toolbarWithFix { toolbar }
       .background { navigation }
-      .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
-      .onChange(of: dataSource.latestResponse, perform: self.onNewResponse(response:))
-      .onChange(of: dataSource.latestError, perform: self.onError(e:))
+      .onChange(of: postReply.sent, perform: reloadPageAfter(sent:))
+      .onChange(of: dataSource.latestResponse, perform: onNewResponse(response:))
+      .onChange(of: dataSource.latestError, perform: onError(e:))
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
@@ -499,9 +499,9 @@ struct TopicDetailsView: View {
   func toggleFavor() {
     logicCallAsync(.topicFavor(.with {
       $0.topicID = topic.id
-      $0.operation = self.isFavored ? .delete : .add
+      $0.operation = isFavored ? .delete : .add
     })) { (response: TopicFavorResponse) in
-      self.isFavored = response.isFavored
+      isFavored = response.isFavored
       #if os(iOS)
         HapticUtils.play(type: .success)
       #endif
@@ -515,7 +515,7 @@ struct TopicDetailsView: View {
         f.fid = topic.fid
       }
       $0.postID = .with {
-        $0.tid = self.topic.id
+        $0.tid = topic.id
         $0.pid = "0"
       }
     }, pageToReload: .last)
@@ -570,7 +570,7 @@ struct TopicDetailsView: View {
     VStack(alignment: .leading) {
       headerSectionInner
 
-      if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
+      if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
         Text("Hot Replies")
           .font(.footnote)
           .foregroundColor(.secondary)
@@ -578,15 +578,17 @@ struct TopicDetailsView: View {
           Divider()
           buildRow(post: post, withId: false)
         }
-      } else if let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5),
-                !latestReplies.isEmpty
-      {
-        Text("Replies")
-          .font(.footnote)
-          .foregroundColor(.secondary)
-        ForEach(latestReplies, id: \.id.pid) { post in
-          Divider()
-          buildRow(post: post, withId: false)
+      } else {
+        let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5)
+
+        if !latestReplies.isEmpty {
+          Text("Replies")
+            .font(.footnote)
+            .foregroundColor(.secondary)
+          ForEach(latestReplies, id: \.id.pid) { post in
+            Divider()
+            buildRow(post: post, withId: false)
+          }
         }
       }
     }
@@ -602,7 +604,7 @@ struct TopicDetailsView: View {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       let image = screenshotView.snapshot()
       if image.size == .zero {
-        self.alert.message = .error("Contents are too large to take a screenshot.".localized)
+        alert.message = .error("Contents are too large to take a screenshot.".localized)
       } else {
         viewingImage.show(image: image)
       }

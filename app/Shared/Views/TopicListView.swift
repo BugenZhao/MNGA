@@ -103,7 +103,7 @@ struct TopicListView: View {
   func newTopic() {
     postReply.show(action: .with {
       $0.operation = .new
-      $0.forumID = self.forum.id
+      $0.forumID = forum.id
     }, pageToReload: nil)
   }
 
@@ -118,7 +118,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var newTopicButton: some View {
-    Button(action: { self.newTopic() }) {
+    Button(action: { newTopic() }) {
       Label("New Topic", systemImage: "square.and.pencil")
     }
   }
@@ -196,8 +196,8 @@ struct TopicListView: View {
           subforums: subforums,
           refresh: { dataSource.refresh() },
           onNavigateToForum: {
-            self.showingSubforumsModal = false
-            self.currentShowingSubforum = $0
+            showingSubforumsModal = false
+            currentShowingSubforum = $0
           }
         )
       }
@@ -206,7 +206,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var subforum: some View {
-    let destination = TopicListView.build(forum: self.currentShowingSubforum ?? Forum())
+    let destination = TopicListView.build(forum: currentShowingSubforum ?? Forum())
     NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) {}
       .isDetailLink(false)
       .hidden()
@@ -252,7 +252,7 @@ struct TopicListView: View {
         ProgressView()
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation
-              self.dataSource.initialLoad()
+              dataSource.initialLoad()
             }
           }
       } else {
@@ -285,9 +285,9 @@ struct TopicListView: View {
     .background { subforum; navigations }
     .toolbarWithFix { toolbar }
     .onAppear { selectedForum.inner = forum }
-    .onChange(of: prefs.defaultTopicListOrder) { if $0 != self.order { self.order = $0 } }
-    .onAppear { if self.order == nil { self.order = prefs.defaultTopicListOrder } }
-    .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
+    .onChange(of: prefs.defaultTopicListOrder) { if $0 != order { order = $0 } }
+    .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
+    .onChange(of: dataSource.latestResponse, perform: updateForumMeta(r:))
   }
 
   var navID: NavigationIdentifier {

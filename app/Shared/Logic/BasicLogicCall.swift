@@ -1,5 +1,5 @@
 //
-//  RustCall.swift
+//  BasicLogicCall.swift
 //  InteropApp
 //
 //  Created by Bugen Zhao on 6/23/21.

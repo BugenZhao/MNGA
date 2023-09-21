@@ -33,7 +33,7 @@ struct ShortMessageListView: View {
 
   @ViewBuilder
   var newShortMessageButton: some View {
-    Button(action: { self.newShortMessage() }) {
+    Button(action: { newShortMessage() }) {
       Label("New Short Message", systemImage: "square.and.pencil")
     }
   }

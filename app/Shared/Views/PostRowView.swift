@@ -213,7 +213,7 @@ struct PostRowView: View {
       .contextMenu { menu }
     #endif
     #if os(iOS)
-    .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
+    .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
     .background { navigation }
     .environmentObject(attachments)
@@ -244,10 +244,10 @@ struct PostRowView: View {
     })) { (response: PostVoteResponse) in
       if !response.hasError {
         withAnimation {
-          self.vote.state = response.state
-          self.vote.delta += response.delta
+          vote.state = response.state
+          vote.delta += response.delta
           #if os(iOS)
-            if self.vote.state != .none {
+            if vote.state != .none {
               HapticUtils.play(style: .light)
             }
           #endif
@@ -262,7 +262,7 @@ struct PostRowView: View {
     if dummy { return }
 
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.forumID = .with { f in
         f.fid = post.fid
       }
@@ -272,7 +272,7 @@ struct PostRowView: View {
 
   func doComment(model: PostReplyModel) {
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.forumID = .with { f in
         f.fid = post.fid
       }
@@ -282,7 +282,7 @@ struct PostRowView: View {
 
   func doEdit(model: PostReplyModel) {
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.forumID = .with { f in
         f.fid = post.fid
       }
@@ -292,7 +292,7 @@ struct PostRowView: View {
 
   func doReport(model: PostReplyModel) {
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.operation = .report
     })
   }

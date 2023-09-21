@@ -28,7 +28,7 @@ struct AttachmentsView: View {
   var body: some View {
     List {
       ForEachOrEmpty(model.items, id: \.url) { attachment in
-        Button(action: { self.show(attachment) }) {
+        Button(action: { show(attachment) }) {
           Label(attachment.url, systemImage: image(for: attachment))
             .font(.system(.subheadline, design: .monospaced))
             .lineLimit(1)

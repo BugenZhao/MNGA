@@ -120,7 +120,7 @@ swiftformat:
 	@if [ -z "${SWIFTFORMAT}" ]; then \
 		echo "warning: swiftformat not installed, skip" ;\
 	else \
-		${SWIFTFORMAT} --indent 2 --swiftversion 5.5 . ;\
+		${SWIFTFORMAT} --indent 2 --swiftversion 5.9 . ;\
 	fi
 
 

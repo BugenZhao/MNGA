@@ -27,7 +27,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
   @ViewBuilder
   var textEditor: some View {
-    ContentTextEditorView(model: self.model)
+    ContentTextEditorView(model: model)
   }
 
   @ViewBuilder

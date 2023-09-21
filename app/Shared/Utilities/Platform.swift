@@ -123,33 +123,33 @@ func copyToPasteboard(image: AppKitOrUIKitImage) {
 extension ToolbarItemPlacement {
   static var mayNavigationBarLeading: Self {
     #if os(iOS)
-      Self.navigationBarLeading
+      navigationBarLeading
     #else
-      Self.navigation
+      navigation
     #endif
   }
 
   static var mayNavigationBarLeadingOrAction: Self {
     #if os(iOS)
-      Self.navigationBarLeading
+      navigationBarLeading
     #else
-      Self.primaryAction
+      primaryAction
     #endif
   }
 
   static var mayNavigationBarTrailing: Self {
     #if os(iOS)
-      Self.navigationBarTrailing
+      navigationBarTrailing
     #else
-      Self.automatic
+      automatic
     #endif
   }
 
   static var mayBottomBar: Self {
     #if os(iOS)
-      Self.bottomBar
+      bottomBar
     #else
-      Self.status
+      status
     #endif
   }
 }

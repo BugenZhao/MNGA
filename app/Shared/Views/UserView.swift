@@ -93,7 +93,7 @@ struct UserView: View {
         Button(action: { if let url = avatarURL { viewingImage.show(url: url) } }) {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
-      } else if let user = self.user, let action = self.action {
+      } else if let user = user, let action = action {
         Button(action: { action.showUserProfile = user }) {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
@@ -161,9 +161,9 @@ struct UserView: View {
     HStack(spacing: 4) {
       Group {
         if showId {
-          Text(self.idDisplay)
+          Text(idDisplay)
         } else {
-          Text(self.name)
+          Text(name)
         }
       }.font(nameFont, weight: style == .huge ? .bold : .medium)
 
@@ -179,7 +179,7 @@ struct UserView: View {
           }
         }.font(style == .huge ? .body : .footnote)
       }
-    }.onTapGesture { withAnimation { self.showId.toggle() } }
+    }.onTapGesture { withAnimation { showId.toggle() } }
       .redacted(if: shouldRedactName)
   }
 

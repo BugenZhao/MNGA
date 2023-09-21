@@ -47,7 +47,7 @@ struct PostReplyChainView: View {
       $0.postID = id.pid
     })) { (response: TopicDetailsResponse) in
       guard let post = response.replies.first else { return }
-      withAnimation { self.remotePosts[post.id] = post }
+      withAnimation { remotePosts[post.id] = post }
     }
   }
 }

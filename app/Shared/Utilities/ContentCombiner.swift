@@ -406,7 +406,7 @@ class ContentCombiner {
     var name: String?
     if case let .plain(p) = uid.spans.first?.value, p.text != "" {
       name = p.text
-      self.setEnv(key: "username", globalValue: p.text)
+      setEnv(key: "username", globalValue: p.text)
     }
     if let uid = uid.attributes.first {
       setEnv(key: "uid", globalValue: uid)

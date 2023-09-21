@@ -16,18 +16,18 @@ struct CollapsedContentView<Content: View>: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      Button(action: { self.collapsed.toggle() }) {
+      Button(action: { collapsed.toggle() }) {
         HStack {
-          Image(systemName: self.collapsed ? "chevron.down" : "chevron.up")
-          Text(self.title)
+          Image(systemName: collapsed ? "chevron.down" : "chevron.up")
+          Text(title)
         }.padding(.bottom, 1)
           .foregroundColor(.accentColor)
           .font(.subheadline.bold())
       }.buttonStyle(PlainButtonStyle())
 
       Group {
-        if !self.collapsed {
-          self.content()
+        if !collapsed {
+          content()
         }
       }
     }.fixedSize(horizontal: false, vertical: true)

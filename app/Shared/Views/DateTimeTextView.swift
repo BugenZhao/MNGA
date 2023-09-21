@@ -55,7 +55,7 @@ struct DateTimeTextView: View {
 
     if switchable {
       view.onTapGesture {
-        withAnimation { self.showDetailed.toggle() }
+        withAnimation { showDetailed.toggle() }
       }
     } else {
       view

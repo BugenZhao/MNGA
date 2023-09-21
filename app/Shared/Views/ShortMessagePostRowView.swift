@@ -43,7 +43,7 @@ struct ShortMessagePostRowView: View {
   @ViewBuilder
   var header: some View {
     HStack {
-      if let user = self.user {
+      if let user = user {
         UserView(user: user, style: .normal)
       } else {
         UserView(id: post.authorID, style: .normal)

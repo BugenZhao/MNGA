@@ -18,7 +18,7 @@ struct QuoteUserView: View {
   var body: some View {
     HStack {
       UserView(id: uid, nameHint: nameHint, style: .compact)
-      if let action = self.action, enableShowReplyChain {
+      if let action = action, enableShowReplyChain {
         Spacer()
         Button(action: action) {
           HStack(spacing: 2) {

@@ -72,7 +72,7 @@ struct UserProfileView: View {
 
   @ViewBuilder
   var list: some View {
-    switch self.tab {
+    switch tab {
     case .topics:
       if topicDataSource.notLoaded {
         LoadingRowView()
@@ -127,13 +127,13 @@ struct UserProfileView: View {
       Menu {
         if !user.isAnonymous {
           Section {
-            Button(action: { self.newShortMessage() }) {
+            Button(action: { newShortMessage() }) {
               Label("New Short Message", systemImage: "message")
             }
           }
         }
         Section {
-          Button(role: blocked ? nil : .destructive, action: { self.blockWords.toggle(user: user.name) }) {
+          Button(role: blocked ? nil : .destructive, action: { blockWords.toggle(user: user.name) }) {
             if blocked {
               Label("Unblock This User", systemImage: "hand.raised")
             } else {
@@ -155,7 +155,9 @@ struct UserProfileView: View {
     List {
       Section(header: Text("User Profile")) {
         UserView(user: user, style: .huge)
-        if let sig = user.signature, !sig.spans.isEmpty, !blocked {
+
+        let sig = user.signature
+        if !sig.spans.isEmpty, !blocked {
           UserSignatureView(content: sig, font: .callout, color: .primary)
         }
       }

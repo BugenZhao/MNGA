@@ -360,7 +360,7 @@ extension BlockWord {
   static let userPrefix = "User: "
 
   static func fromUser(_ user: UserName) -> Self {
-    Self.with { $0.word = "\(userPrefix)\(user.display)" }
+    with { $0.word = "\(userPrefix)\(user.display)" }
   }
 
   var userName: String? {

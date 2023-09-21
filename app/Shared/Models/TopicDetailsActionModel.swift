@@ -82,26 +82,26 @@ struct TopicDetailsActionBasicNavigationView: View {
 
   var body: some View {
     let navTopic = Topic.with {
-      if let tid = self.action.navigateToTid { $0.id = tid }
+      if let tid = action.navigateToTid { $0.id = tid }
     }
-    let user = self.action.showUserProfile ?? .init()
-    let forum = self.action.navigateToForum ?? .init()
-    let view = self.action.navigateToView ?? EmptyView().eraseToAnyView()
+    let user = action.showUserProfile ?? .init()
+    let forum = action.navigateToForum ?? .init()
+    let view = action.navigateToView ?? EmptyView().eraseToAnyView()
 
-    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) {}.hidden()
-    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) {}.hidden()
-    NavigationLink(destination: TopicListView.build(forum: forum), isActive: self.$action.navigateToForum.isNotNil()) {}.hidden()
-    NavigationLink(destination: view, isActive: self.$action.navigateToView.isNotNil()) {}.hidden()
+    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: $action.navigateToTid.isNotNil()) {}.hidden()
+    NavigationLink(destination: UserProfileView.build(user: user), isActive: $action.showUserProfile.isNotNil()) {}.hidden()
+    NavigationLink(destination: TopicListView.build(forum: forum), isActive: $action.navigateToForum.isNotNil()) {}.hidden()
+    NavigationLink(destination: view, isActive: $action.navigateToView.isNotNil()) {}.hidden()
 
     let withPidTopic = Topic.with {
-      if let tid = self.action.navigateToTidWithPidAndPage?.tid { $0.id = tid }
+      if let tid = action.navigateToTidWithPidAndPage?.tid { $0.id = tid }
     }
-    let page = self.action.navigateToTidWithPidAndPage?.page
+    let page = action.navigateToTidWithPidAndPage?.page
     let postId = PostId.with {
-      if let pid = self.action.navigateToTidWithPidAndPage?.pid { $0.pid = pid }
+      if let pid = action.navigateToTidWithPidAndPage?.pid { $0.pid = pid }
       $0.tid = withPidTopic.id
     }
-    NavigationLink(destination: TopicDetailsView.build(topic: withPidTopic, fromPage: page, postIdToJump: postId), isActive: self.$action.navigateToTidWithPidAndPage.isNotNil()) {}.hidden()
+    NavigationLink(destination: TopicDetailsView.build(topic: withPidTopic, fromPage: page, postIdToJump: postId), isActive: $action.navigateToTidWithPidAndPage.isNotNil()) {}.hidden()
   }
 }
 

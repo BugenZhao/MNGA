@@ -82,7 +82,7 @@ struct UserMenuView: View {
   @ViewBuilder
   var menu: some View {
     Menu {
-      if let _ = self.user {
+      if let _ = user {
         Section {
           notificationButton
           Button(action: { showShortMessages = true }) {
@@ -91,7 +91,7 @@ struct UserMenuView: View {
         }
       }
       Section {
-        if let _ = self.user {
+        if let _ = user {
           Button(action: { showUserProfile = true }) {
             Label("My Profile", systemImage: "person.fill")
           }

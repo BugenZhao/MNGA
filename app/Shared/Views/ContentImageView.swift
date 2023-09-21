@@ -34,7 +34,7 @@ struct ContentImageView: View {
         .frame(width: 50, height: 50)
     } else {
       if onlyThumbs {
-        ContentButtonView(icon: "photo", title: Text("View Image"), inQuote: true) { self.showImage() }
+        ContentButtonView(icon: "photo", title: Text("View Image"), inQuote: true) { showImage() }
       } else {
         Group {
           if let model = presendAttachmentsModel, let image = model.image(for: url) {
@@ -45,7 +45,7 @@ struct ContentImageView: View {
           }
         }.scaledToFit()
           .clipShape(RoundedRectangle(cornerRadius: 8))
-          .onTapGesture(perform: self.showImage)
+          .onTapGesture(perform: showImage)
       }
     }
   }

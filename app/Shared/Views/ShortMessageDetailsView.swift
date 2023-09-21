@@ -38,7 +38,7 @@ struct ShortMessageDetailsView: View {
 
   @ViewBuilder
   var replyButton: some View {
-    Button(action: { self.doReply() }) {
+    Button(action: { doReply() }) {
       Label("Reply", systemImage: "arrowshape.turn.up.left")
     }
   }

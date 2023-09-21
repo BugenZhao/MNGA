@@ -94,9 +94,9 @@ struct LoginView: View {
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) { Button(action: close) { Text("Cancel") } }
     ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
-    ToolbarItem(placement: .status) { Button(action: { self.load(url: URLs.login) }) { Text("Sign In") } }
-    ToolbarItem(placement: .status) { Button(action: { self.load(url: URLs.agreement) }) { Text("Agreement") } }
-    ToolbarItem(placement: .status) { Button(action: { self.load(url: URLs.privacy) }) { Text("Privacy") } }
+    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
+    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.agreement) }) { Text("Agreement") } }
+    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.privacy) }) { Text("Privacy") } }
   }
 
   func load(url: URL) {
@@ -107,13 +107,13 @@ struct LoginView: View {
   var webView: some View {
     WebView(webView: webViewStore.webView)
       .onAppear {
-        self.delegate = .init(parent: self)
-        self.webViewStore.webView.load(URLRequest(url: URLs.login))
-        self.webViewStore.webView.uiDelegate = self.delegate
-        self.webViewStore.webView.navigationDelegate = self.delegate
-        self.load(url: URLs.login)
+        delegate = .init(parent: self)
+        webViewStore.webView.load(URLRequest(url: URLs.login))
+        webViewStore.webView.uiDelegate = delegate
+        webViewStore.webView.navigationDelegate = delegate
+        load(url: URLs.login)
       }.onReceive(timer) { _ in
-        self.webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
+        webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
       }.navigationTitleInline(key: "Sign in to NGA")
   }
 
