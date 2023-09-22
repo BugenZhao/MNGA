@@ -32,7 +32,7 @@ struct PostReplyTask: TaskProtocol {
 
   func buildUploadAttachmentRequest(data: Data) -> AsyncRequest.OneOf_Value? {
     .uploadAttachment(.with {
-      $0.action = self.action
+      $0.action = action
       $0.file = data
     })
   }

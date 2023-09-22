@@ -53,7 +53,7 @@ struct ForumListView: View {
           favorites.favoriteForums.remove(atOffsets: offsets)
         }.onMove { from, to in
           favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
-          withAnimation { self.favoriteEditing = false }
+          withAnimation { favoriteEditing = false }
         }
       }
     }

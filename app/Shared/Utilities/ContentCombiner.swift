@@ -154,7 +154,7 @@ class ContentCombiner {
     return text
   }
 
-  private func append<V: View>(_ view: V) {
+  private func append(_ view: some View) {
     let subview: Subview
 
     if view is Text {
@@ -228,7 +228,7 @@ class ContentCombiner {
     }
   }
 
-  func visit<S: Sequence>(spans: S) where S.Element == Span {
+  func visit(spans: some Sequence<Span>) {
     spans.forEach(visit(span:))
   }
 
@@ -406,11 +406,11 @@ class ContentCombiner {
     var name: String?
     if case let .plain(p) = uid.spans.first?.value, p.text != "" {
       name = p.text
-      self.setEnv(key: "username", globalValue: p.text)
+      setEnv(key: "username", globalValue: p.text)
     }
     if let uid = uid.attributes.first {
       setEnv(key: "uid", globalValue: uid)
-    } else if let name = name { // treat raw name as id, mainly for anonymous users
+    } else if let name { // treat raw name as id, mainly for anonymous users
       setEnv(key: "uid", globalValue: name)
     }
 
@@ -464,7 +464,7 @@ class ContentCombiner {
     }
 
     let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
-      guard let urlString = urlString else { return }
+      guard let urlString else { return }
       guard let url = URL(string: urlString, relativeTo: URLs.base) else { return }
 
       switch url.mngaNavigationIdentifier {

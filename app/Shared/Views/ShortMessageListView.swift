@@ -33,7 +33,7 @@ struct ShortMessageListView: View {
 
   @ViewBuilder
   var newShortMessageButton: some View {
-    Button(action: { self.newShortMessage() }) {
+    Button(action: { newShortMessage() }) {
       Label("New Short Message", systemImage: "square.and.pencil")
     }
   }
@@ -57,7 +57,7 @@ struct ShortMessageListView: View {
     .mayGroupedListStyle()
     .refreshable(dataSource: dataSource)
     .toolbarWithFix { ToolbarItem(placement: .primaryAction) { newShortMessageButton } }
-    .onChange(of: postModel.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
+    .onChange(of: postModel.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
   }
 
   func newShortMessage() {

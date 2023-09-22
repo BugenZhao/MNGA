@@ -57,7 +57,7 @@ extension View {
 }
 
 extension View {
-  func navigationTitleInline<S>(string title: S) -> some View where S: StringProtocol {
+  func navigationTitleInline(string title: some StringProtocol) -> some View {
     #if os(iOS)
       navigationBarTitle(title, displayMode: .inline)
     #elseif os(macOS)
@@ -73,7 +73,7 @@ extension View {
     #endif
   }
 
-  func navigationTitleLarge<S>(string title: S) -> some View where S: StringProtocol {
+  func navigationTitleLarge(string title: some StringProtocol) -> some View {
     #if os(iOS)
       navigationBarTitle(title, displayMode: .large)
     #elseif os(macOS)
@@ -123,33 +123,33 @@ func copyToPasteboard(image: AppKitOrUIKitImage) {
 extension ToolbarItemPlacement {
   static var mayNavigationBarLeading: Self {
     #if os(iOS)
-      Self.navigationBarLeading
+      navigationBarLeading
     #else
-      Self.navigation
+      navigation
     #endif
   }
 
   static var mayNavigationBarLeadingOrAction: Self {
     #if os(iOS)
-      Self.navigationBarLeading
+      navigationBarLeading
     #else
-      Self.primaryAction
+      primaryAction
     #endif
   }
 
   static var mayNavigationBarTrailing: Self {
     #if os(iOS)
-      Self.navigationBarTrailing
+      navigationBarTrailing
     #else
-      Self.automatic
+      automatic
     #endif
   }
 
   static var mayBottomBar: Self {
     #if os(iOS)
-      Self.bottomBar
+      bottomBar
     #else
-      Self.status
+      status
     #endif
   }
 }

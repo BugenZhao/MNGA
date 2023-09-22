@@ -27,15 +27,12 @@ struct TopicListView: View {
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
-  @State var showingHotTopics = false
-  @State var showingRecommendedTopics = false
-  @State var showingToppedTopic = false
   @State var order: TopicListRequest.Order? = nil
 
   var dataSource: DataSource {
     switch order {
-    case .lastPost, .none: return dataSourceLastPost
-    case .postDate: return dataSourcePostDate
+    case .lastPost, .none: dataSourceLastPost
+    case .postDate: dataSourcePostDate
     default: fatalError()
     }
   }
@@ -47,9 +44,9 @@ struct TopicListView: View {
   var itemBindings: Binding<[Topic]> {
     switch order {
     case .lastPost, .none:
-      return $dataSourceLastPost.items
+      $dataSourceLastPost.items
     case .postDate:
-      return $dataSourcePostDate.items
+      $dataSourcePostDate.items
     default: fatalError()
     }
   }
@@ -103,7 +100,7 @@ struct TopicListView: View {
   func newTopic() {
     postReply.show(action: .with {
       $0.operation = .new
-      $0.forumID = self.forum.id
+      $0.forumID = forum.id
     }, pageToReload: nil)
   }
 
@@ -118,7 +115,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var newTopicButton: some View {
-    Button(action: { self.newTopic() }) {
+    Button(action: { newTopic() }) {
       Label("New Topic", systemImage: "square.and.pencil")
     }
   }
@@ -144,14 +141,14 @@ struct TopicListView: View {
           } label: {
             Label("Order by", systemImage: (order ?? .lastPost).icon)
           }
-          Button(action: { showingHotTopics = true }) {
+          NavigationLink(destination: HotTopicListView.build(forum: forum)) {
             Label("Hot Topics", systemImage: "flame")
           }
-          Button(action: { showingRecommendedTopics = true }) {
+          NavigationLink(destination: RecommendedTopicListView.build(forum: forum)) {
             Label("Recommended Topics", systemImage: "hand.thumbsup")
           }
-          if let _ = toppedTopicID {
-            Button(action: { showingToppedTopic = true }) {
+          if let topicID = toppedTopicID {
+            NavigationLink(destination: TopicDetailsView.build(id: topicID)) {
               Label("Topped Topic", systemImage: "arrow.up.to.line")
             }
           }
@@ -196,33 +193,12 @@ struct TopicListView: View {
           subforums: subforums,
           refresh: { dataSource.refresh() },
           onNavigateToForum: {
-            self.showingSubforumsModal = false
-            self.currentShowingSubforum = $0
+            showingSubforumsModal = false
+            currentShowingSubforum = $0
           }
         )
       }
     }
-  }
-
-  @ViewBuilder
-  var subforum: some View {
-    let destination = TopicListView.build(forum: self.currentShowingSubforum ?? Forum())
-    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) {}
-      .isDetailLink(false)
-      .hidden()
-    NavigationLink(destination: EmptyView()) {}.hidden() // hack: unexpected pop
-  }
-
-  @ViewBuilder
-  var navigations: some View {
-    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) {}
-      .isDetailLink(false)
-      .hidden()
-    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) {}
-      .isDetailLink(false)
-      .hidden()
-    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) {}
-      .hidden()
   }
 
   @ViewBuilder
@@ -252,7 +228,7 @@ struct TopicListView: View {
         ProgressView()
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation
-              self.dataSource.initialLoad()
+              dataSource.initialLoad()
             }
           }
       } else {
@@ -281,21 +257,21 @@ struct TopicListView: View {
     .searchable(model: searchModel, prompt: "Search Topics".localized, iOS15Only: true)
     .navigationTitleLarge(string: forum.name.localized)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
-    .onChange(of: postReply.sent) { _ in dataSource.reload(page: 1, evenIfNotLoaded: false) }
-    .background { subforum; navigations }
+    .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
+    .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
     .toolbarWithFix { toolbar }
     .onAppear { selectedForum.inner = forum }
-    .onChange(of: prefs.defaultTopicListOrder) { if $0 != self.order { self.order = $0 } }
-    .onAppear { if self.order == nil { self.order = prefs.defaultTopicListOrder } }
-    .onChange(of: dataSource.latestResponse, perform: self.updateForumMeta(r:))
+    .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
+    .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
+    .onChange(of: dataSource.latestResponse) { updateForumMeta($1) }
   }
 
   var navID: NavigationIdentifier {
     .forumID(forum.id)
   }
 
-  func updateForumMeta(r: TopicListResponse?) {
-    guard let r = r else { return }
+  func updateForumMeta(_ r: TopicListResponse?) {
+    guard let r else { return }
     if forum.name.isEmpty {
       forum.name = r.forum.name
       forum.info = r.forum.info

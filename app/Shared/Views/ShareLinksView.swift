@@ -16,16 +16,19 @@ struct ShareLinksView<V: View>: View {
 
   var body: some View {
     Menu {
-      Button(action: { self.activity.put(navigationID.mngaURL) }) {
-        Label("MNGA Link", systemImage: "m.circle")
+      if let mngaURL = navigationID.mngaURL {
+        ShareLink(item: mngaURL) {
+          Label("MNGA Link", systemImage: "m.circle")
+        }
       }
 
-      if !navigationID.isMNGAMockID {
-        Button(action: { self.activity.put(navigationID.webpageURL) }) {
+      if !navigationID.isMNGAMockID, let webpageURL = navigationID.webpageURL {
+        ShareLink(item: webpageURL) {
           Label("NGA Link", systemImage: "network")
         }
       }
-      if let o = others { o() }
+
+      others()
     } label: {
       Label("Share", systemImage: "square.and.arrow.up")
     }

@@ -18,7 +18,7 @@ struct StickerInputView: View {
     ScrollView(.horizontal) {
       LazyHGrid(rows: rows, spacing: 10) {
         ForEach(stickerImageNames, id: \.self) { name in
-          Button(action: { self.insert(name: name) }) {
+          Button(action: { insert(name: name) }) {
             Image(name)
               .renderingMode(name.starts(with: "a") ? .template : .original)
               .resizable()

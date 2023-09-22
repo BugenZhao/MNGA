@@ -9,7 +9,13 @@ import BetterSafariView
 import SwiftUI
 import SwiftUIX
 
+@Observable class Router {
+  var path = NavigationPath()
+}
+
 struct ContentView: View {
+  @State var router = Router()
+
   @StateObject var viewingImage = ViewingImageModel()
   @StateObject var activity = ActivityModel()
   @StateObject var postReply = PostReplyModel()
@@ -46,33 +52,34 @@ struct ContentView: View {
           TopicDetailsPlaceholderView()
         }
       } else {
-        NavigationView {
+        NavigationStack(path: $router.path) {
           main
         }
       }
     }
+    .environment(router)
     #if os(iOS)
-    .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
+      .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif
-    .onOpenURL { _ = schemes.onNavigateToURL($0) }
-    .overlay { ImageOverlay() }
-    .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
-    .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
-    .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
-      AppActivityView(activityItems: activity.activityItems ?? [])
-    })
-    .modifier(MainToastModifier())
-    .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
-    .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
-    .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
-    .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection) }
-    .environmentObject(viewingImage)
-    .environmentObject(activity)
-    .environmentObject(postReply)
-    .environmentObject(shortMessagePost)
-    .environmentObject(currentUser)
-    .environmentObject(textSelection)
-    .preferredColorScheme(prefs.colorScheme.scheme)
+      .onOpenURL { _ = schemes.onNavigateToURL($0) }
+      .overlay { ImageOverlay() }
+      .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
+      .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
+      .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
+        AppActivityView(activityItems: activity.activityItems ?? [])
+      })
+      .modifier(MainToastModifier())
+      .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
+      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
+      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
+      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection) }
+      .environmentObject(viewingImage)
+      .environmentObject(activity)
+      .environmentObject(postReply)
+      .environmentObject(shortMessagePost)
+      .environmentObject(currentUser)
+      .environmentObject(textSelection)
+      .preferredColorScheme(prefs.colorScheme.scheme)
   }
 }
 

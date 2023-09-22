@@ -77,48 +77,33 @@ extension EnvironmentValues {
 
 // MARK: TopicDetailsAction
 
-struct TopicDetailsActionBasicNavigationView: View {
-  @ObservedObject var action: TopicDetailsActionModel
-
-  var body: some View {
-    let navTopic = Topic.with {
-      if let tid = self.action.navigateToTid { $0.id = tid }
-    }
-    let user = self.action.showUserProfile ?? .init()
-    let forum = self.action.navigateToForum ?? .init()
-    let view = self.action.navigateToView ?? EmptyView().eraseToAnyView()
-
-    NavigationLink(destination: TopicDetailsView.build(topic: navTopic), isActive: self.$action.navigateToTid.isNotNil()) {}.hidden()
-    NavigationLink(destination: UserProfileView.build(user: user), isActive: self.$action.showUserProfile.isNotNil()) {}.hidden()
-    NavigationLink(destination: TopicListView.build(forum: forum), isActive: self.$action.navigateToForum.isNotNil()) {}.hidden()
-    NavigationLink(destination: view, isActive: self.$action.navigateToView.isNotNil()) {}.hidden()
-
-    let withPidTopic = Topic.with {
-      if let tid = self.action.navigateToTidWithPidAndPage?.tid { $0.id = tid }
-    }
-    let page = self.action.navigateToTidWithPidAndPage?.page
-    let postId = PostId.with {
-      if let pid = self.action.navigateToTidWithPidAndPage?.pid { $0.pid = pid }
-      $0.tid = withPidTopic.id
-    }
-    NavigationLink(destination: TopicDetailsView.build(topic: withPidTopic, fromPage: page, postIdToJump: postId), isActive: self.$action.navigateToTidWithPidAndPage.isNotNil()) {}.hidden()
-  }
-}
-
 struct TopicDetailsActionModifier: ViewModifier {
   @StateObject var action = TopicDetailsActionModel()
 
   func body(content: Content) -> some View {
     content
       .environmentObject(action)
-      .background { TopicDetailsActionBasicNavigationView(action: action) }
+      .navigationDestination(item: $action.navigateToTid) { tid in
+        let navTopic = Topic.with { $0.id = tid }
+        TopicDetailsView.build(topic: navTopic)
+      }
+      .navigationDestination(item: $action.showUserProfile) { UserProfileView.build(user: $0) }
+      .navigationDestination(item: $action.navigateToForum) { TopicListView.build(forum: $0) }
+      .navigationDestination(isPresented: $action.navigateToView.isNotNil()) { action.navigateToView } // TODO(ng): use item
+      .navigationDestination(isPresented: $action.navigateToTidWithPidAndPage.isNotNil()) { // TODO(ng): use item
+        if let x = action.navigateToTidWithPidAndPage {
+          let withPidTopic = Topic.with { $0.id = x.tid }
+          let postId = PostId.with { $0.pid = x.pid; $0.tid = x.tid }
+          TopicDetailsView.build(topic: withPidTopic, fromPage: x.page, postIdToJump: postId)
+        }
+      }
   }
 }
 
 extension View {
   @ViewBuilder
   func withTopicDetailsAction(action: TopicDetailsActionModel? = nil) -> some View {
-    if let action = action {
+    if let action {
       modifier(TopicDetailsActionModifier(action: action))
     } else {
       modifier(TopicDetailsActionModifier())

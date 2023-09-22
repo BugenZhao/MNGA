@@ -46,14 +46,14 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @ViewBuilder
   var previewInner: some View {
-    if let subject = self.subject {
+    if let subject {
       TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
     }
 
     VStack(alignment: .leading, spacing: 10) {
       if postReply.context?.anonymous == true {
         UserView(user: .anonymousExample, style: .normal)
-      } else if let user = self.currentUser.user {
+      } else if let user = currentUser.user {
         UserView(user: user, style: .normal)
       }
 
@@ -107,7 +107,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
     DispatchQueue.global(qos: .userInitiated).async {
       let content = (postReply.context?.content ?? "").replacingOccurrences(of: "\n", with: "<br/>")
       let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = content }))
-      self.parsedContent = response?.content ?? .init()
+      parsedContent = response?.content ?? .init()
     }
     if let subject = postReply.context?.subject {
       DispatchQueue.global(qos: .userInitiated).async {
@@ -137,14 +137,14 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @ViewBuilder
   var cancelButton: some View {
-    Button(action: { self.presentation.dismiss() }) {
+    Button(action: { presentation.dismiss() }) {
       Text("Cancel")
     }
   }
 
   @ViewBuilder
   var discardButton: some View {
-    Button(role: .destructive, action: { self.postReply.discardCurrentContext() }) {
+    Button(role: .destructive, action: { postReply.discardCurrentContext() }) {
       Text("Discard").foregroundColor(.red).bold()
     }
   }

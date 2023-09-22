@@ -78,7 +78,7 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
 
   private var contexts = [Task: Context]()
   private func reset() {
-    if let context = context {
+    if let context {
       contexts.removeValue(forKey: context.task)
       self.context = nil
     }
@@ -115,7 +115,7 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
   }
 
   public func send() {
-    guard let context = context else { return }
+    guard let context else { return }
     isSending = true
     doSend(with: context)
   }

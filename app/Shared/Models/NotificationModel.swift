@@ -34,9 +34,9 @@ extension NotificationDataSource {
 
   var title: LocalizedStringKey {
     if unreadCount > 0 {
-      return "Notifications (\(unreadCount))"
+      "Notifications (\(unreadCount))"
     } else {
-      return "Notifications"
+      "Notifications"
     }
   }
 }

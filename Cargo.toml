@@ -1,4 +1,5 @@
 [workspace]
+resolver = "2"
 members = [
     "logic/cache",
     "logic/config",
@@ -15,3 +16,7 @@ inherits = "release"
 opt-level = "s"   # Optimize for size.
 lto = true        # Enable link time optimization
 codegen-units = 1
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
+serde = { version = "1", features = ["derive"] }

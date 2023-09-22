@@ -63,7 +63,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       .store(in: &cancellables)
   }
 
-  func sortedItems<Key: Comparable>(by key: KeyPath<Item, Key>) -> [Item] {
+  func sortedItems(by key: KeyPath<Item, some Comparable>) -> [Item] {
     items.sorted { $0[keyPath: key] < $1[keyPath: key] }
   }
 
@@ -84,7 +84,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     return pagedItems.sorted { $0.key < $1.key }.map { (page: $0.key, items: $0.value) }
   }
 
-  private func upsertItems<S>(_ items: S, page: Int) where S: Sequence, S.Element == Item {
+  private func upsertItems(_ items: some Sequence<Item>, page: Int) {
     items.forEach {
       let id = $0[keyPath: self.id]
 
@@ -97,7 +97,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  private func replaceItems<S>(_ items: S, page: Int) where S: Sequence, S.Element == Item {
+  private func replaceItems(_ items: some Sequence<Item>, page: Int) {
     if neverRemove == false {
       self.items.removeAll()
       itemToIndexAndPage.removeAll()
@@ -178,7 +178,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     @available(iOS 15.0, *)
     func refreshAsync(animated: Bool = false, fromPage: Int = 1) async {
       let request = DispatchQueue.main.sync { preRefresh(fromPage: fromPage) }
-      guard let request = request else { return }
+      guard let request else { return }
 
       let response: Result<Res, LogicError> = await logicCallAsync(request)
 
@@ -222,7 +222,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
         self.isLoading = false
       }
       self.totalPages = newTotalPages ?? self.totalPages
-      if let after = after { after() }
+      if let after { after() }
     } onError: { e in
       withAnimation {
         self.isLoading = false
@@ -265,7 +265,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 }
 
 extension View {
-  func refreshable<Res, Item>(dataSource: PagingDataSource<Res, Item>, iOS15Only: Bool = false, refreshWhenEnterForeground _: Bool = false) -> some View {
+  func refreshable(dataSource: PagingDataSource<some Any, some Any>, iOS15Only: Bool = false, refreshWhenEnterForeground _: Bool = false) -> some View {
     #if canImport(SwiftUIRefresh)
       Group {
         if #available(iOS 15.0, *) {

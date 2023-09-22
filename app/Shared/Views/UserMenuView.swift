@@ -15,26 +15,10 @@ struct UserMenuView: View {
 
   @EnvironmentObject var model: CurrentUserModel
 
-  @State var showHistory: Bool = false
-  @State var showFavorite: Bool = false
-  @State var showNotifications: Bool = false
-  @State var showShortMessages: Bool = false
   @State var showPreferencesModal: Bool = false
-  @State var showAbout: Bool = false
-  @State var showUserProfile: Bool = false
 
   var user: User? {
     model.user
-  }
-
-  @ViewBuilder
-  var navigationBackgrounds: some View {
-    NavigationLink(destination: TopicHistoryListView.build(), isActive: $showHistory) {}.hidden()
-    NavigationLink(destination: FavoriteTopicListView.build(), isActive: $showFavorite) {}.hidden()
-    NavigationLink(destination: NotificationListView(), isActive: $showNotifications) {}.hidden()
-    NavigationLink(destination: ShortMessageListView.build(), isActive: $showShortMessages) {}.hidden()
-    NavigationLink(destination: UserProfileView.build(user: user ?? .init()), isActive: $showUserProfile) {}.hidden()
-    NavigationLink(destination: AboutView(), isActive: $showAbout) {}.hidden()
   }
 
   @ViewBuilder
@@ -52,7 +36,7 @@ struct UserMenuView: View {
 
   @ViewBuilder
   var notificationButton: some View {
-    Button(action: { showNotifications = true }) {
+    NavigationLink(destination: NotificationListView()) {
       Label(notification.dataSource.title, systemImage: notification.dataSource.unreadCount > 0 ? "bell.badge.fill" : "bell")
     }.maySymbolRenderingModeHierarchical()
   }
@@ -82,24 +66,24 @@ struct UserMenuView: View {
   @ViewBuilder
   var menu: some View {
     Menu {
-      if let _ = self.user {
+      if let _ = user {
         Section {
           notificationButton
-          Button(action: { showShortMessages = true }) {
+          NavigationLink(destination: ShortMessageListView.build()) {
             Label("Short Messages", systemImage: "message")
           }
         }
       }
       Section {
-        if let _ = self.user {
-          Button(action: { showUserProfile = true }) {
+        if let user = user {
+          NavigationLink(destination: UserProfileView.build(user: user)) {
             Label("My Profile", systemImage: "person.fill")
           }
-          Button(action: { showFavorite = true }) {
+          NavigationLink(destination: FavoriteTopicListView.build()) {
             Label("Favorite Topics", systemImage: "bookmark")
           }
         }
-        Button(action: { showHistory = true }) {
+        NavigationLink(destination: TopicHistoryListView.build()) {
           Label("History", systemImage: "clock")
         }
       }
@@ -118,7 +102,7 @@ struct UserMenuView: View {
             Label("Preferences", systemImage: "gear")
           }
         #endif
-        Button(action: { showAbout = true }) {
+        NavigationLink(destination: AboutView()) {
           Label("About & Feedback", systemImage: "hands.sparkles")
         }
       }
@@ -137,7 +121,6 @@ struct UserMenuView: View {
       .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
-      .background { navigationBackgrounds }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
   }
 

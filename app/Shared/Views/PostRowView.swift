@@ -56,17 +56,10 @@ struct PostRowView: View {
   @ViewBuilder
   var menuButton: some View {
     #if os(iOS)
-      if #available(iOS 15.0, *) {
-        Menu(content: { menu }) {
-          Image(systemName: "ellipsis.circle.fill")
-            .symbolRenderingMode(.hierarchical)
-            .imageScale(.large)
-        }
-      } else {
-        Menu(content: { menu }) {
-          Image(systemName: "ellipsis")
-            .imageScale(.large)
-        }
+      Menu(content: { menu }) {
+        Image(systemName: "ellipsis.circle.fill")
+          .symbolRenderingMode(.hierarchical)
+          .imageScale(.large)
       }
     #endif
   }
@@ -158,7 +151,7 @@ struct PostRowView: View {
       Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
         Label("Select Text", systemImage: "selection.pin.in.out")
       }
-      if #available(iOS 15.0, *), !attachments.items.isEmpty {
+      if !attachments.items.isEmpty {
         Button(action: { showAttachments = true }) {
           Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
         }
@@ -182,7 +175,7 @@ struct PostRowView: View {
         }
       }
     }
-    if let action = action {
+    if let action {
       Section {
         if enableAuthorOnly, !(user?.isAnonymous ?? false) {
           Button(action: { action.navigateToAuthorOnly = post.authorID }) {
@@ -190,13 +183,6 @@ struct PostRowView: View {
           }
         }
       }
-    }
-  }
-
-  @ViewBuilder
-  var navigation: some View {
-    if #available(iOS 15.0, *) {
-      NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) {}.hidden()
     }
   }
 
@@ -213,12 +199,12 @@ struct PostRowView: View {
       .contextMenu { menu }
     #endif
     #if os(iOS)
-    .listRowBackground(action?.scrollToPid == self.post.id.pid ? Color.tertiarySystemBackground : nil)
+    .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .background { navigation }
+    .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments) } }
     .environmentObject(attachments)
 
-    if #available(iOS 15.0, *), let model = postReply, !mock {
+    if let model = postReply, !mock {
       body
         .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) {
           Button(action: { self.doQuote(model: model) }) {
@@ -244,10 +230,10 @@ struct PostRowView: View {
     })) { (response: PostVoteResponse) in
       if !response.hasError {
         withAnimation {
-          self.vote.state = response.state
-          self.vote.delta += response.delta
+          vote.state = response.state
+          vote.delta += response.delta
           #if os(iOS)
-            if self.vote.state != .none {
+            if vote.state != .none {
               HapticUtils.play(style: .light)
             }
           #endif
@@ -262,7 +248,7 @@ struct PostRowView: View {
     if dummy { return }
 
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.forumID = .with { f in
         f.fid = post.fid
       }
@@ -272,7 +258,7 @@ struct PostRowView: View {
 
   func doComment(model: PostReplyModel) {
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.forumID = .with { f in
         f.fid = post.fid
       }
@@ -282,7 +268,7 @@ struct PostRowView: View {
 
   func doEdit(model: PostReplyModel) {
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.forumID = .with { f in
         f.fid = post.fid
       }
@@ -292,7 +278,7 @@ struct PostRowView: View {
 
   func doReport(model: PostReplyModel) {
     model.show(action: .with {
-      $0.postID = self.post.id
+      $0.postID = post.id
       $0.operation = .report
     })
   }

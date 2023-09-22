@@ -14,7 +14,7 @@ struct PlaceholderView: View {
 
   var body: some View {
     VStack(spacing: 12) {
-      if let icon = icon {
+      if let icon {
         Image(systemName: icon)
           .font(.largeTitle)
       }

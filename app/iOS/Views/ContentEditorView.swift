@@ -27,7 +27,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
   @ViewBuilder
   var textEditor: some View {
-    ContentTextEditorView(model: self.model)
+    ContentTextEditorView(model: model)
   }
 
   @ViewBuilder
@@ -80,14 +80,14 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
       }
     }
     .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
-    .onChange(of: model.text) { text in context.content = text }
+    .onChange(of: model.text) { context.content = $1 }
     .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 0.8)) }
-    .onChange(of: model.image) { image in uploadImageAttachment(data: image) }
+    .onChange(of: model.image) { uploadImageAttachment(data: $1) }
     .toast(isPresenting: $model.image.isNotNil()) { AlertToast(type: .loading) }
   }
 
   func uploadImageAttachment(data: Data?) {
-    guard let data = data else { return }
+    guard let data else { return }
     guard let request = context.task.buildUploadAttachmentRequest(data: data) else {
       model.image = nil
       return

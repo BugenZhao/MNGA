@@ -38,7 +38,7 @@ struct ShortMessageDetailsView: View {
 
   @ViewBuilder
   var replyButton: some View {
-    Button(action: { self.doReply() }) {
+    Button(action: { doReply() }) {
       Label("Reply", systemImage: "arrowshape.turn.up.left")
     }
   }
@@ -73,7 +73,7 @@ struct ShortMessageDetailsView: View {
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()
       .toolbarWithFix { ToolbarItem(placement: .primaryAction) { replyButton } }
-      .onChange(of: postModel.sent) { _ in dataSource.reloadLastPages(evenIfNotLoaded: false) }
+      .onChange(of: postModel.sent) { dataSource.reloadLastPages(evenIfNotLoaded: false) }
   }
 
   func doReply() {

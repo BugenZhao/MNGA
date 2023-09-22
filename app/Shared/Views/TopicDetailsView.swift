@@ -53,9 +53,9 @@ struct TopicDetailsView: View {
   }
 
   static func build(id: String, fav: String? = nil) -> some View {
-    Self.build(topic: .with {
+    build(topic: .with {
       $0.id = id
-      if let fav = fav {
+      if let fav {
         $0.fav = fav
       }
     })
@@ -96,7 +96,7 @@ struct TopicDetailsView: View {
 
   static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
     StaticTopicDetailsView(topic: topic) { binding in
-      Self.build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
+      build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
     }
   }
 
@@ -155,7 +155,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var replyButton: some View {
     if !mock {
-      Button(action: { self.doReplyTopic() }) {
+      Button(action: { doReplyTopic() }) {
         Label("Reply", systemImage: "arrowshape.turn.up.left")
       }
     }
@@ -178,15 +178,15 @@ struct TopicDetailsView: View {
     Menu {
       Section {
         if enableAuthorOnly, !topic.authorName.isAnonymous {
-          Button(action: { self.action.navigateToAuthorOnly = self.topic.authorID }) {
+          Button(action: { action.navigateToAuthorOnly = topic.authorID }) {
             Label("Author Only", systemImage: "person.fill")
           }
         }
         if !localMode {
-          Button(action: { self.action.navigateToLocalMode = true }) {
+          Button(action: { action.navigateToLocalMode = true }) {
             Label("View Cached Topic", systemImage: "clock")
           }
-          Button(action: { self.showJumpSelector = true }) {
+          Button(action: { showJumpSelector = true }) {
             Label("Jump to...", systemImage: "arrow.up.arrow.down")
           }
         }
@@ -194,22 +194,22 @@ struct TopicDetailsView: View {
 
       #if os(iOS)
         ShareLinksView(navigationID: navID) {
-          Button(action: self.shareAsImage) {
+          Button(action: shareAsImage) {
             Label("Screenshot (Beta)", systemImage: "text.below.photo")
           }
         }
       #endif
 
       Section {
-        if let atForum = atForum {
-          Button(action: { self.action.navigateToForum = atForum }) {
+        if let atForum {
+          Button(action: { action.navigateToForum = atForum }) {
             Label("Goto \(atForum.name)", systemImage: "list.triangle")
           }
         }
         #if os(iOS)
           favoriteButton
         #endif
-        Button(action: { self.dataSource.refresh() }) {
+        Button(action: { dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
         }
         Label("#" + topic.id, systemImage: "number")
@@ -246,10 +246,10 @@ struct TopicDetailsView: View {
        let currFirst = dataSource.items.min(by: { $0.floor < $1.floor })
     {
       Button(action: {
-        self.action.scrollToFloor = Int(currFirst.floor) // scroll to first for fixing scroll position
+        action.scrollToFloor = Int(currFirst.floor) // scroll to first for fixing scroll position
         dataSource.reload(page: prevPage, evenIfNotLoaded: true) {
           guard let floor = dataSource.itemsAtPage(prevPage).map(\.floor).max() else { return }
-          DispatchQueue.main.async { self.action.scrollToFloor = Int(floor) } // scroll to last of prev page
+          DispatchQueue.main.async { action.scrollToFloor = Int(floor) } // scroll to last of prev page
         }
       }) {
         Label("Load Page \(prevPage)", systemImage: "arrow.counterclockwise")
@@ -275,7 +275,7 @@ struct TopicDetailsView: View {
     }
     .fixedSize(horizontal: false, vertical: true)
 
-    if let first = self.first {
+    if let first {
       buildRow(post: first)
     }
   }
@@ -289,7 +289,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var hotRepliesSection: some View {
-    if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
+    if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
       Section(header: Text("Hot Replies")) {
         ForEach(hotReplies, id: \.id.pid) { post in
           buildRow(post: post, withId: false)
@@ -312,18 +312,6 @@ struct TopicDetailsView: View {
         }
       }
     }
-  }
-
-  @ViewBuilder
-  var navigation: some View {
-    let showingChain = self.action.showingReplyChain ?? .init()
-    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: self.$action.showingReplyChain.isNotNil()) {}.hidden()
-
-    let authorOnlyView = TopicDetailsView.build(topic: topic, only: self.action.navigateToAuthorOnly ?? .init())
-    NavigationLink(destination: authorOnlyView, isActive: self.$action.navigateToAuthorOnly.isNotNil()) {}.hidden()
-
-    let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
-    NavigationLink(destination: localCacheView, isActive: self.$action.navigateToLocalMode) {}.hidden()
   }
 
   @ViewBuilder
@@ -377,15 +365,15 @@ struct TopicDetailsView: View {
 
   var title: String {
     if forceLocalMode {
-      return "Topic".localized
+      "Topic".localized
     } else if !enableAuthorOnly {
-      return "Author Only".localized
+      "Author Only".localized
     } else if onlyPost.id != nil {
-      return "Reply".localized
+      "Reply".localized
     } else if prefs.showTopicSubject {
-      return topic.subject.content
+      topic.subject.content
     } else {
-      return "Topic".localized
+      "Topic".localized
     }
   }
 
@@ -448,16 +436,28 @@ struct TopicDetailsView: View {
           listMain
         }
       }.onReceive(action.$scrollToFloor) { floor in
-        guard let floor = floor else { return }
+        guard let floor else { return }
         let item = dataSource.items.first { $0.floor == UInt32(floor) }
         proxy.scrollTo(item, anchor: .top)
       }.onReceive(action.$scrollToPid) { pid in
-        guard let pid = pid else { return }
+        guard let pid else { return }
         let item = dataSource.items.first { $0.id.pid == pid }
         proxy.scrollTo(item, anchor: .top)
       }
     }.mayGroupedListStyle()
+      // Action Navigation
       .withTopicDetailsAction(action: action)
+      .navigationDestination(item: $action.showingReplyChain) {
+        PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
+          .environmentObject(postReply)
+      }
+      .navigationDestination(item: $action.navigateToAuthorOnly) {
+        TopicDetailsView.build(topic: topic, only: $0)
+      }
+      .navigationDestination(isPresented: $action.navigateToLocalMode) {
+        TopicDetailsView.build(topic: topic, localMode: true)
+      }
+      // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
       .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
   }
@@ -466,10 +466,9 @@ struct TopicDetailsView: View {
     main
       .navigationTitleInline(string: title)
       .toolbarWithFix { toolbar }
-      .background { navigation }
-      .onChange(of: postReply.sent, perform: self.reloadPageAfter(sent:))
-      .onChange(of: dataSource.latestResponse, perform: self.onNewResponse(response:))
-      .onChange(of: dataSource.latestError, perform: self.onError(e:))
+      .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
+      .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
+      .onChange(of: dataSource.latestError) { onError(e: $1) }
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
@@ -499,9 +498,9 @@ struct TopicDetailsView: View {
   func toggleFavor() {
     logicCallAsync(.topicFavor(.with {
       $0.topicID = topic.id
-      $0.operation = self.isFavored ? .delete : .add
+      $0.operation = isFavored ? .delete : .add
     })) { (response: TopicFavorResponse) in
-      self.isFavored = response.isFavored
+      isFavored = response.isFavored
       #if os(iOS)
         HapticUtils.play(type: .success)
       #endif
@@ -515,14 +514,14 @@ struct TopicDetailsView: View {
         f.fid = topic.fid
       }
       $0.postID = .with {
-        $0.tid = self.topic.id
+        $0.tid = topic.id
         $0.pid = "0"
       }
     }, pageToReload: .last)
   }
 
   func reloadPageAfter(sent: PostReplyModel.Context?) {
-    guard let sent = sent else { return }
+    guard let sent else { return }
 
     switch sent.task.pageToReload {
     case let .exact(page):
@@ -535,7 +534,7 @@ struct TopicDetailsView: View {
   }
 
   func onNewResponse(response: TopicDetailsResponse?) {
-    guard let response = response else { return }
+    guard let response else { return }
     let newTopic = response.topic
 
     guard #available(iOS 15.0, *) else {
@@ -570,7 +569,7 @@ struct TopicDetailsView: View {
     VStack(alignment: .leading) {
       headerSectionInner
 
-      if let hotReplies = self.first?.hotReplies, !hotReplies.isEmpty {
+      if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
         Text("Hot Replies")
           .font(.footnote)
           .foregroundColor(.secondary)
@@ -578,15 +577,17 @@ struct TopicDetailsView: View {
           Divider()
           buildRow(post: post, withId: false)
         }
-      } else if let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5),
-                !latestReplies.isEmpty
-      {
-        Text("Replies")
-          .font(.footnote)
-          .foregroundColor(.secondary)
-        ForEach(latestReplies, id: \.id.pid) { post in
-          Divider()
-          buildRow(post: post, withId: false)
+      } else {
+        let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5)
+
+        if !latestReplies.isEmpty {
+          Text("Replies")
+            .font(.footnote)
+            .foregroundColor(.secondary)
+          ForEach(latestReplies, id: \.id.pid) { post in
+            Divider()
+            buildRow(post: post, withId: false)
+          }
         }
       }
     }
@@ -602,7 +603,7 @@ struct TopicDetailsView: View {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       let image = screenshotView.snapshot()
       if image.size == .zero {
-        self.alert.message = .error("Contents are too large to take a screenshot.".localized)
+        alert.message = .error("Contents are too large to take a screenshot.".localized)
       } else {
         viewingImage.show(image: image)
       }
@@ -616,7 +617,7 @@ struct TopicDetailsView: View {
   }
 
   func onError(e: LogicError?) {
-    guard let e = e else { return }
+    guard let e else { return }
     if e.isXMLParseError, prefs.autoOpenInBrowserWhenBanned {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
         openInBrowser()

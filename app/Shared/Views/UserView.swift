@@ -40,7 +40,7 @@ struct UserView: View {
 
   init(id: String, nameHint: String? = nil, style: Style, isAuthor: Bool = false, remote: Bool = false) {
     var user = UsersModel.shared.localUser(id: id)
-    if let nameHint = nameHint, user == nil {
+    if let nameHint, user == nil {
       user = .with {
         $0.id = id
         $0.name.normal = nameHint
@@ -64,13 +64,13 @@ struct UserView: View {
   private var avatarSize: CGFloat {
     switch style {
     case .compact:
-      return 24
+      24
     case .normal:
-      return 36
+      36
     case .huge:
-      return 56
+      56
     case .vertical:
-      return 48
+      48
     }
   }
 
@@ -93,7 +93,7 @@ struct UserView: View {
         Button(action: { if let url = avatarURL { viewingImage.show(url: url) } }) {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
-      } else if let user = self.user, let action = self.action {
+      } else if let user, let action {
         Button(action: { action.showUserProfile = user }) {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
@@ -107,19 +107,19 @@ struct UserView: View {
 
   var name: String {
     if let name = user?.name, !name.display.isEmpty {
-      return name.display
+      name.display
     } else if !id.isEmpty {
-      return id
+      id
     } else {
-      return "????????"
+      "????????"
     }
   }
 
   var idDisplay: String {
-    if isAnonymous, let user = user {
-      return user.name.normal
+    if isAnonymous, let user {
+      user.name.normal
     } else {
-      return id
+      id
     }
   }
 
@@ -146,13 +146,13 @@ struct UserView: View {
   var nameFont: Font {
     switch style {
     case .compact:
-      return .subheadline
+      .subheadline
     case .normal:
-      return showDetails ? .subheadline : .callout
+      showDetails ? .subheadline : .callout
     case .huge:
-      return .title
+      .title
     case .vertical:
-      return .footnote
+      .footnote
     }
   }
 
@@ -161,9 +161,9 @@ struct UserView: View {
     HStack(spacing: 4) {
       Group {
         if showId {
-          Text(self.idDisplay)
+          Text(idDisplay)
         } else {
-          Text(self.name)
+          Text(name)
         }
       }.font(nameFont, weight: style == .huge ? .bold : .medium)
 
@@ -179,7 +179,7 @@ struct UserView: View {
           }
         }.font(style == .huge ? .body : .footnote)
       }
-    }.onTapGesture { withAnimation { self.showId.toggle() } }
+    }.onTapGesture { withAnimation { showId.toggle() } }
       .redacted(if: shouldRedactName)
   }
 

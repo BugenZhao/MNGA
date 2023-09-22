@@ -61,7 +61,7 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
 
   var body: some View {
     VStack(alignment: .leading) {
-      if let error = error, !error.isEmpty {
+      if let error, !error.isEmpty {
         QuoteView(fullWidth: true) {
           Text("Bad or Unsupported Post Content Format")
             .bold()

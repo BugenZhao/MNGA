@@ -19,7 +19,7 @@ struct WebOrAsyncImage: View {
 //          if let p = placeholder { p } else { ProgressView() }
 //        })
     } else {
-      if let url = url {
+      if let url {
         let image = WebImage(url: url).resizable()
         if let p = placeholder {
           image.placeholder(p)

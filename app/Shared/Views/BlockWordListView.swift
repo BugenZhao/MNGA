@@ -14,7 +14,7 @@ struct BlockWordListView: View {
   @State var newWord = nil as BlockWord?
 
   func commitNewWord() {
-    if let newWord = newWord, !newWord.word.isEmpty {
+    if let newWord, !newWord.word.isEmpty {
       storage.add(newWord)
       self.newWord = nil
     }
@@ -25,10 +25,10 @@ struct BlockWordListView: View {
     List {
       if newWord != nil {
         HStack {
-          TextField(LocalizedStringKey("New word"), text: ($newWord ?? .init()).word, onCommit: self.commitNewWord)
+          TextField(LocalizedStringKey("New word"), text: ($newWord ?? .init()).word, onCommit: commitNewWord)
           #if os(iOS)
             .introspectTextField {
-              if self.newWord?.word.isEmpty == true {
+              if newWord?.word.isEmpty == true {
                 $0.becomeFirstResponder()
               }
             }
@@ -56,10 +56,10 @@ struct BlockWordListView: View {
   var addButton: some View {
     Button(action: {
       withAnimation {
-        if let newWord = self.newWord, !newWord.word.isEmpty {
-          self.storage.add(newWord)
+        if let newWord, !newWord.word.isEmpty {
+          storage.add(newWord)
         }
-        self.newWord = .init()
+        newWord = .init()
       }
     }) {
       Label("Add Word", systemImage: "plus.circle")

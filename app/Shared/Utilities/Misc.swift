@@ -10,9 +10,9 @@ import SwiftUI
 
 public func withAnimation<Result>(_: Animation? = .default, when condition: Bool, _ body: () throws -> Result) rethrows -> Result {
   if condition {
-    return withAnimation { try! body() }
+    withAnimation { try! body() }
   } else {
-    return try! body()
+    try! body()
   }
 }
 

@@ -173,7 +173,7 @@ pub fn get_unique_id() -> String {
 #[inline]
 pub fn server_now() -> DateTime<FixedOffset> {
     const HOUR: i32 = 3600;
-    Utc::now().with_timezone(&FixedOffset::east(8 * HOUR))
+    Utc::now().with_timezone(&FixedOffset::east_opt(8 * HOUR).unwrap())
 }
 
 #[inline]

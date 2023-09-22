@@ -22,7 +22,7 @@ struct CacheRowView: View {
       Text(text)
         .foregroundColor(clear == nil ? .secondary : .primary)
       Spacer()
-      if let status = self.status {
+      if let status {
         Text(status)
           .foregroundColor(.secondary)
       } else {
@@ -33,8 +33,8 @@ struct CacheRowView: View {
 
   var body: some View {
     Group {
-      if let clear = clear {
-        Button(action: { self.alertPresented = true }) {
+      if let clear {
+        Button(action: { alertPresented = true }) {
           inner
         }.alert(isPresented: $alertPresented) {
           Alert(title: Text("Are you sure to clear the cache?"), message: Text("This will take a while."), primaryButton: .default(Text("Clear")) { clear() }, secondaryButton: .cancel())
@@ -56,16 +56,16 @@ struct CacheView: View {
     List {
       Section(header: Text("Image")) {
         CacheRowView(text: "Image Cache", status: imageStatus) {
-          self.imageStatus = nil
-          self.clearImageCache()
+          imageStatus = nil
+          clearImageCache()
         }.onAppear { if imageStatus == nil { loadImageCacheSize() } }
       }
 
       Section(header: Text("Data")) {
         ForEach(CacheType.allCases, id: \.self) { type in
           let action = type == .all ? nil : {
-            self.cacheStatus.removeValue(forKey: type)
-            self.manipulateCache(for: type, operation: .clear)
+            cacheStatus.removeValue(forKey: type)
+            manipulateCache(for: type, operation: .clear)
           }
           CacheRowView(text: type.description, status: cacheStatus[type], clear: action)
             .onAppear { manipulateCache(for: type, operation: .check) }
@@ -91,7 +91,7 @@ struct CacheView: View {
 
   func loadImageCacheSize() {
     SDImageCache.shared.calculateSize { _, totalSize in
-      self.imageStatus = ByteCountFormatter().string(fromByteCount: Int64(totalSize))
+      imageStatus = ByteCountFormatter().string(fromByteCount: Int64(totalSize))
     }
   }
 
@@ -101,9 +101,9 @@ struct CacheView: View {
       $0.operation = operation
     })) { (response: CacheResponse) in
       if type == .all {
-        self.cacheStatus[type] = ByteCountFormatter().string(fromByteCount: Int64(response.totalSize))
+        cacheStatus[type] = ByteCountFormatter().string(fromByteCount: Int64(response.totalSize))
       } else {
-        self.cacheStatus[type] = String(format: "%llu items".localized, response.items)
+        cacheStatus[type] = String(format: "%llu items".localized, response.items)
       }
 
       if operation == .clear {

@@ -19,16 +19,16 @@ struct AttachmentsView: View {
   func image(for attachment: Attachment) -> String {
     switch attachment.type {
     case "img":
-      return "photo"
+      "photo"
     default:
-      return "link"
+      "link"
     }
   }
 
   var body: some View {
     List {
       ForEachOrEmpty(model.items, id: \.url) { attachment in
-        Button(action: { self.show(attachment) }) {
+        Button(action: { show(attachment) }) {
           Label(attachment.url, systemImage: image(for: attachment))
             .font(.system(.subheadline, design: .monospaced))
             .lineLimit(1)
@@ -42,7 +42,7 @@ struct AttachmentsView: View {
 
   func show(_ attachment: Attachment) {
     let url = URL(string: attachment.url, relativeTo: URLs.attachmentBase)
-    guard let url = url else { return }
+    guard let url else { return }
 
     if attachment.type == "img" {
       image?.show(url: url)

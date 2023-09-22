@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 extension View {
-  func toolbarWithFix<Content>(@ToolbarContentBuilder content: () -> Content) -> some View where Content: ToolbarContent {
+  func toolbarWithFix(@ToolbarContentBuilder content: () -> some ToolbarContent) -> some View {
     toolbar {
       #if os(iOS)
         ToolbarItem(placement: .navigationBarLeading) { Text("") } // fix back button bug for iOS 14

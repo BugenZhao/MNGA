@@ -25,7 +25,7 @@ struct HotTopicsView: View {
       VStack(alignment: .leading, spacing: 8) {
         HStack(spacing: 4) {
           Group {
-            if let image = self.image {
+            if let image {
               Image(uiImage: image).resizable()
             } else {
               Image("default_forum_icon").resizable()

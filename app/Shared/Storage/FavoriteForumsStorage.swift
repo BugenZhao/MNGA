@@ -27,18 +27,18 @@ class FavoriteForumsStorage: ObservableObject {
     var icon: String {
       switch self {
       case .favoritesOnly:
-        return "star.fill"
+        "star.fill"
       case .all:
-        return "star.lefthalf.fill"
+        "star.lefthalf.fill"
       }
     }
 
     var filterIcon: String {
       switch self {
       case .all:
-        return "line.horizontal.3.decrease.circle"
+        "line.horizontal.3.decrease.circle"
       default:
-        return "line.horizontal.3.decrease.circle.fill"
+        "line.horizontal.3.decrease.circle.fill"
       }
     }
   }

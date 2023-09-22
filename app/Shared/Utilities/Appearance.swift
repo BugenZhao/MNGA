@@ -17,17 +17,17 @@ enum ColorSchemeMode: Int, CaseIterable {
 extension ColorSchemeMode {
   var scheme: ColorScheme? {
     switch self {
-    case .auto: return nil
-    case .light: return .light
-    case .dark: return .dark
+    case .auto: nil
+    case .light: .light
+    case .dark: .dark
     }
   }
 
   var description: LocalizedStringKey {
     switch self {
-    case .auto: return "Auto"
-    case .light: return "Light"
-    case .dark: return "Dark"
+    case .auto: "Auto"
+    case .light: "Light"
+    case .dark: "Dark"
     }
   }
 }
@@ -40,33 +40,33 @@ enum ThemeColor: Int, CaseIterable {
 extension ThemeColor {
   var color: Color? {
     switch self {
-    case .mnga: return nil
-    case .blue: return .systemBlue
-    case .gray: return .systemGray
-    case .green: return .systemGreen
-    case .indigo: return .systemIndigo
-    case .orange: return .systemOrange
-    case .pink: return .systemPink
-    case .purple: return .systemPurple
-    case .red: return .systemRed
-    case .teal: return .systemTeal
-    case .yellow: return .systemYellow
+    case .mnga: nil
+    case .blue: .systemBlue
+    case .gray: .systemGray
+    case .green: .systemGreen
+    case .indigo: .systemIndigo
+    case .orange: .systemOrange
+    case .pink: .systemPink
+    case .purple: .systemPurple
+    case .red: .systemRed
+    case .teal: .systemTeal
+    case .yellow: .systemYellow
     }
   }
 
   var description: LocalizedStringKey {
     switch self {
-    case .mnga: return "MNGA"
-    case .blue: return "Blue"
-    case .gray: return "Gray"
-    case .green: return "Green"
-    case .indigo: return "Indigo"
-    case .orange: return "Orange"
-    case .pink: return "Pink"
-    case .purple: return "Purple"
-    case .red: return "Red"
-    case .teal: return "Teal"
-    case .yellow: return "Yellow"
+    case .mnga: "MNGA"
+    case .blue: "Blue"
+    case .gray: "Gray"
+    case .green: "Green"
+    case .indigo: "Indigo"
+    case .orange: "Orange"
+    case .pink: "Pink"
+    case .purple: "Purple"
+    case .red: "Red"
+    case .teal: "Teal"
+    case .yellow: "Yellow"
     }
   }
 }

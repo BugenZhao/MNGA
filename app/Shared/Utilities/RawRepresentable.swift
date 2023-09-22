@@ -82,9 +82,9 @@ extension RawRepresentable where RawValue == String {
 extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.RawValue == String {
   public var rawValue: String {
     if let s = self {
-      return s.rawValue
+      s.rawValue
     } else {
-      return "<nil>"
+      "<nil>"
     }
   }
 
