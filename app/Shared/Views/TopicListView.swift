@@ -27,9 +27,6 @@ struct TopicListView: View {
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
-  @State var showingHotTopics = false
-  @State var showingRecommendedTopics = false
-  @State var showingToppedTopic = false
   @State var order: TopicListRequest.Order? = nil
 
   var dataSource: DataSource {
@@ -144,14 +141,14 @@ struct TopicListView: View {
           } label: {
             Label("Order by", systemImage: (order ?? .lastPost).icon)
           }
-          Button(action: { showingHotTopics = true }) {
+          NavigationLink(destination: HotTopicListView.build(forum: forum)) {
             Label("Hot Topics", systemImage: "flame")
           }
-          Button(action: { showingRecommendedTopics = true }) {
+          NavigationLink(destination: RecommendedTopicListView.build(forum: forum)) {
             Label("Recommended Topics", systemImage: "hand.thumbsup")
           }
-          if let _ = toppedTopicID {
-            Button(action: { showingToppedTopic = true }) {
+          if let topicID = toppedTopicID {
+            NavigationLink(destination: TopicDetailsView.build(id: topicID)) {
               Label("Topped Topic", systemImage: "arrow.up.to.line")
             }
           }
@@ -202,27 +199,6 @@ struct TopicListView: View {
         )
       }
     }
-  }
-
-  @ViewBuilder
-  var subforum: some View {
-    let destination = TopicListView.build(forum: currentShowingSubforum ?? Forum())
-    NavigationLink(destination: destination, isActive: $currentShowingSubforum.isNotNil()) {}
-      .isDetailLink(false)
-      .hidden()
-    NavigationLink(destination: EmptyView()) {}.hidden() // hack: unexpected pop
-  }
-
-  @ViewBuilder
-  var navigations: some View {
-    NavigationLink(destination: HotTopicListView.build(forum: forum), isActive: $showingHotTopics) {}
-      .isDetailLink(false)
-      .hidden()
-    NavigationLink(destination: RecommendedTopicListView.build(forum: forum), isActive: $showingRecommendedTopics) {}
-      .isDetailLink(false)
-      .hidden()
-    NavigationLink(destination: TopicDetailsView.build(id: toppedTopicID ?? ""), isActive: $showingToppedTopic) {}
-      .hidden()
   }
 
   @ViewBuilder
@@ -282,7 +258,7 @@ struct TopicListView: View {
     .navigationTitleLarge(string: forum.name.localized)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
-    .background { subforum; navigations }
+    .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
     .toolbarWithFix { toolbar }
     .onAppear { selectedForum.inner = forum }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }

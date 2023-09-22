@@ -315,18 +315,6 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
-  var navigation: some View {
-    let showingChain = action.showingReplyChain ?? .init()
-    NavigationLink(destination: PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: showingChain).environmentObject(postReply), isActive: $action.showingReplyChain.isNotNil()) {}.hidden()
-
-    let authorOnlyView = TopicDetailsView.build(topic: topic, only: action.navigateToAuthorOnly ?? .init())
-    NavigationLink(destination: authorOnlyView, isActive: $action.navigateToAuthorOnly.isNotNil()) {}.hidden()
-
-    let localCacheView = TopicDetailsView.build(topic: topic, localMode: true)
-    NavigationLink(destination: localCacheView, isActive: $action.navigateToLocalMode) {}.hidden()
-  }
-
-  @ViewBuilder
   var listMain: some View {
     List {
       headerSection
@@ -457,7 +445,19 @@ struct TopicDetailsView: View {
         proxy.scrollTo(item, anchor: .top)
       }
     }.mayGroupedListStyle()
+      // Action Navigation
       .withTopicDetailsAction(action: action)
+      .navigationDestination(item: $action.showingReplyChain) {
+        PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
+          .environmentObject(postReply)
+      }
+      .navigationDestination(item: $action.navigateToAuthorOnly) {
+        TopicDetailsView.build(topic: topic, only: $0)
+      }
+      .navigationDestination(isPresented: $action.navigateToLocalMode) {
+        TopicDetailsView.build(topic: topic, localMode: true)
+      }
+      // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
       .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
   }
@@ -466,7 +466,6 @@ struct TopicDetailsView: View {
     main
       .navigationTitleInline(string: title)
       .toolbarWithFix { toolbar }
-      .background { navigation }
       .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
       .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
       .onChange(of: dataSource.latestError) { onError(e: $1) }

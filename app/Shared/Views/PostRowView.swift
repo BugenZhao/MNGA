@@ -56,17 +56,10 @@ struct PostRowView: View {
   @ViewBuilder
   var menuButton: some View {
     #if os(iOS)
-      if #available(iOS 15.0, *) {
-        Menu(content: { menu }) {
-          Image(systemName: "ellipsis.circle.fill")
-            .symbolRenderingMode(.hierarchical)
-            .imageScale(.large)
-        }
-      } else {
-        Menu(content: { menu }) {
-          Image(systemName: "ellipsis")
-            .imageScale(.large)
-        }
+      Menu(content: { menu }) {
+        Image(systemName: "ellipsis.circle.fill")
+          .symbolRenderingMode(.hierarchical)
+          .imageScale(.large)
       }
     #endif
   }
@@ -158,7 +151,7 @@ struct PostRowView: View {
       Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
         Label("Select Text", systemImage: "selection.pin.in.out")
       }
-      if #available(iOS 15.0, *), !attachments.items.isEmpty {
+      if !attachments.items.isEmpty {
         Button(action: { showAttachments = true }) {
           Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
         }
@@ -193,13 +186,6 @@ struct PostRowView: View {
     }
   }
 
-  @ViewBuilder
-  var navigation: some View {
-    if #available(iOS 15.0, *) {
-      NavigationLink(destination: AttachmentsView(model: attachments), isActive: $showAttachments) {}.hidden()
-    }
-  }
-
   var body: some View {
     let body = VStack(alignment: .leading, spacing: 10) {
       header
@@ -215,10 +201,10 @@ struct PostRowView: View {
     #if os(iOS)
     .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .background { navigation }
+    .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments) } }
     .environmentObject(attachments)
 
-    if #available(iOS 15.0, *), let model = postReply, !mock {
+    if let model = postReply, !mock {
       body
         .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) {
           Button(action: { self.doQuote(model: model) }) {

@@ -168,22 +168,19 @@ struct SchemesNavigationModifier: ViewModifier {
 
   @State var urlFromPasteboardForAlert: URL?
 
-  var navigation: some View {
-    let view: AnyView = switch model.navID {
+  @ViewBuilder
+  func destination(_ navID: NavigationIdentifier) -> some View {
+    switch navID {
     case let .topicID(tid, fav):
-      TopicDetailsView.build(id: tid, fav: fav).eraseToAnyView()
+      TopicDetailsView.build(id: tid, fav: fav)
     case let .forumID(forumID):
-      TopicListView.build(id: forumID).eraseToAnyView()
-    case .none:
-      EmptyView().eraseToAnyView()
+      TopicListView.build(id: forumID)
     }
-
-    return NavigationLink(destination: view, isActive: $model.navID.isNotNil()) {}.hidden()
   }
 
   func body(content: Content) -> some View {
     content
-      .background { navigation }
+      .navigationDestination(item: $model.navID) { self.destination($0) }
       .alert(isPresented: $urlFromPasteboardForAlert.isNotNil()) {
         let url = urlFromPasteboardForAlert
         return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
