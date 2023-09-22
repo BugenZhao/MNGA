@@ -18,7 +18,7 @@ struct MNGAApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()
-        .onChange(of: prefs.themeColor) { _ in setupColor() }
+        .onChange(of: prefs.themeColor) { setupColor() }
         .onAppear { setupColor() }
     }
 

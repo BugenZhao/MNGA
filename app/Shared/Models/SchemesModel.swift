@@ -188,7 +188,7 @@ struct SchemesNavigationModifier: ViewModifier {
         let url = urlFromPasteboardForAlert
         return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
       }
-      .onChange(of: urlFromPasteboardForAlert) { if $0 == nil { copyToPasteboard(string: "") } }
+      .onChange(of: urlFromPasteboardForAlert) { if $1 == nil { copyToPasteboard(string: "") } }
       .onReceive(NotificationCenter.default.publisher(for: AppKitOrUIKitApplication.didBecomeActiveNotification)) { _ in
         #if os(iOS)
           UIPasteboard.general.detectPatterns(for: [\.probableWebURL]) { result in

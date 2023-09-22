@@ -467,9 +467,9 @@ struct TopicDetailsView: View {
       .navigationTitleInline(string: title)
       .toolbarWithFix { toolbar }
       .background { navigation }
-      .onChange(of: postReply.sent, perform: reloadPageAfter(sent:))
-      .onChange(of: dataSource.latestResponse, perform: onNewResponse(response:))
-      .onChange(of: dataSource.latestError, perform: onError(e:))
+      .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
+      .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
+      .onChange(of: dataSource.latestError) { onError(e: $1) }
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }

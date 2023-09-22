@@ -102,8 +102,8 @@ struct TopicJumpSelectorView: View {
           }.frame(maxWidth: .infinity)
         }.buttonStyle(.plain)
           .foregroundColor(.accentColor)
-      }.onChange(of: text) { _ in parseText() }
-        .onChange(of: mode) { _ in parseText() }
+      }.onChange(of: text) { parseText() }
+        .onChange(of: mode) { parseText() }
     }
   }
 

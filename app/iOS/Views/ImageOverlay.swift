@@ -54,7 +54,7 @@ struct ImageViewer<Content: View>: View {
       .zIndex(1)
       .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
 //        .onAppear { self.dragOffset = .zero; self.scale = 1.0 }
-      .onChange(of: scale) { s in if s != 1.0 { dragOffset = .zero } }
+      .onChange(of: scale) { if $1 != 1.0 { dragOffset = .zero } }
       .gesture(scale == 1.0 ? dragGesture : nil)
     }
   }

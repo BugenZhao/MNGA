@@ -285,9 +285,9 @@ struct TopicListView: View {
     .background { subforum; navigations }
     .toolbarWithFix { toolbar }
     .onAppear { selectedForum.inner = forum }
-    .onChange(of: prefs.defaultTopicListOrder) { _, new in if new != order { order = new } }
+    .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
-    .onChange(of: dataSource.latestResponse) { _, new in updateForumMeta(new) }
+    .onChange(of: dataSource.latestResponse) { updateForumMeta($1) }
   }
 
   var navID: NavigationIdentifier {

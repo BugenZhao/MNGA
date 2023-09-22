@@ -124,7 +124,7 @@ struct LoginView: View {
       ProgressView().hidden(!loading)
     }.toolbar { toolbar }
       .alert(isPresented: $alertMessage.isNotNil()) { Alert(title: "From NGA".localized, message: alertMessage) }
-      .onChange(of: alertMessage) { if $0 == nil, let c = alertCompletion { c(); alertCompletion = nil } }
+      .onChange(of: alertMessage) { if $1 == nil, let c = alertCompletion { c(); alertCompletion = nil } }
   }
 
   var body: some View {
