@@ -63,11 +63,12 @@ struct CellContextMenuModifier: ViewModifier {
     interaction = UIContextMenuInteraction(delegate: delegate)
   }
 
-  func body(content: Content) -> some View {
-    content.introspectTableViewCell { cell in
-      cell.interactions.removeAll()
-      cell.addInteraction(interaction)
-    }
+  func body(content _: Content) -> some View {
+    EmptyView()
+//    content.introspectTableViewCell { cell in
+//      cell.interactions.removeAll()
+//      cell.addInteraction(interaction)
+//    }
   }
 }
 

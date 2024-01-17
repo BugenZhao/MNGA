@@ -18,8 +18,8 @@ struct ContentImageView: View {
   @Environment(\.inRealPost) var inRealPost
   @EnvironmentObject var viewingImage: ViewingImageModel
 
-  @OptionalEnvironmentObject<AttachmentsModel> var attachmentsModel
-  @OptionalEnvironmentObject<PresendAttachmentsModel> var presendAttachmentsModel
+  @EnvironmentObject<AttachmentsModel>.Optional var attachmentsModel
+  @EnvironmentObject<PresendAttachmentsModel>.Optional var presendAttachmentsModel
 
   init(url: URL, onlyThumbs: Bool = false) {
     self.url = url

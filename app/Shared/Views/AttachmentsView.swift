@@ -11,7 +11,7 @@ import SwiftUI
 import SwiftUIX
 
 struct AttachmentsView: View {
-  @OptionalEnvironmentObject<ViewingImageModel> var image
+  @EnvironmentObject<ViewingImageModel>.Optional var image
   @ObservedObject var model: AttachmentsModel
 
   @Environment(\.presentationMode) var presentation

@@ -22,7 +22,6 @@
 		B404C49E270C73EC00FF1743 /* Platform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B404C49C270C73EC00FF1743 /* Platform.swift */; };
 		B404C4A0270C788100FF1743 /* AppActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B404C49F270C788100FF1743 /* AppActivityView.swift */; };
 		B404C4A2270C790A00FF1743 /* ContentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B404C4A1270C790A00FF1743 /* ContentEditorView.swift */; };
-		B404C4A8270C8E1000FF1743 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B404C4A7270C8E1000FF1743 /* Introspect */; };
 		B404C4AA270D662900FF1743 /* ShareMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B404C4A9270D662600FF1743 /* ShareMenu.swift */; };
 		B404C4B2270D734A00FF1743 /* DismissableStubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B404C4B1270D734A00FF1743 /* DismissableStubView.swift */; };
 		B404C4F9270D9EBA00FF1743 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B43DEDAB269F0951009C52F5 /* WidgetKit.framework */; platformFilter = maccatalyst; };
@@ -101,7 +100,6 @@
 		B42BA73F2720561D004D46EB /* ContentEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA73D2720561D004D46EB /* ContentEditorModel.swift */; };
 		B42BA74127205943004D46EB /* ShortMessageEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA74027205943004D46EB /* ShortMessageEditorView.swift */; };
 		B42BA74227205943004D46EB /* ShortMessageEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BA74027205943004D46EB /* ShortMessageEditorView.swift */; };
-		B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */ = {isa = PBXBuildFile; productRef = B437B278269B09DC0092FF9E /* SwiftUIRefresh */; };
 		B437B27C269B0E190092FF9E /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
 		B43DED46269C29BB009C52F5 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
 		B43DED47269C29BB009C52F5 /* DateTimeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43DED45269C29BB009C52F5 /* DateTimeTextView.swift */; };
@@ -228,7 +226,6 @@
 		B4CF7E92270B2A8D00E7C374 /* RecommendedTopicListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CF7E90270B2A8C00E7C374 /* RecommendedTopicListView.swift */; };
 		B4D13B9C27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
 		B4D13B9D27020A8C009506A2 /* TopicPostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D13B9B27020A8C009506A2 /* TopicPostRowView.swift */; };
-		B4D34D3A2749FF6D0068A23C /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = B4D34D392749FF6D0068A23C /* SwiftUINavigation */; };
 		B4D34D3C274A148F0068A23C /* AttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D34D3B274A148F0068A23C /* AttachmentsView.swift */; };
 		B4D34D3D274A148F0068A23C /* AttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D34D3B274A148F0068A23C /* AttachmentsView.swift */; };
 		B4DBF608268976470027233F /* DateFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DBF607268976470027233F /* DateFormatters.swift */; };
@@ -278,6 +275,7 @@
 		B4E10724268DD2A4006C1742 /* AuthInfoDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E10722268DD2A4006C1742 /* AuthInfoDebug.swift */; };
 		B4E2BDD226922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
 		B4E2BDD326922A5E0080C790 /* TopicHistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E2BDD126922A5E0080C790 /* TopicHistoryListView.swift */; };
+		B4E39C4F2ABDFEA600256DD9 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = B4E39C4E2ABDFEA600256DD9 /* SwiftUIIntrospect */; };
 		B4EA154E2740F2F200C0308B /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B4EA154D2740F2F200C0308B /* AlertToast */; };
 		B4EA15502740F30000C0308B /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = B4EA154F2740F30000C0308B /* AlertToast */; };
 		B4EB80E3269B0F290014DDFA /* ToolbarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437B27B269B0E190092FF9E /* ToolbarModifier.swift */; };
@@ -495,9 +493,8 @@
 				B4C7F011273EBFF400F64A88 /* logic-ios.xcframework in Frameworks */,
 				B4C024ED268850E800E53554 /* SwiftProtobuf in Frameworks */,
 				B4E10716268DADEE006C1742 /* WebView in Frameworks */,
-				B437B279269B09DC0092FF9E /* SwiftUIRefresh in Frameworks */,
-				B4D34D3A2749FF6D0068A23C /* SwiftUINavigation in Frameworks */,
 				B45819CC268DA17D00999830 /* SwiftUIX in Frameworks */,
+				B4E39C4F2ABDFEA600256DD9 /* SwiftUIIntrospect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -512,7 +509,6 @@
 				B4C024F0268850F300E53554 /* SwiftProtobuf in Frameworks */,
 				B404C497270C71F600FF1743 /* Colorful in Frameworks */,
 				B4E10718268DADF5006C1742 /* WebView in Frameworks */,
-				B404C4A8270C8E1000FF1743 /* Introspect in Frameworks */,
 				B45819CE268DA18600999830 /* SwiftUIX in Frameworks */,
 				B404C495270C71DC00FF1743 /* BetterSafariView in Frameworks */,
 			);
@@ -897,13 +893,12 @@
 				B45819CB268DA17D00999830 /* SwiftUIX */,
 				B4E10715268DADEE006C1742 /* WebView */,
 				B412F706268DFC4600EB0614 /* Logging */,
-				B437B278269B09DC0092FF9E /* SwiftUIRefresh */,
 				B409252526D29F6C00BCB666 /* BetterSafariView */,
 				B4CF7E8E270AE04A00E7C374 /* Colorful */,
 				B41BC0DC271C7E5D00DD05F2 /* CombineExt */,
 				B4EA154D2740F2F200C0308B /* AlertToast */,
 				B4BDE1372746A5F300F0607E /* Crossroad */,
-				B4D34D392749FF6D0068A23C /* SwiftUINavigation */,
+				B4E39C4E2ABDFEA600256DD9 /* SwiftUIIntrospect */,
 			);
 			productName = "NGA (iOS)";
 			productReference = B4C024C826884FD700E53554 /* MNGA.app */;
@@ -930,7 +925,6 @@
 				B412F708268DFC4F00EB0614 /* Logging */,
 				B404C494270C71DC00FF1743 /* BetterSafariView */,
 				B404C496270C71F600FF1743 /* Colorful */,
-				B404C4A7270C8E1000FF1743 /* Introspect */,
 				B4EA154F2740F30000C0308B /* AlertToast */,
 			);
 			productName = "NGA (macOS)";
@@ -977,14 +971,12 @@
 				B45819CA268DA17D00999830 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 				B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */,
 				B412F705268DFC4600EB0614 /* XCRemoteSwiftPackageReference "swift-log" */,
-				B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */,
 				B409252426D29F6C00BCB666 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */,
-				B404C4A6270C8E1000FF1743 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */,
 				B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */,
 				B4BDE1362746A5F300F0607E /* XCRemoteSwiftPackageReference "Crossroad" */,
-				B4D34D382749FF6D0068A23C /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
+				B4E39C4D2ABDFEA600256DD9 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			productRefGroup = B4C024C926884FD700E53554 /* Products */;
 			projectDirPath = "";
@@ -1456,6 +1448,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1523,6 +1516,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1616,8 +1610,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = MNGA.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 87F9J2DF6R;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
@@ -1630,7 +1624,7 @@
 				MARKETING_VERSION = 1.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.bugenzhao.MNGA;
 				PRODUCT_NAME = MNGA;
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bugenzhao.MNGA";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -1745,14 +1739,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B404C4A6270C8E1000FF1743 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.3;
-			};
-		};
 		B409252426D29F6C00BCB666 /* XCRemoteSwiftPackageReference "BetterSafariView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stleamist/BetterSafariView";
@@ -1793,14 +1779,6 @@
 				minimumVersion = 0.1.0;
 			};
 		};
-		B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUIRefresh";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.3;
-			};
-		};
 		B4BDE1362746A5F300F0607E /* XCRemoteSwiftPackageReference "Crossroad" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/giginet/Crossroad";
@@ -1825,20 +1803,20 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		B4D34D382749FF6D0068A23C /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
-		};
 		B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kylehickinson/SwiftUI-WebView";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.3.0;
+			};
+		};
+		B4E39C4D2ABDFEA600256DD9 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		B4EA154C2740F2F200C0308B /* XCRemoteSwiftPackageReference "AlertToast" */ = {
@@ -1861,11 +1839,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */;
 			productName = Colorful;
-		};
-		B404C4A7270C8E1000FF1743 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B404C4A6270C8E1000FF1743 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
 		};
 		B409252526D29F6C00BCB666 /* BetterSafariView */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1912,11 +1885,6 @@
 			package = B41BC0DB271C7E5C00DD05F2 /* XCRemoteSwiftPackageReference "CombineExt" */;
 			productName = CombineExt;
 		};
-		B437B278269B09DC0092FF9E /* SwiftUIRefresh */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4920CD22690224F00762FC9 /* XCRemoteSwiftPackageReference "SwiftUIRefresh" */;
-			productName = SwiftUIRefresh;
-		};
 		B45819C6268D9B5600999830 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B45819C5268D9B5600999830 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
@@ -1957,11 +1925,6 @@
 			package = B4CF7E8D270AE04A00E7C374 /* XCRemoteSwiftPackageReference "Colorful" */;
 			productName = Colorful;
 		};
-		B4D34D392749FF6D0068A23C /* SwiftUINavigation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4D34D382749FF6D0068A23C /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
-			productName = SwiftUINavigation;
-		};
 		B4E10715268DADEE006C1742 /* WebView */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */;
@@ -1971,6 +1934,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4E10714268DADEE006C1742 /* XCRemoteSwiftPackageReference "SwiftUI-WebView" */;
 			productName = WebView;
+		};
+		B4E39C4E2ABDFEA600256DD9 /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B4E39C4D2ABDFEA600256DD9 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = SwiftUIIntrospect;
 		};
 		B4EA154D2740F2F200C0308B /* AlertToast */ = {
 			isa = XCSwiftPackageProductDependency;

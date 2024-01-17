@@ -15,8 +15,8 @@ struct PostRowView: View {
 
   @Binding var vote: VotesModel.Vote
 
-  @OptionalEnvironmentObject<TopicDetailsActionModel> var action
-  @OptionalEnvironmentObject<PostReplyModel> var postReply
+  @EnvironmentObject<TopicDetailsActionModel>.Optional var action
+  @EnvironmentObject<PostReplyModel>.Optional var postReply
   @EnvironmentObject var textSelection: TextSelectionModel
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
 

@@ -13,7 +13,7 @@ struct ForumIconView: View {
   let iconURL: String
 
   var body: some View {
-    let defaultIcon = Image("default_forum_icon")
+    let defaultIcon = Image(.defaultForumIcon)
       .resizable()
       .renderingMode(.template)
 

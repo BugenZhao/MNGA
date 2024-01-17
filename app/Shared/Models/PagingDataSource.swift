@@ -10,10 +10,6 @@ import Foundation
 import SwiftProtobuf
 import SwiftUI
 
-#if os(iOS)
-  import SwiftUIRefresh
-#endif
-
 class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let buildRequest: (_ page: Int) -> AsyncRequest.OneOf_Value
   private let onResponse: (_ response: Res) -> ([Item], Int?)
@@ -265,22 +261,13 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 }
 
 extension View {
-  func refreshable(dataSource: PagingDataSource<some Any, some Any>, iOS15Only: Bool = false, refreshWhenEnterForeground _: Bool = false) -> some View {
-    #if canImport(SwiftUIRefresh)
-      Group {
-        if #available(iOS 15.0, *) {
-          self.refreshable {
-            try! await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
-            await dataSource.refreshAsync(animated: true)
-            try! await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
-          }
-        } else if !iOS15Only {
-          self.pullToRefresh(isShowing: .constant(dataSource.isRefreshing)) { dataSource.refresh(animated: true) }
-        } else {
-          self
-        }
-      }
-// refreshWhenEnterForeground is currently buggy
+  func refreshable(dataSource: PagingDataSource<some Any, some Any>, iOS15Only _: Bool = false, refreshWhenEnterForeground _: Bool = false) -> some View {
+    refreshable {
+      try! await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+      await dataSource.refreshAsync(animated: true)
+      try! await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+    }
+    // refreshWhenEnterForeground is currently buggy
 
 //      .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
 //        guard refreshWhenEnterForeground else { return }
@@ -291,8 +278,5 @@ extension View {
 //          dataSource.refresh()
 //        }
 //      }
-    #else
-      self
-    #endif
   }
 }

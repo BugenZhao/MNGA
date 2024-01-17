@@ -51,7 +51,7 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
     self.initialInQuote = initialInQuote
   }
 
-  @OptionalEnvironmentObject<TopicDetailsActionModel> var actionModel
+  @EnvironmentObject<TopicDetailsActionModel>.Optional var actionModel
 
   var main: some View {
     let combiner = ContentCombiner(actionModel: actionModel, id: id, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)

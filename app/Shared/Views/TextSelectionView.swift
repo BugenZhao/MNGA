@@ -28,7 +28,7 @@ struct TextSelectionView: View {
   var body: some View {
     NavigationView {
       TextEditor(text: .constant(text))
-        .introspectTextView { tv in
+        .introspect(.textEditor, on: .iOS(.v14, .v15, .v16, .v17)) { tv in
           tv.isEditable = false
           tv.selectAll(nil)
         }

@@ -46,7 +46,7 @@ struct OldAboutView: View {
   var header: some View {
     VStack {
       Button(action: { doShare() }) {
-        Image("RoundedIcon")
+        Image(.roundedIcon)
           .resizable()
           .scaledToFit()
           .height(200)
@@ -60,7 +60,7 @@ struct OldAboutView: View {
 
       HStack(spacing: 12) {
         Button(action: { openGitHub() }) {
-          Image("github")
+          Image(.github)
             .renderingMode(.template)
             .resizable()
             .scaledToFit()
