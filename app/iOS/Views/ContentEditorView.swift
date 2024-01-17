@@ -55,7 +55,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
         Section(header: Text("Content")) {
           ZStack(alignment: .topLeading) { // hack for dynamic height
-            textEditor.introspectTextView { tv in
+            textEditor.introspect(.textEditor, on: .iOS(.v14, .v15, .v16, .v17)) { tv in
               if first { tv.becomeFirstResponder(); first = false }
             }
             Text(model.text).opacity(0).padding(.all, 6)

@@ -28,7 +28,7 @@ struct UserView: View {
   @State var showId = false
   @StateObject var pref = PreferencesStorage.shared
 
-  @OptionalEnvironmentObject<TopicDetailsActionModel> var action
+  @EnvironmentObject<TopicDetailsActionModel>.Optional var action
   @EnvironmentObject var viewingImage: ViewingImageModel
 
   @State var user: User?
