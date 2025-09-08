@@ -3,5 +3,6 @@
   "protoc": {
     "options": ["-I protos/"]
   },
-  "sweetpad.build.xcodeWorkspacePath": "app/MNGA.xcodeproj/project.xcworkspace"
+  "sweetpad.build.xcodeWorkspacePath": "app/MNGA.xcodeproj/project.xcworkspace",
+  "sweetpad.tuist.autogenerate": true
 }
