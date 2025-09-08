@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct HapticUtils {
+enum HapticUtils {
   static let notification = UINotificationFeedbackGenerator()
 
   static func play(type: UINotificationFeedbackGenerator.FeedbackType) {

@@ -87,13 +87,13 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
 
   // MARK: Interface
 
-  public func showAfter(action: Task.Action) {
+  func showAfter(action: Task.Action) {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
       self.show(action: action)
     }
   }
 
-  public func show(action: Task.Action, pageToReload: PageToReload? = nil) {
+  func show(action: Task.Action, pageToReload: PageToReload? = nil) {
     let task = Task(action: action, pageToReload: pageToReload)
 
     if showEditor { return }
@@ -107,14 +107,14 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
     }
   }
 
-  public func discardCurrentContext() {
+  func discardCurrentContext() {
     guard showEditor else { return }
 
     reset()
     showEditor = false
   }
 
-  public func send() {
+  func send() {
     guard let context else { return }
     isSending = true
     doSend(with: context)

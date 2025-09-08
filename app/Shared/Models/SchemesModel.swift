@@ -180,7 +180,7 @@ struct SchemesNavigationModifier: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      .navigationDestination(item: $model.navID) { self.destination($0) }
+      .navigationDestination(item: $model.navID) { destination($0) }
       .alert(isPresented: $urlFromPasteboardForAlert.isNotNil()) {
         let url = urlFromPasteboardForAlert
         return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())

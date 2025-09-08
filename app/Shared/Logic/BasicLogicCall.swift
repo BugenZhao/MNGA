@@ -23,7 +23,7 @@ func logicInitialConfigure() {
 }
 
 struct LogicError: Error, LocalizedError, Equatable {
-  public let error: String
+  let error: String
 
   var errorDescription: String? {
     error
@@ -61,7 +61,7 @@ func logicCall<Response: SwiftProtobuf.Message>(_ requestValue: SyncRequest.OneO
   defer { rust_free(resByteBuffer) }
 
   if let resData {
-    let res = try Response(serializedData: resData)
+    let res = try Response(serializedBytes: resData)
     return res
   } else {
     throw resError!

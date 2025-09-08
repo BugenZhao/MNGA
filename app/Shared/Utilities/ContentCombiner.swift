@@ -91,9 +91,9 @@ class ContentCombiner {
 
   private func getEnv(key: String) -> Any? {
     if let v = envs[key] {
-      return v
+      v
     } else {
-      return parent?.getEnv(key: key)
+      parent?.getEnv(key: key)
     }
   }
 
@@ -571,11 +571,10 @@ class ContentCombiner {
     guard let urlText = tokens.first else { return }
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
 
-    let title: Text
-    if let duration = extractQueryParams(query: duration ?? "", param: "duration") {
-      title = Text(duration)
+    let title = if let duration = extractQueryParams(query: duration ?? "", param: "duration") {
+      Text(duration)
     } else {
-      title = Text("Audio")
+      Text("Audio")
     }
 
     let link = ContentButtonView(icon: "waveform", title: title, inQuote: inQuote) {

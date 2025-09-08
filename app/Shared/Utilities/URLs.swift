@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct URLs {
+enum URLs {
   static let attachmentBase = URL(string: "https://img.nga.178.com/attachments/")!
   static let testFlight = URL(string: "https://testflight.apple.com/join/qFDuytLt")!
   static let gitHub = URL(string: "https://github.com/BugenZhao/MNGA")!

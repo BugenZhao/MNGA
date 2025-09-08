@@ -35,7 +35,7 @@ struct ImageViewer<Content: View>: View {
   }
 
   @ViewBuilder
-  public var body: some View {
+  var body: some View {
     if let view {
       Group {
         if prefs.imageViewerEnableZoom {

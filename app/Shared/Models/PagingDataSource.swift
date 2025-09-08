@@ -81,14 +81,14 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 
   private func upsertItems(_ items: some Sequence<Item>, page: Int) {
-    items.forEach {
-      let id = $0[keyPath: self.id]
+    for item in items {
+      let id = item[keyPath: id]
 
-      if let index = self.itemToIndexAndPage[id]?.index {
-        self.items[index] = $0
+      if let index = itemToIndexAndPage[id]?.index {
+        self.items[index] = item
       } else { // is new
-        self.items.append($0)
-        self.itemToIndexAndPage[id] = (index: self.items.endIndex - 1, page: page)
+        self.items.append(item)
+        itemToIndexAndPage[id] = (index: self.items.endIndex - 1, page: page)
       }
     }
   }

@@ -75,7 +75,7 @@ struct UserMenuView: View {
         }
       }
       Section {
-        if let user = user {
+        if let user {
           NavigationLink(destination: UserProfileView.build(user: user)) {
             Label("My Profile", systemImage: "person.fill")
           }

@@ -25,7 +25,7 @@ struct PostReplyChainView: View {
 
   var body: some View {
     List {
-      ForEach(chain, id: \.hashIdentifiable) { id in
+      ForEach(chain, id: \.hashValue) { id in
         if let post = baseDataSource.items.first(where: { $0.id == id }) {
           buildRow(post: post)
         } else if let post = remotePosts[id] {

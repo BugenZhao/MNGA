@@ -99,7 +99,7 @@ struct PostRowView: View {
       HStack {
         Spacer().frame(width: 6, height: 1)
         VStack {
-          ForEach(post.comments, id: \.hashIdentifiable) { comment in
+          ForEach(post.comments, id: \.hashValue) { comment in
             PostCommentRowView(comment: comment)
               .fixedSize(horizontal: false, vertical: true)
           }
@@ -207,7 +207,7 @@ struct PostRowView: View {
     if let model = postReply, !mock {
       body
         .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) {
-          Button(action: { self.doQuote(model: model) }) {
+          Button(action: { doQuote(model: model) }) {
             Image(systemName: "quote.bubble")
           }.tint(.accentColor)
         }
