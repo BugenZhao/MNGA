@@ -16,7 +16,7 @@ log = "0.4"
 tokio = { workspace = true }
 protos = { path = "../protos" }
 service = { path = "../service" }
-ctor = "0.2.4"
+ctor = "0.5"
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.19"

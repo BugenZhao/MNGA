@@ -11,5 +11,5 @@ lazy_static = "1"
 log = "0.4"
 protos = { path = "../protos" }
 sled = { git = "https://github.com/spacejam/sled", rev = "95a883f" }
-thiserror = "1"
+thiserror = "2"
 tokio = { workspace = true }
