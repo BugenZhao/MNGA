@@ -123,6 +123,10 @@ swiftformat:
 		${SWIFTFORMAT} --indent 2 --swiftversion 5.9 --exclude "app/Shared/Protos/*" . ;\
 	fi
 
+tuist:
+	tuist generate -p app --no-open
+clean-xcode-proj:
+	rm -rf app/MNGA.xcodeproj app/MNGA.xcworkspace
 
 nightly:
 	rustup override set nightly
