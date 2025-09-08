@@ -60,15 +60,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b0674a1ddeecb70197781e945de4b3b8ffb61fa939a5597bcf48503737663100"
 
 [[package]]
-name = "atomic"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a89cbf775b137e9b968e67227ef7f775587cde3fd31b0d8599dbd0f598a48340"
-dependencies = [
- "bytemuck",
-]
-
-[[package]]
 name = "atomic-waker"
 version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -150,12 +141,6 @@ name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46c5e41b57b8bba42a04676d81cb89e9ee8e859a1a66f80a5a72e1cb76b34d43"
-
-[[package]]
-name = "bytemuck"
-version = "1.23.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3995eaeebcdf32f91f980d360f78732ddc061097ab4e39991ae7a6ace9194677"
 
 [[package]]
 name = "bytes"
@@ -1354,10 +1339,8 @@ version = "0.1.0"
 dependencies = [
  "base-62",
  "cargo-emit",
- "paste",
  "protobuf",
  "protoc-rust",
- "serde",
 ]
 
 [[package]]
@@ -1794,7 +1777,6 @@ dependencies = [
 name = "service"
 version = "0.1.0"
 dependencies = [
- "atomic",
  "cache",
  "chrono",
  "config",
@@ -1808,7 +1790,6 @@ dependencies = [
  "randua",
  "regex",
  "reqwest",
- "serde",
  "serde_json",
  "sxd-document",
  "sxd-xpath",

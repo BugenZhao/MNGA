@@ -10,23 +10,23 @@ name = "logic"
 crate-type = ["staticlib", "cdylib"]
 
 [dependencies]
+ctor = "0.5"
 env_logger = "0.10"
 lazy_static = "1"
 log = "0.4"
-tokio = { workspace = true }
 protos = { path = "../protos" }
 service = { path = "../service" }
-ctor = "0.5"
+tokio = { workspace = true }
 
 [target.'cfg(target_os = "android")'.dependencies]
-jni = "0.19"
 android_logger = "0.11"
-
-[dev-dependencies]
-dotenv = "0.15"
+jni = "0.19"
 
 [build-dependencies]
 cbindgen = "0.26"
+
+[dev-dependencies]
+dotenv = "0.15"
 
 # [features]
 # default = ["with-serde"]
