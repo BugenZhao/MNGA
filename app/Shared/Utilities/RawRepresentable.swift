@@ -36,7 +36,7 @@ extension Array: RawRepresentable where Element: SwiftProtobuf.Message {
 
 extension Set: RawRepresentable where Element: SwiftProtobuf.Message {
   public init?(rawValue: String) {
-    if let array = [Element].init(rawValue: rawValue) {
+    if let array = [Element](rawValue: rawValue) {
       self = Set(array)
     } else {
       return nil

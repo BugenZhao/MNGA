@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Constants {
+enum Constants {
   enum Activity {
     private static let base = "com.bugenzhao.NGA"
 

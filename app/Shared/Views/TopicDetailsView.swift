@@ -126,9 +126,9 @@ struct TopicDetailsView: View {
 
   private var first: Post? {
     if let first = dataSource.items.min(by: { $0.floor < $1.floor }), first.id.pid == "0" {
-      return first
+      first
     } else {
-      return nil
+      nil
     }
   }
 

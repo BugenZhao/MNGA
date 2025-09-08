@@ -59,9 +59,9 @@ class GlobalSearchModel: SearchModel<DataSource> {
         },
         onResponse: { response in
           if response.hasUser {
-            return ([response.user], 1)
+            ([response.user], 1)
           } else {
-            return ([], 1)
+            ([], 1)
           }
         },
         id: \.id
