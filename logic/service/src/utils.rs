@@ -15,7 +15,7 @@ fn to_xpath(s: &str) -> ServiceResult<XPath> {
     xpath.ok_or_else(|| sxd_xpath::Error::NoXPath.into())
 }
 
-pub fn extract_kv(node: Node) -> HashMap<&str, String> {
+pub fn extract_kv(node: Node<'_>) -> HashMap<&str, String> {
     node.children()
         .into_iter()
         .filter(|n| matches!(n, Node::Element(_)))
@@ -23,7 +23,7 @@ pub fn extract_kv(node: Node) -> HashMap<&str, String> {
         .collect::<HashMap<_, _>>()
 }
 
-pub fn extract_kv_pairs(node: Node) -> Vec<(&str, String)> {
+pub fn extract_kv_pairs(node: Node<'_>) -> Vec<(&str, String)> {
     node.children()
         .into_iter()
         // fixme: filter element?
