@@ -1,7 +1,14 @@
 {
   "rust-analyzer.procMacro.enable": true,
   "protoc": {
-    "options": ["-I protos/"]
+    "options": [
+      "-I protos/"
+    ]
   },
-  "sweetpad.build.xcodeWorkspacePath": "app/MNGA.xcodeproj/project.xcworkspace"
+  "sweetpad.build.xcodeWorkspacePath": "app/MNGA.xcodeproj/project.xcworkspace",
+  "sweetpad.tuist.autogenerate": true,
+  "sweetpad.tuist.generate.env": {
+    // Operate in `app` directory.
+    "TUIST_GENERATE_PATH": "app"
+  }
 }
