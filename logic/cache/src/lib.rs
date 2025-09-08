@@ -19,7 +19,9 @@ lazy_static! {
                 (db, false)
             }
             None => {
-                log::warn!("no cache path conf provided, use temporary location and treat it as a test environment");
+                log::warn!(
+                    "no cache path conf provided, use temporary location and treat it as a test environment"
+                );
                 let db = sled::Config::new()
                     .temporary(true)
                     .open()

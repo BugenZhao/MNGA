@@ -142,8 +142,8 @@ fn extract_topic_with_light_post(node: Node) -> Option<TopicWithLightPost> {
 }
 
 pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteResponse> {
-    use std::cmp::Ordering::*;
     use PostVoteRequest_Operation::*;
+    use std::cmp::Ordering::*;
 
     let value = request.get_operation().to_value();
 

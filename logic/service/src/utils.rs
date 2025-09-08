@@ -6,7 +6,7 @@ use chrono::{DateTime, FixedOffset, Utc};
 use protos::DataModel::ErrorMessage;
 use std::collections::HashMap;
 use sxd_document::Package;
-use sxd_xpath::{nodeset::Node, Context, Factory, XPath};
+use sxd_xpath::{Context, Factory, XPath, nodeset::Node};
 use uuid::Uuid;
 
 fn to_xpath(s: &str) -> ServiceResult<XPath> {

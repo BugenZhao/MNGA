@@ -1,7 +1,7 @@
 use crate::callback_trait::CallbackTrait;
 use jni::{
-    objects::{GlobalRef, JObject, JValue},
     JNIEnv, JavaVM,
+    objects::{GlobalRef, JObject, JValue},
 };
 use service::error::ServiceResult;
 

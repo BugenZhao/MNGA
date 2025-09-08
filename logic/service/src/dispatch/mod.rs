@@ -3,7 +3,7 @@ mod handlers_sync;
 
 mod dispatch_async {
     use super::handlers_async::*;
-    use crate::error::{any_err_to_string, ServiceError, ServiceResult};
+    use crate::error::{ServiceError, ServiceResult, any_err_to_string};
     use futures::prelude::*;
     use protos::{Message, Service::AsyncRequest_oneof_value};
     use std::panic::AssertUnwindSafe;
@@ -51,7 +51,7 @@ mod dispatch_async {
 
 mod dispatch_sync {
     use super::handlers_sync::*;
-    use crate::error::{any_err_to_string, ServiceError, ServiceResult};
+    use crate::error::{ServiceError, ServiceResult, any_err_to_string};
     use protos::{Message, Service::*};
     use std::panic::catch_unwind;
 

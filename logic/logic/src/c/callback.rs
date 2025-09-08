@@ -20,7 +20,7 @@ impl Callback {
     pub unsafe fn new(user_data: *const c_void, callback: *const c_void) -> Self {
         Self {
             user_data,
-            callback: mem::transmute::<*const c_void, CallbackFn>(callback),
+            callback: unsafe { mem::transmute::<*const c_void, CallbackFn>(callback) },
         }
     }
 }
