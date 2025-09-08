@@ -2,6 +2,7 @@ import ProjectDescription
 
 let project = Project(
     name: "MNGA",
+    // TODO: avoid using exact requirements
     packages: [
         .remote(url: "https://github.com/apple/swift-protobuf", requirement: .exact("1.31.0")),
         .remote(url: "https://github.com/SDWebImage/SDWebImageSwiftUI", requirement: .exact("2.2.6")),
@@ -18,7 +19,7 @@ let project = Project(
     targets: [
         // iOS App Target
         .target(
-            name: "MNGA-iOS",
+            name: "MNGA",
             destinations: .iOS,
             product: .app,
             bundleId: "com.bugenzhao.MNGA",
