@@ -3,11 +3,13 @@ use crate::callback_trait::CallbackTrait;
 use service::error::ServiceResult;
 use std::{ffi::c_void, mem};
 
+type CallbackFn = extern "C" fn(*const c_void, ByteBuffer);
+
 #[repr(C)]
 #[derive(Debug)]
 pub struct Callback {
     pub user_data: *const c_void,
-    pub callback: extern "C" fn(*const c_void, ByteBuffer),
+    pub callback: CallbackFn,
 }
 unsafe impl Send for Callback {}
 
@@ -18,7 +20,7 @@ impl Callback {
     pub unsafe fn new(user_data: *const c_void, callback: *const c_void) -> Self {
         Self {
             user_data,
-            callback: mem::transmute(callback),
+            callback: unsafe { mem::transmute::<*const c_void, CallbackFn>(callback) },
         }
     }
 }

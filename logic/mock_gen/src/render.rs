@@ -6,7 +6,7 @@ use std::{
 };
 
 use anyhow::Result;
-use protos::{encode_api, MockResponse};
+use protos::{MockResponse, encode_api};
 
 #[derive(Default)]
 pub struct Renderer {

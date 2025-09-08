@@ -1,8 +1,8 @@
 use anyhow::Result;
 use protos::{
-    mock_api,
     DataModel::{Device, Forum, ForumId, ForumId_oneof_id, Post, PostId, Topic, User, UserName},
     Service::{MockApi_TopicDetails, MockApi_TopicList, TopicDetailsResponse, TopicListResponse},
+    mock_api,
 };
 use serde::{Deserialize, Serialize};
 

@@ -1,37 +1,35 @@
 [package]
 name = "service"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dashmap = "5"
+cache = { path = "../cache" }
+chrono = "0.4"
+config = { path = "../config" }
+dashmap = "6"
 futures = "0.3"
 lazy_static = "1"
 log = "0.4"
-reqwest = { version = "0.11", features = [
+paste = "1"
+protos = { path = "../protos" }
+randua = "0.1"
+regex = "1"
+reqwest = { version = "0.12", features = [
+    "charset",
     "rustls-tls",
     "multipart",
 ], default-features = false }
-serde = { workspace = true }
+serde_json = "1"
 sxd-document = "0.3"
 sxd-xpath = "0.4"
-thiserror = "1"
-tokio = { workspace = true }
-chrono = "0.4"
-regex = "1"
-uuid = { version = "1", features = ["v4"] }
-protos = { path = "../protos" }
 text = { path = "../text" }
-cache = { path = "../cache" }
-config = { path = "../config" }
-atomic = "0.6"
+thiserror = "2"
+tokio = { workspace = true }
 url = "2"
-serde_json = "1"
-paste = "1"
-randua = "0.1"
-workspace-hack = { version = "0.1", path = "../workspace-hack" }
+uuid = { version = "1", features = ["v4"] }
 
 [dev-dependencies]
 dotenv = "0.15"

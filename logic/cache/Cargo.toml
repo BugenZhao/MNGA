@@ -1,7 +1,7 @@
 [package]
 name = "cache"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -11,6 +11,5 @@ lazy_static = "1"
 log = "0.4"
 protos = { path = "../protos" }
 sled = { git = "https://github.com/spacejam/sled", rev = "95a883f" }
-thiserror = "1"
+thiserror = "2"
 tokio = { workspace = true }
-workspace-hack = { version = "0.1", path = "../workspace-hack" }

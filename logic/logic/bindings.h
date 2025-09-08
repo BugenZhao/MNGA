@@ -10,9 +10,11 @@ typedef struct ByteBuffer {
   const char *err;
 } ByteBuffer;
 
+typedef void (*CallbackFn)(const void*, struct ByteBuffer);
+
 typedef struct Callback {
   const void *user_data;
-  void (*callback)(const void*, struct ByteBuffer);
+  CallbackFn callback;
 } Callback;
 
 /**

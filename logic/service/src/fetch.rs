@@ -11,7 +11,7 @@ use crate::{
 };
 use lazy_static::lazy_static;
 use protos::DataModel::{Device, ErrorMessage};
-use reqwest::{multipart, Client, Method, RequestBuilder, Response, Url};
+use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
 
 fn device_ua() -> Cow<'static, str> {
     let option = request::REQUEST_OPTION.read().unwrap();

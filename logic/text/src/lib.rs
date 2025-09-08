@@ -11,8 +11,7 @@ mod subject;
 pub fn unescape(text: &str) -> String {
     // todo: Cow
     let first = html_escape::decode_html_entities(text);
-    let second = html_escape::decode_html_entities(&first).into_owned();
-    second
+    html_escape::decode_html_entities(&first).into_owned()
 }
 
 pub fn parse_content(text: &str) -> PostContent {

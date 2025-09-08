@@ -17,12 +17,11 @@ pub fn serve_request_sync(request: SyncRequest) -> ServiceResult<Vec<u8>> {
             response.write_to_vec(&mut response_buf).unwrap();
             response_buf
         })
-        .map_err(|e| {
+        .inspect_err(|e| {
             log::error!(
                 "error when serving sync request #{}: {}",
                 id,
                 e.to_app_string()
             );
-            e
         })
 }

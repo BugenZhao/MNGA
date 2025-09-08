@@ -513,13 +513,15 @@ mod test {
         assert!(!response.get_topic().get_id().is_empty());
         assert!(!response.get_replies().is_empty());
 
-        assert!(response
-            .get_replies()
-            .first()
-            .unwrap()
-            .get_content()
-            .get_raw()
-            .contains("zsbd"));
+        assert!(
+            response
+                .get_replies()
+                .first()
+                .unwrap()
+                .get_content()
+                .get_raw()
+                .contains("zsbd")
+        );
         assert_eq!(
             response
                 .get_topic()
@@ -580,13 +582,15 @@ mod test {
         .await?;
 
         assert_eq!(response.get_replies().len(), 1);
-        assert!(response
-            .get_replies()
-            .first()
-            .unwrap()
-            .get_content()
-            .get_raw()
-            .contains("BOLD"));
+        assert!(
+            response
+                .get_replies()
+                .first()
+                .unwrap()
+                .get_content()
+                .get_raw()
+                .contains("BOLD")
+        );
 
         Ok(())
     }
@@ -604,10 +608,12 @@ mod test {
         })
         .await?;
 
-        assert!(response
-            .get_replies()
-            .iter()
-            .all(|p| p.author_id == author_id));
+        assert!(
+            response
+                .get_replies()
+                .iter()
+                .all(|p| p.author_id == author_id)
+        );
 
         Ok(())
     }

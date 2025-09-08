@@ -8,15 +8,14 @@ members = [
     "logic/protos",
     "logic/service",
     "logic/text",
-    "logic/workspace-hack",
 ]
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 
 [profile.production]
 inherits = "release"
 opt-level = "s"   # Optimize for size.
 lto = true        # Enable link time optimization
 codegen-units = 1
-
-[workspace.dependencies]
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
-serde = { version = "1", features = ["derive"] }

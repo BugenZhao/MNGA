@@ -6,7 +6,7 @@ use chrono::{DateTime, FixedOffset, Utc};
 use protos::DataModel::ErrorMessage;
 use std::collections::HashMap;
 use sxd_document::Package;
-use sxd_xpath::{nodeset::Node, Context, Factory, XPath};
+use sxd_xpath::{Context, Factory, XPath, nodeset::Node};
 use uuid::Uuid;
 
 fn to_xpath(s: &str) -> ServiceResult<XPath> {
@@ -15,7 +15,7 @@ fn to_xpath(s: &str) -> ServiceResult<XPath> {
     xpath.ok_or_else(|| sxd_xpath::Error::NoXPath.into())
 }
 
-pub fn extract_kv(node: Node) -> HashMap<&str, String> {
+pub fn extract_kv(node: Node<'_>) -> HashMap<&str, String> {
     node.children()
         .into_iter()
         .filter(|n| matches!(n, Node::Element(_)))
@@ -23,7 +23,7 @@ pub fn extract_kv(node: Node) -> HashMap<&str, String> {
         .collect::<HashMap<_, _>>()
 }
 
-pub fn extract_kv_pairs(node: Node) -> Vec<(&str, String)> {
+pub fn extract_kv_pairs(node: Node<'_>) -> Vec<(&str, String)> {
     node.children()
         .into_iter()
         // fixme: filter element?

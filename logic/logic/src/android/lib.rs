@@ -1,11 +1,11 @@
 use crate::{
-    android::callback::AndroidCallback, callback_trait::CallbackTrait, init::may_init,
-    r#async::serve_request_async, sync::serve_request_sync,
+    android::callback::AndroidCallback, r#async::serve_request_async,
+    callback_trait::CallbackTrait, init::may_init, sync::serve_request_sync,
 };
 use jni::{
+    JNIEnv,
     objects::{JClass, JObject},
     sys::jbyteArray,
-    JNIEnv,
 };
 use protos::{
     Message,

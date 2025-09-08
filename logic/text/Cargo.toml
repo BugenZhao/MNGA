@@ -1,14 +1,13 @@
 [package]
 name = "text"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-thiserror = "1"
+html-escape = "0.2"
+peg = "0.8"
 
 protos = { path = "../protos" }
-peg = "0.8"
-html-escape = "0.2"
-workspace-hack = { version = "0.1", path = "../workspace-hack" }
+thiserror = "2"
