@@ -17,7 +17,6 @@ tokio = { workspace = true }
 protos = { path = "../protos" }
 service = { path = "../service" }
 ctor = "0.2.4"
-workspace-hack = { version = "0.1", path = "../workspace-hack" }
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.19"

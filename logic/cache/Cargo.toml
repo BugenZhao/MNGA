@@ -13,4 +13,3 @@ protos = { path = "../protos" }
 sled = { git = "https://github.com/spacejam/sled", rev = "95a883f" }
 thiserror = "1"
 tokio = { workspace = true }
-workspace-hack = { version = "0.1", path = "../workspace-hack" }

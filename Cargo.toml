@@ -8,7 +8,6 @@ members = [
     "logic/protos",
     "logic/service",
     "logic/text",
-    "logic/workspace-hack",
 ]
 
 [profile.production]

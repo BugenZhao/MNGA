@@ -168,7 +168,6 @@ dependencies = [
  "sled",
  "thiserror",
  "tokio",
- "workspace-hack",
 ]
 
 [[package]]
@@ -272,7 +271,6 @@ dependencies = [
  "log",
  "once_cell",
  "protos",
- "workspace-hack",
 ]
 
 [[package]]
@@ -1025,7 +1023,6 @@ dependencies = [
  "protos",
  "service",
  "tokio",
- "workspace-hack",
 ]
 
 [[package]]
@@ -1079,7 +1076,6 @@ dependencies = [
  "serde",
  "serde_yaml",
  "text",
- "workspace-hack",
 ]
 
 [[package]]
@@ -1301,7 +1297,6 @@ dependencies = [
  "protobuf",
  "protoc-rust",
  "serde",
- "workspace-hack",
 ]
 
 [[package]]
@@ -1677,7 +1672,6 @@ dependencies = [
  "tokio",
  "url",
  "uuid",
- "workspace-hack",
 ]
 
 [[package]]
@@ -1876,7 +1870,6 @@ dependencies = [
  "peg",
  "protos",
  "thiserror",
- "workspace-hack",
 ]
 
 [[package]]
@@ -2572,18 +2565,6 @@ name = "wit-bindgen"
 version = "0.45.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c573471f125075647d03df72e026074b7203790d41351cd6edc96f46bcccd36"
-
-[[package]]
-name = "workspace-hack"
-version = "0.1.0"
-dependencies = [
- "hashbrown 0.14.5",
- "log",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
- "syn 2.0.106",
-]
 
 [[package]]
 name = "writeable"
