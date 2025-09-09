@@ -61,8 +61,14 @@ let project = Project(
                     "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "YES",
                 ],
                 configurations: [
-                    .debug(name: .debug),
-                    .release(name: .release),
+                    .debug(name: .debug, settings: [
+                        "CODE_SIGN_IDENTITY": "Apple Development",
+                        "PROVISIONING_PROFILE_SPECIFIER": "match Development com.bugenzhao.MNGA",
+                    ]),
+                    .release(name: .release, settings: [
+                        "CODE_SIGN_IDENTITY": "Apple Distribution",
+                        "PROVISIONING_PROFILE_SPECIFIER": "match AppStore com.bugenzhao.MNGA",
+                    ]),
                 ]
             )
         ),
