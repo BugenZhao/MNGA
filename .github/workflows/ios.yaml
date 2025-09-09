@@ -21,20 +21,12 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: "26.0-beta"
-      - uses: arduino/setup-protoc@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
       - name: Install Prereqs
         run: |
           brew install swift-protobuf
-          rustup target add aarch64-apple-ios
-      - name: Install Tuist
-        run: |
           brew tap tuist/tuist
           brew install tuist
+          rustup target add aarch64-apple-ios
       - name: Generate Xcode Project
         run: tuist generate
         working-directory: app
