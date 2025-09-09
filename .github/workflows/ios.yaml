@@ -27,11 +27,11 @@ jobs:
           brew tap tuist/tuist
           brew install tuist
           rustup target add aarch64-apple-ios
+      - name: Build Logic for Deployment
+        run: make logic-deploy
       - name: Generate Xcode Project
         run: tuist generate
         working-directory: app
-      - name: Build Logic for Deployment
-        run: make logic-deploy
       - run: fastlane beta
         working-directory: app
         env:
