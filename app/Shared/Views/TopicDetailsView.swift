@@ -465,7 +465,7 @@ struct TopicDetailsView: View {
   var body: some View {
     main
       .navigationTitleInline(string: title)
-      .toolbarWithFix { toolbar }
+      .toolbar { toolbar }
       .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
       .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
       .onChange(of: dataSource.latestError) { onError(e: $1) }

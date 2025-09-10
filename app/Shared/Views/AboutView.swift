@@ -120,7 +120,7 @@ struct OldAboutView: View {
       }
     }
     .navigationTitleInline(key: "About & Feedback")
-    .toolbarWithFix {
+    .toolbar {
       ToolbarItem(placement: .status) { footer }
       ToolbarItem(placement: .mayNavigationBarTrailing) { shareButton }
     }

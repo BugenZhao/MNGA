@@ -72,7 +72,7 @@ struct ShortMessageDetailsView: View {
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()
-      .toolbarWithFix { ToolbarItem(placement: .primaryAction) { replyButton } }
+      .toolbar { ToolbarItem(placement: .primaryAction) { replyButton } }
       .onChange(of: postModel.sent) { dataSource.reloadLastPages(evenIfNotLoaded: false) }
   }
 

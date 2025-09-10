@@ -132,7 +132,7 @@ struct TopicJumpSelectorView: View {
     NavigationView {
       main
         .mayInsetGroupedListStyle()
-        .toolbarWithFix { ToolbarItem(placement: .primaryAction) { jumpButton } }
+        .toolbar { ToolbarItem(placement: .primaryAction) { jumpButton } }
     }
   }
 }

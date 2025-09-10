@@ -83,35 +83,16 @@ class AutoSearchModel<DS>: BasicSearchModel {
 struct SearchableModifier: ViewModifier {
   @ObservedObject var model: BasicSearchModel
   let prompt: String
-  let alwaysShow: Bool
-  let iOS15Only: Bool
 
   func body(content: Content) -> some View {
-    if #available(iOS 15.0, *) {
-      content
-        .searchable(text: $model.text, placement: alwaysShow ? .navigationBarDrawer(displayMode: .always) : .automatic, prompt: prompt)
-        .onSubmit(of: .search) { model.commit() }
-    } else if iOS15Only {
-      content
-    } else {
-      content
-      #if os(iOS)
-      .navigationSearchBar {
-        SearchBar(
-          prompt,
-          text: $model.text,
-          onCommit: { model.commit() }
-        )
-        .onCancel { model.cancel() }
-      }
-      .navigationSearchBarHiddenWhenScrolling(!alwaysShow)
-      #endif
-    }
+    content
+      .searchable(text: $model.text, placement: .automatic, prompt: prompt)
+      .onSubmit(of: .search) { model.commit() }
   }
 }
 
 extension View {
-  func searchable(model: BasicSearchModel, prompt: String, alwaysShow: Bool = false, iOS15Only: Bool = false) -> some View {
-    modifier(SearchableModifier(model: model, prompt: prompt, alwaysShow: alwaysShow, iOS15Only: iOS15Only))
+  func searchable(model: BasicSearchModel, prompt: String) -> some View {
+    modifier(SearchableModifier(model: model, prompt: prompt))
   }
 }
