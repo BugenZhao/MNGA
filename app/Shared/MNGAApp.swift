@@ -23,7 +23,7 @@ struct MNGAApp: App {
       ContentView()
         .onChange(of: prefs.themeColor) { setupColor() }
         .onAppear { setupColor() }
-        .enableInjection()
+        // .enableInjection()
     }
 
     #if os(macOS)

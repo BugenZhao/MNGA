@@ -30,6 +30,10 @@ struct ContentView: View {
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
 
+  // For preview usage. If set, the content will be replaced by this.
+  // In this case, `ContentView` mainly serves as a container for global states.
+  var testBody: AnyView?
+
   var useColumnStyle: Bool {
     UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac
   }
@@ -39,25 +43,28 @@ struct ContentView: View {
       .modifier(SchemesNavigationModifier(model: schemes))
   }
 
-  var body: some View {
-    Group {
-      if useColumnStyle {
-        NavigationView {
-          main
-          if selectedForum.inner != Forum() {
-            TopicListView.build(forum: selectedForum.inner)
-          } else {
-            TopicListPlaceholderView()
-          }
-          TopicDetailsPlaceholderView()
+  @ViewBuilder
+  var realBody: some View {
+    if useColumnStyle {
+      NavigationView {
+        main
+        if selectedForum.inner != Forum() {
+          TopicListView.build(forum: selectedForum.inner)
+        } else {
+          TopicListPlaceholderView()
         }
-      } else {
-        NavigationStack(path: $router.path) {
-          main
-        }
+        TopicDetailsPlaceholderView()
+      }
+    } else {
+      NavigationStack(path: $router.path) {
+        main
       }
     }
-    .environment(router)
+  }
+
+  var body: some View {
+    (testBody ?? realBody.eraseToAnyView())
+      .environment(router)
     #if os(iOS)
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif
