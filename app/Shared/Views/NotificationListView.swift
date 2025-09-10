@@ -68,7 +68,7 @@ struct NotificationListView: View {
     .navigationTitle(dataSource.title)
     .mayGroupedListStyle()
     .refreshable(dataSource: dataSource)
-    .toolbarWithFix { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }
+    .toolbar { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }
   }
 }
 

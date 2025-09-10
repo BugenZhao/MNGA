@@ -56,7 +56,7 @@ struct ShortMessageListView: View {
     .navigationTitle("Short Messages")
     .mayGroupedListStyle()
     .refreshable(dataSource: dataSource)
-    .toolbarWithFix { ToolbarItem(placement: .primaryAction) { newShortMessageButton } }
+    .toolbar { ToolbarItem(placement: .primaryAction) { newShortMessageButton } }
     .onChange(of: postModel.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
   }
 

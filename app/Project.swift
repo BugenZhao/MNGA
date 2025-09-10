@@ -15,6 +15,7 @@ let project = Project(
         .remote(url: "https://github.com/BugenZhao/AlertToast", requirement: .branch("master")),
         .remote(url: "https://github.com/giginet/Crossroad", requirement: .exact("3.2.0")),
         .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("1.1.2")),
+        .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .exact("1.5.2")),
     ],
     targets: [
         // iOS App Target
@@ -46,6 +47,7 @@ let project = Project(
                 .package(product: "AlertToast"),
                 .package(product: "Crossroad"),
                 .package(product: "SwiftUIIntrospect"),
+                .package(product: "Inject"),
                 .xcframework(path: "../out/logic-ios.xcframework"),
             ],
             settings: .settings(
@@ -64,6 +66,8 @@ let project = Project(
                     .debug(name: .debug, settings: [
                         "CODE_SIGN_IDENTITY": "Apple Development",
                         "PROVISIONING_PROFILE_SPECIFIER": "match Development com.bugenzhao.MNGA",
+                        "OTHER_LDFLAGS[sdk=iphonesimulator*]": ["-Xlinker", "-interposable"],
+                        "EMIT_FRONTEND_COMMAND_LINES": "YES",
                     ]),
                     .release(name: .release, settings: [
                         "CODE_SIGN_IDENTITY": "Apple Distribution",

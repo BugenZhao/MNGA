@@ -49,6 +49,6 @@ struct TopicHistoryListView: View {
     .navigationTitle("History")
     .refreshable(dataSource: dataSource)
     .mayGroupedListStyle()
-    .searchable(model: search, prompt: "Search History".localized, alwaysShow: true)
+    .searchable(model: search, prompt: "Search History".localized)
   }
 }

@@ -38,7 +38,7 @@ struct UserMenuView: View {
   var notificationButton: some View {
     NavigationLink(destination: NotificationListView()) {
       Label(notification.dataSource.title, systemImage: notification.dataSource.unreadCount > 0 ? "bell.badge.fill" : "bell")
-    }.maySymbolRenderingModeHierarchical()
+    }
   }
 
   @ViewBuilder
@@ -55,7 +55,7 @@ struct UserMenuView: View {
       Button(action: { addUser() }) {
         Label("Add Account", systemImage: "person.crop.circle.fill.badge.plus")
       }
-      Button(action: { reSignIn() }) {
+      Button(role: .destructive, action: { reSignIn() }) {
         Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
       }
     } label: {

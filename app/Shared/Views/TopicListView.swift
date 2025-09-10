@@ -203,9 +203,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var icon: some View {
-    if #available(iOS 15.0, *) {
-      ForumIconView(iconURL: forum.iconURL)
-    }
+    ForumIconView(iconURL: forum.iconURL)
   }
 
   @ToolbarContentBuilder
@@ -254,12 +252,12 @@ struct TopicListView: View {
         list
       }
     }
-    .searchable(model: searchModel, prompt: "Search Topics".localized, iOS15Only: true)
+    .searchable(model: searchModel, prompt: "Search Topics".localized)
     .navigationTitleLarge(string: forum.name.localized)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
-    .toolbarWithFix { toolbar }
+    .toolbar { toolbar }
     .onAppear { selectedForum.inner = forum }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }

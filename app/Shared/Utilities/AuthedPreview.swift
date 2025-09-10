@@ -18,7 +18,7 @@ struct AuthedPreview<Content: View>: View {
   let build: () -> Content
 
   var body: some View {
-    build()
+    ContentView(testBody: build().eraseToAnyView())
       .environmentObject(authStorage)
   }
 }

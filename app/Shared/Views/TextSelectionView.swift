@@ -33,7 +33,7 @@ struct TextSelectionView: View {
           tv.selectAll(nil)
         }
         .padding(.horizontal)
-        .toolbarWithFix { ToolbarItem(placement: .status) { copyButton } }
+        .toolbar { ToolbarItem(placement: .status) { copyButton } }
         .navigationTitleInline(key: "Text Selection")
     }
   }

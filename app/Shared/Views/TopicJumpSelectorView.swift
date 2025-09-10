@@ -82,13 +82,8 @@ struct TopicJumpSelectorView: View {
       }
 
       Section {
-        if #available(iOS 15.0, *) {
-          HStack {
-            modePicker.pickerStyle(.menu)
-            inputField
-          }
-        } else {
-          modePicker.pickerStyle(.inline)
+        HStack {
+          modePicker.pickerStyle(.menu)
           inputField
         }
 
@@ -132,7 +127,7 @@ struct TopicJumpSelectorView: View {
     NavigationView {
       main
         .mayInsetGroupedListStyle()
-        .toolbarWithFix { ToolbarItem(placement: .primaryAction) { jumpButton } }
+        .toolbar { ToolbarItem(placement: .primaryAction) { jumpButton } }
     }
   }
 }

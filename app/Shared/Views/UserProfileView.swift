@@ -168,7 +168,7 @@ struct UserProfileView: View {
         EmptyRowView(title: "Blocked")
       }
     }
-    .toolbarWithFix { toolbar }
+    .toolbar { toolbar }
     .withTopicDetailsAction() // for signature only
     .mayGroupedListStyle()
     .navigationTitleInline(string: title)
