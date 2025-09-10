@@ -154,7 +154,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var replyButton: some View {
-    if !mock {
+    if !mock && onlyPost.id == nil {
       Button(action: { doReplyTopic() }) {
         Label("Reply", systemImage: "arrowshape.turn.up.left")
       }
@@ -231,10 +231,7 @@ struct TopicDetailsView: View {
           Label("See Full Topic", systemImage: "doc.richtext")
         }
       } else {
-        HStack {
-          replyButton
-          moreMenu
-        }
+        moreMenu
       }
     }.imageScale(.large)
   }
@@ -399,8 +396,13 @@ struct TopicDetailsView: View {
     #if os(iOS)
       ToolbarItem(placement: .status) { status }
       ToolbarItem(placement: .status) { loadFirstPageButton }
+
       ToolbarItem(placement: .navigationBarTrailing) { progress }
+      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
       ToolbarItem(placement: .navigationBarTrailing) { menu }
+
+      ToolbarSpacer(placement: .bottomBar)
+      ToolbarItem(placement: .bottomBar) { replyButton }
     #elseif os(macOS)
       ToolbarItemGroup {
         replyButton

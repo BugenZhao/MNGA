@@ -124,12 +124,6 @@ struct TopicListView: View {
   var moreMenu: some View {
     Menu {
       if !mock {
-        #if os(iOS)
-          Section {
-            newTopicButton
-          }
-        #endif
-
         Section {
           Menu {
             Picker(selection: $order, label: Text("Order")) {
@@ -209,8 +203,16 @@ struct TopicListView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
+      // -- Navigation Bar
       ToolbarItem(placement: .navigationBarTrailing) { icon }
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+
+      // -- Bottom Bar
+      DefaultToolbarItem(kind: .search, placement: .bottomBar)
+      ToolbarSpacer(placement: .bottomBar)
+      ToolbarItemGroup(placement: .bottomBar) {
+        newTopicButton
+      }
     #elseif os(macOS)
       ToolbarItemGroup {
         newTopicButton
