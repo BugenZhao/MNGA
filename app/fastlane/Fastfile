@@ -18,7 +18,7 @@ default_platform(:ios)
 platform :ios do
   desc "Build MNGA"
   lane :build do
-    build_app(scheme: "MNGA (iOS)")
+    build_app(scheme: "MNGA")
   end
 
   desc "Push a new beta build to TestFlight"
@@ -35,6 +35,7 @@ platform :ios do
 
       match(
         type: "appstore",
+        # BugenZhao:<pat>
         git_basic_authorization: Base64.strict_encode64(ENV["GIT_AUTHORIZATION"]),
       )
     else
@@ -46,7 +47,7 @@ platform :ios do
       xcodeproj: "MNGA.xcodeproj",
     )
 
-    build_app(scheme: "MNGA (iOS)")
+    build_app(scheme: "MNGA")
 
     changelog = changelog_from_git_commits(
       date_format: "short",

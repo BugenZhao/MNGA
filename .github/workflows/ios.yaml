@@ -1,37 +1,46 @@
 name: iOS
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - "main"
+  push:
+    branches:
+      - "main"
+      - "fastlane/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   testflight:
     name: Upload to TestFlight
-    runs-on: macos-12
+    runs-on: macos-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.9
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "latest-stable"
-      - uses: arduino/setup-protoc@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+          xcode-version: "26.0-beta"
+      # error:iOS 26.0 is not installed. Please download and install
+      # https://github.com/actions/runner-images/issues/12904
+      - name: Install iOS
+        run: xcodebuild -downloadPlatform iOS
       - name: Install Prereqs
         run: |
           brew install swift-protobuf
+          brew tap tuist/tuist
+          brew install --formula tuist
           rustup target add aarch64-apple-ios
       - name: Build Logic for Deployment
         run: make logic-deploy
+        env:
+          SCCACHE_GHA_ENABLED: "true"
+          RUSTC_WRAPPER: sccache
+      - name: Generate Xcode Project
+        run: tuist generate
+        working-directory: app
       - run: fastlane beta
         working-directory: app
         env:
