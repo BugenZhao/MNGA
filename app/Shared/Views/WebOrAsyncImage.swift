@@ -14,21 +14,15 @@ struct WebOrAsyncImage: View {
   let placeholder: Image?
 
   var body: some View {
-    if #available(iOS 15.0, *), false { // TODO: use AsyncImage when ready
-//      AsyncImage(url: url, content: { $0.resizable() }, placeholder: {
-//          if let p = placeholder { p } else { ProgressView() }
-//        })
-    } else {
-      if let url {
-        let image = WebImage(url: url).resizable()
-        if let p = placeholder {
-          image.placeholder(p)
-        } else {
-          image.indicator(.activity)
-        }
+    if let url {
+      let image = WebImage(url: url).resizable()
+      if let p = placeholder {
+        image.placeholder(p)
       } else {
-        placeholder
+        image.indicator(.activity)
       }
+    } else {
+      placeholder
     }
   }
 }

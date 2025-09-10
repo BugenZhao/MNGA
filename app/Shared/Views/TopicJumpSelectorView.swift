@@ -82,13 +82,8 @@ struct TopicJumpSelectorView: View {
       }
 
       Section {
-        if #available(iOS 15.0, *) {
-          HStack {
-            modePicker.pickerStyle(.menu)
-            inputField
-          }
-        } else {
-          modePicker.pickerStyle(.inline)
+        HStack {
+          modePicker.pickerStyle(.menu)
           inputField
         }
 

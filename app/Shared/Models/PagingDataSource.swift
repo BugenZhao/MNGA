@@ -170,24 +170,21 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  #if os(iOS)
-    @available(iOS 15.0, *)
-    func refreshAsync(animated: Bool = false, fromPage: Int = 1) async {
-      let request = DispatchQueue.main.sync { preRefresh(fromPage: fromPage) }
-      guard let request else { return }
+  func refreshAsync(animated: Bool = false, fromPage: Int = 1) async {
+    let request = DispatchQueue.main.sync { preRefresh(fromPage: fromPage) }
+    guard let request else { return }
 
-      let response: Result<Res, LogicError> = await logicCallAsync(request)
+    let response: Result<Res, LogicError> = await logicCallAsync(request)
 
-      DispatchQueue.main.sync {
-        switch response {
-        case let .success(response):
-          self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
-        case let .failure(e):
-          self.onRefreshError(e, animated: animated)
-        }
+    DispatchQueue.main.sync {
+      switch response {
+      case let .success(response):
+        self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
+      case let .failure(e):
+        self.onRefreshError(e, animated: animated)
       }
     }
-  #endif
+  }
 
   func initialLoad() {
     if loadedPage == 0, latestError == nil {

@@ -537,17 +537,6 @@ struct TopicDetailsView: View {
     guard let response else { return }
     let newTopic = response.topic
 
-    guard #available(iOS 15.0, *) else {
-      // workaround for avoiding loading twice
-      if topic.authorID != newTopic.authorID {
-        topic.authorID = newTopic.authorID
-      }
-      if topic.subject != newTopic.subject {
-        topic.subject = newTopic.subject
-      }
-      return
-    }
-
     if newTopic.hasParentForum {
       topic.parentForum = newTopic.parentForum
     }
