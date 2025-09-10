@@ -3,11 +3,14 @@
 //
 
 import Foundation
+import Inject
 import SwiftUI
 import SwiftUIX
 
 @main
 struct MNGAApp: App {
+  @ObserveInjection var forceRedraw
+
   @StateObject var prefs = PreferencesStorage()
 
   init() {
@@ -20,6 +23,7 @@ struct MNGAApp: App {
       ContentView()
         .onChange(of: prefs.themeColor) { setupColor() }
         .onAppear { setupColor() }
+        .enableInjection()
     }
 
     #if os(macOS)
