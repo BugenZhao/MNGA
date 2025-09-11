@@ -119,11 +119,11 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @ViewBuilder
   var sendButton: some View {
-    Button(action: { doSend() }) {
+    Button(role: .confirm, action: { doSend() }) {
       if postReply.isSending {
         ProgressView()
       } else {
-        Text("Send")
+        Image(systemName: "paperplane.fill")
       }
     }
   }
@@ -145,7 +145,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
   @ViewBuilder
   var discardButton: some View {
     Button(role: .destructive, action: { postReply.discardCurrentContext() }) {
-      Text("Discard").foregroundColor(.red).bold()
+      Image(systemName: "trash").foregroundColor(.red)
     }
   }
 
