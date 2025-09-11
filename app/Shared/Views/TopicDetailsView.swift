@@ -174,9 +174,24 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  var jumpButton: some View {
+    Button(action: { showJumpSelector = true }) {
+      Label("Jump to...", systemImage: "arrow.up.arrow.down")
+    }
+  }
+
+  var debugID: String {
+    var id = "#\(topic.id)"
+    if topic.hasFav, topic.fav != "" {
+      id += " @\(topic.fav)"
+    }
+    return id
+  }
+
+  @ViewBuilder
   var moreMenu: some View {
     Menu {
-      Section {
+      Section(debugID) {
         if enableAuthorOnly, !topic.authorName.isAnonymous {
           Button(action: { action.navigateToAuthorOnly = topic.authorID }) {
             Label("Author Only", systemImage: "person.fill")
@@ -185,9 +200,6 @@ struct TopicDetailsView: View {
         if !localMode {
           Button(action: { action.navigateToLocalMode = true }) {
             Label("View Cached Topic", systemImage: "clock")
-          }
-          Button(action: { showJumpSelector = true }) {
-            Label("Jump to...", systemImage: "arrow.up.arrow.down")
           }
         }
       }
@@ -211,10 +223,6 @@ struct TopicDetailsView: View {
         #endif
         Button(action: { dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
-        }
-        Label("#" + topic.id, systemImage: "number")
-        if topic.hasFav, topic.fav != "" {
-          Label(topic.fav, systemImage: "bookmark.fill")
         }
       }
     } label: {
@@ -361,8 +369,8 @@ struct TopicDetailsView: View {
   }
 
   var title: String {
-    if forceLocalMode {
-      "Topic".localized
+    if localMode {
+      "Cached Topic".localized
     } else if !enableAuthorOnly {
       "Author Only".localized
     } else if onlyPost.id != nil {
@@ -383,24 +391,17 @@ struct TopicDetailsView: View {
     }
   }
 
-  @ViewBuilder
-  var status: some View {
-    if localMode {
-      Text("Cached Topic")
-        .foregroundColor(.secondary)
-    }
-  }
-
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
-      ToolbarItem(placement: .status) { status }
-      ToolbarItem(placement: .status) { loadFirstPageButton }
-
       ToolbarItem(placement: .navigationBarTrailing) { progress }
       ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
       ToolbarItem(placement: .navigationBarTrailing) { menu }
 
+      ToolbarItemGroup(placement: .bottomBar) {
+        jumpButton
+        loadFirstPageButton
+      }
       ToolbarSpacer(placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) { replyButton }
     #elseif os(macOS)
@@ -461,7 +462,7 @@ struct TopicDetailsView: View {
       }
       // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
-      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
+      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage).presentationDetents([.medium]) }
   }
 
   var body: some View {
@@ -622,7 +623,7 @@ struct TopicDetailsView_Preview: PreviewProvider {
     AuthedPreview {
       NavigationView {
         TopicDetailsView.build(topic: Topic.with {
-          $0.id = "27637920" // "27555218"
+          $0.id = "45055554" // "27555218"
           $0.subject = .with { s in
             s.content = "Topic Title"
           }

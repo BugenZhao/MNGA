@@ -156,6 +156,8 @@ where
 
     #[cfg(test)]
     let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
+    #[cfg(test)]
+    println!("http response: {}", response);
 
     RF::parse_response(response)
 }

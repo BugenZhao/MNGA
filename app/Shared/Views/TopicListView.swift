@@ -115,16 +115,22 @@ struct TopicListView: View {
 
   @ViewBuilder
   var newTopicButton: some View {
-    Button(action: { newTopic() }) {
-      Label("New Topic", systemImage: "square.and.pencil")
+    if !mock {
+      Button(action: { newTopic() }) {
+        Label("New Topic", systemImage: "square.and.pencil")
+      }
     }
+  }
+
+  var debugName: String {
+    forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? "")
   }
 
   @ViewBuilder
   var moreMenu: some View {
     Menu {
       if !mock {
-        Section {
+        Section(debugName) {
           Menu {
             Picker(selection: $order, label: Text("Order")) {
               ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
@@ -170,7 +176,6 @@ struct TopicListView: View {
             Label("Refresh", systemImage: "arrow.clockwise")
           }
         #endif
-        Label(forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
       }
     } label: {
       Label("More", systemImage: "ellipsis.circle")
@@ -254,7 +259,7 @@ struct TopicListView: View {
         list
       }
     }
-    .searchable(model: searchModel, prompt: "Search Topics".localized)
+    .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name.localized)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }

@@ -34,6 +34,8 @@ Generates Swift protobuf code. Rust protobuf code is generated automatically dur
 - `make logic-sim` - Build simulator-only version (faster for development)
 - `make logic-deploy` - Build production version
 
-## Notes for Agents
+## Important Notes
 
 - Avoid any Chinese in source code, including comments and string literals.
+- The project is targeting iOS 26. Note that this is NOT a typo. Apple released iOS 26 in 2025.
+- APIs of SwiftUI is evolving very fast. Always refer to the latest documentation via `sosumi` MCP server.

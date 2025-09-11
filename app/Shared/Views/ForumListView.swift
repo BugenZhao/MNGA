@@ -143,7 +143,7 @@ struct ForumListView: View {
     }
     .searchable(model: searchModel, prompt: "Search".localized)
     .onAppear { loadData() }
-    .navigationTitle("Forums")
+    .navigationTitle("MNGA")
     .compatForumListListStyle()
     .toolbar {
       ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }

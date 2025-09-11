@@ -60,6 +60,7 @@ struct PostRowView: View {
         Image(systemName: "ellipsis.circle.fill")
           .symbolRenderingMode(.hierarchical)
           .imageScale(.large)
+          .glassEffect()
       }
     #endif
   }
