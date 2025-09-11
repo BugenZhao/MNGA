@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "sosumi": {
+      "type": "streamable-http",
+      "url": "https://sosumi.ai/mcp",
+      "alwaysAllow": [
+        "searchAppleDocumentation",
+        "fetchAppleDocumentation"
+      ]
+    }
+  }
+}
