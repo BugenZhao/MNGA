@@ -37,6 +37,18 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
     function getElementByXpath(document, path) {
       return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
+
+    // Disable viewport scaling
+    let viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no');
+    } else {
+      let meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
+      document.head.appendChild(meta);
+    }
+
     let iframe = document.getElementById("iff")
 
     let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
