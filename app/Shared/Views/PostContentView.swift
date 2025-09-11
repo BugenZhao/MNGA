@@ -10,19 +10,6 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-extension View {
-  func mayEnableTextSelection() -> some View {
-    Group {
-      if #available(iOS 15.0, *) {
-//        self.textSelection(.enabled)
-        self
-      } else {
-        self
-      }
-    }
-  }
-}
-
 struct InRealPostKey: EnvironmentKey {
   static let defaultValue: Bool = true
 }
@@ -56,7 +43,7 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
   var main: some View {
     let combiner = ContentCombiner(actionModel: actionModel, id: id, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)
     combiner.visit(spans: spans)
-    return combiner.buildView().mayEnableTextSelection()
+    return combiner.buildView()
   }
 
   var body: some View {
