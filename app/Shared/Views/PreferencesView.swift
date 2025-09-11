@@ -95,7 +95,7 @@ struct PreferencesInnerView: View {
         }.tag(color)
       }
     }
-    Picker(selection: $pref.useInsetGrouped, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
+    Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
     }
@@ -127,12 +127,6 @@ struct PreferencesInnerView: View {
       Picker(selection: $pref.requestOption.baseURLV2, label: Label("Backend", systemImage: "server.rack")) {
         ForEach(URLs.hosts, id: \.self) { host in
           Text(host).tag(URLs.base(for: host)!.absoluteString)
-        }
-      }
-      Picker(selection: $pref.requestOption.mockBaseURLV2, label: Label("MNGA Backend", systemImage: "server.rack")) {
-        ForEach(URLs.mockHosts, id: \.self) { host in
-          let url = URLs.base(for: host)!
-          Text(url.host!).tag(url.absoluteString)
         }
       }
     }.lineLimit(1)

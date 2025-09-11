@@ -4,7 +4,7 @@ use std::{borrow::Cow, time::Duration};
 
 use crate::{
     auth,
-    constants::{ANDROID_UA, APPLE_UA, DESKTOP_UA, WINDOWS_PHONE_UA},
+    constants::{ANDROID_UA, APPLE_UA, DEFAULT_MOCK_BASE_URL, DESKTOP_UA, WINDOWS_PHONE_UA},
     error::{ServiceError, ServiceResult},
     request,
     utils::extract_error,
@@ -34,13 +34,14 @@ fn device_ua() -> Cow<'static, str> {
 fn resolve_url(api: &str, mock: bool) -> ServiceResult<Url> {
     let url = Url::parse(api) // if absolute
         .or_else(|_| -> ServiceResult<Url> {
-            let option = request::REQUEST_OPTION.read().unwrap();
             let base = if mock {
-                option.get_mock_base_url_v2()
+                DEFAULT_MOCK_BASE_URL
             } else {
-                option.get_base_url_v2()
+                let option = request::REQUEST_OPTION.read().unwrap();
+                &option.get_base_url_v2().to_owned()
             };
-            let url = Url::parse(&format!("{}/{}", base, api))?;
+            // Make sure there's a trailing slahs in `base`!
+            let url = Url::parse(base)?.join(api)?;
             Ok(url)
         })?;
 
@@ -91,6 +92,8 @@ where
     #[cfg(test)]
     println!("request to url: {}", url);
 
+    log::info!("request to url: {}", url);
+
     let query = {
         query.push(("__inchst", "UTF8"));
         query
@@ -117,6 +120,10 @@ where
     if !check_status || response.status().is_success() {
         Ok(response)
     } else {
+        log::error!(
+            "request failed: {}",
+            response.error_for_status_ref().unwrap_err()
+        );
         Err(ServiceError::Mnga(ErrorMessage {
             code: response.status().as_u16().to_string(),
             info: response

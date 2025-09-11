@@ -21,6 +21,12 @@ typedef struct Callback {
  * # Safety
  * totally unsafe
  */
+void rust_init(void);
+
+/**
+ * # Safety
+ * totally unsafe
+ */
 struct ByteBuffer rust_call(const uint8_t *data, uintptr_t len);
 
 /**
