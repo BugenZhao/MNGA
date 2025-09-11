@@ -623,7 +623,7 @@ struct TopicDetailsView_Preview: PreviewProvider {
     AuthedPreview {
       NavigationView {
         TopicDetailsView.build(topic: Topic.with {
-          $0.id = "27637920" // "27555218"
+          $0.id = "45055554" // "27555218"
           $0.subject = .with { s in
             s.content = "Topic Title"
           }
