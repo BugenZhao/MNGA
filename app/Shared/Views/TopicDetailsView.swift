@@ -180,10 +180,18 @@ struct TopicDetailsView: View {
     }
   }
 
+  var debugID: String {
+    var id = "#\(topic.id)"
+    if topic.hasFav, topic.fav != "" {
+      id += " @\(topic.fav)"
+    }
+    return id
+  }
+
   @ViewBuilder
   var moreMenu: some View {
     Menu {
-      Section {
+      Section(debugID) {
         if enableAuthorOnly, !topic.authorName.isAnonymous {
           Button(action: { action.navigateToAuthorOnly = topic.authorID }) {
             Label("Author Only", systemImage: "person.fill")
@@ -215,10 +223,6 @@ struct TopicDetailsView: View {
         #endif
         Button(action: { dataSource.refresh() }) {
           Label("Refresh", systemImage: "arrow.clockwise")
-        }
-        Label("#" + topic.id, systemImage: "number")
-        if topic.hasFav, topic.fav != "" {
-          Label(topic.fav, systemImage: "bookmark.fill")
         }
       }
     } label: {

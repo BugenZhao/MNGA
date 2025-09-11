@@ -122,11 +122,15 @@ struct TopicListView: View {
     }
   }
 
+  var debugName: String {
+    forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? "")
+  }
+
   @ViewBuilder
   var moreMenu: some View {
     Menu {
       if !mock {
-        Section {
+        Section(debugName) {
           Menu {
             Picker(selection: $order, label: Text("Order")) {
               ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
@@ -172,7 +176,6 @@ struct TopicListView: View {
             Label("Refresh", systemImage: "arrow.clockwise")
           }
         #endif
-        Label(forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? ""), systemImage: "number")
       }
     } label: {
       Label("More", systemImage: "ellipsis.circle")
