@@ -95,7 +95,7 @@ struct PreferencesInnerView: View {
         }.tag(color)
       }
     }
-    Picker(selection: $pref.useInsetGrouped, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
+    Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
     }
