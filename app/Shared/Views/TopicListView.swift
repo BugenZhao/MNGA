@@ -115,8 +115,10 @@ struct TopicListView: View {
 
   @ViewBuilder
   var newTopicButton: some View {
-    Button(action: { newTopic() }) {
-      Label("New Topic", systemImage: "square.and.pencil")
+    if !mock {
+      Button(action: { newTopic() }) {
+        Label("New Topic", systemImage: "square.and.pencil")
+      }
     }
   }
 
@@ -254,7 +256,7 @@ struct TopicListView: View {
         list
       }
     }
-    .searchable(model: searchModel, prompt: "Search Topics".localized)
+    .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name.localized)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }

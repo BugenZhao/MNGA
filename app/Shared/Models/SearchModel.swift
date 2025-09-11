@@ -92,7 +92,13 @@ struct SearchableModifier: ViewModifier {
 }
 
 extension View {
-  func searchable(model: BasicSearchModel, prompt: String) -> some View {
-    modifier(SearchableModifier(model: model, prompt: prompt))
+  func searchable(model: BasicSearchModel, prompt: String, if: Bool = true) -> some View {
+    Group {
+      if `if` {
+        modifier(SearchableModifier(model: model, prompt: prompt))
+      } else {
+        self
+      }
+    }
   }
 }
