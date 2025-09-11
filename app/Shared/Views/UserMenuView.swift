@@ -21,6 +21,10 @@ struct UserMenuView: View {
     model.user
   }
 
+  var unreadCount: Int {
+    notification.dataSource.unreadCount
+  }
+
   @ViewBuilder
   var icon: some View {
     let icon = Image(systemName: authStorage.signedIn ? "person.crop.circle.fill" : "person.crop.circle")
@@ -37,7 +41,7 @@ struct UserMenuView: View {
   @ViewBuilder
   var notificationButton: some View {
     NavigationLink(destination: NotificationListView()) {
-      Label(notification.dataSource.title, systemImage: notification.dataSource.unreadCount > 0 ? "bell.badge.fill" : "bell")
+      Label(notification.dataSource.title, systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
     }
   }
 
@@ -112,12 +116,8 @@ struct UserMenuView: View {
   }
 
   var body: some View {
-    HStack {
-      menu
-      if notification.dataSource.unreadCount > 0 {
-        notificationButton
-      }
-    }.imageScale(.large)
+    menu.imageScale(.large)
+      .badge(unreadCount)
       .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
