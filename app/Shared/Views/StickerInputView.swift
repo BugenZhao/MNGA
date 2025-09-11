@@ -26,9 +26,12 @@ struct StickerInputView: View {
               .frame(height: 50)
           }
         }
-      }.padding(.horizontal)
-    }.foregroundColor(.primary)
-      .frame(height: 240)
+      }
+      .foregroundColor(.primary)
+      .padding(.horizontal)
+      .glassEffect(in: .rect(cornerRadius: 16.0))
+    }
+    .frame(height: 240)
   }
 
   func insert(name: String) {
@@ -43,7 +46,7 @@ struct StickerInputView_Previews: PreviewProvider {
 
     var body: some View {
       VStack {
-        Text(model.attributedText.description)
+        Text(model.plainText)
         StickerInputView(model: model)
           .background(.secondary.opacity(0.2))
       }

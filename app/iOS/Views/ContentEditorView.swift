@@ -33,7 +33,6 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   @ViewBuilder
   var stickerPanel: some View {
     StickerInputView(model: model)
-      .background(.secondarySystemGroupedBackground)
       .frame(maxHeight: 240)
   }
 
@@ -54,12 +53,8 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
         }
 
         Section(header: Text("Content")) {
-          ZStack(alignment: .topLeading) { // hack for dynamic height
-            textEditor.introspect(.textEditor, on: .iOS(.v26)) { tv in
-              if first { tv.becomeFirstResponder(); first = false }
-            }
-            Text(model.attributedText).opacity(0).padding(.all, 6)
-          }.font(.callout)
+          textEditor
+            .font(.callout)
             .frame(minHeight: 250)
         }
 
