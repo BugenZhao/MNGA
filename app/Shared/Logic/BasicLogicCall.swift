@@ -9,6 +9,8 @@ import Foundation
 import SwiftProtobuf
 
 func logicInitialConfigure() {
+  initializeLogic()
+
   let configuration = Configuration.with { c in
     c.documentDirPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].path
   }
@@ -45,6 +47,10 @@ private func extractByteBuffer(_ bb: ByteBuffer) -> (Data?, LogicError?) {
   }
 
   return (resData, resError)
+}
+
+func initializeLogic() {
+  rust_init()
 }
 
 // MARK: - Sync

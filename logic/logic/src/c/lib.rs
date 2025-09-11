@@ -16,6 +16,14 @@ unsafe fn parse_from_raw<T: Message>(data: *const u8, len: usize) -> T {
 /// # Safety
 /// totally unsafe
 #[unsafe(no_mangle)]
+pub unsafe extern "C" fn rust_init() {
+    static INIT: std::sync::Once = std::sync::Once::new();
+    INIT.call_once(crate::init::init);
+}
+
+/// # Safety
+/// totally unsafe
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn rust_call(data: *const u8, len: usize) -> ByteBuffer {
     let request = unsafe { parse_from_raw::<SyncRequest>(data, len) };
     log::info!("request {:?}", request);
@@ -40,8 +48,10 @@ pub unsafe extern "C" fn rust_free(byte_buffer: ByteBuffer) {
     log::trace!("free buffer {:?}", byte_buffer);
     let ByteBuffer { ptr, len, cap, err } = byte_buffer;
 
-    let buf = unsafe { Vec::from_raw_parts(ptr as *mut u8, len, cap) };
-    drop(buf);
+    if !ptr.is_null() {
+        let buf = unsafe { Vec::from_raw_parts(ptr as *mut u8, len, cap) };
+        drop(buf);
+    }
     if !err.is_null() {
         let err_string = unsafe { ffi::CString::from_raw(err as *mut _) };
         drop(err_string)

@@ -41,7 +41,7 @@ fn resolve_url(api: &str, mock: bool) -> ServiceResult<Url> {
                 &option.get_base_url_v2().to_owned()
             };
             // Make sure there's a trailing slahs in `base`!
-            let url = Url::parse(&base)?.join(api)?;
+            let url = Url::parse(base)?.join(api)?;
             Ok(url)
         })?;
 
