@@ -361,8 +361,8 @@ struct TopicDetailsView: View {
   }
 
   var title: String {
-    if forceLocalMode {
-      "Topic".localized
+    if localMode {
+      "Cached Topic".localized
     } else if !enableAuthorOnly {
       "Author Only".localized
     } else if onlyPost.id != nil {
@@ -383,18 +383,9 @@ struct TopicDetailsView: View {
     }
   }
 
-  @ViewBuilder
-  var status: some View {
-    if localMode {
-      Text("Cached Topic")
-        .foregroundColor(.secondary)
-    }
-  }
-
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
-      ToolbarItem(placement: .status) { status }
       ToolbarItem(placement: .status) { loadFirstPageButton }
 
       ToolbarItem(placement: .navigationBarTrailing) { progress }
