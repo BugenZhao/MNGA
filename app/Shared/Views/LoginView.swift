@@ -37,23 +37,37 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
     function getElementByXpath(document, path) {
       return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
-    let iframe = document.getElementById("iff")
 
-    let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
-    let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
-    loginElement.click()
-
-    let xpaths = [
-      '//*[@id="main"]/div/div[last()-1]', // Register
-      '//*[@id="main"]/div/span[last()]',  // EULA
-      '//*[@id="main"]/div/a[2]',          // QRCode login
-      '//*[@id="main"]/div/div[last()]',   // 3rd party login
-    ]
-
-    for (let xpath of xpaths) {
-      let element = getElementByXpath(iframe.contentDocument, xpath)
-      element.parentElement.removeChild(element)
+    // Disable viewport scaling
+    let viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no');
+    } else {
+      let meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
+      document.head.appendChild(meta);
     }
+
+    // Temporarily disable masking. Try our luck to see if it can pass App Store review.
+
+    // let iframe = document.getElementById("iff")
+
+    // let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
+    // let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
+    // loginElement.click()
+
+    // let xpaths = [
+    //   '//*[@id="main"]/div/div[last()-1]', // Register
+    //   '//*[@id="main"]/div/span[last()]',  // EULA
+    //   '//*[@id="main"]/div/a[2]',          // QRCode login
+    //   '//*[@id="main"]/div/div[last()]',   // 3rd party login
+    // ]
+
+    // for (let xpath of xpaths) {
+    //   let element = getElementByXpath(iframe.contentDocument, xpath)
+    //   element.parentElement.removeChild(element)
+    // }
     """
 
     webView.evaluateJavaScript(hideLoginElement) { _, _ in
@@ -92,11 +106,15 @@ struct LoginView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    ToolbarItem(placement: .cancellationAction) { Button(action: close) { Text("Cancel") } }
+    ToolbarItem(placement: .cancellationAction) { Button(role: .cancel, action: close) { Text("Cancel") } }
     ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
-    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
-    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.agreement) }) { Text("Agreement") } }
-    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.privacy) }) { Text("Privacy") } }
+
+    ToolbarItem(placement: .bottomBar) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
+    ToolbarSpacer(.fixed, placement: .bottomBar)
+    ToolbarItemGroup(placement: .bottomBar) {
+      Button(action: { load(url: URLs.agreement) }) { Text("Agreement") }
+      Button(action: { load(url: URLs.privacy) }) { Text("Privacy") }
+    }
   }
 
   func load(url: URL) {
