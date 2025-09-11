@@ -129,12 +129,6 @@ struct PreferencesInnerView: View {
           Text(host).tag(URLs.base(for: host)!.absoluteString)
         }
       }
-      Picker(selection: $pref.requestOption.mockBaseURLV2, label: Label("MNGA Backend", systemImage: "server.rack")) {
-        ForEach(URLs.mockHosts, id: \.self) { host in
-          let url = URLs.base(for: host)!
-          Text(url.host!).tag(url.absoluteString)
-        }
-      }
     }.lineLimit(1)
 
     Group {

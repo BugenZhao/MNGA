@@ -169,7 +169,6 @@ message AuthInfo {
 message RequestOption {
   string base_url_v2 = 1;
   Device device = 2;
-  string mock_base_url_v2 = 3;
   bool random_ua = 4;
   string custom_ua = 5; // Only used when `device` is `CUSTOM` and `random_ua`
                         // is false.

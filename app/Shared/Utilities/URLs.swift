@@ -16,9 +16,6 @@ enum URLs {
   static let defaultHost = "nga.178.com"
   static let hosts = [defaultHost, "bbs.nga.cn", "ngabbs.com"]
 
-  static let defaultMockHost = "bugenzhao.com/MNGA/api"
-  static let mockHosts = [defaultMockHost, "raw.fastgit.org/BugenZhao/MNGA/gh-pages/api", "raw.githubusercontent.com/BugenZhao/MNGA/gh-pages/api"]
-
   static func base(for host: String) -> URL? {
     URL(string: "https://\(host)/")
   }
