@@ -92,11 +92,15 @@ struct LoginView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    ToolbarItem(placement: .cancellationAction) { Button(action: close) { Text("Cancel") } }
+    ToolbarItem(placement: .cancellationAction) { Button(role: .cancel, action: close) { Text("Cancel") } }
     ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
-    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
-    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.agreement) }) { Text("Agreement") } }
-    ToolbarItem(placement: .status) { Button(action: { load(url: URLs.privacy) }) { Text("Privacy") } }
+
+    ToolbarItem(placement: .bottomBar) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
+    ToolbarSpacer(.fixed, placement: .bottomBar)
+    ToolbarItemGroup(placement: .bottomBar) {
+      Button(action: { load(url: URLs.agreement) }) { Text("Agreement") }
+      Button(action: { load(url: URLs.privacy) }) { Text("Privacy") }
+    }
   }
 
   func load(url: URL) {
