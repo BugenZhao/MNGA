@@ -14,7 +14,7 @@ let project = Project(
         .remote(url: "https://github.com/CombineCommunity/CombineExt", requirement: .exact("1.8.1")),
         .remote(url: "https://github.com/BugenZhao/AlertToast", requirement: .branch("master")),
         .remote(url: "https://github.com/giginet/Crossroad", requirement: .exact("3.2.0")),
-        .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("1.1.2")),
+        .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("26.0.0-rc.1")),
         .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .exact("1.5.2")),
     ],
     targets: [

@@ -25,8 +25,12 @@ jobs:
           xcode-version: "26.0-beta"
       # error:iOS 26.0 is not installed. Please download and install
       # https://github.com/actions/runner-images/issues/12904
-      - name: Install iOS
-        run: xcodebuild -downloadPlatform iOS
+      - name: Install iOS (with retry)
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 20
+          max_attempts: 3
+          command: xcodebuild -downloadPlatform iOS
       - name: Install Prereqs
         run: |
           brew install swift-protobuf

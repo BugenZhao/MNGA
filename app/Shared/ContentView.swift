@@ -79,7 +79,7 @@ struct ContentView: View {
       .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
-      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection) }
+      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection).presentationDetents([.medium, .large]) }
       .environmentObject(viewingImage)
       .environmentObject(activity)
       .environmentObject(postReply)
