@@ -10,5 +10,9 @@
   "sweetpad.tuist.generate.env": {
     // Operate in `app` directory.
     "TUIST_GENERATE_PATH": "app"
-  }
+  },
+  "git.branchProtectionPrompt": "alwaysCommitToNewBranch",
+  "git.branchProtection": [
+    "main"
+  ]
 }
