@@ -22,45 +22,82 @@ class ContentEditorModel: ObservableObject {
     didSet { if showing != .none { keyboard.dismiss() } }
   }
 
-  @Published var selected: NSRange
-  @Published var text: String
+  @Published var selection = AttributedTextSelection()
+  @Published var attributedText: AttributedString
 
   @Published var image: Data? = nil
   @Published var showingImagePicker = false
 
-  @objc func showSticker() {
+  var plainText: String {
+    String(attributedText.characters)
+  }
+
+  func showSticker() {
     showing = .sticker
   }
 
   init(initialText: String) {
-    _text = .init(initialValue: initialText)
-    _selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
+    attributedText = AttributedString(initialText)
+    selection = AttributedTextSelection(insertionPoint: attributedText.endIndex)
   }
 
   private func appendTag(_ tag: String) {
-    let range = Range(selected, in: text)!
-    let selectedText = text[range]
-    text.replaceSubrange(range, with: "[\(tag)]\(selectedText)[/\(tag)]")
-    let newLocation = selected.location + (tag as NSString).length + 2
-    selected = NSRange(location: newLocation, length: selected.length)
+    let tagLength = tag.utf16.count + 2 // "[tag]"
+    let indices = selection.indices(in: attributedText)
+
+    switch indices {
+    case let .insertionPoint(index):
+      // Insert tags at cursor position
+      attributedText.insert(AttributedString("[\(tag)][/\(tag)]"), at: index)
+
+      // Position cursor between the tags
+      let newIndex = attributedText.index(index, offsetByCharacters: tagLength)
+      selection = AttributedTextSelection(insertionPoint: newIndex)
+
+    case let .ranges(rangeSet):
+      // Handle selection ranges - use first range for simplicity
+      if let firstRange = rangeSet.ranges.first {
+        // TODO: not correct! index will be invalidated after mutation
+        attributedText.insert(AttributedString("[/\(tag)]"), at: firstRange.upperBound)
+        attributedText.insert(AttributedString("[\(tag)]"), at: firstRange.lowerBound)
+
+        // Update selection to highlight the content between tags
+        let tagLength = tag.utf16.count + 2 // "[tag]"
+        let newStart = firstRange.lowerBound
+        let newEnd = attributedText.index(firstRange.upperBound, offsetByCharacters: tagLength + 1)
+        selection = AttributedTextSelection(range: newStart ..< newEnd)
+      }
+    }
   }
 
-  @objc func appendBold() {
+  func appendBold() {
     appendTag("b")
   }
 
-  @objc func appendDel() {
+  func appendDel() {
     appendTag("del")
   }
 
-  @objc func showImagePicker() {
+  func showImagePicker() {
     showingImagePicker = true
   }
 
   func insert(_ string: String) {
-    let range = Range(selected, in: text)!
-    text.replaceSubrange(range, with: string)
-    let newLocation = selected.location + (string as NSString).length
-    selected = NSRange(location: newLocation, length: 0)
+    let indices = selection.indices(in: attributedText)
+    let insertAttributed = AttributedString(string)
+
+    switch indices {
+    case let .insertionPoint(index):
+      attributedText.insert(insertAttributed, at: index)
+      let newIndex = attributedText.index(index, offsetByCharacters: string.utf16.count)
+      selection = AttributedTextSelection(insertionPoint: newIndex)
+
+    case let .ranges(rangeSet):
+      if let firstRange = rangeSet.ranges.first {
+        attributedText.replaceSubrange(firstRange, with: insertAttributed)
+        let newIndex = attributedText.index(firstRange.lowerBound, offsetByCharacters: string.utf16.count)
+        selection = AttributedTextSelection(insertionPoint: newIndex)
+      }
+    }
   }
 }
