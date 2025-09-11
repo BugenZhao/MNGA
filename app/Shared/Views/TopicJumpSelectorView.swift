@@ -40,65 +40,99 @@ struct TopicJumpSelectorView: View {
 
   @ViewBuilder
   var jumpButton: some View {
-    Button(action: { commit() }) { Text("Jump").bold() }
+    Button(role: .confirm, action: { commit() }) { Image(systemName: "arrowshape.bounce.right") }
+      .buttonStyle(.borderedProminent)
   }
 
   @ViewBuilder
-  var modePicker: some View {
+  var modeSelector: some View {
     Picker("Mode", selection: $mode) {
       ForEach(Mode.allCases, id: \.rawValue) {
         Text(LocalizedStringKey($0.rawValue)).tag($0)
       }
     }
+    .pickerStyle(.segmented)
   }
 
   @ViewBuilder
-  var inputField: some View {
-    TextField("Type here...".localized, text: $text)
+  var floorInputField: some View {
+    TextField("Floor number".localized, text: $text)
       .keyboardType(.numberPad)
       .multilineTextAlignment(.trailing)
   }
 
   @ViewBuilder
-  var main: some View {
-    List {
-      Section(header: Text("Jump to...")) {
-        Group {
-          if maxFloor <= 799 {
-            Picker("Floor", selection: $selectedFloor) {
-              ForEach(0 ..< maxFloor + 1, id: \.self) { i in
-                Text("Floor \(i)").tag(i)
-              }
-            }
-          } else {
-            withAnimation(nil) {
-              Text("Floor \(selectedFloor)")
-                .font(.title3)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
-            }
-          }
-        }.pickerStyle(.wheel)
+  var pageInputField: some View {
+    TextField("Page number".localized, text: $text)
+      .keyboardType(.numberPad)
+      .multilineTextAlignment(.trailing)
+  }
+
+  @ViewBuilder
+  var floorSlider: some View {
+    VStack(spacing: 8) {
+      HStack {
+        Text("0")
+          .font(.caption)
+          .foregroundColor(.secondary)
+        Spacer()
+        Text("\(maxFloor)")
+          .font(.caption)
+          .foregroundColor(.secondary)
       }
 
-      Section {
-        HStack {
-          modePicker.pickerStyle(.menu)
-          inputField
-        }
+      Slider(
+        value: Binding(
+          get: { Double(selectedFloor) },
+          set: { value in
+            withAnimation {
+              selectedFloor = Int(value)
+              text = String(selectedFloor)
+            }
+          }
+        ),
+        in: 0 ... Double(maxFloor),
+        step: 1
+      )
+    }
+  }
 
-        HStack {
-          Button(action: { withAnimation { selectedFloor = 0 } }) {
-            Image(systemName: "arrow.up.to.line")
-          }.frame(maxWidth: .infinity)
-          Divider()
-          Button(action: { withAnimation { selectedFloor = maxFloor } }) {
-            Image(systemName: "arrow.down.to.line")
-          }.frame(maxWidth: .infinity)
-        }.buttonStyle(.plain)
-          .foregroundColor(.accentColor)
-      }.onChange(of: text) { parseText() }
-        .onChange(of: mode) { parseText() }
+  @ViewBuilder
+  var main: some View {
+    VStack(spacing: 0) {
+      modeSelector
+        .padding()
+        .background(Color(.systemGroupedBackground))
+
+      List {
+        switch mode {
+        case .floor:
+          Section(header: Text("Jump to...")) {
+            HStack {
+              Text("Floor")
+              floorInputField
+            }
+            floorSlider
+          }
+
+        case .page:
+          Section(header: Text("Jump to...")) {
+            HStack {
+              Text("Page")
+              pageInputField
+            }
+          }
+        }
+      }
+      .listStyle(.insetGrouped)
+    }
+    .onChange(of: text) { parseText() }
+    .onChange(of: mode) {
+      updateTextForMode()
+      parseText()
+    }
+    .onAppear {
+      updateTextForMode()
     }
   }
 
@@ -120,6 +154,15 @@ struct TopicJumpSelectorView: View {
         number = min(max(number, 1), maxPage)
         selectedPage.wrappedValue = number
       }
+    }
+  }
+
+  func updateTextForMode() {
+    switch mode {
+    case .floor:
+      text = String(selectedFloor)
+    case .page:
+      text = String(selectedPage.wrappedValue)
     }
   }
 

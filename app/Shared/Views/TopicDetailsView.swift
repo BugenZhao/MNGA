@@ -174,6 +174,13 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  var jumpButton: some View {
+    Button(action: { showJumpSelector = true }) {
+      Label("Jump to...", systemImage: "arrow.up.arrow.down")
+    }
+  }
+
+  @ViewBuilder
   var moreMenu: some View {
     Menu {
       Section {
@@ -185,9 +192,6 @@ struct TopicDetailsView: View {
         if !localMode {
           Button(action: { action.navigateToLocalMode = true }) {
             Label("View Cached Topic", systemImage: "clock")
-          }
-          Button(action: { showJumpSelector = true }) {
-            Label("Jump to...", systemImage: "arrow.up.arrow.down")
           }
         }
       }
@@ -386,12 +390,14 @@ struct TopicDetailsView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
-      ToolbarItem(placement: .status) { loadFirstPageButton }
-
       ToolbarItem(placement: .navigationBarTrailing) { progress }
       ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
       ToolbarItem(placement: .navigationBarTrailing) { menu }
 
+      ToolbarItemGroup(placement: .bottomBar) {
+        jumpButton
+        loadFirstPageButton
+      }
       ToolbarSpacer(placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) { replyButton }
     #elseif os(macOS)
@@ -452,7 +458,7 @@ struct TopicDetailsView: View {
       }
       // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
-      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage) }
+      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage).presentationDetents([.medium]) }
   }
 
   var body: some View {
