@@ -49,23 +49,25 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
       document.head.appendChild(meta);
     }
 
-    let iframe = document.getElementById("iff")
+    // Temporarily disable masking. Try our luck to see if it can pass App Store review.
 
-    let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
-    let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
-    loginElement.click()
+    // let iframe = document.getElementById("iff")
 
-    let xpaths = [
-      '//*[@id="main"]/div/div[last()-1]', // Register
-      '//*[@id="main"]/div/span[last()]',  // EULA
-      '//*[@id="main"]/div/a[2]',          // QRCode login
-      '//*[@id="main"]/div/div[last()]',   // 3rd party login
-    ]
+    // let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
+    // let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
+    // loginElement.click()
 
-    for (let xpath of xpaths) {
-      let element = getElementByXpath(iframe.contentDocument, xpath)
-      element.parentElement.removeChild(element)
-    }
+    // let xpaths = [
+    //   '//*[@id="main"]/div/div[last()-1]', // Register
+    //   '//*[@id="main"]/div/span[last()]',  // EULA
+    //   '//*[@id="main"]/div/a[2]',          // QRCode login
+    //   '//*[@id="main"]/div/div[last()]',   // 3rd party login
+    // ]
+
+    // for (let xpath of xpaths) {
+    //   let element = getElementByXpath(iframe.contentDocument, xpath)
+    //   element.parentElement.removeChild(element)
+    // }
     """
 
     webView.evaluateJavaScript(hideLoginElement) { _, _ in
