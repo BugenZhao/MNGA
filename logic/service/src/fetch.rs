@@ -89,11 +89,6 @@ where
 {
     let url = resolve_url(api, mock)?;
 
-    #[cfg(test)]
-    println!("request to url: {}", url);
-
-    log::info!("request to url: {}", url);
-
     let query = {
         query.push(("__inchst", "UTF8"));
         query
@@ -116,7 +111,12 @@ where
         .header("X-User-Agent", device_ua().as_ref());
     let builder = add_form(builder);
 
-    let response = builder.send().await?;
+    let request = builder.build()?;
+    #[cfg(test)]
+    println!("request to url: {}", request.url());
+    log::info!("request to url: {}", request.url());
+
+    let response = client.execute(request).await?;
     if !check_status || response.status().is_success() {
         Ok(response)
     } else {
@@ -137,29 +137,65 @@ where
 }
 
 trait ResponseFormat: Sized {
-    fn query_pair() -> (&'static str, &'static str);
+    fn query_pairs() -> &'static [(&'static str, &'static str)];
     fn parse_response(response: String) -> ServiceResult<Self>;
 }
 
 async fn do_fetch_text<RF, AF>(
     api: &str,
-    mut query: Vec<(&str, &str)>,
+    query: Vec<(&str, &str)>,
     add_form: AF,
 ) -> ServiceResult<RF>
 where
     RF: ResponseFormat,
-    AF: FnOnce(RequestBuilder) -> RequestBuilder,
+    AF: Fn(RequestBuilder) -> RequestBuilder,
 {
-    query.push(RF::query_pair());
-    let response = do_fetch(api, false, query, Method::POST, false, add_form).await?;
-    let response = response.text_with_charset("gb18030").await?;
+    let mut last_error = None;
 
-    #[cfg(test)]
-    let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
-    #[cfg(test)]
-    println!("http response: {}", response);
+    // Try different query pairs to mitigate blocking.
+    for query_pair in RF::query_pairs() {
+        let mut query = query.clone();
+        query.push(*query_pair);
 
-    RF::parse_response(response)
+        let response = do_fetch(api, false, query, Method::POST, false, &add_form).await?;
+
+        let parse_result = async {
+            let response = response.text_with_charset("gb18030").await?;
+
+            #[cfg(test)]
+            let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
+            #[cfg(test)]
+            println!("http response: {}", response);
+
+            RF::parse_response(response)
+        }
+        .await;
+
+        match parse_result {
+            Ok(r) => {
+                if last_error.is_some() {
+                    log::info!(
+                        "successfully parsed with `{}={}`",
+                        query_pair.0,
+                        query_pair.1
+                    );
+                }
+                return Ok(r);
+            }
+            Err(err) => {
+                log::error!(
+                    "failed to parse response with `{}={}`, retrying: {}",
+                    query_pair.0,
+                    query_pair.1,
+                    err
+                );
+                last_error = Some(err);
+            }
+        }
+    }
+
+    log::error!("all query pairs failed, giving up");
+    Err(last_error.unwrap())
 }
 
 #[inline]
@@ -185,8 +221,13 @@ mod xml {
     use super::*;
 
     impl ResponseFormat for sxd_document::Package {
-        fn query_pair() -> (&'static str, &'static str) {
-            ("lite", "xml")
+        fn query_pairs() -> &'static [(&'static str, &'static str)] {
+            &[
+                ("lite", "xml"),
+                // ("__output", "9"), // exactly same as `lite=xml`, useless
+                ("__output", "10"),
+                // TODO: __output=8 yields JSON, which has same schema
+            ]
         }
 
         fn parse_response(response: String) -> ServiceResult<Self> {
@@ -207,15 +248,17 @@ mod xml {
     pub async fn fetch_package_multipart(
         api: &str,
         query: Vec<(&str, &str)>,
-        form: multipart::Form,
+        make_form: impl Fn() -> multipart::Form,
     ) -> ServiceResult<sxd_document::Package> {
         let auth_info = auth::AUTH_INFO.read().unwrap().clone();
-        let form = form
-            .percent_encode_path_segment()
-            .text("access_token", auth_info.token) // todo: really needed ?
-            .text("access_uid", auth_info.uid);
+        let make_form = move || {
+            make_form()
+                .percent_encode_path_segment()
+                .text("access_token", auth_info.token.clone()) // todo: really needed ?
+                .text("access_uid", auth_info.uid.clone())
+        };
 
-        do_fetch_text(api, query, |b| b.multipart(form)).await
+        do_fetch_text(api, query, |b| b.multipart(make_form())).await
     }
 }
 
@@ -229,8 +272,8 @@ mod json {
     }
 
     impl ResponseFormat for serde_json::Value {
-        fn query_pair() -> (&'static str, &'static str) {
-            ("__output", "8")
+        fn query_pairs() -> &'static [(&'static str, &'static str)] {
+            &[("__output", "8")]
         }
 
         fn parse_response(response: String) -> ServiceResult<Self> {
