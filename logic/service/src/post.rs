@@ -324,27 +324,29 @@ pub async fn upload_attachment(
 
     let query = vec![];
 
-    let form = multipart::Form::new()
-        .text("v2", "1")
-        .text("origin_domain", "ngabbs.com") // todo: original domain
-        .text("func", "upload")
-        .text("auth", action.get_verbatim().get_auth().to_owned())
-        .text("fid", action.get_forum_id().get_fid().to_owned())
-        .text("attachment_file1_img", "1")
-        .text("attachment_file1_dscp", name.clone())
-        .text("attachment_file1_url_utf8_name", name.clone())
-        .text("attachment_file1_watermark", "")
-        .text("attachment_file1_auto_size", "")
-        .part(
-            "attachment_file1",
-            multipart::Part::bytes(file)
-                .file_name(name.clone())
-                .mime_str("image/jpeg")
-                .unwrap(),
-        );
+    let make_form = || {
+        multipart::Form::new()
+            .text("v2", "1")
+            .text("origin_domain", "ngabbs.com") // todo: original domain
+            .text("func", "upload")
+            .text("auth", action.get_verbatim().get_auth().to_owned())
+            .text("fid", action.get_forum_id().get_fid().to_owned())
+            .text("attachment_file1_img", "1")
+            .text("attachment_file1_dscp", name.clone())
+            .text("attachment_file1_url_utf8_name", name.clone())
+            .text("attachment_file1_watermark", "")
+            .text("attachment_file1_auto_size", "")
+            .part(
+                "attachment_file1",
+                multipart::Part::bytes(file.clone())
+                    .file_name(name.clone())
+                    .mime_str("image/jpeg")
+                    .unwrap(),
+            )
+    };
 
     let package =
-        fetch_package_multipart(action.get_verbatim().get_attach_url(), query, form).await?;
+        fetch_package_multipart(action.get_verbatim().get_attach_url(), query, make_form).await?;
 
     let name = extract_string(&package, "/root/attachments")?;
     let url = extract_string(&package, "/root/url")?;

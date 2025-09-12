@@ -19,7 +19,7 @@ randua = "0.1"
 regex = "1"
 reqwest = { version = "0.12", features = [
     "charset",
-    "rustls-tls",
+    "native-tls",
     "multipart",
 ], default-features = false }
 serde_json = "1"

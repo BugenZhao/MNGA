@@ -18,4 +18,3 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 inherits = "release"
 opt-level = "s"   # Optimize for size.
 lto = true        # Enable link time optimization
-codegen-units = 1
