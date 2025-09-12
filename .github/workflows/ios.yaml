@@ -22,7 +22,7 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.9
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.0-beta"
+          xcode-version: "26.0"
       # error:iOS 26.0 is not installed. Please download and install
       # https://github.com/actions/runner-images/issues/12904
       - name: Install iOS (with retry)
