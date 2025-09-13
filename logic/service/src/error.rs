@@ -23,6 +23,8 @@ pub enum ServiceError {
     XmlParse(#[from] sxd_document::parser::Error),
     #[error(transparent)]
     JsonParse(#[from] serde_json::Error),
+    // #[error(transparent)]
+    // XmlToJson(#[from] quick_xml::se::SeError),
     #[error(transparent)]
     XPath(#[from] sxd_xpath::Error),
     #[error(transparent)]
@@ -45,7 +47,7 @@ impl ServiceError {
             ServiceError::Mnga(_) => "MNGA",
             ServiceError::MissingField(_) => "Missing Field",
             ServiceError::Reqwest(_) => "Network Connection",
-            ServiceError::XmlParse(_) => "XML Parse",
+            ServiceError::XmlParse(_) /* | ServiceError::XmlToJson(_) */ => "XML Parse",
             ServiceError::JsonParse(_) => "JSON Parse",
             ServiceError::XPath(_) => "XPath Resolve",
             ServiceError::Cache(_) => "Cache",

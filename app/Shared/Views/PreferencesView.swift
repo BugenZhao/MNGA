@@ -138,11 +138,11 @@ struct PreferencesInnerView: View {
         }
       }
 
-      if pref.requestOption.device == .custom, !pref.requestOption.randomUa {
+      if pref.requestOption.device == .custom {
         TextField("Custom User-Agent", text: $pref.requestOption.customUa)
           .autocorrectionDisabled(true)
       }
-    }.disabled(pref.requestOption.randomUa)
+    }
   }
 
   @ViewBuilder
@@ -157,10 +157,6 @@ struct PreferencesInnerView: View {
     Group {
       Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
         Label("Auto Open in Browser when Banned", systemImage: "network")
-      }
-
-      Toggle(isOn: $pref.requestOption.randomUa.animation()) {
-        Label("Random Device Identity", systemImage: "ipad.and.iphone")
       }
     }
   }

@@ -225,7 +225,6 @@
 "Auto Open in Browser when Banned" = "封禁时自动访问网页版";
 "NGA Workaround" = "本 App 不被 NGA 官方支持。为了避免 NGA 的干扰和封禁，可能需要尝试这些应对措施。";
 "Special" = "特殊";
-"Random Device Identity" = "随机设备身份";
 "Hide MNGA Meta" = "隐藏 MNGA Meta 版块";
 "Custom" = "自定义";
 "Custom User-Agent" = "自定义 User-Agent";

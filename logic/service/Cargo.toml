@@ -11,14 +11,16 @@ chrono = "0.4"
 config = { path = "../config" }
 dashmap = "6"
 futures = "0.3"
+itertools = "0.14"
 lazy_static = "1"
 log = "0.4"
 paste = "1"
 protos = { path = "../protos" }
-randua = "0.1"
+rand = "0.9"
 regex = "1"
 reqwest = { version = "0.12", features = [
     "charset",
+    "gzip",
     "native-tls",
     "multipart",
 ], default-features = false }
