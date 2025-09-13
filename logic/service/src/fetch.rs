@@ -1,6 +1,6 @@
 #![allow(clippy::declare_interior_mutable_const)]
 
-use std::{borrow::Cow, time::Duration};
+use std::{borrow::Cow, sync::Mutex, time::Duration};
 
 use crate::{
     auth,
@@ -64,8 +64,19 @@ fn build_client() -> Client {
         .expect("failed to build reqwest client")
 }
 
-lazy_static! {
-    static ref CLIENT: Client = build_client();
+static CLIENT: Mutex<Option<Client>> = Mutex::new(None);
+
+// Take the global client. It will be recreated on next fetch.
+fn invalidate_global_client() {
+    let _ = CLIENT.lock().unwrap().take();
+}
+
+fn get_global_client() -> Client {
+    CLIENT
+        .lock()
+        .unwrap()
+        .get_or_insert_with(build_client)
+        .clone()
 }
 
 #[cfg(test)]
@@ -105,12 +116,13 @@ where
     };
 
     // `tokio::test` make a new runtime for every test,
-    // so we should use a thread-local client built in current runtime instead of a `lazy_static` one,
+    // so we should use a thread-local client built in current runtime instead of a global one,
     // which may cause client being dropped early and `hyper` panicking at 'dispatch dropped without returning error'
-    #[cfg(test)]
-    let client = build_client();
-    #[cfg(not(test))]
-    let client = &CLIENT;
+    let client = if cfg!(test) {
+        build_client()
+    } else {
+        get_global_client()
+    };
 
     let builder = client
         .request(method, url)
@@ -196,6 +208,7 @@ where
                     query_pair.1,
                     err
                 );
+                invalidate_global_client();
                 if first_error.is_none() {
                     first_error = Some(err);
                 }
