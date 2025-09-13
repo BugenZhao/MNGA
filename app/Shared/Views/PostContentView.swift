@@ -25,14 +25,16 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
   let spans: S
   let error: String?
   let id: PostId?
+  let postDate: UInt64?
   let defaultFont: Font
   let defaultColor: Color
   let initialInQuote: Bool
 
-  init(spans: S, error: String? = nil, id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  init(spans: S, error: String? = nil, id: PostId? = nil, postDate: UInt64? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     self.spans = spans
     self.error = error
     self.id = id
+    self.postDate = postDate
     self.defaultFont = defaultFont
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote
@@ -41,7 +43,7 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
   @EnvironmentObject<TopicDetailsActionModel>.Optional var actionModel
 
   var main: some View {
-    let combiner = ContentCombiner(actionModel: actionModel, id: id, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)
+    let combiner = ContentCombiner(actionModel: actionModel, id: id, postDate: postDate, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)
     combiner.visit(spans: spans)
     return combiner.buildView()
   }
@@ -65,10 +67,11 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
 }
 
 extension PostContentView where S == [Span] {
-  init(content: PostContent, id: PostId? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  init(content: PostContent, id: PostId? = nil, postDate: UInt64? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     spans = content.spans
     error = content.error
     self.id = id
+    self.postDate = postDate
     self.defaultFont = defaultFont
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote
