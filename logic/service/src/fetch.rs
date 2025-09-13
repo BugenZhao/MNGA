@@ -67,7 +67,6 @@ fn build_client() -> Client {
 static CLIENT: Mutex<Option<Client>> = Mutex::new(None);
 
 // Take the global client. It will be recreated on next fetch.
-#[allow(dead_code)]
 fn invalidate_global_client() {
     let _ = CLIENT.lock().unwrap().take();
 }
@@ -117,7 +116,7 @@ where
     let url = resolve_url(api, kind)?;
 
     let query = {
-        query.insert(0, ("__inchst", "UTF8"));
+        query.push(("__inchst", "UTF8"));
         query
             .into_iter()
             .filter(|(_k, v)| !v.is_empty())
@@ -228,6 +227,7 @@ where
                     query_pair.1,
                     err
                 );
+                invalidate_global_client();
                 if first_error.is_none() {
                     first_error = Some(err);
                 }
