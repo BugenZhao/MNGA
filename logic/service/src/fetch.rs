@@ -4,11 +4,15 @@ use std::{borrow::Cow, sync::Mutex, time::Duration};
 
 use crate::{
     auth,
-    constants::{ANDROID_UA, APPLE_UA, DEFAULT_MOCK_BASE_URL, DESKTOP_UA, WINDOWS_PHONE_UA},
+    constants::{
+        ANDROID_UA, APPLE_UA, DEFAULT_MOCK_BASE_URL, DEFAULT_PROXY_BASE_URL, DESKTOP_UA,
+        WINDOWS_PHONE_UA,
+    },
     error::{ServiceError, ServiceResult},
     request,
     utils::extract_error,
 };
+use itertools::Itertools;
 use lazy_static::lazy_static;
 use protos::DataModel::{Device, ErrorMessage};
 use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
@@ -36,14 +40,14 @@ fn device_ua(api: &str) -> Cow<'static, str> {
     }
 }
 
-fn resolve_url(api: &str, mock: bool) -> ServiceResult<Url> {
+fn resolve_url(api: &str, kind: FetchKind) -> ServiceResult<Url> {
     let url = Url::parse(api) // if absolute
         .or_else(|_| -> ServiceResult<Url> {
-            let base = if mock {
-                DEFAULT_MOCK_BASE_URL
-            } else {
-                let option = request::REQUEST_OPTION.read().unwrap();
-                &option.get_base_url_v2().to_owned()
+            let option = request::REQUEST_OPTION.read().unwrap();
+            let base = match kind {
+                FetchKind::Normal => option.get_base_url_v2(),
+                FetchKind::Mock => DEFAULT_MOCK_BASE_URL,
+                FetchKind::Proxy => DEFAULT_PROXY_BASE_URL,
             };
             // Make sure there's a trailing slahs in `base`!
             let url = Url::parse(base)?.join(api)?;
@@ -67,6 +71,7 @@ fn build_client() -> Client {
 static CLIENT: Mutex<Option<Client>> = Mutex::new(None);
 
 // Take the global client. It will be recreated on next fetch.
+#[allow(dead_code)]
 fn invalidate_global_client() {
     let _ = CLIENT.lock().unwrap().take();
 }
@@ -94,9 +99,17 @@ pub async fn with_fetch_check<F: futures::Future>(
         .await
 }
 
+/// Determine the base URL of the request.
+#[derive(Copy, Clone, Debug)]
+enum FetchKind {
+    Normal,
+    Mock,
+    Proxy,
+}
+
 async fn do_fetch<AF>(
     api: &str,
-    mock: bool,
+    kind: FetchKind,
     mut query: Vec<(&str, &str)>,
     method: Method,
     check_status: bool,
@@ -105,7 +118,7 @@ async fn do_fetch<AF>(
 where
     AF: FnOnce(RequestBuilder) -> RequestBuilder,
 {
-    let url = resolve_url(api, mock)?;
+    let url = resolve_url(api, kind)?;
 
     let query = {
         query.insert(0, ("__inchst", "UTF8"));
@@ -172,11 +185,14 @@ where
     let mut first_error = None;
 
     // Try different query pairs to mitigate blocking.
-    for query_pair in RF::query_pairs() {
+    for (kind, query_pair) in [FetchKind::Normal, FetchKind::Proxy]
+        .into_iter()
+        .cartesian_product(RF::query_pairs())
+    {
         let mut query = query.clone();
         query.push(*query_pair);
 
-        let response = do_fetch(api, false, query, Method::POST, false, &add_form).await?;
+        let response = do_fetch(api, kind, query, Method::POST, false, &add_form).await?;
 
         let parse_result = async {
             let response = response.text_with_charset("gb18030").await?;
@@ -208,7 +224,6 @@ where
                     query_pair.1,
                     err
                 );
-                invalidate_global_client();
                 if first_error.is_none() {
                     first_error = Some(err);
                 }
@@ -348,7 +363,7 @@ mod mock {
         Res: MockResponse,
     {
         let api = request.to_encoded_mock_api()?;
-        let response = do_fetch(&api, true, vec![], Method::GET, true, |b| b)
+        let response = do_fetch(&api, FetchKind::Mock, vec![], Method::GET, true, |b| b)
             .await?
             .bytes()
             .await?;
