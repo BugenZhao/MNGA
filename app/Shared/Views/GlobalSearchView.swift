@@ -16,10 +16,6 @@ struct DataSource {
 }
 
 class GlobalSearchModel: SearchModel<DataSource> {
-  init() {
-    super.init(commited: false)
-  }
-
   override func buildDataSource(text: String) -> DataSource {
     DataSource(
       forum: .init(
@@ -86,7 +82,7 @@ struct ForumSearchView: View {
       } else {
         List {
           Section(header: Text("Search Results")) {
-            ForEach(dataSource.items, id: \.id) { forum in
+            ForEachOrEmpty(dataSource.items, id: \.id) { forum in
               buildLink(forum)
             }
           }
@@ -107,7 +103,7 @@ struct UserSearchView: View {
       } else {
         List {
           Section(header: Text("Search Results")) {
-            ForEach(dataSource.items, id: \.id) { user in
+            ForEachOrEmpty(dataSource.items, id: \.id) { user in
               NavigationLink(destination: UserProfileView.build(user: user)) {
                 UserView(user: user, style: .huge)
               }
@@ -132,11 +128,14 @@ struct GlobalSearchView: View {
           NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search")) {
             Label("All Topics", systemImage: "doc.richtext")
           }.isDetailLink(false)
-          NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
-            Label("All Users", systemImage: "person.2")
-          }.isDetailLink(false)
+          // FIXME: the api is broken
+          // NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
+          //   Label("All Users", systemImage: "person.2")
+          // }.isDetailLink(false)
         }
       }
     }.mayInsetGroupedListStyle()
+      // Auto commit (then build a new data source) on type, so that user don't need to press enter.
+      .onChange(of: model.text, initial: true) { model.commit() }
   }
 }

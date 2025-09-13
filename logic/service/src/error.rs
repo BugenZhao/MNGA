@@ -61,6 +61,11 @@ impl ServiceError {
     pub fn to_app_string(&self) -> String {
         format!("{}|{}", self.to_kind(), self)
     }
+
+    /// Whether the error is caused by response parse error. If so, it's likely to be NGA blocking.
+    pub fn is_response_parse_error(&self) -> bool {
+        matches!(self, ServiceError::XmlParse(_) | ServiceError::JsonParse(_))
+    }
 }
 
 pub type ServiceResult<T> = Result<T, ServiceError>;

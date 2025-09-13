@@ -220,17 +220,21 @@ where
                 }
                 return Ok(r);
             }
-            Err(err) => {
+            Err(parse_error) if parse_error.is_response_parse_error() => {
                 log::error!(
                     "failed to parse response with `{}={}`, retrying: {}",
                     query_pair.0,
                     query_pair.1,
-                    err
+                    parse_error
                 );
                 invalidate_global_client();
                 if first_error.is_none() {
-                    first_error = Some(err);
+                    first_error = Some(parse_error);
                 }
+            }
+            Err(error) => {
+                // For normal errors, we don't need to retry.
+                return Err(error);
             }
         }
     }
