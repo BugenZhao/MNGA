@@ -69,7 +69,6 @@ struct ContentView: View {
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif
       .onOpenURL { _ = schemes.onNavigateToURL($0) }
-      .overlay { ImageOverlay() }
       .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
@@ -80,6 +79,7 @@ struct ContentView: View {
       .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection).presentationDetents([.medium, .large]) }
+      .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
       .environmentObject(viewingImage)
       .environmentObject(activity)
       .environmentObject(postReply)

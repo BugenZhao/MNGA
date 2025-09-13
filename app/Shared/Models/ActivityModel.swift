@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 
+// Deprecated in favor of `ShareLink`.
 class ActivityModel: ObservableObject {
   @Published var activityItems: [Any]? = nil
 

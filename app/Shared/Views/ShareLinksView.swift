@@ -9,8 +9,6 @@ import Foundation
 import SwiftUI
 
 struct ShareLinksView<V: View>: View {
-  @EnvironmentObject var activity: ActivityModel
-
   let navigationID: NavigationIdentifier
   @ViewBuilder let others: () -> V
 

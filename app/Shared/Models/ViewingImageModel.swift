@@ -18,6 +18,7 @@ class ViewingImageModel: ObservableObject {
 
   @Published var id: UUID?
   @Published var imageData: Data?
+  @Published var showing = false
 
   func show(image: PlatformImage) {
     withAnimation {
@@ -25,6 +26,7 @@ class ViewingImageModel: ObservableObject {
         .resizable()
         .eraseToAnyView()
       self.imageData = image.sd_imageData()
+      self.showing = true
     }
   }
 
@@ -40,6 +42,7 @@ class ViewingImageModel: ObservableObject {
         .indicator(.progress)
         .eraseToAnyView()
       self.imageData = nil
+      self.showing = true
     }
   }
 }

@@ -16,6 +16,7 @@ let project = Project(
         .remote(url: "https://github.com/giginet/Crossroad", requirement: .exact("3.2.0")),
         .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("26.0.0-rc.1")),
         .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .exact("1.5.2")),
+        .remote(url: "https://github.com/gh123man/LazyPager", requirement: .exact("1.1.13")),
     ],
     targets: [
         // iOS App Target
@@ -48,6 +49,7 @@ let project = Project(
                 .package(product: "Crossroad"),
                 .package(product: "SwiftUIIntrospect"),
                 .package(product: "Inject"),
+                .package(product: "LazyPager"),
                 .xcframework(path: "../out/logic-ios.xcframework"),
             ],
             settings: .settings(

@@ -32,7 +32,6 @@ struct TopicDetailsView: View {
   @Binding var topic: Topic
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
-  @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var viewingImage: ViewingImageModel
   @EnvironmentObject var postReply: PostReplyModel
 
