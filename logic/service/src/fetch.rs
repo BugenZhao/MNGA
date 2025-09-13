@@ -13,7 +13,12 @@ use lazy_static::lazy_static;
 use protos::DataModel::{Device, ErrorMessage};
 use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
 
-fn device_ua() -> Cow<'static, str> {
+fn device_ua(api: &str) -> Cow<'static, str> {
+    // Always use windows phone for read.php since it seems to be more robust.
+    if api == "read.php" {
+        return WINDOWS_PHONE_UA.into();
+    }
+
     let option = request::REQUEST_OPTION.read().unwrap();
 
     if option.get_random_ua() {
@@ -108,7 +113,7 @@ where
     let builder = client
         .request(method, url)
         .query(&query)
-        .header("X-User-Agent", device_ua().as_ref());
+        .header("X-User-Agent", &*device_ua(api));
     let builder = add_form(builder);
 
     let request = builder.build()?;
