@@ -183,8 +183,10 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var jumpButton: some View {
-    Button(action: { showJumpSelector = true }) {
-      Label("Jump to...", systemImage: "arrow.up.arrow.down")
+    if !mock, onlyPost.id == nil {
+      Button(action: { showJumpSelector = true }) {
+        Label("Jump to...", systemImage: "arrow.up.arrow.down")
+      }
     }
   }
 
@@ -239,17 +241,21 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
-  var menu: some View {
-    Group {
-      if let postId = onlyPost.id {
-        let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
-        Button(action: { action.navigateToView = view }) {
-          Label("See Full Topic", systemImage: "doc.richtext")
-        }
-      } else {
-        moreMenu
+  var seeFullTopicButton: some View {
+    if let postId = onlyPost.id {
+      let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
+      Button(action: { action.navigateToView = view }) {
+        Text("See Full Topic")
       }
-    }.imageScale(.large)
+    }
+  }
+
+  @ViewBuilder
+  var menu: some View {
+    if onlyPost.id == nil {
+      moreMenu
+        .imageScale(.large)
+    }
   }
 
   @ViewBuilder
@@ -415,7 +421,11 @@ struct TopicDetailsView: View {
         loadFirstPageButton
       }
       ToolbarSpacer(placement: .bottomBar)
-      ToolbarItem(placement: .bottomBar) { replyButton }
+      ToolbarItemGroup(placement: .bottomBar) {
+        // They won't show simultaneously.
+        replyButton
+        seeFullTopicButton
+      }
     #elseif os(macOS)
       ToolbarItemGroup {
         replyButton
