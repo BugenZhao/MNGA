@@ -26,7 +26,7 @@ struct BlockWordListView: View {
       if newWord != nil {
         HStack {
           TextField(LocalizedStringKey("New word"), text: ($newWord ?? .init()).word, onCommit: commitNewWord)
-            .introspect(.textField, on: .iOS(.v13, .v14, .v15, .v16, .v17)) {
+            .introspect(.textField, on: .iOS(.v26)) {
               if newWord?.word.isEmpty == true {
                 $0.becomeFirstResponder()
               }
