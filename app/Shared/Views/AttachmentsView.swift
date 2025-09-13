@@ -37,7 +37,7 @@ struct AttachmentsView: View {
         .buttonStyle(.plain)
       }
     }
-    .navigationTitle("Attachments")
+    .navigationTitleInline(key: "Attachments")
   }
 
   func show(_ attachment: Attachment) {
@@ -45,7 +45,10 @@ struct AttachmentsView: View {
     guard let url else { return }
 
     if attachment.type == "img" {
-      image?.show(url: url)
+      presentation.dismiss()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // workaround image viewer background
+        image?.show(url: url)
+      }
     } else {
       OpenURLModel.shared.open(url: url, inApp: true)
     }

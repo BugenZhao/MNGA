@@ -202,7 +202,7 @@ struct PostRowView: View {
     #if os(iOS)
     .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments) } }
+    .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments) }.presentationDetents([.medium, .large]) }
     .environmentObject(attachments)
 
     if let model = postReply, !mock {
