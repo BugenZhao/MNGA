@@ -16,10 +16,6 @@ struct DataSource {
 }
 
 class GlobalSearchModel: SearchModel<DataSource> {
-  init() {
-    super.init(commited: false)
-  }
-
   override func buildDataSource(text: String) -> DataSource {
     DataSource(
       forum: .init(
@@ -138,5 +134,7 @@ struct GlobalSearchView: View {
         }
       }
     }.mayInsetGroupedListStyle()
+      // Auto commit (then build a new data source) on type, so that user don't need to press enter.
+      .onChange(of: model.text, initial: true) { model.commit() }
   }
 }

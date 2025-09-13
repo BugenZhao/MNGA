@@ -42,40 +42,14 @@ class SearchModel<DS>: BasicSearchModel {
     preconditionFailure()
   }
 
-  init(commited: Bool = true) {
-    super.init()
-
-    if commited {
-      $commitedText
-        .map { t -> DataSource? in
-          if let t { self.buildDataSource(text: t) }
-          else { nil }
-        }
-        .assign(to: &$dataSource)
-    } else {
-      $text
-        .map(buildDataSource(text:))
-        .assign(to: &$dataSource)
-    }
-  }
-}
-
-class AutoSearchModel<DS>: BasicSearchModel {
-  typealias DataSource = DS
-
-  @Published var dataSource: DataSource? = nil
-
-  func buildDataSource(text _: String) -> DataSource {
-    preconditionFailure()
-  }
-
   override init() {
     super.init()
 
-    $text
-      .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
-      .removeDuplicates()
-      .map(buildDataSource(text:))
+    $commitedText
+      .map { t -> DataSource? in
+        if let t { self.buildDataSource(text: t) }
+        else { nil }
+      }
       .assign(to: &$dataSource)
   }
 }
