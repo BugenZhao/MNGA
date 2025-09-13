@@ -23,7 +23,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   @Published var isRefreshing = false
   @Published var latestResponse: Res?
   @Published var latestError: LogicError?
-  @Published var lastRefreshTime: Date?
+  @Published var lastRefreshTime: Date? // only successful refresh
   @Published var loadFromPage: Int?
 
   private var loadedPage = 0
@@ -36,7 +36,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
   var isInitialLoading: Bool { isLoading && loadedPage == 0 }
   var firstLoadedPage: Int? { itemToIndexAndPage.values.map(\.page).min() }
-  var notLoaded: Bool { items.isEmpty && lastRefreshTime == nil }
+  var notLoaded: Bool { items.isEmpty && lastRefreshTime == nil && latestError == nil }
 
   init(
     buildRequest: @escaping (_ page: Int) -> AsyncRequest.OneOf_Value,
