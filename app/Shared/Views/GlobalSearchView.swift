@@ -82,7 +82,7 @@ struct ForumSearchView: View {
       } else {
         List {
           Section(header: Text("Search Results")) {
-            ForEach(dataSource.items, id: \.id) { forum in
+            ForEachOrEmpty(dataSource.items, id: \.id) { forum in
               buildLink(forum)
             }
           }
@@ -103,7 +103,7 @@ struct UserSearchView: View {
       } else {
         List {
           Section(header: Text("Search Results")) {
-            ForEach(dataSource.items, id: \.id) { user in
+            ForEachOrEmpty(dataSource.items, id: \.id) { user in
               NavigationLink(destination: UserProfileView.build(user: user)) {
                 UserView(user: user, style: .huge)
               }

@@ -37,7 +37,7 @@ struct TopicHistoryListView: View {
       } else {
         List {
           let items = dataSource.items.filter { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) }
-          ForEach(items, id: \.topicSnapshot.id) { snapshot in
+          ForEachOrEmpty(items, id: \.topicSnapshot.id) { snapshot in
             let topic = snapshot.topicSnapshot
             NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
               TopicRowView(topic: topic, dimmedSubject: false)

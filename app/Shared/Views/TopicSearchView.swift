@@ -44,7 +44,7 @@ struct TopicSearchItemsView: View {
       LoadingRowView()
         .onAppear { dataSource.initialLoad() }
     } else {
-      ForEach($dataSource.items, id: \.id) { topic in
+      ForEachOrEmpty($dataSource.items, id: \.wrappedValue.id) { topic in
         NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
           TopicRowView(topic: topic.w)
         }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }

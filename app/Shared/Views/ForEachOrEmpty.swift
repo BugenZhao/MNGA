@@ -31,6 +31,7 @@ struct ForEachOrEmpty<Data, ID, Content>: View where Data: RandomAccessCollectio
   let id: KeyPath<Data.Element, ID>
   let content: (Data.Element) -> Content
 
+  // TODO: this doesn't directly support binding.
   init(_ data: Data, id: KeyPath<Data.Element, ID>, @ViewBuilder content: @escaping (Data.Element) -> Content) {
     self.data = data
     self.id = id
