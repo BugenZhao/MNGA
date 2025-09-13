@@ -25,19 +25,15 @@ fn device_ua(api: &str) -> Cow<'static, str> {
         return WINDOWS_PHONE_UA.into();
     }
 
-    if option.get_random_ua() {
-        randua::new().to_string().into()
-    } else {
-        match option.get_device() {
-            Device::DESKTOP => DESKTOP_UA,
-            Device::APPLE => APPLE_UA,
-            Device::ANDROID => ANDROID_UA,
-            Device::WINDOWS_PHONE => WINDOWS_PHONE_UA,
-            // Use `custom_ua` if `device` is `CUSTOM`
-            Device::CUSTOM => return option.get_custom_ua().to_owned().into(),
-        }
-        .into()
+    match option.get_device() {
+        Device::DESKTOP => DESKTOP_UA,
+        Device::APPLE => APPLE_UA,
+        Device::ANDROID => ANDROID_UA,
+        Device::WINDOWS_PHONE => WINDOWS_PHONE_UA,
+        // Use `custom_ua` if `device` is `CUSTOM`
+        Device::CUSTOM => return option.get_custom_ua().to_owned().into(),
     }
+    .into()
 }
 
 fn resolve_url(api: &str, kind: FetchKind) -> ServiceResult<Url> {

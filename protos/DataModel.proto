@@ -169,9 +169,7 @@ message AuthInfo {
 message RequestOption {
   string base_url_v2 = 1;
   Device device = 2;
-  bool random_ua = 4;
-  string custom_ua = 5; // Only used when `device` is `CUSTOM` and `random_ua`
-                        // is false.
+  string custom_ua = 5; // Only used when `device` is `CUSTOM`.
 }
 
 enum VoteState {

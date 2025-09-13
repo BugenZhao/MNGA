@@ -8,7 +8,6 @@ fn default_request_option() -> RequestOption {
     RequestOption {
         base_url_v2: DEFAULT_BASE_URL.to_owned(),
         device: Device::APPLE,
-        random_ua: false,
         custom_ua: "".to_owned(),
         ..Default::default()
     }
