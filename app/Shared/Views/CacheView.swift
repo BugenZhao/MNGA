@@ -37,7 +37,7 @@ struct CacheRowView: View {
         Button(action: { alertPresented = true }) {
           inner
         }.alert(isPresented: $alertPresented) {
-          Alert(title: Text("Are you sure to clear the cache?"), message: Text("This will take a while."), primaryButton: .default(Text("Clear")) { clear() }, secondaryButton: .cancel())
+          Alert(title: Text("Are you sure to clear the cache?"), message: Text("This will take a while."), primaryButton: .destructive(Text("Clear")) { clear() }, secondaryButton: .cancel())
         }
       } else {
         inner
