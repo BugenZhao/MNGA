@@ -22,7 +22,10 @@ pub async fn manipulate_cache(request: CacheRequest) -> ServiceResult<CacheRespo
     let prefix = type_to_prefix(request.get_field_type());
     let items = match request.get_operation() {
         CacheOperation::CHECK => CACHE.scan_prefix(prefix).count(),
-        CacheOperation::CLEAR => CACHE.remove_prefix(prefix)?,
+        CacheOperation::CLEAR => {
+            let _removed_count = CACHE.remove_prefix(prefix)?;
+            CACHE.scan_prefix(prefix).count()
+        }
     };
     let total_size = CACHE.total_size()?;
 
