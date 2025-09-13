@@ -14,12 +14,12 @@ use protos::DataModel::{Device, ErrorMessage};
 use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
 
 fn device_ua(api: &str) -> Cow<'static, str> {
-    // Always use windows phone for read.php since it seems to be more robust.
-    if api == "read.php" {
+    let option = request::REQUEST_OPTION.read().unwrap();
+
+    // If not customized, always use windows phone for read.php since it seems to be more robust.
+    if api == "read.php" && option.get_device() != Device::CUSTOM {
         return WINDOWS_PHONE_UA.into();
     }
-
-    let option = request::REQUEST_OPTION.read().unwrap();
 
     if option.get_random_ua() {
         randua::new().to_string().into()
