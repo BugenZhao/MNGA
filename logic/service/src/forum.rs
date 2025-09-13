@@ -211,4 +211,19 @@ mod test {
 
         Ok(())
     }
+
+    #[tokio::test]
+    async fn test_search_forum_not_exist() -> ServiceResult<()> {
+        let response = search_forum(ForumSearchRequest {
+            key: "元神".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        assert!(response.get_forums().is_empty());
+
+        Ok(())
+    }
 }
