@@ -209,7 +209,7 @@ struct PostRowView: View {
       body
         .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) {
           Button(action: { doQuote(model: model) }) {
-            Image(systemName: "quote.bubble")
+            Label("Quote", systemImage: "quote.bubble")
           }.tint(.accentColor)
         }
     } else {
