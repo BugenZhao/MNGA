@@ -24,9 +24,15 @@ struct UserProfileView: View {
   @StateObject var postDataSource: PostDataSource
 
   @EnvironmentObject var postModel: ShortMessagePostModel
+  @EnvironmentObject var currentUser: CurrentUserModel
+
   @StateObject var blockWords = BlockWordsStorage.shared
 
   @State var tab = Tab.topics
+
+  var isMyself: Bool {
+    user.id == currentUser.user?.id
+  }
 
   static func build(user: User) -> Self {
     let topicDataSource = TopicDataSource(
@@ -119,7 +125,7 @@ struct UserProfileView: View {
             Text($0.rawValue).tag($0)
           }
         }.pickerStyle(SegmentedPickerStyle())
-          .frame(maxWidth: 200)
+          .frame(minWidth: 160)
       }
     }
 
@@ -130,7 +136,7 @@ struct UserProfileView: View {
             Button(action: { newShortMessage() }) {
               Label("New Short Message", systemImage: "message")
             }
-          }
+          }.disabled(isMyself)
         }
         Section {
           Button(role: blocked ? nil : .destructive, action: { blockWords.toggle(user: user.name) }) {
@@ -139,7 +145,7 @@ struct UserProfileView: View {
             } else {
               Label("Block This User", systemImage: "hand.raised")
             }
-          }
+          }.disabled(isMyself)
         }
       } label: {
         Label("More", systemImage: "ellipsis.circle")
