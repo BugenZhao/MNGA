@@ -500,15 +500,13 @@ mod test {
     }
 
     #[tokio::test]
-    async fn test_topic_details() -> ServiceResult<()> {
+    async fn test_topic_details_new() -> ServiceResult<()> {
         let response = get_topic_details(TopicDetailsRequest {
-            topic_id: "27455825".to_owned(),
+            topic_id: "45094055".to_owned(),
             page: 1,
             ..Default::default()
         })
         .await?;
-
-        println!("response: {:?}", response);
 
         assert!(!response.get_topic().get_id().is_empty());
         assert!(!response.get_replies().is_empty());
@@ -520,16 +518,14 @@ mod test {
                 .unwrap()
                 .get_content()
                 .get_raw()
-                .contains("zsbd")
+                .contains("测量")
         );
-        assert_eq!(
+        assert!(
             response
                 .get_topic()
                 .get_subject()
-                .get_tags()
-                .first()
-                .unwrap(),
-            "测试"
+                .get_content()
+                .contains("拿捏")
         );
 
         Ok(())

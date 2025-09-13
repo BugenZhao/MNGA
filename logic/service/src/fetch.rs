@@ -265,19 +265,31 @@ mod xml {
         fn query_pairs() -> &'static [(&'static str, &'static str)] {
             &[
                 ("lite", "xml"),
-                // ("__output", "9"), // exactly same as `lite=xml`, useless
-                ("__output", "10"), // compact XML
-                ("__output", "11"), // verbose JSON
-                ("__output", "8"),  // compact JSON
+                // compact XML
+                ("__output", "10"),
+                // exactly same as `lite=xml`, useless
+                // ("__output", "9"),
+                // need some effort to make JSON schema compatible with XML
+                // ("__output", "11"), // verbose JSON
+                // ("__output", "8"),  // compact JSON
             ]
         }
 
-        fn parse_response(mut response: String) -> ServiceResult<Self> {
-            if response.starts_with("{") {
-                // This is a JSON. Convert to XML first.
-                let value: serde_json::Value = serde_json::from_str(&response)?;
-                response = serde_xml_rs::to_string(&value)?;
-            }
+        fn parse_response(response: String) -> ServiceResult<Self> {
+            // If it is a JSON, convert to XML first.
+            // if response.starts_with("{") {
+            //     // Fix control chars.
+            //     let r = response
+            //         .replace('\t', " ")
+            //         .replace(|c: char| c.is_ascii_control(), "");
+            //     let mut value: serde_json::Value = serde_json::from_str(&r)?;
+            //     value = value["data"].take();
+
+            //     let mut buffer = String::new();
+            //     let ser = quick_xml::se::Serializer::with_root(&mut buffer, Some("root"))?;
+            //     value.serialize(ser)?;
+            //     response = buffer;
+            // }
 
             let package = sxd_document::parser::parse(&response)?;
             extract_error(&package)?;
