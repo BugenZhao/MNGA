@@ -1,5 +1,5 @@
 {
-  "originHash" : "d3036792f202dd7c6a57a8c9650090b123076cf90ce3930d861e1de459cffdcc",
+  "originHash" : "19fd26ae81586578e3826a7d8c9a4b94931784584a988231bb2e700e96e0adf6",
   "pins" : [
     {
       "identity" : "alerttoast",
@@ -53,6 +53,15 @@
       "state" : {
         "revision" : "728c56639ecb3df441d51d5bc6747329afabcfc9",
         "version" : "1.5.2"
+      }
+    },
+    {
+      "identity" : "lazypager",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gh123man/LazyPager",
+      "state" : {
+        "revision" : "3b9f2f2264117babb21f828826e77dd799529741",
+        "version" : "1.1.13"
       }
     },
     {

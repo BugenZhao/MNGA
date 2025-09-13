@@ -14,7 +14,6 @@ struct TopicListView: View {
 
   @State var forum: Forum
 
-  @EnvironmentObject var activity: ActivityModel
   @EnvironmentObject var postReply: PostReplyModel
 
   @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
