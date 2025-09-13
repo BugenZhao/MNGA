@@ -15,12 +15,9 @@ struct ForumListView: View {
   @StateObject var prefs = PreferencesStorage.shared
 
   @State var categories = [Category]()
-  @State var favoriteEditing = false
 
-  #if os(iOS)
-    // HACK: do not use @Environment, which causes some sheets (like PostReplyView) popped unexpectedly
-    @State var editMode = EditMode.inactive
-  #endif
+  // HACK: do not use @Environment, which causes some sheets (like PostReplyView) popped unexpectedly
+  @State var editMode = EditMode.inactive
 
   @ViewBuilder
   func buildFavoriteSectionLink(_ forum: Forum) -> some View {
@@ -53,7 +50,6 @@ struct ForumListView: View {
           favorites.favoriteForums.remove(atOffsets: offsets)
         }.onMove { from, to in
           favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
-          withAnimation { favoriteEditing = false }
         }
       }
     }
@@ -79,17 +75,11 @@ struct ForumListView: View {
     }
   }
 
-  func setEditModeActive() {
-    #if os(iOS)
-      withAnimation { editMode = .active }
-    #endif
-  }
-
   @ViewBuilder
   var filterMenu: some View {
     Menu {
       Section {
-        Button(action: { setEditModeActive() }) {
+        Button(action: { editMode = .active }) {
           Text("Edit Favorites")
         }
       }
@@ -109,15 +99,11 @@ struct ForumListView: View {
 
   @ViewBuilder
   var filter: some View {
-    #if os(iOS)
-      if editMode == .active {
-        EditButton().environment(\.editMode, $editMode)
-      } else {
-        filterMenu
-      }
-    #else
+    if editMode == .active {
+      EditButton().environment(\.editMode, $editMode)
+    } else {
       filterMenu
-    #endif
+    }
   }
 
   @ViewBuilder
@@ -126,11 +112,9 @@ struct ForumListView: View {
       favoritesSection
       if favorites.filterMode == .all {
         allForumsSection
+          .environment(\.editMode, .constant(.inactive))
       }
-    }
-    #if os(iOS)
-    .environment(\.editMode, $editMode)
-    #endif
+    }.environment(\.editMode, $editMode)
   }
 
   var body: some View {
@@ -147,7 +131,7 @@ struct ForumListView: View {
     .compatForumListListStyle()
     .toolbar {
       ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }
-      ToolbarItem(placement: .mayNavigationBarTrailing) { filter }
+      ToolbarItemGroup(placement: .mayNavigationBarTrailing) { filter }
     }
   }
 

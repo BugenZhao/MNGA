@@ -73,14 +73,23 @@ struct FavoriteModifier: ViewModifier {
 
   @StateObject var favorites = FavoriteForumsStorage.shared
 
+  func toggle() {
+    withAnimation {
+      favorites.toggleFavorite(forum: forum)
+    }
+  }
+
   func body(content: Content) -> some View {
+    let isFavorite = favorites.isFavorite(id: forum.id)
+    let image = isFavorite ? "star.slash.fill" : "star"
+    let label: LocalizedStringKey = isFavorite ? "Remove from Favorites" : "Mark as Favorite"
+    let tintColor: Color = isFavorite ? .gray : .accentColor
+
     content
       .swipeActions(edge: .trailing) {
-        Button(action: { withAnimation { favorites.toggleFavorite(forum: forum) } }) {
-          let isFavorite = favorites.isFavorite(id: forum.id)
-          let image = isFavorite ? "star.slash.fill" : "star"
-          Image(systemName: image)
-        }.tint(.accentColor)
+        Button(action: toggle) {
+          Label(label, systemImage: image)
+        }.tint(tintColor)
       }
   }
 }
