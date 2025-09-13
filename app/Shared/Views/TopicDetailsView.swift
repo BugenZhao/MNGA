@@ -154,7 +154,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var replyButton: some View {
-    if !mock && onlyPost.id == nil {
+    if !mock, onlyPost.id == nil {
       Button(action: { doReplyTopic() }) {
         Label("Reply", systemImage: "arrowshape.turn.up.left")
       }

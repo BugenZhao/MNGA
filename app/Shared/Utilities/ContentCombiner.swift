@@ -112,6 +112,11 @@ class ContentCombiner {
     set { setEnv(key: "id", value: newValue) }
   }
 
+  private var postDate: UInt64? {
+    get { getEnv(key: "postDate") as! UInt64? }
+    set { setEnv(key: "postDate", value: newValue) }
+  }
+
   init(
     parent: ContentCombiner?,
     font: @escaping (Font?) -> Font? = { $0 },
@@ -127,7 +132,7 @@ class ContentCombiner {
     alignment = overrideAlignment ?? parent?.alignment ?? .leading
   }
 
-  init(actionModel: TopicDetailsActionModel?, id: PostId?, defaultFont: Font, defaultColor: Color, initialEnvs: [String: Any]? = nil) {
+  init(actionModel: TopicDetailsActionModel?, id: PostId?, postDate: UInt64?, defaultFont: Font, defaultColor: Color, initialEnvs: [String: Any]? = nil) {
     parent = nil
     self.actionModel = actionModel
     fontModifier = { _ in defaultFont }
@@ -137,6 +142,7 @@ class ContentCombiner {
     envs = initialEnvs ?? [:]
 
     selfId = id
+    self.postDate = postDate
   }
 
   private func styledText(_ text: Text, overridenFont: Font? = nil, overridenColor: Color? = nil) -> Text {
@@ -296,6 +302,8 @@ class ContentCombiner {
       visit(divider: tagged)
     case "img":
       visit(image: tagged)
+    case "noimg":
+      visit(noimg: tagged)
     case "quote":
       visit(quote: tagged)
     case "b":
@@ -341,6 +349,29 @@ class ContentCombiner {
 
     let urlText = plain.text
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
+
+    let onlyThumbs = inQuote && replyTo != nil
+    let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
+    append(image)
+  }
+
+  private func visit(noimg: Span.Tagged) {
+    guard let value = noimg.spans.first?.value else { return }
+    guard case let .plain(plain) = value else { return }
+    guard let postDate else { return }
+
+    let urlText = plain.text
+
+    // Extract year, month, day from postDate in UTC+8
+    let date = Date(timeIntervalSince1970: TimeInterval(postDate))
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(secondsFromGMT: 8 * 3600)!
+    let comps = calendar.dateComponents([.year, .month, .day], from: date)
+    guard let year = comps.year, let month = comps.month, let day = comps.day else { return }
+
+    // Construct the URL
+    let p = String(format: "mon_%04d%02d/%02d/", year, month, day)
+    guard let url = URL(string: p + urlText, relativeTo: URLs.attachmentBase) else { return }
 
     let onlyThumbs = inQuote && replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
