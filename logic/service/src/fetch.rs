@@ -15,6 +15,7 @@ use crate::{
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use protos::DataModel::{Device, ErrorMessage};
+use rand::{Rng, seq::SliceRandom as _};
 use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
 
 fn device_ua(api: &str) -> Cow<'static, str> {
@@ -58,7 +59,6 @@ fn build_client() -> Client {
     Client::builder()
         .https_only(true)
         .timeout(Duration::from_secs(10))
-        .cookie_store(true)
         .gzip(true)
         .build()
         .expect("failed to build reqwest client")
@@ -178,15 +178,23 @@ where
     RF: ResponseFormat,
     AF: Fn(RequestBuilder) -> RequestBuilder,
 {
+    let mut attempts = [FetchKind::Normal, FetchKind::Proxy]
+        .into_iter()
+        .cartesian_product(RF::query_pairs())
+        .collect_vec();
+    // Shuffle attempts except for the primary one.
+    attempts[1..].shuffle(&mut rand::rng());
+
     let mut first_error = None;
 
     // Try different query pairs to mitigate blocking.
-    for (kind, query_pair) in [FetchKind::Normal, FetchKind::Proxy]
-        .into_iter()
-        .cartesian_product(RF::query_pairs())
-    {
+    for (kind, query_pair) in attempts {
         let mut query = query.clone();
         query.push(*query_pair);
+
+        // Sleep for a random duration.
+        let duration = Duration::from_millis(rand::rng().random_range(100..=300));
+        tokio::time::sleep(duration).await;
 
         let response = do_fetch(api, kind, query, Method::POST, false, &add_form).await?;
 
