@@ -19,6 +19,8 @@ randua = "0.1"
 regex = "1"
 reqwest = { version = "0.12", features = [
     "charset",
+    "cookies",
+    "gzip",
     "native-tls",
     "multipart",
 ], default-features = false }
