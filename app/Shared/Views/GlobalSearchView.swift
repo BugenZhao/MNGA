@@ -128,9 +128,10 @@ struct GlobalSearchView: View {
           NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search")) {
             Label("All Topics", systemImage: "doc.richtext")
           }.isDetailLink(false)
-          NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
-            Label("All Users", systemImage: "person.2")
-          }.isDetailLink(false)
+          // FIXME: the api is broken
+          // NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
+          //   Label("All Users", systemImage: "person.2")
+          // }.isDetailLink(false)
         }
       }
     }.mayInsetGroupedListStyle()
