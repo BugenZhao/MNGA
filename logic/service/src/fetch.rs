@@ -95,7 +95,7 @@ where
     let url = resolve_url(api, mock)?;
 
     let query = {
-        query.push(("__inchst", "UTF8"));
+        query.insert(0, ("__inchst", "UTF8"));
         query
             .into_iter()
             .filter(|(_k, v)| !v.is_empty())
@@ -155,7 +155,7 @@ where
     RF: ResponseFormat,
     AF: Fn(RequestBuilder) -> RequestBuilder,
 {
-    let mut last_error = None;
+    let mut first_error = None;
 
     // Try different query pairs to mitigate blocking.
     for query_pair in RF::query_pairs() {
@@ -178,7 +178,7 @@ where
 
         match parse_result {
             Ok(r) => {
-                if last_error.is_some() {
+                if first_error.is_some() {
                     log::info!(
                         "successfully parsed with `{}={}`",
                         query_pair.0,
@@ -194,13 +194,15 @@ where
                     query_pair.1,
                     err
                 );
-                last_error = Some(err);
+                if first_error.is_none() {
+                    first_error = Some(err);
+                }
             }
         }
     }
 
     log::error!("all query pairs failed, giving up");
-    Err(last_error.unwrap())
+    Err(first_error.unwrap())
 }
 
 #[inline]
@@ -230,12 +232,19 @@ mod xml {
             &[
                 ("lite", "xml"),
                 // ("__output", "9"), // exactly same as `lite=xml`, useless
-                ("__output", "10"),
-                // TODO: __output=8 yields JSON, which has same schema
+                ("__output", "10"), // compact XML
+                ("__output", "11"), // verbose JSON
+                ("__output", "8"),  // compact JSON
             ]
         }
 
-        fn parse_response(response: String) -> ServiceResult<Self> {
+        fn parse_response(mut response: String) -> ServiceResult<Self> {
+            if response.starts_with("{") {
+                // This is a JSON. Convert to XML first.
+                let value: serde_json::Value = serde_json::from_str(&response)?;
+                response = serde_xml_rs::to_string(&value)?;
+            }
+
             let package = sxd_document::parser::parse(&response)?;
             extract_error(&package)?;
             Ok(package)
