@@ -18,6 +18,14 @@ struct StaticTopicDetailsView<Content: View>: View {
   }
 }
 
+// Track the floors currently on the screen.
+final class CurrentViewingFloor {
+  var floors: Set<Int> = []
+  var highest: Int? {
+    floors.max()
+  }
+}
+
 struct TopicDetailsView: View {
   typealias DataSource = PagingDataSource<TopicDetailsResponse, Post>
 
@@ -43,6 +51,7 @@ struct TopicDetailsView: View {
   @State var showJumpSelector = false
   @State var floorToJump: Int?
   @State var postIdToJump: PostId?
+  var currentViewingFloor = CurrentViewingFloor()
 
   var localMode: Bool {
     forceLocalMode || (dataSource.latestResponse?.isLocalCache == true)
@@ -312,7 +321,11 @@ struct TopicDetailsView: View {
           let items = pair.items.filter { $0.id != first?.id }
           ForEach(items, id: \.id.pid) { post in
             buildRow(post: post)
-              .onAppear { dataSource.loadMoreIfNeeded(currentItem: post) }
+              .onAppear {
+                currentViewingFloor.floors.insert(Int(post.floor))
+                dataSource.loadMoreIfNeeded(currentItem: post)
+              }
+              .onDisappear { currentViewingFloor.floors.remove(Int(post.floor)) }
           }
         }
       }
@@ -462,7 +475,7 @@ struct TopicDetailsView: View {
       }
       // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
-      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: floorToJump ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage).presentationDetents([.medium]) }
+      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: currentViewingFloor.highest ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage).presentationDetents([.medium]) }
   }
 
   var body: some View {
