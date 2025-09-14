@@ -29,10 +29,13 @@ struct TextSelectionView: View {
     NavigationView {
       TextEditor(text: .constant(text))
         .introspect(.textEditor, on: .iOS(.v26)) { tv in
-          tv.isEditable = false
-          tv.selectAll(nil)
+          if tv.isEditable {
+            tv.isEditable = false
+            tv.selectAll(nil)
+          }
         }
-        .padding(.horizontal)
+        .padding()
+        .background(Color(.systemBackground)) // for the padding background
         .toolbar { ToolbarItem(placement: .status) { copyButton } }
         .navigationTitleInline(key: "Text Selection")
     }

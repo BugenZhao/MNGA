@@ -129,26 +129,28 @@ struct UserProfileView: View {
       }
     }
 
-    ToolbarItem(placement: .mayNavigationBarTrailing) {
-      Menu {
-        if !user.isAnonymous {
+    if !isMyself {
+      ToolbarItem(placement: .mayNavigationBarTrailing) {
+        Menu {
+          if !user.isAnonymous {
+            Section {
+              Button(action: { newShortMessage() }) {
+                Label("New Short Message", systemImage: "message")
+              }
+            }
+          }
           Section {
-            Button(action: { newShortMessage() }) {
-              Label("New Short Message", systemImage: "message")
+            Button(role: blocked ? nil : .destructive, action: { blockWords.toggle(user: user.name) }) {
+              if blocked {
+                Label("Unblock This User", systemImage: "hand.raised")
+              } else {
+                Label("Block This User", systemImage: "hand.raised")
+              }
             }
-          }.disabled(isMyself)
+          }
+        } label: {
+          Label("More", systemImage: "ellipsis.circle")
         }
-        Section {
-          Button(role: blocked ? nil : .destructive, action: { blockWords.toggle(user: user.name) }) {
-            if blocked {
-              Label("Unblock This User", systemImage: "hand.raised")
-            } else {
-              Label("Block This User", systemImage: "hand.raised")
-            }
-          }.disabled(isMyself)
-        }
-      } label: {
-        Label("More", systemImage: "ellipsis.circle")
       }
     }
   }

@@ -13,7 +13,6 @@ import SwiftUIX
 class PreferencesStorage: ObservableObject {
   static let shared = PreferencesStorage()
 
-  @AppStorage("showTopicSubjectNew") var showTopicSubject = false
   @AppStorage("showSignatureNew") var showSignature = false
   @AppStorage("showAvatar") var showAvatar = true
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = false

@@ -183,8 +183,10 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var jumpButton: some View {
-    Button(action: { showJumpSelector = true }) {
-      Label("Jump to...", systemImage: "arrow.up.arrow.down")
+    if !mock, onlyPost.id == nil {
+      Button(action: { showJumpSelector = true }) {
+        Label("Jump to...", systemImage: "arrow.up.arrow.down")
+      }
     }
   }
 
@@ -239,17 +241,21 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
-  var menu: some View {
-    Group {
-      if let postId = onlyPost.id {
-        let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
-        Button(action: { action.navigateToView = view }) {
-          Label("See Full Topic", systemImage: "doc.richtext")
-        }
-      } else {
-        moreMenu
+  var seeFullTopicButton: some View {
+    if let postId = onlyPost.id {
+      let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
+      Button(action: { action.navigateToView = view }) {
+        Text("Goto Topic")
       }
-    }.imageScale(.large)
+    }
+  }
+
+  @ViewBuilder
+  var menu: some View {
+    if onlyPost.id == nil {
+      moreMenu
+        .imageScale(.large)
+    }
   }
 
   @ViewBuilder
@@ -380,18 +386,31 @@ struct TopicDetailsView: View {
     }
   }
 
-  var title: String {
-    if localMode {
+  var titles: (String?, String?) {
+    var titles: [String] = []
+
+    if !topic.subject.content.isEmpty {
+      titles.append(topic.subject.content)
+    }
+
+    let subTitle: String? = if localMode {
       "Cached Topic".localized
     } else if !enableAuthorOnly {
       "Author Only".localized
     } else if onlyPost.id != nil {
       "Reply".localized
-    } else if prefs.showTopicSubject {
-      topic.subject.content
     } else {
-      "Topic".localized
+      nil
     }
+    if let subTitle {
+      titles.append(subTitle)
+    }
+
+    if let atForum {
+      titles.append(atForum.name)
+    }
+
+    return (titles.first, titles.dropFirst().first)
   }
 
   @ViewBuilder
@@ -415,7 +434,11 @@ struct TopicDetailsView: View {
         loadFirstPageButton
       }
       ToolbarSpacer(placement: .bottomBar)
-      ToolbarItem(placement: .bottomBar) { replyButton }
+      ToolbarItemGroup(placement: .bottomBar) {
+        // They won't show simultaneously.
+        replyButton
+        seeFullTopicButton
+      }
     #elseif os(macOS)
       ToolbarItemGroup {
         replyButton
@@ -478,9 +501,14 @@ struct TopicDetailsView: View {
   }
 
   var body: some View {
+    let (title, subtitle) = titles
+
     main
-      .navigationTitleInline(string: title)
+      .if(title != nil, content: { $0.navigationTitle(title!) })
+      .if(subtitle != nil, content: { $0.navigationSubtitle(subtitle!) })
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar { toolbar }
+      .toolbarRole(.editor) // make title left aligned
       .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
       .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
       .onChange(of: dataSource.latestError) { onError(e: $1) }
