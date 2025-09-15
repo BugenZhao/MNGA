@@ -86,7 +86,7 @@
    克隆仓库到本地，在项目的根目录，运行
 
    ```bash
-   $ make generate
+   $ make tuist
    $ make ios
    ```
 
