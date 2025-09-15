@@ -236,3 +236,5 @@
 "Text Parse" = "文本解析";
 "URL Parse" = "URL 解析";
 "Backend Panic" = "后端错误";
+"Tag" = "标签";
+"Add Tag" = "添加标签";

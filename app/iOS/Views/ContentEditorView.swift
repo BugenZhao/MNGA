@@ -10,6 +10,32 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+struct SubjectEditorView: View {
+  @Binding var subject: String
+  @State var selection: TextSelection?
+
+  func addTagPlaceholder() {
+    // FIXME: iOS 26: cannot use unicode (localized) string here, use "..." instead for now.
+    let placeholder = "..."
+    subject = "[\(placeholder)]\(subject)"
+    let range = subject.range(of: placeholder)!
+    selection = TextSelection(range: range)
+  }
+
+  var body: some View {
+    TextField("", text: $subject, selection: $selection)
+      .toolbar {
+        ToolbarItemGroup(placement: .keyboard) {
+          Button(action: addTagPlaceholder) {
+            Label("Add Tag", systemImage: "tag")
+              .labelStyle(.titleAndIcon)
+          }
+          Spacer()
+        }
+      }
+  }
+}
+
 struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   @Binding var context: M.Context
   @State var first = true
@@ -49,7 +75,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
         if context.subject != nil {
           Section(header: Text("Subject")) {
-            TextField("", text: $context.subject ?? "")
+            SubjectEditorView(subject: $context.subject.withDefaultValue(""))
           }
         }
 
