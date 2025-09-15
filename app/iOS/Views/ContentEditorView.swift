@@ -16,7 +16,7 @@ enum Focus {
   case content
 }
 
-struct SubjectEditorView: View {
+struct SubjectTextFieldView: View {
   @Binding var subject: String
   @State var selection: TextSelection?
 
@@ -178,4 +178,6 @@ struct ContentEditorView_Previews: PreviewProvider {
     Preview.build(subject: "Subject")
     Preview.build(subject: nil)
   }
+}
+
 }
