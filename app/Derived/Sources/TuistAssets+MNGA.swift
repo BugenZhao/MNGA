@@ -19,9 +19,7 @@
 
 public enum MNGAAsset: Sendable {
   public static let accentColor = MNGAColors(name: "AccentColor")
-  public static let github = MNGAImages(name: "github")
   public static let lightAccentColor = MNGAColors(name: "LightAccentColor")
-  public static let roundedIcon = MNGAImages(name: "RoundedIcon")
   public static let a2Doge = MNGAImages(name: "a2|doge")
   public static let a2Goodjob = MNGAImages(name: "a2|goodjob")
   public static let a2Jojo立 = MNGAImages(name: "a2|jojo立")
