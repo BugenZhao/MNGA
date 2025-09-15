@@ -1,0 +1,49 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.75294,0.61569,0.45098,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : "none"
+            },
+            {
+              "appearance" : "dark",
+              "value" : "automatic"
+            },
+            {
+              "appearance" : "tinted",
+              "value" : "none"
+            }
+          ],
+          "image-name" : "Inner.svg",
+          "name" : "Inner",
+          "position" : {
+            "scale" : 0.96,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.4
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

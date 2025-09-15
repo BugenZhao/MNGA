@@ -34,6 +34,7 @@ let project = Project(
             resources: [
                 "Shared/Assets.xcassets",
                 "Shared/Localization/**",
+                "MNGA.icon",
             ],
             entitlements: "MNGA.entitlements",
             dependencies: [
@@ -54,6 +55,7 @@ let project = Project(
             ],
             settings: .settings(
                 base: [
+                    "ASSETCATALOG_COMPILER_APPICON_NAME": "MNGA",
                     "MARKETING_VERSION": "1.2.0",
                     "CURRENT_PROJECT_VERSION": "1",
                     "SWIFT_VERSION": "5.0",
