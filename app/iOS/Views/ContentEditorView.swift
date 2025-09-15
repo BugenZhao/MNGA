@@ -58,7 +58,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
   @ViewBuilder
   var stickerPanel: some View {
-    StickerInputView(text: $model.text, selected: $model.selected)
+    StickerInputView(model: model)
       .background(.secondarySystemGroupedBackground)
       .frame(maxHeight: 240)
   }
@@ -81,12 +81,14 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
         Section(header: Text("Content")) {
           ZStack(alignment: .topLeading) { // hack for dynamic height
-            textEditor.introspect(.textEditor, on: .iOS(.v14, .v15, .v16, .v17)) { tv in
-              if first { tv.becomeFirstResponder(); first = false }
-            }
-            Text(model.text).opacity(0).padding(.all, 6)
-          }.font(.callout)
-            .frame(minHeight: 250)
+            textEditor
+            // TODO: do we still need this?
+            // .introspect(.textEditor, on: .iOS(.v26)) { tv in
+            //   if first { tv.becomeFirstResponder(); first = false }
+            // }
+            // Text(model.attributedText).opacity(0).padding(.all, 6)
+          }
+          .frame(minHeight: 250)
         }
 
         if context.anonymous != nil {
@@ -106,7 +108,8 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
       }
     }
     .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
-    .onChange(of: model.text) { context.content = $1 }
+    .onChange(of: model.text) { context.content = model.text }
+    // TODO: use swiftui native photo picker
     .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 0.8)) }
     .onChange(of: model.image) { uploadImageAttachment(data: $1) }
     .toast(isPresenting: $model.image.isNotNil()) { AlertToast(type: .loading) }
@@ -124,7 +127,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
       context.attachments.append(attachment)
       presendAttachments.add(url: attachment.url, data: data)
 
-      model.insert("\n[img]./\(attachment.url)[/img]")
+      model.insert("\n[img]./\(attachment.url)[/img]\n")
       model.image = nil
     } onError: { _ in
       model.image = nil

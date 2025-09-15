@@ -9,8 +9,7 @@ import Foundation
 import SwiftUI
 
 struct StickerInputView: View {
-  @Binding var text: String
-  @Binding var selected: NSRange
+  @ObservedObject var model: ContentEditorModel
 
   var body: some View {
     let rows = [GridItem](repeating: .init(.fixed(50)), count: 4)
@@ -33,23 +32,19 @@ struct StickerInputView: View {
   }
 
   func insert(name: String) {
-    let range = Range(selected, in: text)!
     let code = stickerImageNameToCode(name)
-    text.replaceSubrange(range, with: code)
-    let newLocation = selected.location + (code as NSString).length
-    selected = NSRange(location: newLocation, length: 0)
+    model.insert(code)
   }
 }
 
 struct StickerInputView_Previews: PreviewProvider {
   struct Preview: View {
-    @State var text = "233"
-    @State var selected = NSRange()
+    @StateObject var model = ContentEditorModel(initialText: "233")
 
     var body: some View {
       VStack {
-        Text(text)
-        StickerInputView(text: $text, selected: $selected)
+        Text(model.text)
+        StickerInputView(model: model)
           .background(.secondary.opacity(0.2))
       }
     }

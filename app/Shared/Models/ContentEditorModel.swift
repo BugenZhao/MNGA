@@ -22,45 +22,72 @@ class ContentEditorModel: ObservableObject {
     didSet { if showing != .none { keyboard.dismiss() } }
   }
 
-  @Published var selected: NSRange
   @Published var text: String
+  @Published var selection: TextSelection?
 
   @Published var image: Data? = nil
   @Published var showingImagePicker = false
 
-  @objc func showSticker() {
+  func showSticker() {
     showing = .sticker
   }
 
   init(initialText: String) {
-    _text = .init(initialValue: initialText)
-    _selected = .init(initialValue: NSRange(location: (initialText as NSString).length, length: 0))
-  }
-
-  private func appendTag(_ tag: String) {
-    let range = Range(selected, in: text)!
-    let selectedText = text[range]
-    text.replaceSubrange(range, with: "[\(tag)]\(selectedText)[/\(tag)]")
-    let newLocation = selected.location + (tag as NSString).length + 2
-    selected = NSRange(location: newLocation, length: selected.length)
-  }
-
-  @objc func appendBold() {
-    appendTag("b")
-  }
-
-  @objc func appendDel() {
-    appendTag("del")
-  }
-
-  @objc func showImagePicker() {
-    showingImagePicker = true
+    text = initialText
+    selection = TextSelection(insertionPoint: text.endIndex)
   }
 
   func insert(_ string: String) {
-    let range = Range(selected, in: text)!
+    let selection = self.selection ?? TextSelection(insertionPoint: text.endIndex)
+    guard case let .selection(range) = selection.indices else { return }
+    let prefixLength = text.distance(from: text.startIndex, to: range.lowerBound)
+
     text.replaceSubrange(range, with: string)
-    let newLocation = selected.location + (string as NSString).length
-    selected = NSRange(location: newLocation, length: 0)
+
+    let insertionPoint = text.index(text.startIndex, offsetBy: prefixLength + string.count)
+    self.selection = TextSelection(insertionPoint: insertionPoint)
+
+    // Sometimes it just doesn't work if we set string and selection at the same time...
+    // DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+    //   if let ip = insertionPoint.samePosition(in: self.text) {
+    //     self.selection = TextSelection(insertionPoint: ip)
+    //   }
+    // }
+  }
+
+  private func appendTag(_ tag: String) {
+    let open = "[\(tag)]"
+    let close = "[/\(tag)]"
+
+    let selection = self.selection ?? TextSelection(insertionPoint: text.endIndex)
+    guard case let .selection(range) = selection.indices else { return }
+    let prefixLength = text.distance(from: text.startIndex, to: range.lowerBound)
+    let distance = text.distance(from: range.lowerBound, to: range.upperBound)
+
+    text.insert(contentsOf: open, at: range.lowerBound)
+    text.insert(contentsOf: close, at: text.index(text.startIndex, offsetBy: prefixLength + open.count + distance))
+
+    // Note: never reuse index after mutation! if there's re-allocation, the index is invalid!
+    let insertionPoint = text.index(text.startIndex, offsetBy: prefixLength + open.count + distance)
+    self.selection = TextSelection(insertionPoint: insertionPoint)
+
+    // Sometimes it just doesn't work if we set string and selection at the same time...
+    // DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+    //   if let ip = insertionPoint.samePosition(in: self.text) {
+    //     self.selection = TextSelection(insertionPoint: ip)
+    //   }
+    // }
+  }
+
+  func appendBold() {
+    appendTag("b")
+  }
+
+  func appendDel() {
+    appendTag("del")
+  }
+
+  func showImagePicker() {
+    showingImagePicker = true
   }
 }

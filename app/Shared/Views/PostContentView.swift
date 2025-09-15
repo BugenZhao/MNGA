@@ -67,6 +67,7 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
 }
 
 extension PostContentView where S == [Span] {
+  // TODO: shall we increase default font size?
   init(content: PostContent, id: PostId? = nil, postDate: UInt64? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     spans = content.spans
     error = content.error
