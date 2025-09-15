@@ -10,12 +10,50 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+enum Focus {
+  case sendTo
+  case subject
+  case content
+}
+
+struct SubjectTextFieldView: View {
+  @Binding var subject: String
+  @State var selection: TextSelection?
+
+  let focused: Bool
+
+  func addTagPlaceholder() {
+    // FIXME: iOS 26: cannot use unicode (localized) string here, use "..." instead for now.
+    let placeholder = "..."
+    subject = "[\(placeholder)]\(subject)"
+    let range = subject.range(of: placeholder)!
+    selection = TextSelection(range: range)
+  }
+
+  var body: some View {
+    TextField("", text: $subject, selection: $selection)
+      .toolbar {
+        // Show toolbar only when focused, otherwise it will also be shown in other text fields.
+        if focused {
+          ToolbarItemGroup(placement: .keyboard) {
+            Button(action: addTagPlaceholder) {
+              Label("Add Tag", systemImage: "tag")
+                .labelStyle(.titleAndIcon)
+            }
+            Spacer()
+          }
+        }
+      }
+  }
+}
+
 struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   @Binding var context: M.Context
-  @State var first = true
 
   @StateObject var model: ContentEditorModel
   @StateObject var keyboard = Keyboard.main
+
+  @FocusState var focused: Focus?
 
   @EnvironmentObject var presendAttachments: PresendAttachmentsModel
 
@@ -27,14 +65,29 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
   @ViewBuilder
   var textEditor: some View {
-    ContentTextEditorView(model: model)
+    ContentTextEditorView(
+      model: model,
+      focused: Binding(get: { focused == .content }, set: { focused = $0 ? .content : nil }),
+    )
   }
 
   @ViewBuilder
   var stickerPanel: some View {
-    StickerInputView(text: $model.text, selected: $model.selected)
+    StickerInputView(model: model)
       .background(.secondarySystemGroupedBackground)
       .frame(maxHeight: 240)
+  }
+
+  func setFocusOnAppear() {
+    focused = if context.to?.isEmpty == true {
+      .sendTo
+    } else if context.subject?.isEmpty == true {
+      .subject
+    } else if context.content?.isEmpty == true {
+      .content
+    } else {
+      nil
+    }
   }
 
   var body: some View {
@@ -44,23 +97,21 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
           Section(header: Text("Send To"), footer: Text("Separate multiple users with space.")) {
             TextField("", text: $context.to ?? "")
               .disableAutocorrection(true)
+              .focused($focused, equals: .sendTo)
           }
         }
 
         if context.subject != nil {
           Section(header: Text("Subject")) {
-            TextField("", text: $context.subject ?? "")
+            SubjectEditorView(subject: $context.subject.withDefaultValue(""), focused: focused == .subject)
+              .focused($focused, equals: .subject)
           }
         }
 
         Section(header: Text("Content")) {
-          ZStack(alignment: .topLeading) { // hack for dynamic height
-            textEditor.introspect(.textEditor, on: .iOS(.v14, .v15, .v16, .v17)) { tv in
-              if first { tv.becomeFirstResponder(); first = false }
-            }
-            Text(model.text).opacity(0).padding(.all, 6)
-          }.font(.callout)
+          textEditor
             .frame(minHeight: 250)
+            .focused($focused, equals: .content)
         }
 
         if context.anonymous != nil {
@@ -79,8 +130,10 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
         }
       }
     }
+    .onAppear { setFocusOnAppear() }
     .onReceive(keyboard.$isShown) { shown in if shown { model.showing = .none } }
-    .onChange(of: model.text) { context.content = $1 }
+    .onChange(of: model.text) { context.content = model.text }
+    // TODO: use swiftui native photo picker
     .sheet(isPresented: $model.showingImagePicker) { ImagePicker(data: $model.image, encoding: .jpeg(compressionQuality: 0.8)) }
     .onChange(of: model.image) { uploadImageAttachment(data: $1) }
     .toast(isPresenting: $model.image.isNotNil()) { AlertToast(type: .loading) }
@@ -98,7 +151,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
       context.attachments.append(attachment)
       presendAttachments.add(url: attachment.url, data: data)
 
-      model.insert("\n[img]./\(attachment.url)[/img]")
+      model.insert("\n[img]./\(attachment.url)[/img]\n")
       model.image = nil
     } onError: { _ in
       model.image = nil
@@ -125,4 +178,6 @@ struct ContentEditorView_Previews: PreviewProvider {
     Preview.build(subject: "Subject")
     Preview.build(subject: nil)
   }
+}
+
 }

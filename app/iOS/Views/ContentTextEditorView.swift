@@ -8,79 +8,49 @@
 import Foundation
 import SwiftUI
 
-struct ContentTextEditorView: UIViewRepresentable {
+struct ContentTextEditorView: View {
   @ObservedObject var model: ContentEditorModel
 
-  init(model: ContentEditorModel) {
-    self.model = model
+  @Binding var focused: Bool
+
+  var body: some View {
+    TextEditor(text: $model.text, selection: $model.selection)
+      .toolbar {
+        // Show toolbar only when focused, otherwise it will also be shown in other text fields.
+        if focused {
+          ToolbarItemGroup(placement: .keyboard) {
+            Button(action: model.showSticker) {
+              Image(systemName: "face.smiling")
+            }
+            Button(action: model.appendBold) {
+              Image(systemName: "bold")
+            }
+            Button(action: model.appendDel) {
+              Image(systemName: "strikethrough")
+            }
+            Button(action: model.showImagePicker) {
+              Image(systemName: "photo")
+            }
+            Spacer()
+            Button(action: hideKeyboard) {
+              Image(systemName: "keyboard.chevron.compact.down")
+            }
+          }
+        }
+      }
   }
 
-  func makeUIView(context: Context) -> UITextView {
-    let textView = UITextView()
-    textView.delegate = context.coordinator
-
-    let inputView = UIInputView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44), inputViewStyle: .keyboard)
-
-    let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-    let flexButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-    let doneButton = UIBarButtonItem(image: UIImage(systemName: "keyboard.chevron.compact.down"), style: .done, target: self, action: #selector(textView.doneButtonTapped(button:)))
-    let stickerButton = UIBarButtonItem(image: UIImage(systemName: "face.smiling"), style: .plain, target: model, action: #selector(ContentEditorModel.showSticker))
-    let imageButton = UIBarButtonItem(image: UIImage(systemName: "photo"), style: .plain, target: model, action: #selector(ContentEditorModel.showImagePicker))
-    let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: model, action: #selector(ContentEditorModel.appendBold))
-    let delButton = UIBarButtonItem(image: UIImage(systemName: "strikethrough"), style: .plain, target: model, action: #selector(ContentEditorModel.appendDel))
-    let sepButton = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-    sepButton.width = 12
-
-    toolbar.items = [stickerButton, imageButton, sepButton, boldButton, delButton, flexButton, doneButton]
-
-    // make the toolbar translucent with keyboard
-    toolbar.isTranslucent = true
-    toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-    toolbar.backgroundColor = .clear
-    inputView.addSubview(toolbar)
-
-    textView.inputAccessoryView = inputView
-    textView.isSelectable = true
-    textView.isUserInteractionEnabled = true
-    textView.font = UIFont.preferredFont(forTextStyle: .callout)
-    textView.backgroundColor = .clear
-
-    return textView
-  }
-
-  func updateUIView(_ textView: UITextView, context _: Context) {
-    let text = model.text
-    let selected = model.selected
-
-    if text != textView.text {
-      textView.text = text
-    }
-    textView.selectedRange = selected
-  }
-
-  func makeCoordinator() -> Coordinator {
-    Coordinator(model: model)
-  }
-
-  class Coordinator: NSObject, UITextViewDelegate {
-    let model: ContentEditorModel
-
-    init(model: ContentEditorModel) {
-      self.model = model
-    }
-
-    func textViewDidChange(_ textView: UITextView) {
-      model.text = textView.text
-    }
-
-    func textViewDidChangeSelection(_ textView: UITextView) {
-      model.selected = textView.selectedRange
+  private func hideKeyboard() {
+    withAnimation {
+      focused = false
     }
   }
 }
 
-extension UITextView {
-  @objc func doneButtonTapped(button _: UIBarButtonItem) {
-    resignFirstResponder()
+// MARK: - Preview
+
+struct ContentTextEditorView_Previews: PreviewProvider {
+  static var previews: some View {
+    ContentTextEditorView(model: ContentEditorModel(initialText: "Sample text"), focused: .constant(true))
   }
 }
