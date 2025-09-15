@@ -10,33 +10,31 @@ import SwiftUI
 
 struct ContentTextEditorView: View {
   @ObservedObject var model: ContentEditorModel
-  // @Binding var isEditorFocused: FocusState<Bool>
 
-  init(model: ContentEditorModel) {
-    self.model = model
-  }
+  @Binding var focused: Bool
 
   var body: some View {
     TextEditor(text: $model.text, selection: $model.selection)
-      // .focused(isEditorFocused)
       .toolbar {
-        ToolbarItemGroup(placement: .keyboard) {
-          Button(action: model.showSticker) {
-            Image(systemName: "face.smiling")
-          }
-          Button(action: model.appendBold) {
-            Image(systemName: "bold")
-          }
-          Button(action: model.appendDel) {
-            Image(systemName: "strikethrough")
-          }
-          Button(action: model.showImagePicker) {
-            Image(systemName: "photo")
-          }
-          Spacer()
-          Button(action: hideKeyboard) {
-            Label("Done", systemImage: "keyboard.chevron.compact.down")
-              .labelStyle(.titleOnly)
+        // Show toolbar only when focused, otherwise it will also be shown in other text fields.
+        if focused {
+          ToolbarItemGroup(placement: .keyboard) {
+            Button(action: model.showSticker) {
+              Image(systemName: "face.smiling")
+            }
+            Button(action: model.appendBold) {
+              Image(systemName: "bold")
+            }
+            Button(action: model.appendDel) {
+              Image(systemName: "strikethrough")
+            }
+            Button(action: model.showImagePicker) {
+              Image(systemName: "photo")
+            }
+            Spacer()
+            Button(action: hideKeyboard) {
+              Image(systemName: "keyboard.chevron.compact.down")
+            }
           }
         }
       }
@@ -44,7 +42,7 @@ struct ContentTextEditorView: View {
 
   private func hideKeyboard() {
     withAnimation {
-      // isEditorFocused = false
+      focused = false
     }
   }
 }
@@ -53,6 +51,6 @@ struct ContentTextEditorView: View {
 
 struct ContentTextEditorView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentTextEditorView(model: ContentEditorModel(initialText: "Sample text"))
+    ContentTextEditorView(model: ContentEditorModel(initialText: "Sample text"), focused: .constant(true))
   }
 }

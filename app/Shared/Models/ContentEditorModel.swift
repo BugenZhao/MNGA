@@ -38,7 +38,7 @@ class ContentEditorModel: ObservableObject {
   }
 
   func insert(_ string: String) {
-    let selection = self.selection ?? TextSelection(insertionPoint: text.endIndex)
+    let selection = selection ?? TextSelection(insertionPoint: text.endIndex)
     guard case let .selection(range) = selection.indices else { return }
     let prefixLength = text.distance(from: text.startIndex, to: range.lowerBound)
 
@@ -59,7 +59,7 @@ class ContentEditorModel: ObservableObject {
     let open = "[\(tag)]"
     let close = "[/\(tag)]"
 
-    let selection = self.selection ?? TextSelection(insertionPoint: text.endIndex)
+    let selection = selection ?? TextSelection(insertionPoint: text.endIndex)
     guard case let .selection(range) = selection.indices else { return }
     let prefixLength = text.distance(from: text.startIndex, to: range.lowerBound)
     let distance = text.distance(from: range.lowerBound, to: range.upperBound)
