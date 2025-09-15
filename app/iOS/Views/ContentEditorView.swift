@@ -103,7 +103,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
 
         if context.subject != nil {
           Section(header: Text("Subject")) {
-            SubjectEditorView(subject: $context.subject.withDefaultValue(""), focused: focused == .subject)
+            SubjectTextFieldView(subject: $context.subject.withDefaultValue(""), focused: focused == .subject)
               .focused($focused, equals: .subject)
           }
         }
@@ -178,6 +178,4 @@ struct ContentEditorView_Previews: PreviewProvider {
     Preview.build(subject: "Subject")
     Preview.build(subject: nil)
   }
-}
-
 }
