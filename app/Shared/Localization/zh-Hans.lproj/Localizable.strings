@@ -10,6 +10,7 @@
 "Topic" = "话题";
 "Post" = "帖子";
 "Replies" = "回复";
+"Subforums" = "子版块";
 "Subforums (%lld)" = "子版块 (%lld)";
 "Refresh" = "刷新";
 "Copy Raw Content" = "拷贝原始内容";

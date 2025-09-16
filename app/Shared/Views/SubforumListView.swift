@@ -8,11 +8,34 @@
 import Foundation
 import SwiftUI
 
+struct SubforumRowView: View {
+  let isFavorite: Bool
+  @Binding var subforum: Subforum
+
+  var body: some View {
+    HStack {
+      ForumRowView(forum: subforum.forum, isFavorite: isFavorite)
+
+      Group {
+        if subforum.filterable {
+          Toggle(isOn: $subforum.selected) {}
+        } else {
+          Toggle(isOn: .constant(true)) {}.disabled(true)
+        }
+      }
+      .labelsHidden()
+      .tint(.accentColor)
+    }
+  }
+}
+
 struct SubforumListView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
 
   let forum: Forum
-  let subforums: [Subforum]
+  // Marked as @State instead of @Binding since it's not actually synced with parent.
+  // On toggling, a request will be sent to server, and we will be refreshed.
+  @State var subforums: [Subforum]
   let refresh: () -> Void
   let onNavigateToForum: (Forum) -> Void
 
@@ -23,39 +46,30 @@ struct SubforumListView: View {
       $0.subforumFilterID = subforum.filterID
     })) { (_: SubforumFilterResponse) in
       refresh()
+      HapticUtils.play(type: .success)
     }
   }
 
   @ViewBuilder
-  func buildLink(_ subforum: Subforum) -> some View {
+  func buildLink(_ subforumBinding: Binding<Subforum>) -> some View {
+    let subforum = subforumBinding.wrappedValue
     let forum = subforum.forum
     let isFavorite = favorites.isFavorite(id: forum.id)
 
     Button(action: { onNavigateToForum(forum) }) {
-      HStack {
-        Image(systemName: subforum.selected || !subforum.filterable ? "checkmark.circle.fill" : "circle")
-          .onTapGesture {
-            if subforum.filterable {
-              setSubforumFilter(show: !subforum.selected, subforum: subforum)
-            }
-          }
-          .foregroundColor(subforum.filterable ? .accentColor : .secondary)
-
-        ForumRowView(forum: forum, isFavorite: isFavorite)
-      }
+      SubforumRowView(isFavorite: isFavorite, subforum: subforumBinding)
+        .onChange(of: subforum.selected) { setSubforumFilter(show: $1, subforum: subforum) }
     }.modifier(FavoriteModifier(forum: forum))
   }
 
   var body: some View {
     List {
-      ForEach(subforums, id: \.forum.idDescription) { subforum in
+      ForEachOrEmpty($subforums, id: \.wrappedValue.forum.idDescription) { subforum in
         buildLink(subforum)
       }
     }
-    .navigationTitle("Subforums of \(forum.name)")
     #if os(iOS)
-      .navigationBarTitleDisplayMode(.inline)
-      .listStyle(InsetGroupedListStyle())
+    .listStyle(InsetGroupedListStyle())
     #endif
   }
 }
