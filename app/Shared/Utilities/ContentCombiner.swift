@@ -379,7 +379,11 @@ class ContentCombiner {
   }
 
   private func visit(quote: Span.Tagged) {
-    let combiner = ContentCombiner(parent: self, font: { _ in Font.subheadline }, color: { _ in Color.primary.opacity(0.9) })
+    let combiner = ContentCombiner(
+      parent: self,
+      font: { $0 == .callout ? .subheadline : .callout },
+      color: { _ in Color.primary.opacity(0.9) }
+    )
     combiner.inQuote = true
 
     let spans = quote.spans

@@ -21,21 +21,42 @@ extension EnvironmentValues {
   }
 }
 
+enum PostFontSize {
+  // Used in posts.
+  case small
+  // Used in post comments and signatures.
+  // Though the code path is not unified yet, this will also be used for quotes.
+  case normal
+}
+
 struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
+  @StateObject var pref = PreferencesStorage.shared
+
   let spans: S
   let error: String?
   let id: PostId?
   let postDate: UInt64?
-  let defaultFont: Font
+  let fontSize: PostFontSize
   let defaultColor: Color
   let initialInQuote: Bool
 
-  init(spans: S, error: String? = nil, id: PostId? = nil, postDate: UInt64? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  var defaultFont: Font {
+    let useLargerFont = pref.postRowLargerFont
+
+    return switch fontSize {
+    case .small:
+      useLargerFont ? .callout : .subheadline
+    case .normal:
+      useLargerFont ? .body : .callout
+    }
+  }
+
+  init(spans: S, error: String? = nil, id: PostId? = nil, postDate: UInt64? = nil, fontSize: PostFontSize = .normal, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     self.spans = spans
     self.error = error
     self.id = id
     self.postDate = postDate
-    self.defaultFont = defaultFont
+    self.fontSize = fontSize
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote
   }
@@ -67,13 +88,12 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
 }
 
 extension PostContentView where S == [Span] {
-  // TODO: shall we increase default font size?
-  init(content: PostContent, id: PostId? = nil, postDate: UInt64? = nil, defaultFont: Font = .callout, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  init(content: PostContent, id: PostId? = nil, postDate: UInt64? = nil, fontSize: PostFontSize = .normal, defaultColor: Color = .primary, initialInQuote: Bool = false) {
     spans = content.spans
     error = content.error
     self.id = id
     self.postDate = postDate
-    self.defaultFont = defaultFont
+    self.fontSize = fontSize
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote
   }

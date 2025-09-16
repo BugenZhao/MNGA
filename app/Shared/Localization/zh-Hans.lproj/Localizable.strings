@@ -211,9 +211,9 @@
 "Detailed" = "详细";
 "Time Ago" = "时间差";
 "Topic List Style" = "话题列表样式";
-"Topic Details Style" = "话题详情样式";
+"Topic Details Style" = "话题内容样式";
 "Author Info" = "作者信息";
-"Show Author Indicator" = "显示作者图标";
+"Show Author Indicator" = "显示作者标识";
 "Mode" = "模式";
 "Participants" = "参与者";
 "List Style" = "列表样式";
@@ -228,6 +228,9 @@
 "Hide MNGA Meta" = "隐藏 MNGA Meta 版块";
 "Custom" = "自定义";
 "Custom User-Agent" = "自定义 User-Agent";
+"Tag" = "标签";
+"Add Tag" = "添加标签";
+"Larger Font" = "更大字体";
 
 "Missing Field" = "缺少字段";
 "Network Connection" = "网络连接";
@@ -237,5 +240,3 @@
 "Text Parse" = "文本解析";
 "URL Parse" = "URL 解析";
 "Backend Panic" = "后端错误";
-"Tag" = "标签";
-"Add Tag" = "添加标签";

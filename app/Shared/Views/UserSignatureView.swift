@@ -18,7 +18,7 @@ struct UserSignatureView: View {
       Image(systemName: "signature")
         .foregroundColor(.accentColor)
         .imageScale(.small)
-      PostContentView(content: content, defaultFont: font, defaultColor: color)
+      PostContentView(content: content, fontSize: .small, defaultColor: color)
     }
   }
 }
