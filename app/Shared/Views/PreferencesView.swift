@@ -15,6 +15,19 @@ private struct PostRowAppearanceView: View {
     Form {
       Section(header: Text("Preview")) {
         PostRowView.build(post: .dummy, isAuthor: true, vote: .constant((state: .up, delta: 0)))
+          // PostContentView doesn't seem to correctly refresh when larger font setting changes,
+          // as it creates a new state object from the global shared one. This won't be a problem
+          // in actual browsing. So here we simply use a trick to force refresh.
+          .id("dummy-post-larger-font-\(pref.postRowLargerFont)")
+      }
+
+      Section {
+        Toggle(isOn: $pref.usePaginatedDetails) {
+          Label("Paginated Reading", systemImage: "square.stack")
+        }
+        Toggle(isOn: $pref.postRowLargerFont) {
+          Label("Larger Font", systemImage: "textformat.size")
+        }
       }
 
       Section {
@@ -36,27 +49,20 @@ private struct PostRowAppearanceView: View {
         Toggle(isOn: $pref.showAvatar.animation()) {
           Label("Show Avatar", systemImage: "person.crop.circle")
         }
-      }
 
-      Section {
         Toggle(isOn: $pref.postRowShowAuthorIndicator.animation()) {
-          Text("Show Author Indicator")
+          Label("Show Author Indicator", systemImage: "person.fill")
         }
         Toggle(isOn: $pref.postRowShowUserDetails.animation()) {
-          Text("Show User Details")
+          Label("Show User Details", systemImage: "info.circle")
         }
         if pref.postRowShowUserDetails {
           Toggle(isOn: $pref.postRowShowUserRegDate.animation()) {
-            Text("Show User Register Date")
+            Label("Show User Register Date", systemImage: "calendar")
           }
         }
       }
 
-      Section {
-        Toggle(isOn: $pref.usePaginatedDetails) {
-          Label("Paginated Reading", systemImage: "square.stack")
-        }
-      }
     }.tint(.accentColor)
       .navigationTitleInline(string: "")
   }
