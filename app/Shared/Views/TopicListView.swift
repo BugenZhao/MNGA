@@ -121,6 +121,13 @@ struct TopicListView: View {
     }
   }
 
+  @ViewBuilder
+  var subforumButton: some View {
+    Button(action: { showingSubforumsModal = true }) {
+      Label("Subforums", systemImage: "list.triangle")
+    }
+  }
+
   var debugName: String {
     forum.idDescription + " " + (dataSource.latestResponse?.forum.name ?? "")
   }
@@ -157,13 +164,6 @@ struct TopicListView: View {
       ShareLinksView(navigationID: navID) {}
 
       Section {
-        if let subforums = dataSource.latestResponse?.subforums,
-           !subforums.isEmpty
-        {
-          Button(action: { showingSubforumsModal = true }) {
-            Label("Subforums (\(subforums.count))", systemImage: "list.triangle")
-          }
-        }
         Button(action: { favoriteForums.toggleFavorite(forum: forum) }) {
           Label(
             isFavorite ? "Remove from Favorites" : "Mark as Favorite",
@@ -184,18 +184,23 @@ struct TopicListView: View {
 
   @ViewBuilder
   var subforumsModal: some View {
-    if let subforums = dataSource.latestResponse?.subforums, !subforums.isEmpty {
-      NavigationView {
-        SubforumListView(
-          forum: forum,
-          subforums: subforums,
-          refresh: { dataSource.refresh() },
-          onNavigateToForum: {
-            showingSubforumsModal = false
-            currentShowingSubforum = $0
-          }
-        )
-      }
+    NavigationView {
+      Group {
+        if let subforums = dataSource.latestResponse?.subforums {
+          SubforumListView(
+            forum: forum,
+            subforums: subforums,
+            refresh: { dataSource.refresh(animated: true) },
+            onNavigateToForum: {
+              showingSubforumsModal = false
+              currentShowingSubforum = $0
+            }
+          )
+        } else {
+          ProgressView()
+        }
+      }.navigationTitle("Subforums of \(forum.name)")
+        .navigationBarTitleDisplayMode(.inline)
     }
   }
 
@@ -212,11 +217,11 @@ struct TopicListView: View {
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
 
       // -- Bottom Bar
+      ToolbarItem(placement: .bottomBar) { subforumButton }
+      ToolbarSpacer(placement: .bottomBar)
       DefaultToolbarItem(kind: .search, placement: .bottomBar)
       ToolbarSpacer(placement: .bottomBar)
-      ToolbarItemGroup(placement: .bottomBar) {
-        newTopicButton
-      }
+      ToolbarItem(placement: .bottomBar) { newTopicButton }
     #elseif os(macOS)
       ToolbarItemGroup {
         newTopicButton
@@ -260,7 +265,7 @@ struct TopicListView: View {
     }
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name.localized)
-    .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
+    .sheet(isPresented: $showingSubforumsModal) { subforumsModal.presentationDetents([.medium, .large]) }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
     .toolbar { toolbar }
