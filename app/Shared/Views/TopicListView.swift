@@ -243,8 +243,9 @@ struct TopicListView: View {
       } else {
         List {
           ForEach(itemBindings, id: \.id) { topic in
-            // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
-            NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic).id(topic.w.id) }) {
+            CrossStackNavigationLinkHack(id: topic.w.id, destination: {
+              TopicDetailsView.build(topicBinding: topic)
+            }) {
               TopicRowView(topic: topic.w, useTopicPostDate: order == .postDate)
             }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }

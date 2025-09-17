@@ -42,8 +42,7 @@ struct FavoriteTopicListView: View {
       } else {
         List {
           ForEach($dataSource.items, id: \.id) { topic in
-            // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
-            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic).id(topic.w.id)) {
+            CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: topic), id: topic.w.id) {
               TopicRowView(topic: topic.w, dimmedSubject: false, showIndicators: false)
                 .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
             }

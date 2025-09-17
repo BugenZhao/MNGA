@@ -46,8 +46,9 @@ struct ShortMessageListView: View {
       } else {
         List {
           ForEach(dataSource.items, id: \.id) { message in
-            // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
-            NavigationLink(destination: { ShortMessageDetailsView.build(mid: message.id).id(message.id) }) {
+            CrossStackNavigationLinkHack(id: message.id, destination: {
+              ShortMessageDetailsView.build(mid: message.id)
+            }) {
               ShortMessageRowView(message: message)
             }.onAppear { dataSource.loadMoreIfNeeded(currentItem: message) }
           }

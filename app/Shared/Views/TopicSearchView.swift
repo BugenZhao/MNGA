@@ -45,8 +45,9 @@ struct TopicSearchItemsView: View {
         .onAppear { dataSource.initialLoad() }
     } else {
       ForEachOrEmpty($dataSource.items, id: \.wrappedValue.id) { topic in
-        // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
-        NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic).id(topic.w.id) }) {
+        CrossStackNavigationLinkHack(id: topic.w.id, destination: {
+          TopicDetailsView.build(topicBinding: topic)
+        }) {
           TopicRowView(topic: topic.w)
         }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
       }
