@@ -137,7 +137,7 @@ struct UserMenuView: View {
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
-      .sheet(isPresented: $showAboutViewAsModal) { NavigationStack { AboutView() } }
+      .sheet(isPresented: $showAboutViewAsModal) { AboutNavigationView() }
   }
 
   func reSignIn() {

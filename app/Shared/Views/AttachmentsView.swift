@@ -14,7 +14,7 @@ struct AttachmentsView: View {
   @EnvironmentObject<ViewingImageModel>.Optional var image
   @ObservedObject var model: AttachmentsModel
 
-  @Environment(\.presentationMode) var presentation
+  @Binding var isPresented: Bool
 
   func image(for attachment: Attachment) -> String {
     switch attachment.type {
@@ -45,7 +45,7 @@ struct AttachmentsView: View {
     guard let url else { return }
 
     if attachment.type == "img" {
-      presentation.dismiss()
+      isPresented = false // dismiss sheet first, otherwise the background will be black
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // workaround image viewer background
         image?.show(url: url)
       }

@@ -70,28 +70,44 @@ struct ContentView: View {
 
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
-    #if os(iOS)
-      .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
-    #endif
       .onOpenURL { _ = schemes.onNavigateToURL($0) }
-      .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
+      .modifier(MainToastModifier())
+      .preferredColorScheme(prefs.colorScheme.scheme)
+      // Sheets
+      .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) } // this is global-wide, no need to attribute again in sheets
+      .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })
-      .modifier(MainToastModifier())
       .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
-      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
-      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
-      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection).presentationDetents([.medium, .large]) }
-      .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
+      .modifier(GlobalSheetsModifier())
+      // Global states
       .environmentObject(viewingImage)
       .environmentObject(activity)
       .environmentObject(postReply)
       .environmentObject(shortMessagePost)
       .environmentObject(currentUser)
       .environmentObject(textSelection)
-      .preferredColorScheme(prefs.colorScheme.scheme)
+  }
+}
+
+/// Enable global sheets, including post reply, short message, text selection.
+///
+/// This should be applied to each different navigation stack. For example, the root one
+/// and the one in notification sheet.
+struct GlobalSheetsModifier: ViewModifier {
+  @EnvironmentObject var postReply: PostReplyModel
+  @EnvironmentObject var shortMessagePost: ShortMessagePostModel
+  @EnvironmentObject var textSelection: TextSelectionModel
+  @EnvironmentObject var viewingImage: ViewingImageModel
+
+  func body(content: Content) -> some View {
+    content
+      .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
+      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
+      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
+      .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
   }
 }
 
