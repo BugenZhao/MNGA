@@ -58,9 +58,19 @@ struct SearchableModifier: ViewModifier {
   @ObservedObject var model: BasicSearchModel
   let prompt: String
 
+  var deviceSpecificPlacement: SearchFieldPlacement {
+    if UserInterfaceIdiom.current == .pad {
+      // By `.toolbar` the search field from every column will all be placed in
+      // the top-right corner, which seems weird.
+      .navigationBarDrawer(displayMode: .always)
+    } else {
+      .automatic
+    }
+  }
+
   func body(content: Content) -> some View {
     content
-      .searchable(text: $model.text, placement: .automatic, prompt: prompt)
+      .searchable(text: $model.text, placement: deviceSpecificPlacement, prompt: prompt)
       .onSubmit(of: .search) { model.commit() }
   }
 }
