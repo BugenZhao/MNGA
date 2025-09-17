@@ -223,7 +223,7 @@ struct PreferencesInnerView: View {
 
 struct PreferencesView: View {
   var body: some View {
-    NavigationView {
+    NavigationStack {
       PreferencesInnerView()
     }
   }
