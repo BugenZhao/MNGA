@@ -45,7 +45,9 @@ struct TopicSearchItemsView: View {
         .onAppear { dataSource.initialLoad() }
     } else {
       ForEachOrEmpty($dataSource.items, id: \.wrappedValue.id) { topic in
-        NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
+        CrossStackNavigationLinkHack(id: topic.w.id, destination: {
+          TopicDetailsView.build(topicBinding: topic)
+        }) {
           TopicRowView(topic: topic.w)
         }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
       }

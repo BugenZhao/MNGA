@@ -16,7 +16,7 @@ struct NotificationListView: View {
   func buildLink(for binding: Binding<Notification>) -> some View {
     let notification = binding.w
 
-    NavigationLink(destination: {
+    CrossStackNavigationLinkHack(id: notification.id, destination: {
       Group {
         switch notification.type {
         case .shortMessage, .shortMessageStart:

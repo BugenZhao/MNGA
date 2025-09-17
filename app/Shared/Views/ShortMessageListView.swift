@@ -46,7 +46,9 @@ struct ShortMessageListView: View {
       } else {
         List {
           ForEach(dataSource.items, id: \.id) { message in
-            NavigationLink(destination: { ShortMessageDetailsView.build(mid: message.id) }) {
+            CrossStackNavigationLinkHack(id: message.id, destination: {
+              ShortMessageDetailsView.build(mid: message.id)
+            }) {
               ShortMessageRowView(message: message)
             }.onAppear { dataSource.loadMoreIfNeeded(currentItem: message) }
           }

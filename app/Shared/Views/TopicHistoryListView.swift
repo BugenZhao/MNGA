@@ -39,7 +39,7 @@ struct TopicHistoryListView: View {
           let items = dataSource.items.filter { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) }
           ForEachOrEmpty(items, id: \.topicSnapshot.id) { snapshot in
             let topic = snapshot.topicSnapshot
-            NavigationLink(destination: TopicDetailsView.build(topic: topic)) {
+            CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topic: topic), id: topic.id) {
               TopicRowView(topic: topic, dimmedSubject: false)
             }
           }

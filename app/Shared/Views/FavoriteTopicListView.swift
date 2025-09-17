@@ -42,7 +42,7 @@ struct FavoriteTopicListView: View {
       } else {
         List {
           ForEach($dataSource.items, id: \.id) { topic in
-            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+            CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: topic), id: topic.w.id) {
               TopicRowView(topic: topic.w, dimmedSubject: false, showIndicators: false)
                 .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
             }

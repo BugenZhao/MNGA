@@ -124,10 +124,10 @@ struct GlobalSearchView: View {
         Section(header: Text("Search \"\(model.text)\" in...")) {
           NavigationLink(destination: ForumSearchView(dataSource: ds.forum)) {
             Label("All Forums", systemImage: "square.stack.3d.down.right")
-          }.isDetailLink(false)
+          }.isDetailLink(false) // show in the same stack
           NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search")) {
             Label("All Topics", systemImage: "doc.richtext")
-          }.isDetailLink(false)
+          }
           // FIXME: the api is broken
           // NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
           //   Label("All Users", systemImage: "person.2")

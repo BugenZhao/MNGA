@@ -101,6 +101,7 @@ struct TopicDetailsActionModifier: ViewModifier {
 }
 
 extension View {
+  // With this modifier, the navigation in post content can correctly work.
   @ViewBuilder
   func withTopicDetailsAction(action: TopicDetailsActionModel? = nil) -> some View {
     if let action {

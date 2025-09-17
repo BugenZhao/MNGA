@@ -9,13 +9,7 @@ import BetterSafariView
 import SwiftUI
 import SwiftUIX
 
-@Observable class Router {
-  var path = NavigationPath()
-}
-
 struct ContentView: View {
-  @State var router = Router()
-
   @StateObject var viewingImage = ViewingImageModel()
   @StateObject var activity = ActivityModel()
   @StateObject var postReply = PostReplyModel()
@@ -28,14 +22,12 @@ struct ContentView: View {
   @StateObject var textSelection = TextSelectionModel()
   @StateObject var schemes = SchemesModel()
 
-  @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
-
   // For preview usage. If set, the content will be replaced by this.
   // In this case, `ContentView` mainly serves as a container for global states.
   var testBody: AnyView?
 
   var useColumnStyle: Bool {
-    UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac
+    UserInterfaceIdiom.current == .pad
   }
 
   var main: some View {
@@ -45,26 +37,39 @@ struct ContentView: View {
 
   @ViewBuilder
   var realBody: some View {
+    // Use `NavigationSplitView` on iPad.
+    //
+    // - Each column has its own navigation stack. Purposes are explained below.
+    // - `NavigationLink` will by default push to the stack of the next column.
+    //   Specify `isDetailLink(false)` to push to the current column.
+    // - `.navigationDestination` will always push to the current column. Haven't
+    //   found a way to override this behavior.
     if useColumnStyle {
-      NavigationView {
-        main
-        if selectedForum.inner != Forum() {
-          TopicListView.build(forum: selectedForum.inner)
-        } else {
+      NavigationSplitView {
+        // Forum search may be pushed to this stack.
+        NavigationStack {
+          main
+        }
+      } content: {
+        // Subforum, hot/recommended topics may be pushed to this stack.
+        NavigationStack {
           TopicListPlaceholderView()
         }
-        TopicDetailsPlaceholderView()
+      } detail: {
+        // User profile, detailed reading may be pushed to this stack.
+        NavigationStack {
+          TopicDetailsPlaceholderView()
+        }
       }
     } else {
-      NavigationStack(path: $router.path) {
+      NavigationStack {
         main
       }
     }
   }
 
   var body: some View {
-    (testBody ?? realBody.eraseToAnyView())
-      .environment(router)
+    testBody ?? realBody.eraseToAnyView()
     #if os(iOS)
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) }
     #endif

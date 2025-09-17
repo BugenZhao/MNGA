@@ -21,7 +21,7 @@ struct ForumRowLinkView: View {
 
   @ViewBuilder
   var link: some View {
-    NavigationLink(destination: TopicListView.build(forum: forum)) {
+    CrossStackNavigationLinkHack(destination: TopicListView.build(forum: forum), id: forum.id) {
       ForumRowView(forum: forum, isFavorite: showFavorite && isFavorite)
     }
   }
