@@ -89,7 +89,8 @@ struct UserProfileView: View {
             EmptyRowView()
           } else {
             ForEach($topicDataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+              // My profile may show on the 2nd stack, requiring cross-stack.
+              CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: topic), id: topic.w.id) {
                 TopicRowView(topic: topic.w)
               }.onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
             }
@@ -106,7 +107,8 @@ struct UserProfileView: View {
             EmptyRowView()
           } else {
             ForEach(postDataSource.items, id: \.post.id) { tp in
-              NavigationLink(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: (id: tp.post.id, atPage: nil))) {
+              // My profile may show on the 2nd stack, requiring cross-stack.
+              CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: (id: tp.post.id, atPage: nil)), id: tp.post.id) {
                 TopicPostRowView(topic: tp.topic, post: tp.post)
               }.onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }
             }
