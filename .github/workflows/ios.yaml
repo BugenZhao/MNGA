@@ -3,7 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      # Let's manually release.
+      # - "main"
       - "fastlane/**"
 
 concurrency:
