@@ -23,10 +23,9 @@ class BlockWordsStorage: ObservableObject {
   }
 
   func add(_ word: BlockWord) {
-    withAnimation {
-      if !words.contains(word) {
-        words.insert(word, at: 0) // oops
-      }
+    // No animation, so that TextField can be transformed into Text without jumping
+    if !words.contains(word) {
+      words.insert(word, at: 0)
     }
   }
 
