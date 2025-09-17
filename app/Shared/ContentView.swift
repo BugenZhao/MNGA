@@ -27,7 +27,7 @@ struct ContentView: View {
   var testBody: AnyView?
 
   var useColumnStyle: Bool {
-    UserInterfaceIdiom.current == .pad || UserInterfaceIdiom.current == .mac
+    UserInterfaceIdiom.current == .pad
   }
 
   var main: some View {
@@ -37,21 +37,30 @@ struct ContentView: View {
 
   @ViewBuilder
   var realBody: some View {
+    // Use `NavigationSplitView` on iPad.
+    //
+    // - Each column has its own navigation stack. Purposes are explained below.
+    // - `NavigationLink` will by default push to the stack of the next column.
+    //   Specify `isDetailLink(false)` to push to the current column.
+    // - `.navigationDestination` will always push to the current column. Haven't
+    //   found a way to override this behavior.
     if useColumnStyle {
       NavigationSplitView {
+        // Forum search may be pushed to this stack.
         NavigationStack {
           main
         }
       } content: {
+        // Subforum, hot/recommended topics may be pushed to this stack.
         NavigationStack {
           TopicListPlaceholderView()
         }
       } detail: {
+        // User profile, detailed reading may be pushed to this stack.
         NavigationStack {
           TopicDetailsPlaceholderView()
         }
       }
-
     } else {
       NavigationStack {
         main
