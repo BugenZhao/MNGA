@@ -44,7 +44,8 @@ struct RecommendedTopicListView: View {
       } else {
         List {
           ForEach($dataSource.items, id: \.id) { topic in
-            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
+            // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
+            NavigationLink(destination: TopicDetailsView.build(topicBinding: topic).id(topic.w.id)) {
               TopicRowView(topic: topic.w, useTopicPostDate: true)
             }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }

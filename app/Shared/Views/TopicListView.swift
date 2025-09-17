@@ -16,8 +16,6 @@ struct TopicListView: View {
 
   @EnvironmentObject var postReply: PostReplyModel
 
-  @SceneStorage("selectedForum") var selectedForum = WrappedMessage(inner: Forum())
-
   @StateObject var dataSourceLastPost: DataSource
   @StateObject var dataSourcePostDate: DataSource
   @StateObject var favoriteForums = FavoriteForumsStorage.shared
@@ -147,12 +145,14 @@ struct TopicListView: View {
           } label: {
             Label("Order by", systemImage: (order ?? .lastPost).icon)
           }
+
           NavigationLink(destination: HotTopicListView.build(forum: forum)) {
             Label("Hot Topics", systemImage: "flame")
-          }
+          }.isDetailLink(false)
           NavigationLink(destination: RecommendedTopicListView.build(forum: forum)) {
             Label("Recommended Topics", systemImage: "hand.thumbsup")
-          }
+          }.isDetailLink(false)
+
           if let topicID = toppedTopicID {
             NavigationLink(destination: TopicDetailsView.build(id: topicID)) {
               Label("Topped Topic", systemImage: "arrow.up.to.line")
@@ -243,7 +243,8 @@ struct TopicListView: View {
       } else {
         List {
           ForEach(itemBindings, id: \.id) { topic in
-            NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic) }) {
+            // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
+            NavigationLink(destination: { TopicDetailsView.build(topicBinding: topic).id(topic.w.id) }) {
               TopicRowView(topic: topic.w, useTopicPostDate: order == .postDate)
             }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
@@ -269,7 +270,6 @@ struct TopicListView: View {
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
     .toolbar { toolbar }
-    .onAppear { selectedForum.inner = forum }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
     .onChange(of: dataSource.latestResponse) { updateForumMeta($1) }

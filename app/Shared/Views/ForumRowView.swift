@@ -21,7 +21,8 @@ struct ForumRowLinkView: View {
 
   @ViewBuilder
   var link: some View {
-    NavigationLink(destination: TopicListView.build(forum: forum)) {
+    // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
+    NavigationLink(destination: TopicListView.build(forum: forum).id(forum.id)) {
       ForumRowView(forum: forum, isFavorite: showFavorite && isFavorite)
     }
   }

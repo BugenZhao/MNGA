@@ -16,6 +16,7 @@ struct NotificationListView: View {
   func buildLink(for binding: Binding<Notification>) -> some View {
     let notification = binding.w
 
+    // HACK: seems like cross-column navigation requires an id to trigger refresh on different selection
     NavigationLink(destination: {
       Group {
         switch notification.type {
@@ -27,7 +28,7 @@ struct NotificationListView: View {
       }.onAppear {
         binding.w.read = true // frontend
         let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] })) // backend
-      }
+      }.id(notification.id)
     }) {
       NotificationRowView(noti: notification)
     }
