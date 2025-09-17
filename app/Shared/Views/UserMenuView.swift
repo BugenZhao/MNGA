@@ -8,6 +8,7 @@
 import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
+import SwiftUIX
 
 struct UserMenuView: View {
   @StateObject var notification = NotificationModel.shared
@@ -16,6 +17,7 @@ struct UserMenuView: View {
   @EnvironmentObject var model: CurrentUserModel
 
   @State var showPreferencesModal: Bool = false
+  @State var showAboutViewAsModal: Bool = false
 
   var user: User? {
     model.user
@@ -42,6 +44,21 @@ struct UserMenuView: View {
   var notificationButton: some View {
     NavigationLink(destination: NotificationListView()) {
       Label(notification.dataSource.title, systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
+    }
+  }
+
+  @ViewBuilder
+  var aboutButton: some View {
+    let label = Label("About & Feedback", systemImage: "hands.sparkles")
+
+    if UserInterfaceIdiom.current == .pad {
+      Button(action: { showAboutViewAsModal = true }) {
+        label
+      }
+    } else {
+      NavigationLink(destination: AboutView()) {
+        label
+      }
     }
   }
 
@@ -106,9 +123,7 @@ struct UserMenuView: View {
             Label("Preferences", systemImage: "gear")
           }
         #endif
-        NavigationLink(destination: AboutView()) {
-          Label("About & Feedback", systemImage: "hands.sparkles")
-        }
+        aboutButton
       }
     } label: {
       icon
@@ -122,6 +137,7 @@ struct UserMenuView: View {
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
       .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
+      .sheet(isPresented: $showAboutViewAsModal) { NavigationStack { AboutView() } }
   }
 
   func reSignIn() {
