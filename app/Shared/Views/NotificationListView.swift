@@ -74,8 +74,9 @@ struct NotificationListView: View {
 
 struct NotificationListNavigationView: View {
   var body: some View {
-    NavigationView {
+    NavigationStack {
       NotificationListView()
     }
+    .modifier(GlobalSheetsModifier())
   }
 }

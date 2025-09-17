@@ -14,6 +14,15 @@ struct AboutView: View {
   }
 }
 
+struct AboutNavigationView: View {
+  var body: some View {
+    NavigationStack {
+      AboutView()
+    }
+    .modifier(GlobalSheetsModifier())
+  }
+}
+
 struct AboutView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {

@@ -81,9 +81,7 @@ struct ContentView: View {
       })
       .modifier(MainToastModifier())
       .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
-      .sheet(isPresented: $postReply.showEditor) { PostEditorView().environmentObject(postReply) }
-      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView().environmentObject(shortMessagePost) }
-      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().environmentObject(textSelection).presentationDetents([.medium, .large]) }
+      .modifier(GlobalSheetsModifier())
       .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
       .environmentObject(viewingImage)
       .environmentObject(activity)
@@ -92,6 +90,23 @@ struct ContentView: View {
       .environmentObject(currentUser)
       .environmentObject(textSelection)
       .preferredColorScheme(prefs.colorScheme.scheme)
+  }
+}
+
+/// Enable global sheets, including post reply, short message, text selection.
+///
+/// This should be applied to each different navigation stack. For example, the root one
+/// and the one in notification sheet.
+struct GlobalSheetsModifier: ViewModifier {
+  @EnvironmentObject var postReply: PostReplyModel
+  @EnvironmentObject var shortMessagePost: ShortMessagePostModel
+  @EnvironmentObject var textSelection: TextSelectionModel
+
+  func body(content: Content) -> some View {
+    content
+      .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
+      .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
+      .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
   }
 }
 
