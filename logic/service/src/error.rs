@@ -14,7 +14,7 @@ pub enum ServiceError {
     MngaInternal(String),
 
     #[error("{} ({})", .0.get_info(), .0.get_code())]
-    Response(ErrorMessage),
+    Status(ErrorMessage),
     #[error("{} ({})", .0.get_info(), .0.get_code())]
     Nga(ErrorMessage),
     #[error("{0}")]
@@ -47,7 +47,7 @@ impl ServiceError {
     fn to_kind(&self) -> &'static str {
         match self {
             ServiceError::MngaInternal(_) => "MNGA",
-            ServiceError::Response(_) => "Error Response",
+            ServiceError::Status(_) => "Error Response",
             ServiceError::Nga(_) => "NGA",
             ServiceError::MissingField(_) => "Missing Field",
             ServiceError::Reqwest(_) => "Network Connection",

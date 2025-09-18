@@ -150,7 +150,7 @@ where
             "request failed: {}",
             response.error_for_status_ref().unwrap_err()
         );
-        Err(ServiceError::Response(ErrorMessage {
+        Err(ServiceError::Status(ErrorMessage {
             code: response.status().as_u16().to_string(),
             info: response
                 .status()
@@ -194,9 +194,8 @@ where
         let duration = Duration::from_millis(rand::rng().random_range(100..=300));
         tokio::time::sleep(duration).await;
 
-        let response = do_fetch(api, kind, query, Method::POST, &add_form).await?;
-
-        let parse_result = async {
+        let result = async {
+            let response = do_fetch(api, kind, query, Method::POST, &add_form).await?;
             let response = response.text_with_charset("gb18030").await?;
 
             #[cfg(test)]
@@ -208,7 +207,7 @@ where
         }
         .await;
 
-        match parse_result {
+        match result {
             Ok(r) => {
                 if first_error.is_some() {
                     log::info!(
@@ -219,20 +218,23 @@ where
                 }
                 return Ok(r);
             }
-            Err(parse_error) if parse_error.is_response_parse_error() => {
+            // We may get `Status` error when being rate limited or via proxy.
+            Err(error)
+                if error.is_response_parse_error() || matches!(error, ServiceError::Status(_)) =>
+            {
                 log::error!(
                     "failed to parse response with `{}={}`, retrying: {}",
                     query_pair.0,
                     query_pair.1,
-                    parse_error
+                    error
                 );
                 invalidate_global_client();
                 if first_error.is_none() {
-                    first_error = Some(parse_error);
+                    first_error = Some(error);
                 }
             }
             Err(error) => {
-                // For normal errors, we don't need to retry.
+                // For other errors, we don't need to retry.
                 return Err(error);
             }
         }
