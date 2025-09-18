@@ -1,4 +1,5 @@
 use protos::DataModel::ErrorMessage;
+use reqwest::StatusCode;
 use std::any;
 use thiserror::Error;
 
@@ -60,6 +61,15 @@ impl ServiceError {
             ServiceError::Protobuf(_) => "Protocol Buffer Encoding",
             ServiceError::Panic(_) => "Backend Panic",
         }
+    }
+
+    /// Create a `ServiceError::Status` from `reqwest::StatusCode`.
+    pub fn from_status(status: StatusCode) -> Self {
+        ServiceError::Status(ErrorMessage {
+            code: status.as_u16().to_string(),
+            info: status.canonical_reason().unwrap_or_default().to_owned(),
+            ..Default::default()
+        })
     }
 
     pub fn to_app_string(&self) -> String {
