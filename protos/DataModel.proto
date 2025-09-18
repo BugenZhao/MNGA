@@ -43,6 +43,8 @@ message User {
   PostContent signature = 7;
   string name_raw = 2 [ deprecated = true ];
   bool mute = 9; // Whether the user is temporarily banned by NGA.
+  string ip_location = 10;
+  bool remote = 11; // Whether this user info is fetched with a separate `remoteUser` call.
 }
 
 message PostId {

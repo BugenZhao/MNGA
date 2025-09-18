@@ -5,6 +5,7 @@
 //  Created by Bugen Zhao on 2021/9/11.
 //
 
+import Flow
 import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
@@ -36,9 +37,11 @@ struct UserView: View {
   let id: String
   let style: Style
   let isAuthor: Bool
-  let remote: Bool
+  // User loaded separately with `remoteUser` may contain more info like `ipLocation`
+  // than the one embedded in post/topic.
+  let loadRemote: Bool
 
-  init(id: String, nameHint: String? = nil, style: Style, isAuthor: Bool = false, remote: Bool = false) {
+  init(id: String, nameHint: String? = nil, style: Style, isAuthor: Bool = false, loadRemote: Bool = false) {
     var user = UsersModel.shared.localUser(id: id)
     if let nameHint, user == nil {
       user = .with {
@@ -50,15 +53,15 @@ struct UserView: View {
     self.id = id
     self.style = style
     self.isAuthor = isAuthor
-    self.remote = remote
+    self.loadRemote = loadRemote
   }
 
-  init(user: User, style: Style, isAuthor: Bool = false) {
+  init(user: User, style: Style, isAuthor: Bool = false, loadRemote: Bool = false) {
     self.user = user
     id = user.id
     self.style = style
     self.isAuthor = isAuthor
-    remote = false
+    self.loadRemote = loadRemote
   }
 
   private var avatarSize: CGFloat {
@@ -143,6 +146,10 @@ struct UserView: View {
     style == .huge || (style == .normal && pref.postRowShowUserRegDate)
   }
 
+  var showIpLocation: Bool {
+    style == .huge && user?.ipLocation.isEmpty == false
+  }
+
   var nameFont: Font {
     switch style {
     case .compact:
@@ -203,7 +210,7 @@ struct UserView: View {
         nameView
 
         if showDetails {
-          HStack(spacing: 6) {
+          HFlow(itemSpacing: 6) {
             HStack(spacing: 2) {
               Image(systemName: "text.bubble")
               Text("\(user?.postNum ?? 0)")
@@ -223,8 +230,18 @@ struct UserView: View {
                   .redacted(if: shouldRedactInfo)
               }
             }
-          }.font(.footnote)
-            .foregroundColor(.secondary)
+
+            if showIpLocation {
+              HStack(spacing: 2) {
+                Image(systemName: "mappin")
+                Text(user?.ipLocation ?? "Unknown".localized)
+                  .redacted(if: shouldRedactInfo)
+              }
+            }
+          }
+
+          .font(.footnote)
+          .foregroundColor(.secondary)
         }
       }
     }
@@ -238,7 +255,7 @@ struct UserView: View {
         horizontal
       }
     }.task {
-      if remote, let remoteUser = await UsersModel.shared.remoteUser(id: id) {
+      if loadRemote, let remoteUser = await UsersModel.shared.remoteUser(id: id) {
         withAnimation { user = remoteUser }
       }
     }

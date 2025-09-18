@@ -6,7 +6,7 @@ use crate::{
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
     post::extract_post,
-    user::{extract_user_and_cache, extract_user_name},
+    user::{extract_local_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
         extract_string, get_unique_id, server_now,
@@ -336,12 +336,7 @@ pub async fn get_topic_details(
         key.as_ref()
             .and_then(|key| CACHE.get_msg::<TopicDetailsResponse>(key).ok())
             .flatten()
-            .ok_or_else(|| {
-                ServiceError::Mnga(ErrorMessage {
-                    info: "No local cache found".to_owned(),
-                    ..Default::default()
-                })
-            })
+            .ok_or_else(|| ServiceError::MngaInternal("No local cache found".to_owned()))
             .map(|mut r| {
                 r.is_local_cache = true;
                 r
@@ -389,7 +384,7 @@ pub async fn get_topic_details(
     let user_context = get_unique_id();
     let _users = extract_nodes(&package, "/root/__U/item", |ns| {
         ns.into_iter()
-            .filter_map(|n| extract_user_and_cache(n, Some(&user_context)))
+            .filter_map(|n| extract_local_user_and_cache(n, Some(&user_context)))
             .collect()
     })?;
 
