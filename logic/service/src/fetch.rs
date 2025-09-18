@@ -14,7 +14,7 @@ use crate::{
 };
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use protos::DataModel::{Device, ErrorMessage};
+use protos::DataModel::Device;
 use rand::{Rng, seq::SliceRandom as _};
 use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
 
@@ -107,6 +107,9 @@ async fn do_fetch<AF>(
     kind: FetchKind,
     mut query: Vec<(&str, &str)>,
     method: Method,
+    // NGA may return detailed error message in the response body when the status code is not OK.
+    // So we should not directly return a `ServiceError::Status`.
+    check_status: bool,
     add_form: AF,
 ) -> ServiceResult<Response>
 where
@@ -143,6 +146,7 @@ where
     log::info!("request to url: {}", request.url());
 
     let response = client.execute(request).await?;
+
     if response.status().is_success() {
         Ok(response)
     } else {
@@ -150,15 +154,11 @@ where
             "request failed: {}",
             response.error_for_status_ref().unwrap_err()
         );
-        Err(ServiceError::Response(ErrorMessage {
-            code: response.status().as_u16().to_string(),
-            info: response
-                .status()
-                .canonical_reason()
-                .unwrap_or_default()
-                .to_owned(),
-            ..Default::default()
-        }))
+        if check_status {
+            Err(ServiceError::from_status(response.status()))
+        } else {
+            Ok(response)
+        }
     }
 }
 
@@ -194,9 +194,9 @@ where
         let duration = Duration::from_millis(rand::rng().random_range(100..=300));
         tokio::time::sleep(duration).await;
 
-        let response = do_fetch(api, kind, query, Method::POST, &add_form).await?;
-
-        let parse_result = async {
+        let result = async {
+            let response = do_fetch(api, kind, query, Method::POST, false, &add_form).await?;
+            let status = response.status();
             let response = response.text_with_charset("gb18030").await?;
 
             #[cfg(test)]
@@ -204,11 +204,15 @@ where
             #[cfg(test)]
             println!("http response: {}", response);
 
+            if response.is_empty() && !status.is_success() {
+                // Parse must fail. Here we use the error message from the status code.
+                return Err(ServiceError::from_status(status));
+            }
             RF::parse_response(response)
         }
         .await;
 
-        match parse_result {
+        match result {
             Ok(r) => {
                 if first_error.is_some() {
                     log::info!(
@@ -219,20 +223,23 @@ where
                 }
                 return Ok(r);
             }
-            Err(parse_error) if parse_error.is_response_parse_error() => {
+            // We may get `Status` error when being rate limited or via proxy.
+            Err(error)
+                if error.is_response_parse_error() || matches!(error, ServiceError::Status(_)) =>
+            {
                 log::error!(
                     "failed to parse response with `{}={}`, retrying: {}",
                     query_pair.0,
                     query_pair.1,
-                    parse_error
+                    error
                 );
                 invalidate_global_client();
                 if first_error.is_none() {
-                    first_error = Some(parse_error);
+                    first_error = Some(error);
                 }
             }
             Err(error) => {
-                // For normal errors, we don't need to retry.
+                // For other errors, we don't need to retry.
                 return Err(error);
             }
         }
@@ -382,7 +389,7 @@ mod mock {
         Res: MockResponse,
     {
         let api = request.to_encoded_mock_api()?;
-        let response = do_fetch(&api, FetchKind::Mock, vec![], Method::GET, |b| b)
+        let response = do_fetch(&api, FetchKind::Mock, vec![], Method::GET, true, |b| b)
             .await?
             .bytes()
             .await?;

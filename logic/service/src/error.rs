@@ -1,4 +1,5 @@
 use protos::DataModel::ErrorMessage;
+use reqwest::StatusCode;
 use std::any;
 use thiserror::Error;
 
@@ -14,7 +15,7 @@ pub enum ServiceError {
     MngaInternal(String),
 
     #[error("{} ({})", .0.get_info(), .0.get_code())]
-    Response(ErrorMessage),
+    Status(ErrorMessage),
     #[error("{} ({})", .0.get_info(), .0.get_code())]
     Nga(ErrorMessage),
     #[error("{0}")]
@@ -47,7 +48,7 @@ impl ServiceError {
     fn to_kind(&self) -> &'static str {
         match self {
             ServiceError::MngaInternal(_) => "MNGA",
-            ServiceError::Response(_) => "Error Response",
+            ServiceError::Status(_) => "Error Response",
             ServiceError::Nga(_) => "NGA",
             ServiceError::MissingField(_) => "Missing Field",
             ServiceError::Reqwest(_) => "Network Connection",
@@ -60,6 +61,15 @@ impl ServiceError {
             ServiceError::Protobuf(_) => "Protocol Buffer Encoding",
             ServiceError::Panic(_) => "Backend Panic",
         }
+    }
+
+    /// Create a `ServiceError::Status` from `reqwest::StatusCode`.
+    pub fn from_status(status: StatusCode) -> Self {
+        ServiceError::Status(ErrorMessage {
+            code: status.as_u16().to_string(),
+            info: status.canonical_reason().unwrap_or_default().to_owned(),
+            ..Default::default()
+        })
     }
 
     pub fn to_app_string(&self) -> String {
