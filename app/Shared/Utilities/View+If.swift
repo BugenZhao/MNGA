@@ -9,9 +9,9 @@ import Foundation
 import SwiftUI
 
 public extension View {
-  func `if`(_ conditional: Bool, content: (Self) -> some View) -> some View {
+  func `if`(_ cond: @autoclosure () -> Bool, content: (Self) -> some View) -> some View {
     Group {
-      if conditional {
+      if cond() {
         content(self)
       } else {
         self
@@ -21,7 +21,7 @@ public extension View {
 }
 
 public extension View {
-  func redacted(if cond: Bool, reason: RedactionReasons = .placeholder) -> some View {
-    redacted(reason: cond ? reason : [])
+  func redacted(if cond: @autoclosure () -> Bool, reason: RedactionReasons = .placeholder) -> some View {
+    redacted(reason: cond() ? reason : [])
   }
 }

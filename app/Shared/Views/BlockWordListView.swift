@@ -7,16 +7,17 @@
 
 import Foundation
 import SwiftUI
-import SwiftUIIntrospect
 
 struct BlockWordListView: View {
   @StateObject var storage = BlockWordsStorage.shared
   @State var newWord = nil as BlockWord?
+  @FocusState var focused: Bool
 
   func commitNewWord() {
     if let newWord, !newWord.word.isEmpty {
       storage.add(newWord)
       self.newWord = nil
+      HapticUtils.play(type: .success)
     }
   }
 
@@ -25,12 +26,9 @@ struct BlockWordListView: View {
     List {
       if newWord != nil {
         HStack {
-          TextField(LocalizedStringKey("New word"), text: ($newWord ?? .init()).word, onCommit: commitNewWord)
-            .introspect(.textField, on: .iOS(.v26)) {
-              if newWord?.word.isEmpty == true {
-                $0.becomeFirstResponder()
-              }
-            }
+          TextField(LocalizedStringKey("New word"), text: ($newWord ?? .init()).word)
+            .onSubmit(commitNewWord)
+            .focused($focused)
           Image(systemName: "pencil").foregroundColor(.secondary)
         }
       }
@@ -58,6 +56,7 @@ struct BlockWordListView: View {
           storage.add(newWord)
         }
         newWord = .init()
+        focused = true
       }
     }) {
       Label("Add Word", systemImage: "plus.circle")

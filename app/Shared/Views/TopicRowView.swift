@@ -64,7 +64,7 @@ struct TopicRowView: View {
 
   @ViewBuilder
   var subject: some View {
-    BlockedView(content: BlockWordsStorage.content(user: topic.authorName, content: topic.subjectContent), revealOnTap: false) {
+    BlockedView(content: BlockWordsStorage.content(user: topic.authorName, content: topic.subjectContentCompat), revealOnTap: false) {
       TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: showIndicators)
         .foregroundColor(shouldDim ? .secondary : nil)
     }

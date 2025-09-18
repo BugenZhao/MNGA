@@ -5,6 +5,7 @@
 //  Created by Bugen Zhao on 7/3/21.
 //
 
+import Flow
 import Foundation
 import SwiftUI
 
@@ -45,7 +46,7 @@ struct TopicSubjectView: View {
   }
 
   var content: String {
-    topic.subject.content.isEmpty ? topic.subjectContent : topic.subject.content
+    topic.subjectContentCompat
   }
 
   var showTagBar: Bool {
@@ -55,7 +56,7 @@ struct TopicSubjectView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       if showTagBar {
-        HStack(alignment: .bottom) {
+        HFlow(alignment: .bottom) {
           if showIndicators {
             indicators
           }

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIIntrospect
 
 class TextSelectionModel: ObservableObject {
   @Published var text: String? = nil
