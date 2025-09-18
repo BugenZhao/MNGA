@@ -271,6 +271,11 @@ extension Topic {
       return authorName
     }
   }
+
+  // for compatibility
+  var subjectContentCompat: String {
+    subject.content.isEmpty ? subjectContent : subject.content
+  }
 }
 
 extension CacheType {

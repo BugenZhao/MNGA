@@ -14,21 +14,21 @@ struct BlockedView<Content>: View where Content: View {
   let build: () -> Content
 
   @StateObject var blockWords = BlockWordsStorage.shared
-  @State var hidden = true
+  @State var revealed = false
 
   var shouldHide: Bool {
-    hidden && blockWords.blocked(content)
+    !revealed && blockWords.blocked(content)
   }
 
   var body: some View {
     let view = build()
       .redacted(if: shouldHide)
 
-    if revealOnTap {
-      view
-        .onTapGesture { withAnimation { hidden = false } }
-    } else {
-      view
-    }
+    view
+      .if(shouldHide && revealOnTap) {
+        $0.onTapGesture {
+          withAnimation { revealed = true }
+        }
+      }
   }
 }

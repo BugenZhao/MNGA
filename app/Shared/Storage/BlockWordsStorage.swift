@@ -46,6 +46,6 @@ class BlockWordsStorage: ObservableObject {
   }
 
   static func content(user: UserName, content: String) -> String {
-    "\(BlockWord.fromUser(user))|\(content)"
+    "\(BlockWord.fromUser(user).word)|\(content)"
   }
 }
