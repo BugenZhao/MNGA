@@ -106,7 +106,7 @@ pub fn extract_user_name(original_name: String) -> UserName {
     user_name
 }
 
-fn extract_user(node: Node) -> Option<User> {
+fn extract_user(node: Node, remote: bool) -> Option<User> {
     static MUTE_BUFF: &str = "105";
 
     use super::macros::get;
@@ -134,6 +134,8 @@ fn extract_user(node: Node) -> Option<User> {
             .unwrap_or_default(),
         signature: Some(signature).into(),
         mute,
+        ip_location: get!(map, "ipLoc").unwrap_or_default(),
+        remote,
         ..Default::default()
     };
 
@@ -150,14 +152,18 @@ fn cache_user(mut user: User, context: Option<&str>) -> User {
     user
 }
 
-pub fn extract_user_and_cache(node: Node, context: Option<&str>) -> Option<User> {
-    let user = extract_user(node)?;
+pub fn extract_local_user_and_cache(node: Node, context: Option<&str>) -> Option<User> {
+    let user = extract_user(node, false)?;
     Some(cache_user(user, context))
 }
 
 pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<RemoteUserResponse> {
     let user_id = request.get_user_id();
-    if let Some(user) = UserController::get().get_by_id(user_id) {
+
+    // Only return cached user if it's remote.
+    if let Some(user) = UserController::get().get_by_id(user_id)
+        && user.remote
+    {
         return Ok(RemoteUserResponse {
             _user: Some(RemoteUserResponse_oneof__user::user(user)),
             ..Default::default()
@@ -192,7 +198,7 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
     .await?;
 
     let user = extract_node(&package, "/root/data/item", |n| {
-        let mut user = extract_user(n)?;
+        let mut user = extract_user(n, true)?;
         if user.avatar_url.is_empty() {
             user.avatar_url = avatar_url.clone();
         }

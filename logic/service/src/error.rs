@@ -10,10 +10,13 @@ pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
 #[allow(dead_code)]
 #[derive(Error, Debug)]
 pub enum ServiceError {
+    #[error("{0}")]
+    MngaInternal(String),
+
+    #[error("{} ({})", .0.get_info(), .0.get_code())]
+    Response(ErrorMessage),
     #[error("{} ({})", .0.get_info(), .0.get_code())]
     Nga(ErrorMessage),
-    #[error("{} ({})", .0.get_info(), .0.get_code())]
-    Mnga(ErrorMessage),
     #[error("{0}")]
     MissingField(String),
 
@@ -43,8 +46,9 @@ pub enum ServiceError {
 impl ServiceError {
     fn to_kind(&self) -> &'static str {
         match self {
+            ServiceError::MngaInternal(_) => "MNGA",
+            ServiceError::Response(_) => "Error Response",
             ServiceError::Nga(_) => "NGA",
-            ServiceError::Mnga(_) => "MNGA",
             ServiceError::MissingField(_) => "Missing Field",
             ServiceError::Reqwest(_) => "Network Connection",
             ServiceError::XmlParse(_) /* | ServiceError::XmlToJson(_) */ => "XML Parse",

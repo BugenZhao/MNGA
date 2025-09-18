@@ -11,7 +11,7 @@ use sxd_xpath::nodeset::Node;
 use crate::{
     error::ServiceResult,
     fetch::fetch_package,
-    user::{extract_user_and_cache, extract_user_name},
+    user::{extract_local_user_and_cache, extract_user_name},
     utils::{extract_kv, extract_nodes, extract_string},
 };
 
@@ -121,7 +121,7 @@ pub async fn get_short_msg_details(
 
     let _users = extract_nodes(&package, "/root/data/item/userInfo/item", |ns| {
         ns.into_iter()
-            .filter_map(|n| extract_user_and_cache(n, None))
+            .filter_map(|n| extract_local_user_and_cache(n, None))
             .collect()
     })?;
 

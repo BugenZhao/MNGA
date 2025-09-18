@@ -30,7 +30,7 @@ class UsersModel: ObservableObject {
   }
 
   func remoteUser(id: String) async -> User? {
-    if users[id] == nil {
+    if users[id]??.remote != true {
       let req = RemoteUserRequest.with { $0.userID = id }
       let res: Result<RemoteUserResponse, LogicError> = await logicCallAsync(.remoteUser(req), errorToastModel: nil)
       if case let .success(r) = res, r.hasUser {

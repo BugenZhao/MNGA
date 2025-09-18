@@ -164,7 +164,7 @@ struct UserProfileView: View {
   var body: some View {
     List {
       Section(header: Text("User Profile")) {
-        UserView(user: user, style: .huge)
+        UserView(user: user, style: .huge, loadRemote: true)
 
         let sig = user.signature
         if !sig.spans.isEmpty, !blocked {

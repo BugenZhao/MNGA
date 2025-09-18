@@ -107,7 +107,6 @@ async fn do_fetch<AF>(
     kind: FetchKind,
     mut query: Vec<(&str, &str)>,
     method: Method,
-    check_status: bool,
     add_form: AF,
 ) -> ServiceResult<Response>
 where
@@ -144,14 +143,14 @@ where
     log::info!("request to url: {}", request.url());
 
     let response = client.execute(request).await?;
-    if !check_status || response.status().is_success() {
+    if response.status().is_success() {
         Ok(response)
     } else {
         log::error!(
             "request failed: {}",
             response.error_for_status_ref().unwrap_err()
         );
-        Err(ServiceError::Mnga(ErrorMessage {
+        Err(ServiceError::Response(ErrorMessage {
             code: response.status().as_u16().to_string(),
             info: response
                 .status()
@@ -195,7 +194,7 @@ where
         let duration = Duration::from_millis(rand::rng().random_range(100..=300));
         tokio::time::sleep(duration).await;
 
-        let response = do_fetch(api, kind, query, Method::POST, false, &add_form).await?;
+        let response = do_fetch(api, kind, query, Method::POST, &add_form).await?;
 
         let parse_result = async {
             let response = response.text_with_charset("gb18030").await?;
@@ -383,7 +382,7 @@ mod mock {
         Res: MockResponse,
     {
         let api = request.to_encoded_mock_api()?;
-        let response = do_fetch(&api, FetchKind::Mock, vec![], Method::GET, true, |b| b)
+        let response = do_fetch(&api, FetchKind::Mock, vec![], Method::GET, |b| b)
             .await?
             .bytes()
             .await?;

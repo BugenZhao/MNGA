@@ -231,7 +231,9 @@
 "Tag" = "标签";
 "Add Tag" = "添加标签";
 "Larger Font" = "更大字体";
+"Unknown" = "未知";
 
+"Error Response" = "错误响应";
 "Missing Field" = "缺少字段";
 "Network Connection" = "网络连接";
 "XML Parse" = "XML 解析（NGA 官方封禁访问）";
