@@ -67,7 +67,8 @@ fn build_client() -> Client {
 static CLIENT: Mutex<Option<Client>> = Mutex::new(None);
 
 // Take the global client. It will be recreated on next fetch.
-fn invalidate_global_client() {
+pub fn invalidate_global_client() {
+    log::info!("invalidate global client");
     let _ = CLIENT.lock().unwrap().take();
 }
 
