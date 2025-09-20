@@ -9,7 +9,7 @@ pub const MNGA_ICON_PATH: &str = "https://github.com/BugenZhao/MNGA/blob/5c0e519
 
 pub const SUCCESS_MSGS: &[&str] = &["完毕", "没找到", "没有符合条件的结果", "今天已经签到"];
 
-pub const APPLE_UA: &str = "NGA_skull/7.3.1(iPhone13,2;iOS 15.5)";
+pub const APPLE_UA: &str = "NGA_skull/7.3.1(iPhone17,1;iOS 26.0)";
 pub const ANDROID_UA: &str = "Nga_Official/80024(Android12)";
 pub const DESKTOP_UA: &str = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36";
 pub const WINDOWS_PHONE_UA: &str = "NGA_WP_JW/(;WINDOWS)";
