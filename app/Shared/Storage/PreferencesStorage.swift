@@ -38,6 +38,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategy = DateTimeTextView.Strategy.automatic
   @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicator = true
   @AppStorage("postRowLargerFont") var postRowLargerFont = false
+  @AppStorage("postRowDimImagesInDarkMode") var postRowDimImagesInDarkMode = true
 
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
 

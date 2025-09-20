@@ -78,6 +78,7 @@
 "Redact" = "遮盖";
 "Hidden" = "隐藏";
 "Advanced" = "高级";
+"Dim Images in Dark Mode" = "深色模式下调暗图片";
 "Cache" = "缓存";
 "Image Cache" = "图片缓存";
 "View Image" = "查看图片";
