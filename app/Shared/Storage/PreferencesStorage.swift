@@ -17,7 +17,6 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("showAvatar") var showAvatar = true
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = false
   @AppStorage("useInAppSafari") var useInAppSafari = true
-  @AppStorage("imageViewerEnableZoom") var imageViewerEnableZoom = true
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
   @AppStorage("themeColor") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
@@ -40,7 +39,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicator = true
   @AppStorage("postRowLargerFont") var postRowLargerFont = false
 
-  @AppStorage("autoOpenInBrowserWhenBanned") var autoOpenInBrowserWhenBanned = true
+  @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
 
   init() {
     syncRequestOptionWithLogic()

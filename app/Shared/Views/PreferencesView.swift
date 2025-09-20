@@ -63,7 +63,8 @@ private struct PostRowAppearanceView: View {
         }
       }
 
-    }.tint(.accentColor)
+    }.pickerStyle(.menu)
+      .tint(.accentColor)
       .navigationTitleInline(string: "")
   }
 }
@@ -78,7 +79,8 @@ private struct TopicListAppearanceView: View {
           Label(order.description, systemImage: order.icon).tag(order)
         }
       }
-    }.tint(.accentColor)
+    }.pickerStyle(.menu)
+      .tint(.accentColor)
       .navigationTitleInline(string: "")
   }
 }
@@ -95,10 +97,9 @@ struct PreferencesInnerView: View {
     }
     Picker(selection: $pref.themeColor, label: Label("Theme Color", systemImage: "circle")) {
       ForEach(ThemeColor.allCases, id: \.self) { color in
-        Label(color.description) {
-//          Image(systemName: "circle.fill")
-//            .foregroundColor(color.color ?? Color("AccentColor"))
-        }.tag(color)
+        Label(color.description, systemImage: "circle.fill")
+          .tint(color.color)
+          .tag(color)
       }
     }
     Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
@@ -152,11 +153,7 @@ struct PreferencesInnerView: View {
   }
 
   @ViewBuilder
-  var advanced: some View {
-    Toggle(isOn: $pref.imageViewerEnableZoom) {
-      Label("Enable Zoom for Image Viewer", systemImage: "arrow.up.left.and.arrow.down.right")
-    }
-  }
+  var advanced: some View {}
 
   @ViewBuilder
   var special: some View {
@@ -179,9 +176,9 @@ struct PreferencesInnerView: View {
         Form { connection }
           .tabItem { Label("Connection", systemImage: "network") }
           .tag("connection")
-        Form { advanced }
-          .tabItem { Label("Advanced", systemImage: "gearshape.2") }
-          .tag("advanced")
+        // Form { advanced }
+        //   .tabItem { Label("Advanced", systemImage: "gearshape.2") }
+        //   .tag("advanced")
       }.tint(.accentColor)
         .pickerStyle(InlinePickerStyle())
         .padding(20)
@@ -190,10 +187,6 @@ struct PreferencesInnerView: View {
   #else
     var body: some View {
       Form {
-        Section(header: Text("Special"), footer: Text("NGA Workaround")) {
-          special
-        }
-
         Section(header: Text("Appearance")) {
           appearance
         }
@@ -206,13 +199,22 @@ struct PreferencesInnerView: View {
           connection
         }
 
-        Section(header: Text("Advanced"), footer: Text("Options here are experimental or unstable.")) {
-          NavigationLink(destination: CacheView()) {
-            Label("Cache", systemImage: "internaldrive")
-          }
-          advanced
+        // There's currently no advanced options.
+        //
+        // Section(header: Text("Advanced"), footer: Text("Options here are experimental or unstable.")) {
+        //   NavigationLink(destination: CacheView()) {
+        //     Label("Cache", systemImage: "internaldrive")
+        //   }
+        //   advanced
+        // }
+
+        Section(header: Text("Special"), footer: Text("NGA Workaround")) {
+          special
         }
       }
+      // Set `pickerStyle` explicitly to fix tint color.
+      // https://stackoverflow.com/questions/74157251/why-doesnt-pickers-tint-color-update
+      .pickerStyle(.menu)
       .tint(.accentColor)
       .mayInsetGroupedListStyle()
       .navigationTitle("Preferences")
