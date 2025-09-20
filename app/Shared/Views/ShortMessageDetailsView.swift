@@ -36,11 +36,21 @@ struct ShortMessageDetailsView: View {
     return Self(mid: mid, dataSource: dataSource)
   }
 
+  var debugID: String {
+    "#\(mid)"
+  }
+
   @ViewBuilder
   var replyButton: some View {
     Button(action: { doReply() }) {
       Label("Reply", systemImage: "arrowshape.turn.up.left")
     }
+  }
+
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
+    ToolbarSpacer(placement: .bottomBar)
+    ToolbarItem(placement: .bottomBar) { replyButton }
   }
 
   var body: some View {
@@ -53,8 +63,8 @@ struct ShortMessageDetailsView: View {
           Section(header: Text("Participants")) {
             ScrollView(.horizontal) {
               LazyHStack {
-                ForEach(dataSource.latestResponse?.ids ?? [], id: \.self) { userID in
-                  UserView(id: userID, style: .vertical, loadRemote: true)
+                ForEach(dataSource.latestResponse?.users ?? [], id: \.id) { user in
+                  UserView(user: user, style: .vertical)
                 }
               }
             }
@@ -69,10 +79,11 @@ struct ShortMessageDetailsView: View {
         }
       }
     }.navigationTitleInline(key: "Short Message Details")
+      .navigationSubtitle(debugID)
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()
-      .toolbar { ToolbarItem(placement: .primaryAction) { replyButton } }
+      .toolbar { toolbar }
       .onChange(of: postModel.sent) { dataSource.reloadLastPages(evenIfNotLoaded: false) }
   }
 
