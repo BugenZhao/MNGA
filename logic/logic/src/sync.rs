@@ -3,7 +3,12 @@ use service::dispatch_sync;
 use service::error::ServiceResult;
 use std::thread;
 
+use crate::r#async::RUNTIME;
+
 pub fn serve_request_sync(request: SyncRequest) -> ServiceResult<Vec<u8>> {
+    // Still enter the async runtime in case of calling `tokio::spawn`.
+    let _guard = RUNTIME.enter();
+
     let id = format!("{:p}", &request as *const _);
 
     log::debug!("serving sync request #{} on {:?}", id, thread::current());

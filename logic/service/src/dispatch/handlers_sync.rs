@@ -60,6 +60,6 @@ pub fn handle_set_request_option(
 pub fn handle_invalidate_client(
     _: InvalidateClientRequest,
 ) -> ServiceResult<InvalidateClientResponse> {
-    invalidate_global_client();
+    invalidate_global_client(true);
     Ok(Default::default())
 }

@@ -6,7 +6,7 @@ use std::thread;
 use tokio::runtime::Runtime;
 
 lazy_static! {
-    static ref RUNTIME: Runtime = {
+    pub static ref RUNTIME: Runtime = {
         log::debug!("creating tokio runtime");
         Runtime::new().expect("failed to create tokio runtime")
     };
