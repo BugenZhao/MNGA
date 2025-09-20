@@ -8,7 +8,7 @@
 import Foundation
 import SwiftProtobuf
 
-extension Array: RawRepresentable where Element: SwiftProtobuf.Message {
+extension Array: @retroactive RawRepresentable where Element: SwiftProtobuf.Message {
   public init?(rawValue: String) {
     guard let data = rawValue.data(using: .utf8),
           let strings = try? JSONDecoder().decode([String].self, from: data)
@@ -34,7 +34,7 @@ extension Array: RawRepresentable where Element: SwiftProtobuf.Message {
   }
 }
 
-extension Set: RawRepresentable where Element: SwiftProtobuf.Message {
+extension Set: @retroactive RawRepresentable where Element: SwiftProtobuf.Message {
   public init?(rawValue: String) {
     if let array = [Element](rawValue: rawValue) {
       self = Set(array)
@@ -79,7 +79,7 @@ extension RawRepresentable where RawValue == String {
   }
 }
 
-extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.RawValue == String {
+extension Optional: @retroactive RawRepresentable where Wrapped: RawRepresentable, Wrapped.RawValue == String {
   public var rawValue: String {
     if let s = self {
       s.rawValue
