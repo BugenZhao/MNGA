@@ -6,8 +6,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BugenZhao/AlertToast",
       "state" : {
-        "branch" : "09ddc6b",
-        "revision" : "09ddc6b139f47d2d70073c444570678e885e42fd"
+        "revision" : "668a60ea241735d78f4f26a63d9fb714f20564ce"
       }
     },
     {
