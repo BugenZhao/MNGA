@@ -16,6 +16,7 @@ struct ContentImageView: View {
   let isOpenSourceStickers: Bool
 
   @Environment(\.inRealPost) var inRealPost
+  @Environment(\.colorScheme) private var colorScheme
   @EnvironmentObject var viewingImage: ViewingImageModel
 
   @EnvironmentObject<AttachmentsModel>.Optional var attachmentsModel
@@ -44,6 +45,7 @@ struct ContentImageView: View {
             WebOrAsyncImage(url: url, placeholder: nil)
           }
         }.scaledToFit()
+          .overlay(dimOverlay)
           .clipShape(RoundedRectangle(cornerRadius: 8))
           .onTapGesture(perform: showImage)
       }
@@ -54,5 +56,18 @@ struct ContentImageView: View {
     guard inRealPost else { return }
     let attachURL = attachmentsModel?.attachmentURL(for: url) ?? url
     viewingImage.show(url: attachURL)
+  }
+
+  @ViewBuilder
+  private var dimOverlay: some View {
+    if shouldDimImage {
+      Rectangle()
+        .fill(Color.black.opacity(0.35))
+        .allowsHitTesting(false)
+    }
+  }
+
+  private var shouldDimImage: Bool {
+    colorScheme == .dark && PreferencesStorage.shared.postRowDimImagesInDarkMode
   }
 }
