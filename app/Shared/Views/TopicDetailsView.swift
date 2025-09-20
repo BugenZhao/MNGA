@@ -231,9 +231,11 @@ struct TopicDetailsView: View {
         #if os(iOS)
           favoriteButton
         #endif
-        Button(action: { dataSource.refresh() }) {
-          Label("Refresh", systemImage: "arrow.clockwise")
-        }
+        #if os(macOS)
+          Button(action: { dataSource.refresh() }) {
+            Label("Refresh", systemImage: "arrow.clockwise")
+          }
+        #endif
       }
     } label: {
       Label("More", systemImage: "ellipsis.circle")
@@ -506,6 +508,7 @@ struct TopicDetailsView: View {
       .if(subtitle != nil, content: { $0.navigationSubtitle(subtitle!) })
       .navigationBarTitleDisplayMode(.inline)
       .toolbar { toolbar }
+      .refreshable(dataSource: dataSource)
       .toolbarRole(.editor) // make title left aligned
       .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
       .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
