@@ -299,7 +299,7 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
 }
 
 extension View {
-  func refreshable<Res: SwiftProtobuf.Message, Item>(dataSource: PagingDataSource<Res, Item>, refreshWhenEnterForeground: Bool = false) -> some View {
+  func refreshable(dataSource: PagingDataSource<some SwiftProtobuf.Message, some Any>, refreshWhenEnterForeground: Bool = false) -> some View {
     modifier(PagingDataSourceRefreshable(dataSource: dataSource, refreshWhenEnterForeground: refreshWhenEnterForeground))
   }
 }
