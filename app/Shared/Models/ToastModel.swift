@@ -67,9 +67,9 @@ extension ToastModel.Message {
   func toastView(for displayMode: AlertToast.DisplayMode) -> AlertToast {
     switch self {
     case let .success(msg):
-      AlertToast(displayMode: displayMode, type: .complete(.green), title: "Success".localized, subTitle: msg)
+      AlertToast(displayMode: displayMode, type: .complete(.green), title: "Success".localized, subTitle: msg, style: .style(backgroundColor: .green.opacity(0.07)))
     case let .error(msg):
-      AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg.errorLocalized)
+      AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg.errorLocalized, style: .style(backgroundColor: .red.opacity(0.07)))
     case let .notification(newCount):
       AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String(format: "%lld new unread notifications".localized, newCount))
     case let .userSwitch(user):
