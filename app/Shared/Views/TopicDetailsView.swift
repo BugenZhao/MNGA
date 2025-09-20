@@ -474,11 +474,11 @@ struct TopicDetailsView: View {
       }.onReceive(action.$scrollToFloor) { floor in
         guard let floor else { return }
         let item = dataSource.items.first { $0.floor == UInt32(floor) }
-        proxy.scrollTo(item, anchor: .top)
+        withAnimation { proxy.scrollTo(item, anchor: .top) }
       }.onReceive(action.$scrollToPid) { pid in
         guard let pid else { return }
         let item = dataSource.items.first { $0.id.pid == pid }
-        proxy.scrollTo(item, anchor: .top)
+        withAnimation { proxy.scrollTo(item, anchor: .top) }
       }
     }.mayGroupedListStyle()
       // Action Navigation
