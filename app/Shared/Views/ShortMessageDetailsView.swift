@@ -53,8 +53,8 @@ struct ShortMessageDetailsView: View {
           Section(header: Text("Participants")) {
             ScrollView(.horizontal) {
               LazyHStack {
-                ForEach(dataSource.latestResponse?.ids ?? [], id: \.self) { userID in
-                  UserView(id: userID, style: .vertical, loadRemote: true)
+                ForEach(dataSource.latestResponse?.users ?? [], id: \.id) { user in
+                  UserView(user: user, style: .vertical)
                 }
               }
             }

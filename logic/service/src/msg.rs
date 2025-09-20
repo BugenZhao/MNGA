@@ -119,13 +119,13 @@ pub async fn get_short_msg_details(
     )
     .await?;
 
-    let _users = extract_nodes(&package, "/root/data/item/userInfo/item", |ns| {
+    let users = extract_nodes(&package, "/root/data/item/userInfo/item", |ns| {
         ns.into_iter()
             .filter_map(|n| extract_local_user_and_cache(n, None))
             .collect()
     })?;
 
-    let posts = extract_nodes(&package, "/root/data/item/item", |ns| {
+    let posts = extract_nodes(&package, "/root/data/item/allmsgs/item", |ns| {
         ns.into_iter().filter_map(extract_short_msg_post).collect()
     })?;
 
@@ -137,15 +137,15 @@ pub async fn get_short_msg_details(
         request.page
     };
 
-    let (ids, user_names) = extract_string(&package, "/root/data/item/allUsers")
+    // Unused in favor of `users`.
+    let (_ids, _user_names) = extract_string(&package, "/root/data/item/allUsers")
         .map(|r| extract_all_users(&r))
         .unwrap_or_default();
 
     let response = ShortMessageDetailsResponse {
         posts: posts.into(),
         pages,
-        ids: ids.into(),
-        user_names: user_names.into(),
+        users: users.into(),
         ..Default::default()
     };
     Ok(response)
