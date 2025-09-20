@@ -53,5 +53,6 @@ struct RecommendedTopicListView: View {
       }
     }.navigationTitle("Recommended Topics")
       .navigationSubtitle(forum.name)
+      .refreshable(dataSource: dataSource)
   }
 }
