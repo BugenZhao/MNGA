@@ -134,10 +134,12 @@ where
         get_global_client()
     };
 
+    let ua = &*device_ua(api);
     let builder = client
         .request(method, url)
         .query(&query)
-        .header("X-User-Agent", &*device_ua(api));
+        .header("User-Agent", ua)
+        .header("X-User-Agent", ua);
     let builder = add_form(builder);
 
     let request = builder.build()?;

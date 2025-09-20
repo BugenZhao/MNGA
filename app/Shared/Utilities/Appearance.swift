@@ -38,9 +38,10 @@ enum ThemeColor: Int, CaseIterable {
 }
 
 extension ThemeColor {
-  var color: Color? {
+  var color: Color {
     switch self {
-    case .mnga: nil
+    // Note: Color("AccentColor") is always MNGA color, while `.accentColor` is the user's theme color.
+    case .mnga: Color("AccentColor")
     case .blue: .systemBlue
     case .gray: .systemGray
     case .green: .systemGreen

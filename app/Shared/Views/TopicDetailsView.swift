@@ -214,13 +214,13 @@ struct TopicDetailsView: View {
         }
       }
 
-      #if os(iOS)
-        ShareLinksView(navigationID: navID) {
-          Button(action: shareAsImage) {
-            Label("Screenshot (Beta)", systemImage: "text.below.photo")
-          }
-        }
-      #endif
+      // #if os(iOS)
+      //   ShareLinksView(navigationID: navID) {
+      //     Button(action: shareAsImage) {
+      //       Label("Screenshot (Beta)", systemImage: "text.below.photo")
+      //     }
+      //   }
+      // #endif
 
       Section {
         if let atForum {

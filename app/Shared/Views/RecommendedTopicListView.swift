@@ -52,5 +52,6 @@ struct RecommendedTopicListView: View {
         .mayGroupedListStyle()
       }
     }.navigationTitle("Recommended Topics")
+      .navigationSubtitle(forum.name)
   }
 }

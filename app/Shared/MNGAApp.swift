@@ -36,7 +36,7 @@ struct MNGAApp: App {
   func setupColor() {
     #if os(iOS)
       guard let window = UIApplication.myKeyWindow else { return }
-      window.tintColor = prefs.themeColor.color?.toUIColor()
+      window.tintColor = prefs.themeColor.color.toUIColor()
     #endif
   }
 }
