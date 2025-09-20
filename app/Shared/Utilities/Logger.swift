@@ -10,6 +10,10 @@ import Logging
 
 let logger: Logger = {
   var logger = Logger(label: "App")
-  logger.logLevel = .info
+  #if DEBUG
+    logger.logLevel = .debug
+  #else
+    logger.logLevel = .info
+  #endif
   return logger
 }()

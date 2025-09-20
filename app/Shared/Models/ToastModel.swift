@@ -23,6 +23,7 @@ class ToastModel: ObservableObject {
     case userSwitch(String)
     case clockIn(String)
     case openURL(URL)
+    case autoRefreshed
   }
 
   @Published var message: Message? = nil
@@ -51,7 +52,7 @@ class ToastModel: ObservableObject {
     switch message {
     case .success, .error:
       ToastModel.banner.message = message
-    case .notification, .userSwitch, .clockIn:
+    case .notification, .userSwitch, .clockIn, .autoRefreshed:
       ToastModel.hud.message = message
     case .openURL:
       ToastModel.alert.message = message
@@ -77,6 +78,8 @@ extension ToastModel.Message {
       AlertToast(displayMode: displayMode, type: .systemImage("lanyardcard", .accentColor), title: "Clocked in Successfully".localized, subTitle: msg)
     case let .openURL(url):
       AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
+    case .autoRefreshed:
+      AlertToast(displayMode: displayMode, type: .systemImage("checkmark.arrow.trianglehead.clockwise", .accentColor), title: "Auto Refreshed".localized, subTitle: nil)
     }
   }
 }

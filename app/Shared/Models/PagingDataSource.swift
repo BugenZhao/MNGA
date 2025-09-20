@@ -257,23 +257,49 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 }
 
-extension View {
-  func refreshable(dataSource: PagingDataSource<some Any, some Any>, iOS15Only _: Bool = false, refreshWhenEnterForeground _: Bool = false) -> some View {
-    refreshable {
-      try! await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
-      await dataSource.refreshAsync(animated: true)
-      try! await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
-    }
-    // refreshWhenEnterForeground is currently buggy
+struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifier {
+  let dataSource: PagingDataSource<Res, Item>
+  let refreshWhenEnterForeground: Bool
 
-//      .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-//        guard refreshWhenEnterForeground else { return }
-//        guard let last = dataSource.lastRefreshTime else { return }
-//
-//        let elasped = Date().timeIntervalSince(last)
-//        if elasped > 60 * 60 { // 1 hour elapsed
-//          dataSource.refresh()
-//        }
-//      }
+  @Environment(\.scenePhase) var scenePhase
+
+  func doRefresh() async {
+    try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+    await dataSource.refreshAsync(animated: true)
+    try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+  }
+
+  func body(content: Content) -> some View {
+    ScrollViewReader { proxy in
+      content
+        .refreshable { await doRefresh() }
+        .if(refreshWhenEnterForeground) {
+          $0.onChange(of: scenePhase) {
+            logger.debug("scenePhase changed from \($0) to \($1)")
+            // Swipe to home: active -> inactive -> background
+            // Back to app: background -> inactive -> active
+            // When in multitask mode, app can be inactive if it's not focused.
+            // So we detect the switch from inactive to active, but not from background.
+            guard $0 == .inactive, $1 == .active else { return }
+            guard let last = dataSource.lastRefreshTime else { return }
+
+            let elapsed = Date().timeIntervalSince(last)
+            if elapsed > 60 * 60 { // 1 hour
+              Task {
+                logger.debug("\(elapsed) seconds elapsed, refreshing...")
+                withAnimation { proxy.scrollTo("top-placeholder") }
+                await doRefresh()
+                ToastModel.showAuto(.autoRefreshed)
+              }
+            }
+          }
+        }
+    }
+  }
+}
+
+extension View {
+  func refreshable<Res: SwiftProtobuf.Message, Item>(dataSource: PagingDataSource<Res, Item>, refreshWhenEnterForeground: Bool = false) -> some View {
+    modifier(PagingDataSourceRefreshable(dataSource: dataSource, refreshWhenEnterForeground: refreshWhenEnterForeground))
   }
 }
