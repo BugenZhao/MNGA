@@ -22,6 +22,8 @@ message SyncRequest {
     MarkNotificationReadRequest mark_noti_read = 6;
     // Set options for requesting.
     SetRequestOptionRequest set_request_option = 7;
+    // Invalidate the global HTTP client.
+    InvalidateClientRequest invalidate_client = 8;
   }
 }
 
@@ -301,6 +303,9 @@ message CacheResponse {
   uint64 items = 1;
   uint64 total_size = 2;
 }
+
+message InvalidateClientRequest {}
+message InvalidateClientResponse {}
 
 /*
  * MNGA-only mock APIs.

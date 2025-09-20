@@ -73,6 +73,7 @@ mod dispatch_sync {
             subject_parse(r) => r!(handle_subject_parse(r)),
             mark_noti_read(r) => r!(handle_mark_noti_read(r)),
             set_request_option(r) => r!(handle_set_request_option(r)),
+            invalidate_client(r) => r!(handle_invalidate_client(r)),
         }
     }
 }

@@ -12,6 +12,7 @@ struct MNGAApp: App {
   @ObserveInjection var forceRedraw
 
   @StateObject var prefs = PreferencesStorage()
+  @StateObject var networkMonitor = NetworkMonitor()
 
   init() {
     logger.info("MNGA Init")

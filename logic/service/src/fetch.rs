@@ -67,8 +67,22 @@ fn build_client() -> Client {
 static CLIENT: Mutex<Option<Client>> = Mutex::new(None);
 
 // Take the global client. It will be recreated on next fetch.
-fn invalidate_global_client() {
-    let _ = CLIENT.lock().unwrap().take();
+pub fn invalidate_global_client(warmup: bool) {
+    log::info!("invalidate global client");
+
+    CLIENT.lock().unwrap().take();
+
+    if warmup {
+        // Send a HEAD request to warm up the connection.
+        tokio::spawn(do_fetch(
+            "thread.php",
+            FetchKind::Normal,
+            vec![],
+            Method::HEAD,
+            false,
+            |b| b,
+        ));
+    }
 }
 
 fn get_global_client() -> Client {
@@ -136,7 +150,7 @@ where
 
     let ua = &*device_ua(api);
     let builder = client
-        .request(method, url)
+        .request(method.clone(), url)
         .query(&query)
         .header("User-Agent", ua)
         .header("X-User-Agent", ua);
@@ -144,8 +158,8 @@ where
 
     let request = builder.build()?;
     #[cfg(test)]
-    println!("request to url: {}", request.url());
-    log::info!("request to url: {}", request.url());
+    println!("{} request to url: {}", method, request.url());
+    log::info!("{} request to url: {}", method, request.url());
 
     let response = client.execute(request).await?;
 
@@ -235,7 +249,7 @@ where
                     query_pair.1,
                     error
                 );
-                invalidate_global_client();
+                invalidate_global_client(false);
                 if first_error.is_none() {
                     first_error = Some(error);
                 }
