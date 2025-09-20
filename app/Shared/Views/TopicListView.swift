@@ -242,6 +242,7 @@ struct TopicListView: View {
           }
       } else {
         List {
+          EmptyView().id("top-placeholder") // for auto refresh
           ForEach(itemBindings, id: \.id) { topic in
             CrossStackNavigationLinkHack(id: topic.w.id, destination: {
               TopicDetailsView.build(topicBinding: topic)
