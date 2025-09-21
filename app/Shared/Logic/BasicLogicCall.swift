@@ -129,7 +129,7 @@ func basicLogicCallAsync<Response: SwiftProtobuf.Message>(
     let dataCallback = WrappedDataCallback(
       callback: { (resData: Data) in
         do {
-          let res = try Response(serializedData: resData)
+          let res = try Response(serializedBytes: resData)
           onSuccess(res)
         } catch {
           let e = LogicError(error: "\(type(of: error)): \(error)")

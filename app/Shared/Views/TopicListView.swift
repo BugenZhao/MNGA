@@ -161,7 +161,7 @@ struct TopicListView: View {
         }
       }
 
-      ShareLinksView(navigationID: navID) {}
+      ShareLinksView(navigationID: navID, others: {})
 
       Section {
         Button(action: { favoriteForums.toggleFavorite(forum: forum) }) {
