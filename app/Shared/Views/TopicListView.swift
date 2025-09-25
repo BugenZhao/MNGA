@@ -10,6 +10,8 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 struct TopicListView: View {
+  @Namespace var transition
+
   typealias DataSource = PagingDataSource<TopicListResponse, Topic>
 
   @State var forum: Forum
@@ -202,6 +204,7 @@ struct TopicListView: View {
       }.navigationTitle("Subforums of \(forum.name)")
         .navigationBarTitleDisplayMode(.inline)
     }
+    .navigationTransition(.zoom(sourceID: "subforums", in: transition))
   }
 
   @ViewBuilder
@@ -218,6 +221,7 @@ struct TopicListView: View {
 
       // -- Bottom Bar
       ToolbarItem(placement: .bottomBar) { subforumButton }
+        .matchedTransitionSource(id: "subforums", in: transition)
       ToolbarSpacer(placement: .bottomBar)
       DefaultToolbarItem(kind: .search, placement: .bottomBar)
       ToolbarSpacer(placement: .bottomBar)
