@@ -1,6 +1,6 @@
 # Matchfile for MNGA
 
-This profile of this project is currently configured to be managed by [fastlane match](https://docs.fastlane.tools/actions/match/).
+The profile of this project is currently configured to be managed by [fastlane match](https://docs.fastlane.tools/actions/match/).
 
 ## Initial setup
 
