@@ -67,7 +67,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   var textEditor: some View {
     ContentTextEditorView(
       model: model,
-      focused: Binding(get: { focused == .content }, set: { focused = $0 ? .content : nil }),
+      focused: Binding(get: { focused == .content }, set: { focused = $0 ? .content : nil })
     )
   }
 

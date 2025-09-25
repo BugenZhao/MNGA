@@ -27,6 +27,8 @@ final class CurrentViewingFloor {
 }
 
 struct TopicDetailsView: View {
+  @Namespace var transition
+
   typealias DataSource = PagingDataSource<TopicDetailsResponse, Post>
 
   @Binding var topic: Topic
@@ -425,10 +427,10 @@ struct TopicDetailsView: View {
       ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
       ToolbarItem(placement: .navigationBarTrailing) { menu }
 
-      ToolbarItemGroup(placement: .bottomBar) {
-        jumpButton
-        loadFirstPageButton
-      }
+      ToolbarItem(placement: .bottomBar) { jumpButton }
+        .matchedTransitionSource(id: "jump", in: transition)
+      ToolbarSpacer(.fixed, placement: .bottomBar)
+      ToolbarItem(placement: .bottomBar) { loadFirstPageButton }
       ToolbarSpacer(placement: .bottomBar)
       ToolbarItemGroup(placement: .bottomBar) {
         // They won't show simultaneously.
@@ -456,6 +458,18 @@ struct TopicDetailsView: View {
         }
       }
     }
+  }
+
+  @ViewBuilder
+  var jumpSelector: some View {
+    TopicJumpSelectorView(
+      maxFloor: maxFloor,
+      initialFloor: currentViewingFloor.highest ?? 0,
+      floorToJump: $floorToJump,
+      pageToJump: $dataSource.loadFromPage
+    )
+    .navigationTransition(.zoom(sourceID: "jump", in: transition))
+    .presentationDetents([.medium])
   }
 
   @ViewBuilder
@@ -493,7 +507,7 @@ struct TopicDetailsView: View {
       }
       // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
-      .sheet(isPresented: $showJumpSelector) { TopicJumpSelectorView(maxFloor: maxFloor, initialFloor: currentViewingFloor.highest ?? 0, floorToJump: $floorToJump, pageToJump: $dataSource.loadFromPage).presentationDetents([.medium]) }
+      .sheet(isPresented: $showJumpSelector) { jumpSelector }
   }
 
   var body: some View {
