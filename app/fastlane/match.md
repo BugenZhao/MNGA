@@ -23,7 +23,7 @@ This requires the user to
 
 The development profile is only valid for specific devices, as specified in the Apple Developer Portal.
 
-To add a new device, it seems that we have to open Xcode, select the new device as the destination, and follow the instruction to register the device. After that, run
+To add a new device, it seems that we have to open Xcode, select the new device as the destination, and follow the instructions to register the device. After that, run
 
 ```bash
 $ fastlane match development
