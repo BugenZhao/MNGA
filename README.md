@@ -86,17 +86,17 @@
    克隆仓库到本地，在项目的根目录，运行
 
    ```bash
-   $ make tuist
    $ make ios
+   $ make tuist
    ```
 
    You'll find `logic-ios.xcframework` under `out`.
 
    检查 `out` 目录，将会生成 `logic-ios.xcframework` Xcode Framework.
 
-4. Open the Xcode project `app/NGA.xcodeproj`. Run the app after you set the correct Apple ID.
+4. Open the Xcode project `app/NGA.xcodeproj`. Build and run the app after you set the correct Developer Profile.
 
-   打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置签名 Apple ID 后，编译运行 MNGA。
+   打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置 Developer Profile 后，编译运行 MNGA。
 
 ## Donation
 
