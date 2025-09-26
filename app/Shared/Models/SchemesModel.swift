@@ -145,8 +145,8 @@ class SchemesModel: ObservableObject {
     url.mngaNavigationIdentifier != nil
   }
 
-  func onNavigateToURL(_ url: URL) -> Bool {
-    guard let id = url.mngaNavigationIdentifier else { return false }
+  func navigateTo(url: URL) {
+    guard let id = url.mngaNavigationIdentifier else { return }
 
     let action = { self.navID = id }
     DispatchQueue.main.async {
@@ -159,14 +159,13 @@ class SchemesModel: ObservableObject {
     }
 
     logger.info("navigated url `\(url)`")
-    return true
   }
 }
 
 struct SchemesNavigationModifier: ViewModifier {
   @ObservedObject var model: SchemesModel
 
-  @State var urlFromPasteboardForAlert: URL?
+  // @State var urlFromPasteboardForAlert: URL?
 
   @ViewBuilder
   func destination(_ navID: NavigationIdentifier) -> some View {
@@ -181,24 +180,24 @@ struct SchemesNavigationModifier: ViewModifier {
   func body(content: Content) -> some View {
     content
       .navigationDestination(item: $model.navID) { destination($0) }
-      .alert(isPresented: $urlFromPasteboardForAlert.isNotNil()) {
-        let url = urlFromPasteboardForAlert
-        return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
-      }
-      .onChange(of: urlFromPasteboardForAlert) { if $1 == nil { copyToPasteboard(string: "") } }
-      .onReceive(NotificationCenter.default.publisher(for: AppKitOrUIKitApplication.didBecomeActiveNotification)) { _ in
-        #if os(iOS)
-          UIPasteboard.general.detectPatterns(for: [\.probableWebURL]) { result in
-            switch result {
-            case .success:
-              if let url = UIPasteboard.general.url, model.canNavigateTo(url) {
-                urlFromPasteboardForAlert = url
-              }
-            default:
-              break
-            }
-          }
-        #endif
-      }
+    // .alert(isPresented: $urlFromPasteboardForAlert.isNotNil()) {
+    //   let url = urlFromPasteboardForAlert
+    //   return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
+    // }
+    // .onChange(of: urlFromPasteboardForAlert) { if $1 == nil { copyToPasteboard(string: "") } }
+    // .onReceive(NotificationCenter.default.publisher(for: AppKitOrUIKitApplication.didBecomeActiveNotification)) { _ in
+    //   #if os(iOS)
+    //     UIPasteboard.general.detectPatterns(for: [\.probableWebURL]) { result in
+    //       switch result {
+    //       case .success:
+    //         if let url = UIPasteboard.general.url, model.canNavigateTo(url) {
+    //           urlFromPasteboardForAlert = url
+    //         }
+    //       default:
+    //         break
+    //       }
+    //     }
+    //   #endif
+    // }
   }
 }

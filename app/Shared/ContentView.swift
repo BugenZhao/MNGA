@@ -70,7 +70,7 @@ struct ContentView: View {
 
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
-      .onOpenURL { _ = schemes.onNavigateToURL($0) }
+      .onOpenURL { schemes.navigateTo(url: $0) }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
       .modifier(MainToastModifier())
       .preferredColorScheme(prefs.colorScheme.scheme)
