@@ -72,7 +72,7 @@ struct ContentView: View {
     testBody ?? realBody.eraseToAnyView()
       .onOpenURL { schemes.navigateTo(url: $0) }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
-      .modifier(MainToastModifier())
+      .modifier(MainToastModifier.main())
       .preferredColorScheme(prefs.colorScheme.scheme)
       // Sheets
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) } // this is global-wide, no need to attribute again in sheets

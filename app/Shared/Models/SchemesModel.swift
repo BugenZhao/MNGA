@@ -133,14 +133,6 @@ extension URL {
 class SchemesModel: ObservableObject {
   @Published var navID: NavigationIdentifier?
 
-  var isActive: Bool {
-    navID != nil
-  }
-
-  func clear() {
-    navID = nil
-  }
-
   func canNavigateTo(_ url: URL) -> Bool {
     url.mngaNavigationIdentifier != nil
   }
@@ -148,14 +140,10 @@ class SchemesModel: ObservableObject {
   func navigateTo(url: URL) {
     guard let id = url.mngaNavigationIdentifier else { return }
 
-    let action = { self.navID = id }
-    DispatchQueue.main.async {
-      if self.isActive {
-        self.clear()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: action)
-      } else {
-        action()
-      }
+    navID = nil
+    ToastModel.showAuto(.openURL(url))
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      self.navID = id
     }
 
     logger.info("navigated url `\(url)`")
@@ -168,18 +156,24 @@ struct SchemesNavigationModifier: ViewModifier {
   // @State var urlFromPasteboardForAlert: URL?
 
   @ViewBuilder
-  func destination(_ navID: NavigationIdentifier) -> some View {
-    switch navID {
-    case let .topicID(tid, fav):
-      TopicDetailsView.build(id: tid, fav: fav)
-    case let .forumID(forumID):
-      TopicListView.build(id: forumID)
+  var destination: some View {
+    if let navID = model.navID {
+      NavigationStack {
+        switch navID {
+        case let .topicID(tid, fav):
+          TopicDetailsView.build(id: tid, fav: fav)
+        case let .forumID(forumID):
+          TopicListView.build(id: forumID)
+        }
+      }
+      .modifier(MainToastModifier.bannerOnly()) // for network error
+      .modifier(GlobalSheetsModifier())
     }
   }
 
   func body(content: Content) -> some View {
     content
-      .navigationDestination(item: $model.navID) { destination($0) }
+      .sheet(isPresented: $model.navID.isNotNil()) { destination }
     // .alert(isPresented: $urlFromPasteboardForAlert.isNotNil()) {
     //   let url = urlFromPasteboardForAlert
     //   return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
