@@ -9,9 +9,6 @@ import Foundation
 
 enum URLs {
   static let attachmentBase = URL(string: "https://img.nga.178.com/attachments/")!
-  static let testFlight = URL(string: "https://testflight.apple.com/join/qFDuytLt")!
-  static let gitHub = URL(string: "https://github.com/BugenZhao/MNGA")!
-  static let mailTo = URL(string: "mailto:mnga.feedback@bugenzhao.com")!
 
   static let defaultHost = "nga.178.com"
   static let hosts = [defaultHost, "bbs.nga.cn", "ngabbs.com"]
