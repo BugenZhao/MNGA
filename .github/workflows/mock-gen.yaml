@@ -27,10 +27,10 @@ jobs:
           command: build
           args: --package mock_gen
       - name: Run mock_gen
-        run: target/debug/mock_gen mock-src/forum.yaml pages/api
+        run: target/debug/mock_gen mock-src/forum.yaml mock-src/pages/api
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: pages
+          publish_dir: mock-src/pages
           cname: mnga-pages.bugenzhao.com
