@@ -52,10 +52,10 @@ class ToastModel: ObservableObject {
     switch message {
     case .success, .error:
       ToastModel.banner.message = message
-    case .notification, .userSwitch, .clockIn, .autoRefreshed:
+    case .notification, .userSwitch, .clockIn, .autoRefreshed, .openURL:
       ToastModel.hud.message = message
-    case .openURL:
-      ToastModel.alert.message = message
+    // case .openURL:
+    //   ToastModel.alert.message = message
     case .none:
       break
     }

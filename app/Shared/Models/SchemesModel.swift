@@ -5,6 +5,7 @@
 //  Created by Bugen Zhao on 2021/11/19.
 //
 
+import Combine
 import Crossroad
 import Foundation
 import SwiftUI
@@ -130,75 +131,86 @@ extension URL {
   }
 }
 
+// https://stackoverflow.com/questions/67438411/swiftui-onreceive-dont-work-with-uipasteboard-publisher
+extension UIPasteboard {
+  var hasURLsPublisher: AnyPublisher<Bool, Never> {
+    return Just(hasURLs)
+      .merge(
+        with: NotificationCenter.default
+          .publisher(for: UIPasteboard.changedNotification, object: self)
+          .map { _ in self.hasURLs })
+      .merge(
+        with: NotificationCenter.default
+          .publisher(for: UIApplication.didBecomeActiveNotification, object: nil)
+          .map { _ in self.hasURLs })
+      .eraseToAnyPublisher()
+  }
+}
+
 class SchemesModel: ObservableObject {
   @Published var navID: NavigationIdentifier?
 
-  var isActive: Bool {
-    navID != nil
-  }
+  // We can't guarantee it's a valid NGA/MNGA link in the pasteboard.
+  @Published var canTryNavigateToPasteboardURL = false
 
-  func clear() {
-    navID = nil
-  }
+  var cancellables = Set<AnyCancellable>()
 
   func canNavigateTo(_ url: URL) -> Bool {
     url.mngaNavigationIdentifier != nil
   }
 
-  func onNavigateToURL(_ url: URL) -> Bool {
-    guard let id = url.mngaNavigationIdentifier else { return false }
+  func navigateTo(url: URL) {
+    guard let id = url.mngaNavigationIdentifier else { return }
 
-    let action = { self.navID = id }
-    DispatchQueue.main.async {
-      if self.isActive {
-        self.clear()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: action)
-      } else {
-        action()
-      }
+    navID = nil
+    ToastModel.showAuto(.openURL(url))
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      self.navID = id
     }
 
     logger.info("navigated url `\(url)`")
-    return true
+  }
+
+  init() {
+    UIPasteboard.general.hasURLsPublisher
+      .sink { has in withAnimation { self.canTryNavigateToPasteboardURL = has } }
+      .store(in: &cancellables)
+  }
+
+  func navigateToPasteboardURL() {
+    guard let url = UIPasteboard.general.url else { return }
+    guard canNavigateTo(url) else {
+      ToastModel.showAuto(.error("Not a valid NGA or MNGA link in the pasteboard."))
+      return
+    }
+    navigateTo(url: url)
   }
 }
 
 struct SchemesNavigationModifier: ViewModifier {
   @ObservedObject var model: SchemesModel
 
-  @State var urlFromPasteboardForAlert: URL?
+  // @State var urlFromPasteboardForAlert: URL?
 
   @ViewBuilder
-  func destination(_ navID: NavigationIdentifier) -> some View {
-    switch navID {
-    case let .topicID(tid, fav):
-      TopicDetailsView.build(id: tid, fav: fav)
-    case let .forumID(forumID):
-      TopicListView.build(id: forumID)
+  var destination: some View {
+    if let navID = model.navID {
+      NavigationStack {
+        switch navID {
+        case let .topicID(tid, fav):
+          TopicDetailsView.build(id: tid, fav: fav)
+        case let .forumID(forumID):
+          TopicListView.build(id: forumID)
+        }
+      }
+      .modifier(MainToastModifier.bannerOnly()) // for network error
+      .modifier(GlobalSheetsModifier())
     }
   }
 
   func body(content: Content) -> some View {
     content
-      .navigationDestination(item: $model.navID) { destination($0) }
-      .alert(isPresented: $urlFromPasteboardForAlert.isNotNil()) {
-        let url = urlFromPasteboardForAlert
-        return Alert(title: Text("Navigate to Link from Pasteboard?"), message: Text(url?.absoluteString ?? ""), primaryButton: .default(Text("Navigate")) { if let url, model.canNavigateTo(url) { _ = model.onNavigateToURL(url) } }, secondaryButton: .cancel())
-      }
-      .onChange(of: urlFromPasteboardForAlert) { if $1 == nil { copyToPasteboard(string: "") } }
-      .onReceive(NotificationCenter.default.publisher(for: AppKitOrUIKitApplication.didBecomeActiveNotification)) { _ in
-        #if os(iOS)
-          UIPasteboard.general.detectPatterns(for: [\.probableWebURL]) { result in
-            switch result {
-            case .success:
-              if let url = UIPasteboard.general.url, model.canNavigateTo(url) {
-                urlFromPasteboardForAlert = url
-              }
-            default:
-              break
-            }
-          }
-        #endif
-      }
+      .sheet(isPresented: $model.navID.isNotNil()) { destination }
+      .environmentObject(model)
   }
 }

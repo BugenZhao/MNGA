@@ -77,6 +77,7 @@ struct NotificationListNavigationView: View {
     NavigationStack {
       NotificationListView()
     }
+    .modifier(MainToastModifier.bannerOnly())
     .modifier(GlobalSheetsModifier())
   }
 }

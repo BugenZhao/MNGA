@@ -153,7 +153,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
     var body: some View {
       inner
         .mayGroupedListStyle()
-        .modifier(AlertToastModifier())
+        .modifier(MainToastModifier.editorAlertOnly())
         .navigationTitleInline(key: title)
         .environmentObject(presendAttachments)
         .toolbar {

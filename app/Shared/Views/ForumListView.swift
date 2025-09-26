@@ -10,6 +10,8 @@ import SwiftUI
 import SwiftUIX
 
 struct ForumListView: View {
+  @EnvironmentObject var schemes: SchemesModel
+
   @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = GlobalSearchModel()
   @StateObject var prefs = PreferencesStorage.shared
@@ -117,6 +119,28 @@ struct ForumListView: View {
     }.environment(\.editMode, $editMode)
   }
 
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
+    ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
+    ToolbarItem(placement: .navigationBarTrailing) { filter }
+
+    if UserInterfaceIdiom.current == .phone {
+      DefaultToolbarItem(kind: .search, placement: .bottomBar)
+    }
+    if schemes.canTryNavigateToPasteboardURL {
+      ToolbarSpacer(placement: .bottomBar)
+      ToolbarItem(placement: .bottomBar) {
+        Button(action: schemes.navigateToPasteboardURL) {
+          HStack {
+            Image(systemName: "arrow.right.page.on.clipboard")
+            Text("Navigate")
+          }
+        }
+        .buttonStyle(.borderedProminent)
+      }
+    }
+  }
+
   var body: some View {
     Group {
       if searchModel.text != "" {
@@ -129,10 +153,7 @@ struct ForumListView: View {
     .onAppear { loadData() }
     .navigationTitle("MNGA")
     .compatForumListListStyle()
-    .toolbar {
-      ToolbarItem(placement: .mayNavigationBarLeadingOrAction) { UserMenuView() }
-      ToolbarItemGroup(placement: .mayNavigationBarTrailing) { filter }
-    }
+    .toolbar { toolbar }
   }
 
   func loadData() {
