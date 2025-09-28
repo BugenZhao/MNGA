@@ -13,9 +13,7 @@ struct PlusView: View {
   @EnvironmentObject var paywall: PaywallModel
   @Environment(\.dismiss) private var dismiss
 
-  @State private var products: [Product] = []
-  @State private var isLoadingProducts = false
-  @State private var didLoadProducts = false
+  @State private var products: [Product]?
   @State private var purchasingProductID: String?
   @State private var isRestoring = false
   @State private var errorMessage: String?
@@ -50,7 +48,7 @@ struct PlusView: View {
     }
     .background(.systemGroupedBackground)
     .toolbar { toolbarContent }
-    .task { await loadProductsIfNeeded() }
+    .storeProductsTask(for: Constants.Plus.ids) { self.products = $0.products }
     .onAppear { lastKnownUnlocked = paywall.onlineStatus?.isUnlocked ?? false }
     .onChange(of: paywall.onlineStatus) {
       guard let status = $1 else { return }
@@ -125,7 +123,7 @@ struct PlusView: View {
       VStack(spacing: 16) {
         let displayProducts = productsToDisplay(for: status)
 
-        if isLoadingProducts {
+        if products == nil {
           ProgressView()
             .controlSize(.large)
         } else if displayProducts.isEmpty {
@@ -181,11 +179,9 @@ struct PlusView: View {
             .font(.headline)
         }
 
-        if let offerDescription = offerDescription(for: product) {
-          Text(offerDescription)
-            .font(.footnote)
-            .if(isTrialProduct) { $0.foregroundStyle(.tint) }
-        }
+        Text(product.description)
+          .font(.footnote)
+          .if(isTrialProduct) { $0.foregroundStyle(.tint) }
 
         if isPurchasing {
           ProgressView()
@@ -209,16 +205,8 @@ struct PlusView: View {
       .fill(Color(.secondarySystemGroupedBackground))
   }
 
-  private func offerDescription(for product: Product) -> String? {
-    if product.id == Constants.Plus.trialID {
-      return String(localized: "Try Plus for 14 Days")
-    }
-
-    return nil
-  }
-
   private var sortedProducts: [Product] {
-    products.sorted { lhs, rhs in
+    (products ?? []).sorted { lhs, rhs in
       productOrder(lhs) < productOrder(rhs)
     }
   }
@@ -234,28 +222,6 @@ struct PlusView: View {
       return index
     }
     return Constants.Plus.ids.count
-  }
-
-  private func loadProductsIfNeeded() async {
-    if didLoadProducts { return }
-    await MainActor.run {
-      isLoadingProducts = true
-      errorMessage = nil
-      didLoadProducts = true
-    }
-
-    do {
-      let fetched = try await Product.products(for: Set(Constants.Plus.ids))
-      await MainActor.run {
-        products = fetched
-        isLoadingProducts = false
-      }
-    } catch {
-      await MainActor.run {
-        errorMessage = error.localizedDescription
-        isLoadingProducts = false
-      }
-    }
   }
 
   private func purchase(_ product: Product) {
