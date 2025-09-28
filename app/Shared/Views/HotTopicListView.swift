@@ -72,17 +72,14 @@ struct HotTopicListView: View {
       Section {
         Picker(selection: $range.animation(), label: Text("Range")) {
           ForEach(HotTopicListRequest.DateRange.allCases, id: \.rawValue) { range in
-            HStack {
-              Text(range.description)
-              Spacer()
-              Image(systemName: range.icon)
-            }.tag(range)
+            Label(range.description, systemImage: range.icon)
+              .tag(range)
           }
         }
       }
     } label: {
       Label("Range", systemImage: "calendar")
-    }.imageScale(.large)
+    }
   }
 
   var body: some View {

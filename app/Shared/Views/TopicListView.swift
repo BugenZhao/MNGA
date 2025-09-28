@@ -137,17 +137,6 @@ struct TopicListView: View {
     Menu {
       if !mock {
         Section(debugName) {
-          Menu {
-            Picker(selection: $order, label: Text("Order")) {
-              ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
-                Label(order.description, systemImage: order.icon)
-                  .tag(order as TopicListRequest.Order?)
-              }
-            }
-          } label: {
-            Label("Order by", systemImage: (order ?? .lastPost).icon)
-          }
-
           NavigationLink(destination: HotTopicListView.build(forum: forum)) {
             Label("Hot Topics", systemImage: "flame")
           }.isDetailLink(false)
@@ -185,6 +174,16 @@ struct TopicListView: View {
   }
 
   @ViewBuilder
+  var orderByMenu: some View {
+    Picker(selection: $order, label: Text("Order")) {
+      ForEach(TopicListRequest.Order.allCases, id: \.rawValue) { order in
+        Label(order.description, systemImage: order.icon)
+          .tag(order as TopicListRequest.Order?)
+      }
+    }
+  }
+
+  @ViewBuilder
   var subforumsModal: some View {
     NavigationView {
       Group {
@@ -216,6 +215,7 @@ struct TopicListView: View {
   var toolbar: some ToolbarContent {
     #if os(iOS)
       // -- Navigation Bar
+      ToolbarTitleMenu { orderByMenu }
       ToolbarItem(placement: .navigationBarTrailing) { icon }
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
 
@@ -272,6 +272,7 @@ struct TopicListView: View {
     }
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name.localized)
+    .navigationSubtitle(order?.description ?? "")
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal.presentationDetents([.medium, .large]) }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
