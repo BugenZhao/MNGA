@@ -28,9 +28,13 @@ struct TopicListView: View {
   @State var showingSubforumsModal = false
   @State var order: TopicListRequest.Order? = nil
 
+  var orderOrDefault: TopicListRequest.Order {
+    order ?? prefs.defaultTopicListOrder
+  }
+
   var dataSource: DataSource {
-    switch order {
-    case .lastPost, .none: dataSourceLastPost
+    switch orderOrDefault {
+    case .lastPost: dataSourceLastPost
     case .postDate: dataSourcePostDate
     default: fatalError()
     }
@@ -41,8 +45,8 @@ struct TopicListView: View {
   }
 
   var itemBindings: Binding<[Topic]> {
-    switch order {
-    case .lastPost, .none:
+    switch orderOrDefault {
+    case .lastPost:
       $dataSourceLastPost.items
     case .postDate:
       $dataSourcePostDate.items
@@ -246,15 +250,17 @@ struct TopicListView: View {
           }
       } else {
         List {
-          EmptyView().id("top-placeholder") // for auto refresh
-          ForEach(itemBindings, id: \.id) { topic in
-            CrossStackNavigationLinkHack(id: topic.w.id, destination: {
-              TopicDetailsView.build(topicBinding: topic)
-            }) {
-              TopicRowView(topic: topic.w, useTopicPostDate: order == .postDate)
-            }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+          Section(header: Text(orderOrDefault.description)) {
+            EmptyView().id("top-placeholder") // for auto refresh
+            ForEach(itemBindings, id: \.id) { topic in
+              CrossStackNavigationLinkHack(id: topic.w.id, destination: {
+                TopicDetailsView.build(topicBinding: topic)
+              }) {
+                TopicRowView(topic: topic.w, useTopicPostDate: orderOrDefault == .postDate)
+              }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            }
+            .id(order)
           }
-          .id(order)
         }
       }
     }
@@ -272,7 +278,6 @@ struct TopicListView: View {
     }
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name.localized)
-    .navigationSubtitle(order?.description ?? "")
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal.presentationDetents([.medium, .large]) }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
