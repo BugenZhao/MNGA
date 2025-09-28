@@ -162,7 +162,7 @@ struct TopicListView: View {
 
           if let topicID = toppedTopicID {
             NavigationLink(destination: TopicDetailsView.build(id: topicID)) {
-              Label("Topped Topic", systemImage: "arrow.up.to.line")
+              Label("Topped Topic", systemImage: "pin")
             }
           }
         }
