@@ -150,6 +150,7 @@ struct TopicListView: View {
             }
           } label: {
             Label("Order by", systemImage: orderOrDefault.icon)
+            Text(orderOrDefault.description)
           }
 
           NavigationLink(destination: HotTopicListView.build(forum: forum)) {
