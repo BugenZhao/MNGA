@@ -148,18 +148,8 @@ struct PostRowView: View {
 
   @ViewBuilder
   var menu: some View {
-    Section {
-      Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
-        Label("Select Text", systemImage: "selection.pin.in.out")
-      }
-      if !attachments.items.isEmpty {
-        Button(action: { showAttachments = true }) {
-          Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
-        }
-      }
-    }
     if let model = postReply, !mock, !dummy {
-      Section {
+      ControlGroup {
         Button(action: { doQuote(model: model) }) {
           Label("Quote", systemImage: "quote.bubble")
         }
@@ -170,9 +160,21 @@ struct PostRowView: View {
           Button(action: { doEdit(model: model) }) {
             Label("Edit", systemImage: "pencil")
           }
+        } else {
+          // Why reporting myself?
+          Button(role: .destructive, action: { doReport(model: model) }) {
+            Label("Report", systemImage: "exclamationmark.bubble")
+          }
         }
-        Button(role: .destructive, action: { doReport(model: model) }) {
-          Label("Report", systemImage: "exclamationmark.bubble")
+      }
+    }
+    Section {
+      Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
+        Label("Select Text", systemImage: "selection.pin.in.out")
+      }
+      if !attachments.items.isEmpty {
+        Button(action: { showAttachments = true }) {
+          Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
         }
       }
     }
@@ -196,14 +198,12 @@ struct PostRowView: View {
       signature
     }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
-    #if os(macOS)
       .contextMenu { menu }
-    #endif
     #if os(iOS)
-    .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
+      .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
-    .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments, isPresented: $showAttachments) }.presentationDetents([.medium, .large]) }
-    .environmentObject(attachments)
+      .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments, isPresented: $showAttachments) }.presentationDetents([.medium, .large]) }
+      .environmentObject(attachments)
 
     if let model = postReply, !mock {
       body
