@@ -134,7 +134,7 @@ extension URL {
 // https://stackoverflow.com/questions/67438411/swiftui-onreceive-dont-work-with-uipasteboard-publisher
 extension UIPasteboard {
   var hasURLsPublisher: AnyPublisher<Bool, Never> {
-    return Just(hasURLs)
+    Just(hasURLs)
       .merge(
         with: NotificationCenter.default
           .publisher(for: UIPasteboard.changedNotification, object: self)
