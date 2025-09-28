@@ -11,6 +11,7 @@ import SwiftUIX
 
 struct ForumListView: View {
   @EnvironmentObject var schemes: SchemesModel
+  @EnvironmentObject var paywall: PaywallModel
 
   @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = GlobalSearchModel()
@@ -119,9 +120,24 @@ struct ForumListView: View {
     }.environment(\.editMode, $editMode)
   }
 
+  @Namespace var namespace
+
+  @ViewBuilder
+  var unlockButton: some View {
+    Button(action: { paywall.isShowingModal = true }) {
+      Text("Unlock Plus").bold()
+    }
+    .buttonStyle(.borderedProminent)
+  }
+
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
+
+    if !paywall.isUnlocked {
+      ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
+      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+    }
     ToolbarItem(placement: .navigationBarTrailing) { filter }
 
     if UserInterfaceIdiom.current == .phone {
@@ -151,7 +167,7 @@ struct ForumListView: View {
     }
     .searchable(model: searchModel, prompt: "Search".localized)
     .onAppear { loadData() }
-    .navigationTitle("MNGA")
+    .navigationTitle(paywall.isUnlocked ? "MNGA" : "MNGA Lite")
     .compatForumListListStyle()
     .toolbar { toolbar }
   }

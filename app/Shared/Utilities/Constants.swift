@@ -27,5 +27,11 @@ enum Constants {
     static let favoriteForums = "favoriteForums"
   }
 
+  enum Plus {
+    static let ids = [unlockID, trialID]
+    static let unlockID = "mnga.unlock"
+    static let trialID = "mnga.unlock.trial14"
+  }
+
   static let postPerPage = 20
 }

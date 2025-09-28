@@ -90,6 +90,35 @@ private struct TopicListAppearanceView: View {
 
 struct PreferencesInnerView: View {
   @StateObject var pref = PreferencesStorage.shared
+  @EnvironmentObject var paywall: PaywallModel
+
+  @ViewBuilder
+  var paywallSection: some View {
+    let status = paywall.cachedStatus
+
+    Section(
+      header: Text("Plus"),
+      footer: Text(status.isPaid ? "Plus Thanks" : "Plus Explanation")
+    ) {
+      if status.isPaid {
+        Label("Plus Unlocked", systemImage: "star.circle.fill")
+      } else {
+        if status.isLiteCanTry {
+          NavigationLink(destination: PlusView().storeButton(.hidden, for: .cancellation)) {
+            Label("Try Plus for 14 Days", systemImage: "star.circle")
+          }
+        } else {
+          NavigationLink(destination: PlusView().storeButton(.hidden, for: .cancellation)) {
+            Label("Unlock Plus", systemImage: "star.circle")
+          }
+        }
+      }
+
+      if case let .trial(expiration) = status {
+        Text("Plus Trial Expires in \(timeAgo(date: expiration))")
+      }
+    }
+  }
 
   @ViewBuilder
   var appearance: some View {
@@ -171,58 +200,38 @@ struct PreferencesInnerView: View {
     }
   }
 
-  #if os(macOS)
-    var body: some View {
-      TabView {
-        Form { appearance }
-          .tabItem { Label("Appearance", systemImage: "circle") }
-          .tag("appearance")
-        Form { reading }
-          .tabItem { Label("Reading", systemImage: "eyeglasses") }
-          .tag("reading")
-        Form { connection }
-          .tabItem { Label("Connection", systemImage: "network") }
-          .tag("connection")
-        Form { advanced }
-          .tabItem { Label("Advanced", systemImage: "gearshape.2") }
-          .tag("advanced")
-      }.tint(.accentColor)
-        .pickerStyle(InlinePickerStyle())
-        .padding(20)
-        .frame(width: 500)
-    }
-  #else
-    var body: some View {
-      Form {
-        Section(header: Text("Appearance")) {
-          appearance
-        }
+  var body: some View {
+    Form {
+      paywallSection
 
-        Section(header: Text("Reading")) {
-          reading
-        }
-
-        Section(header: Text("Connection")) {
-          connection
-        }
-
-        Section(header: Text("Advanced")) {
-          advanced
-        }
-
-        Section(header: Text("Special"), footer: Text("NGA Workaround")) {
-          special
-        }
+      Section(header: Text("Appearance")) {
+        appearance
       }
-      // Set `pickerStyle` explicitly to fix tint color.
-      // https://stackoverflow.com/questions/74157251/why-doesnt-pickers-tint-color-update
-      .pickerStyle(.menu)
-      .tint(.accentColor)
-      .mayInsetGroupedListStyle()
-      .navigationTitle("Preferences")
-      .preferredColorScheme(pref.colorScheme.scheme) // workaround
+
+      Section(header: Text("Reading")) {
+        reading
+      }
+
+      Section(header: Text("Connection")) {
+        connection
+      }
+
+      Section(header: Text("Advanced")) {
+        advanced
+      }
+
+      Section(header: Text("Special"), footer: Text("NGA Workaround")) {
+        special
+      }
     }
-  #endif
+    // Set `pickerStyle` explicitly to fix tint color.
+    // https://stackoverflow.com/questions/74157251/why-doesnt-pickers-tint-color-update
+    .pickerStyle(.menu)
+    .tint(.accentColor)
+    .mayInsetGroupedListStyle()
+    .navigationTitle("Preferences")
+    .preferredColorScheme(pref.colorScheme.scheme) // workaround
+  }
 }
 
 struct PreferencesView: View {

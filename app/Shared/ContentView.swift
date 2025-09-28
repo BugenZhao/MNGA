@@ -21,6 +21,7 @@ struct ContentView: View {
   @StateObject var currentUser = CurrentUserModel()
   @StateObject var textSelection = TextSelectionModel()
   @StateObject var schemes = SchemesModel()
+  @StateObject var paywall = PaywallModel()
 
   // For preview usage. If set, the content will be replaced by this.
   // In this case, `ContentView` mainly serves as a container for global states.
@@ -89,6 +90,7 @@ struct ContentView: View {
       .environmentObject(shortMessagePost)
       .environmentObject(currentUser)
       .environmentObject(textSelection)
+      .environmentObject(paywall)
   }
 }
 
@@ -101,12 +103,14 @@ struct GlobalSheetsModifier: ViewModifier {
   @EnvironmentObject var shortMessagePost: ShortMessagePostModel
   @EnvironmentObject var textSelection: TextSelectionModel
   @EnvironmentObject var viewingImage: ViewingImageModel
+  @EnvironmentObject var paywall: PaywallModel
 
   func body(content: Content) -> some View {
     content
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
+      .sheet(isPresented: $paywall.isShowingModal) { PlusSheetView() }
       .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
   }
 }
