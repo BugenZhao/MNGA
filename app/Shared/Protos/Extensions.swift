@@ -180,9 +180,9 @@ extension TopicListRequest.Order {
   var description: LocalizedStringKey {
     switch self {
     case .lastPost:
-      "Last Reply"
+      "Latest Replies"
     case .postDate:
-      "Topic Post"
+      "Latest Topics"
     default:
       ""
     }

@@ -131,7 +131,7 @@ struct UserMenuView: View {
   }
 
   var body: some View {
-    menu.imageScale(.large)
+    menu
       .badge(unreadCount)
       .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
       .onAppear { notification.showing = true }

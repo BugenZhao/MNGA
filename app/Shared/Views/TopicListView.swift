@@ -28,9 +28,13 @@ struct TopicListView: View {
   @State var showingSubforumsModal = false
   @State var order: TopicListRequest.Order? = nil
 
+  var orderOrDefault: TopicListRequest.Order {
+    order ?? prefs.defaultTopicListOrder
+  }
+
   var dataSource: DataSource {
-    switch order {
-    case .lastPost, .none: dataSourceLastPost
+    switch orderOrDefault {
+    case .lastPost: dataSourceLastPost
     case .postDate: dataSourcePostDate
     default: fatalError()
     }
@@ -41,8 +45,8 @@ struct TopicListView: View {
   }
 
   var itemBindings: Binding<[Topic]> {
-    switch order {
-    case .lastPost, .none:
+    switch orderOrDefault {
+    case .lastPost:
       $dataSourceLastPost.items
     case .postDate:
       $dataSourcePostDate.items
@@ -145,7 +149,8 @@ struct TopicListView: View {
               }
             }
           } label: {
-            Label("Order by", systemImage: (order ?? .lastPost).icon)
+            Label("Order by", systemImage: orderOrDefault.icon)
+            Text(orderOrDefault.description)
           }
 
           NavigationLink(destination: HotTopicListView.build(forum: forum)) {
@@ -246,15 +251,17 @@ struct TopicListView: View {
           }
       } else {
         List {
-          EmptyView().id("top-placeholder") // for auto refresh
-          ForEach(itemBindings, id: \.id) { topic in
-            CrossStackNavigationLinkHack(id: topic.w.id, destination: {
-              TopicDetailsView.build(topicBinding: topic)
-            }) {
-              TopicRowView(topic: topic.w, useTopicPostDate: order == .postDate)
-            }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+          Section(header: Text(orderOrDefault.description)) {
+            EmptyView().id("top-placeholder") // for auto refresh
+            ForEach(itemBindings, id: \.id) { topic in
+              CrossStackNavigationLinkHack(id: topic.w.id, destination: {
+                TopicDetailsView.build(topicBinding: topic)
+              }) {
+                TopicRowView(topic: topic.w, useTopicPostDate: orderOrDefault == .postDate)
+              }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            }
+            .id(order)
           }
-          .id(order)
         }
       }
     }
