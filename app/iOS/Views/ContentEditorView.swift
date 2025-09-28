@@ -83,10 +83,9 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
       .sendTo
     } else if context.subject?.isEmpty == true {
       .subject
-    } else if context.content?.isEmpty == true {
-      .content
     } else {
-      nil
+      // Default to focus on content.
+      .content
     }
   }
 
