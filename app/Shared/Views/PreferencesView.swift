@@ -101,21 +101,23 @@ struct PreferencesInnerView: View {
       footer: Text(status.isPaid ? "Plus Thanks" : "Plus Explanation")
     ) {
       if status.isPaid {
-        Label("Plus Unlocked", systemImage: "star.circle.fill")
+        NavigationLink(destination: PlusView()) {
+          Label("Plus Unlocked", systemImage: "star.circle.fill")
+        }
       } else {
         if status.isLiteCanTry {
-          NavigationLink(destination: PlusView().storeButton(.hidden, for: .cancellation)) {
+          NavigationLink(destination: PlusView()) {
             Label("Try Plus for 14 Days", systemImage: "star.circle")
           }
         } else {
-          NavigationLink(destination: PlusView().storeButton(.hidden, for: .cancellation)) {
+          NavigationLink(destination: PlusView()) {
             Label("Unlock Plus", systemImage: "star.circle")
           }
         }
       }
 
       if case let .trial(expiration) = status {
-        Text("Plus Trial Expires in \(timeAgo(date: expiration))")
+        Text("Trial ends on \(expiration, format: .dateTime.year().month().day())")
       }
     }
   }

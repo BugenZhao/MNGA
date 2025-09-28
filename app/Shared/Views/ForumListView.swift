@@ -167,7 +167,7 @@ struct ForumListView: View {
     }
     .searchable(model: searchModel, prompt: "Search".localized)
     .onAppear { loadData() }
-    .navigationTitle(paywall.isUnlocked ? "MNGA" : "MNGA Lite")
+    .navigationTitle(paywall.isUnlocked ? "MNGA Plus" : "MNGA Lite")
     .compatForumListListStyle()
     .toolbar { toolbar }
   }
