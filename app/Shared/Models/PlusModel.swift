@@ -47,10 +47,11 @@ enum PlusFeature {
   }
 }
 
-enum UnlockStatus: Codable, Equatable {
-  case paid
-  case trial(expiration: Date)
+// Note the order of all cases for `Comparable`!
+enum UnlockStatus: Codable, Equatable, Comparable {
   case lite
+  case trial(expiration: Date)
+  case paid
 
   var isUnlocked: Bool {
     switch self {
@@ -127,27 +128,36 @@ class PaywallModel: ObservableObject {
     let status = await fetchStatus()
 
     await MainActor.run {
+      if !isOnlineStatus, cachedStatus != status {
+        logger.warning("mismatch between cached and online status: \(cachedStatus) vs \(status)")
+      }
       cachedStatus = status
       isOnlineStatus = true
     }
   }
 
   func fetchStatus() async -> UnlockStatus {
-    if case let .verified(txn) = await Transaction.latest(for: Constants.Plus.unlockID),
-       txn.revocationDate == nil
-    {
-      logger.info("found unlocked transaction: \(txn)")
-      return UnlockStatus.paid
-    } else if case let .verified(txn) = await Transaction.latest(for: Constants.Plus.trialID),
-              txn.revocationDate == nil
-    {
-      logger.info("found trial transaction: \(txn)")
-      let exp = Calendar.current.date(byAdding: .day, value: 14, to: txn.purchaseDate) ?? Date()
-      return UnlockStatus.trial(expiration: exp)
-    } else {
-      logger.info("no valid transaction found")
-      return UnlockStatus.lite
+    var status = UnlockStatus.lite
+
+    for await entitlement in Transaction.currentEntitlements {
+      if let txn = try? entitlement.payloadValue {
+        if txn.productID == Constants.Plus.unlockID {
+          logger.info("found unlocked transaction: \(txn)")
+          status = max(status, .paid)
+        } else if txn.productID == Constants.Plus.trialID {
+          logger.info("found trial transaction: \(txn)")
+          let exp = Calendar.current.date(byAdding: .day, value: 14, to: txn.purchaseDate) ?? Date()
+          status = max(status, .trial(expiration: exp))
+        } else {
+          logger.info("found unknown transaction: \(txn)")
+        }
+      }
     }
+
+    if status == .lite {
+      logger.info("no valid transaction found")
+    }
+    return status
   }
 }
 
