@@ -125,7 +125,7 @@ struct ForumListView: View {
   @ViewBuilder
   var unlockButton: some View {
     Button(action: { paywall.isShowingModal = true }) {
-      Text("Unlock Plus").bold()
+      Text(paywall.cachedStatus.tryOrUnlock).bold()
     }
     .buttonStyle(.borderedProminent)
   }

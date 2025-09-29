@@ -23,6 +23,8 @@ struct ContentView: View {
   @StateObject var schemes = SchemesModel()
   @StateObject var paywall = PaywallModel.shared
 
+  @Environment(\.scenePhase) var scenePhase
+
   // For preview usage. If set, the content will be replaced by this.
   // In this case, `ContentView` mainly serves as a container for global states.
   var testBody: AnyView?
@@ -73,6 +75,7 @@ struct ContentView: View {
     testBody ?? realBody.eraseToAnyView()
       .onOpenURL { schemes.navigateTo(url: $0) }
       .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
+      .onChange(of: scenePhase) { paywall.objectWillChange.send() } // trigger trial validity check
       .modifier(MainToastModifier.main())
       .preferredColorScheme(prefs.colorScheme.scheme)
       // Sheets

@@ -234,7 +234,7 @@
 "Auto Refreshed" = "已自动刷新";
 "Unlock Plus" = "解锁 Plus";
 "Plus Unlocked" = "Plus 已解锁 🎉";
-"Plus Thanks" = "MNGA 得以持续开发和维护，离不开您的支持。感谢您解锁 Plus！";
+"Plus Thanks" = "MNGA 得以持续开发和维护，离不开您的支持。感谢您解锁 MNGA Plus！";
 "Plus Explanation" = "MNGA Plus 提供无限的泥潭浏览和互动体验，并允许您访问 MNGA 的所有高级功能。";
 "Try Plus" = "试用 Plus";
 "You're enjoying a Plus trial" = "您正在享受 Plus 试用";
@@ -244,7 +244,8 @@
 "Restore Purchases" = "恢复购买";
 "We couldn't verify your purchase. Please try again." = "无法验证您的购买，请重试。";
 "MNGA Plus Required" = "需要 MNGA Plus";
-"Tap to unlock MNGA Plus to access this feature" = "轻触解锁 MNGA Plus 以访问此功能";
+"Unlock MNGA Plus to access this feature." = "解锁 MNGA Plus 以访问此功能。";
+"Tap to unlock MNGA Plus to access this feature" = "轻触解锁 MNGA Plus 以访问此功能，\n提供免费试用";
 
 "Error Response" = "错误响应";
 "Missing Field" = "缺少字段";

@@ -78,6 +78,9 @@ class PaywallModel: ObservableObject {
 
     for await result in Transaction.updates {
       logger.info("transaction update: \(result)")
+      if case let .verified(txn) = result {
+        await txn.finish()
+      }
       await updateStatus()
     }
   }
@@ -97,7 +100,9 @@ class PaywallModel: ObservableObject {
     {
       logger.info("found unlocked transaction: \(txn)")
       return UnlockStatus.paid
-    } else if case let .verified(txn) = await Transaction.latest(for: Constants.Plus.trialID) {
+    } else if case let .verified(txn) = await Transaction.latest(for: Constants.Plus.trialID),
+              txn.revocationDate == nil
+    {
       logger.info("found trial transaction: \(txn)")
       let exp = Calendar.current.date(byAdding: .day, value: 14, to: txn.purchaseDate) ?? Date()
       return UnlockStatus.trial(expiration: exp)

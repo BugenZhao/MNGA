@@ -8,12 +8,23 @@
 import Foundation
 import SwiftUI
 
+private struct UnlockFooterView: View {
+  @EnvironmentObject var paywall: PaywallModel
+
+  var body: some View {
+    if !paywall.isUnlocked {
+      Text("Unlock MNGA Plus to access this feature.")
+    }
+  }
+}
+
 private struct PostRowAppearanceView: View {
   @ObservedObject var pref: PreferencesStorage
+  @EnvironmentObject var paywall: PaywallModel
 
   var body: some View {
     Form {
-      Section(header: Text("Preview")) {
+      Section(header: Text("Preview"), footer: UnlockFooterView()) {
         PostRowView.build(post: .dummy, isAuthor: true, vote: .constant((state: .up, delta: 0)))
           // PostContentView doesn't seem to correctly refresh when larger font setting changes,
           // as it creates a new state object from the global shared one. This won't be a problem
@@ -31,7 +42,7 @@ private struct PostRowAppearanceView: View {
         Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
           Label("Dim Images in Dark Mode", systemImage: "moon.fill")
         }
-      }
+      }.disabled(!paywall.isUnlocked)
 
       Section {
         Picker(selection: $pref.postRowSwipeActionLeading, label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")) {
@@ -64,7 +75,7 @@ private struct PostRowAppearanceView: View {
             Label("Show User Register Date", systemImage: "calendar")
           }
         }
-      }
+      }.disabled(!paywall.isUnlocked)
 
     }.pickerStyle(.menu)
       .tint(.accentColor)
@@ -129,17 +140,19 @@ struct PreferencesInnerView: View {
         Text(mode.description)
       }
     }
+
+    Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
+      Text("Compact").tag(false)
+      Text("Modern").tag(true)
+    }
+
     Picker(selection: $pref.themeColor, label: Label("Theme Color", systemImage: "circle")) {
       ForEach(ThemeColor.allCases, id: \.self) { color in
         Label(color.description, systemImage: "circle.fill")
           .tint(color.color)
           .tag(color)
       }
-    }
-    Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
-      Text("Compact").tag(false)
-      Text("Modern").tag(true)
-    }
+    }.disabled(!paywall.isUnlocked)
   }
 
   @ViewBuilder
@@ -206,7 +219,7 @@ struct PreferencesInnerView: View {
     Form {
       paywallSection
 
-      Section(header: Text("Appearance")) {
+      Section(header: Text("Appearance"), footer: UnlockFooterView()) {
         appearance
       }
 
@@ -242,6 +255,7 @@ struct PreferencesView: View {
       PreferencesInnerView()
     }
     .modifier(GlobalSheetsModifier())
+    .modifier(MainToastModifier.main())
   }
 }
 
