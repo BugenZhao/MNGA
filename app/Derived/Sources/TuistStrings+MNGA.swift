@@ -19,6 +19,10 @@ public enum MNGAStrings: Sendable {
   public static let mngaPleaseShare = MNGAStrings.tr("Localizable", "MNGA Please Share")
   /// This App is not supported by NGA officially. To avoid interference and banning from NGA, these workarounds may be necessary.
   public static let ngaWorkaround = MNGAStrings.tr("Localizable", "NGA Workaround")
+  /// MNGA Plus offers unlimited forum browsing and interaction experiences, and allows you to access all premium features of MNGA.
+  public static let plusExplanation = MNGAStrings.tr("Localizable", "Plus Explanation")
+  /// MNGA's continued development and maintenance would not be possible without your support. Thank you for unlocking MNGA Plus!
+  public static let plusThanks = MNGAStrings.tr("Localizable", "Plus Thanks")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name
