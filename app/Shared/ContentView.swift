@@ -111,7 +111,6 @@ struct GlobalSheetsModifier: ViewModifier {
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
       .sheet(isPresented: $paywall.isShowingModal) { PlusSheetView() }
-      .alert(isPresented: $paywall.isShowingAlert) { paywall.alert }
       .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
   }
 }

@@ -24,6 +24,7 @@ class ToastModel: ObservableObject {
     case clockIn(String)
     case openURL(URL)
     case autoRefreshed
+    case requirePlus
   }
 
   @Published var message: Message? = nil
@@ -32,14 +33,13 @@ class ToastModel: ObservableObject {
 
   private init() {
     $message
-      .removeDuplicates()
       .filter { $0 != nil }
       .sink { message in
         #if os(iOS)
           switch message! {
           case .error:
             HapticUtils.play(type: .error)
-          case .notification:
+          case .notification, .requirePlus:
             HapticUtils.play(type: .warning)
           default:
             HapticUtils.play(type: .success)
@@ -54,8 +54,8 @@ class ToastModel: ObservableObject {
       ToastModel.banner.message = message
     case .notification, .userSwitch, .clockIn, .autoRefreshed, .openURL:
       ToastModel.hud.message = message
-    // case .openURL:
-    //   ToastModel.alert.message = message
+    case .requirePlus:
+      ToastModel.alert.message = message
     case .none:
       break
     }
@@ -80,6 +80,8 @@ extension ToastModel.Message {
       AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
     case .autoRefreshed:
       AlertToast(displayMode: displayMode, type: .systemImage("checkmark.arrow.trianglehead.clockwise", .accentColor), title: "Auto Refreshed".localized, subTitle: nil)
+    case .requirePlus:
+      AlertToast(displayMode: displayMode, type: .regular, title: "Plus Feature".localized, subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
     }
   }
 }

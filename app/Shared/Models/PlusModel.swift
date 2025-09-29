@@ -48,7 +48,6 @@ class PaywallModel: ObservableObject {
   static let shared = PaywallModel()
 
   @Published var isShowingModal = false
-  @Published var isShowingAlert = false
 
   @AppStorage("cachedUnlockStatus") var cachedStatusData: Data = .init()
   var cachedStatus: UnlockStatus {
@@ -107,29 +106,10 @@ class PaywallModel: ObservableObject {
       return UnlockStatus.lite
     }
   }
-
-  var alert: Alert {
-    return Alert(
-      title: Text("Plus Required"),
-      message: Text("This feature is only available in MNGA Plus."),
-      primaryButton: .default(Text(cachedStatus.tryOrUnlock)) {
-        if Thread.isMainThread {
-          self.isShowingAlert = false
-          self.isShowingModal = true
-        } else {
-          DispatchQueue.main.async {
-            self.isShowingAlert = false
-            self.isShowingModal = true
-          }
-        }
-      },
-      secondaryButton: .cancel()
-    )
-  }
 }
 
-func checkPlus() {
-  withPlusCheck { () }
+func checkPlus() -> Bool {
+  withPlusCheck { () } != nil
 }
 
 func withPlusCheck<Result>(_ body: () throws -> Result) rethrows -> Result? {
@@ -138,13 +118,7 @@ func withPlusCheck<Result>(_ body: () throws -> Result) rethrows -> Result? {
   if paywall.isUnlocked {
     return try body()
   } else {
-    if Thread.isMainThread {
-      paywall.isShowingAlert = true
-    } else {
-      DispatchQueue.main.async {
-        paywall.isShowingAlert = true
-      }
-    }
+    ToastModel.showAuto(.requirePlus)
     return nil
   }
 }
