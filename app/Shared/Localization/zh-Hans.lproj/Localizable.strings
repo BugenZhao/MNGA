@@ -243,8 +243,8 @@
 "Products unavailable. Please try again later." = "暂时无法获取商品，请稍后再试。";
 "Restore Purchases" = "恢复购买";
 "We couldn't verify your purchase. Please try again." = "无法验证您的购买，请重试。";
-"Plus Feature" = "Plus 功能";
-"Tap to unlock MNGA Plus to access this feature" = "轻触解锁 MNGA Plus 以获得此功能";
+"MNGA Plus Required" = "需要 MNGA Plus";
+"Tap to unlock MNGA Plus to access this feature" = "轻触解锁 MNGA Plus 以访问此功能";
 
 "Error Response" = "错误响应";
 "Missing Field" = "缺少字段";

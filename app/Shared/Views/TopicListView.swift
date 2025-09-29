@@ -153,12 +153,12 @@ struct TopicListView: View {
             Text(orderOrDefault.description)
           }
 
-          NavigationLink(destination: HotTopicListView.build(forum: forum)) {
+          PlusCheckNavigationLink(destination: HotTopicListView.build(forum: forum), isDetailLink: false) {
             Label("Hot Topics", systemImage: "flame")
-          }.isDetailLink(false)
-          NavigationLink(destination: RecommendedTopicListView.build(forum: forum)) {
+          }
+          PlusCheckNavigationLink(destination: RecommendedTopicListView.build(forum: forum), isDetailLink: false) {
             Label("Recommended Topics", systemImage: "hand.thumbsup")
-          }.isDetailLink(false)
+          }
 
           if let topicID = toppedTopicID {
             NavigationLink(destination: TopicDetailsView.build(id: topicID)) {

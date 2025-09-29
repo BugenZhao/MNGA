@@ -81,7 +81,7 @@ extension ToastModel.Message {
     case .autoRefreshed:
       AlertToast(displayMode: displayMode, type: .systemImage("checkmark.arrow.trianglehead.clockwise", .accentColor), title: "Auto Refreshed".localized, subTitle: nil)
     case .requirePlus:
-      AlertToast(displayMode: displayMode, type: .regular, title: "Plus Feature".localized, subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
+      AlertToast(displayMode: displayMode, type: .regular, title: "MNGA Plus Required".localized, subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
     }
   }
 }

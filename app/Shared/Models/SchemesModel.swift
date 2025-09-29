@@ -190,8 +190,6 @@ class SchemesModel: ObservableObject {
 struct SchemesNavigationModifier: ViewModifier {
   @ObservedObject var model: SchemesModel
 
-  // @State var urlFromPasteboardForAlert: URL?
-
   @ViewBuilder
   var destination: some View {
     if let navID = model.navID {

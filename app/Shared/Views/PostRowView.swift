@@ -181,7 +181,7 @@ struct PostRowView: View {
     if let action {
       Section {
         if enableAuthorOnly, !(user?.isAnonymous ?? false) {
-          Button(action: { action.navigateToAuthorOnly = post.authorID }) {
+          Button(action: { withPlusCheck { action.navigateToAuthorOnly = post.authorID } }) {
             Label("This Author Only", systemImage: "person")
           }
         }

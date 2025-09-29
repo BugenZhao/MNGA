@@ -122,3 +122,30 @@ func withPlusCheck<Result>(_ body: () throws -> Result) rethrows -> Result? {
     return nil
   }
 }
+
+struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Destination: View {
+  @EnvironmentObject var paywall: PaywallModel
+
+  let destination: Destination
+  let isDetailLink: Bool?
+  let label: Label
+
+  init(
+    destination: Destination,
+    isDetailLink: Bool? = nil,
+    @ViewBuilder label: () -> Label
+  ) {
+    self.destination = destination
+    self.isDetailLink = isDetailLink
+    self.label = label()
+  }
+
+  var body: some View {
+    if paywall.isUnlocked {
+      NavigationLink(destination: destination, label: { label })
+        .if(isDetailLink != nil) { $0.isDetailLink(isDetailLink!) }
+    } else {
+      Button(action: { ToastModel.showAuto(.requirePlus) }, label: { label })
+    }
+  }
+}
