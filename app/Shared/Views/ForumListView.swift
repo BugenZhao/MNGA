@@ -120,8 +120,6 @@ struct ForumListView: View {
     }.environment(\.editMode, $editMode)
   }
 
-  @Namespace var namespace
-
   @ViewBuilder
   var unlockButton: some View {
     Button(action: { paywall.isShowingModal = true }) {
@@ -168,6 +166,7 @@ struct ForumListView: View {
     .searchable(model: searchModel, prompt: "Search".localized)
     .onAppear { loadData() }
     .navigationTitle(paywall.isUnlocked ? "MNGA Plus" : "MNGA Lite")
+    .navigationBarTitleDisplayMode(.large)
     .compatForumListListStyle()
     .toolbar { toolbar }
   }

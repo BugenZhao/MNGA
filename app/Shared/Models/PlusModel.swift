@@ -17,7 +17,7 @@ enum UnlockStatus: Codable, Equatable {
   var isUnlocked: Bool {
     switch self {
     case .paid: true
-    case .trial: trialValid!
+    case .trial: trialValid ?? false
     case .lite: false
     }
   }

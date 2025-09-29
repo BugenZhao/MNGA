@@ -123,7 +123,7 @@ struct PreferencesInnerView: View {
 
       if case let .trial(expiration) = status {
         Group {
-          if status.trialValid! {
+          if status.trialValid ?? false {
             Label("Trial ends on \(expiration, format: .dateTime.year().month().day())", systemImage: "calendar")
           } else {
             Label("Your Plus trial has expired", systemImage: "calendar")

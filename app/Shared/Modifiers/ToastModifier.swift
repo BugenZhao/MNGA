@@ -71,7 +71,7 @@ struct MainToastModifier: ViewModifier {
         })
       }
       .if(enableAlert) {
-        $0.toast(isPresenting: $alert.message.isNotNil(), duration: 5, tapToDismiss: alertOnTap == nil, alert: {
+        $0.toast(isPresenting: $alert.message.isNotNil(), duration: 4, tapToDismiss: alertOnTap == nil, alert: {
           (alert.message ?? .success("")).toastView(for: .alert)
         }, onTap: alertOnTap)
       }

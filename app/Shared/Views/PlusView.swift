@@ -99,7 +99,7 @@ struct PlusView: View {
 
     case let .trial(expiration):
       VStack(spacing: 8) {
-        if status.trialValid! {
+        if status.trialValid ?? false {
           Text("You're enjoying a Plus trial")
             .font(.headline)
           Text("Trial ends on \(expiration, format: .dateTime.year().month().day())")
