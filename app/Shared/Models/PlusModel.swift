@@ -86,7 +86,9 @@ class PaywallModel: ObservableObject {
   }
 
   func fetchStatus() async -> UnlockStatus {
-    if case let .verified(txn) = await Transaction.latest(for: Constants.Plus.unlockID) {
+    if case let .verified(txn) = await Transaction.latest(for: Constants.Plus.unlockID),
+       txn.revocationDate == nil
+    {
       logger.info("found unlocked transaction: \(txn)")
       return UnlockStatus.paid
     } else if case let .verified(txn) = await Transaction.latest(for: Constants.Plus.trialID) {
