@@ -124,9 +124,9 @@ struct ForumListView: View {
   var unlockButton: some View {
     if UserInterfaceIdiom.current == .phone {
       Button(action: { paywall.isShowingModal = true }) {
-        Text(paywall.cachedStatus.tryOrUnlock).bold()
+        Text(paywall.cachedStatus.tryOrUnlock)
       }
-      .buttonStyle(.borderedProminent)
+      .if(paywall.cachedStatus.shouldUseProminent) { $0.buttonStyle(.borderedProminent).bold() }
     } else {
       Button(action: { paywall.isShowingModal = true }) {
         Image(systemName: "sparkles.2")

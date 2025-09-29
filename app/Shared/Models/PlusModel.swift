@@ -81,6 +81,15 @@ enum UnlockStatus: Codable, Equatable, Comparable {
   var tryOrUnlock: LocalizedStringKey {
     isLiteCanTry ? "Try Plus" : "Unlock Plus"
   }
+
+  /// Whether we should present a prominent button to unlock.
+  var shouldUseProminent: Bool {
+    switch self {
+      case .lite: true // try now!!
+      case .trial: !(trialValid ?? false) // expired
+      case .paid: false
+    }
+  }
 }
 
 class PaywallModel: ObservableObject {
