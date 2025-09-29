@@ -51,13 +51,13 @@ struct BlockWordListView: View {
   @ViewBuilder
   var addButton: some View {
     Button(action: {
-      withPlusCheck { withAnimation {
+      withAnimation {
         if let newWord, !newWord.word.isEmpty {
           storage.add(newWord)
         }
         newWord = .init()
         focused = true
-      }}
+      }
     }) {
       Label("Add Word", systemImage: "plus.circle")
     }

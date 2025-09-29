@@ -159,7 +159,7 @@ struct PreferencesInnerView: View {
   var reading: some View {
     NavigationLink(destination: BlockWordListView()) {
       Label("Block Contents", systemImage: "hand.raised")
-    }
+    }.disabled(!paywall.isUnlocked)
     NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
       Label("Topic List Style", systemImage: "list.dash")
     }
@@ -223,7 +223,7 @@ struct PreferencesInnerView: View {
         appearance
       }
 
-      Section(header: Text("Reading")) {
+      Section(header: Text("Reading"), footer: UnlockFooterView()) {
         reading
       }
 
