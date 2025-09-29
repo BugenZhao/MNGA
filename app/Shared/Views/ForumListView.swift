@@ -122,10 +122,17 @@ struct ForumListView: View {
 
   @ViewBuilder
   var unlockButton: some View {
-    Button(action: { paywall.isShowingModal = true }) {
-      Text(paywall.cachedStatus.tryOrUnlock).bold()
+    if UserInterfaceIdiom.current == .phone {
+      Button(action: { paywall.isShowingModal = true }) {
+        Text(paywall.cachedStatus.tryOrUnlock).bold()
+      }
+      .buttonStyle(.borderedProminent)
+    } else {
+      Button(action: { paywall.isShowingModal = true }) {
+        Image(systemName: "sparkles.2")
+          .foregroundColor(.accentColor)
+      }
     }
-    .buttonStyle(.borderedProminent)
   }
 
   @ToolbarContentBuilder
