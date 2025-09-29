@@ -18,10 +18,11 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = false
   @AppStorage("useInAppSafari") var useInAppSafari = true
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
-  @AppStorage("themeColor") var themeColor = ThemeColor.mnga
+  @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true
   @AppStorage("hideMNGAMeta") var hideMNGAMeta = false
+  @AppStorage("showPlusInTitle") var showPlusInTitle = false
 
   @AppStorage("requestOption") var requestOptionWrapper = WrappedMessage(inner: RequestOption()) {
     didSet { syncRequestOptionWithLogic() }
@@ -38,7 +39,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategy = DateTimeTextView.Strategy.automatic
   @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicator = true
   @AppStorage("postRowLargerFont") var postRowLargerFont = false
-  @AppStorage("postRowDimImagesInDarkMode") var postRowDimImagesInDarkMode = true
+  @AppStorage("postRowDimImagesInDarkMode") var postRowDimImagesInDarkMode = false
 
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
 

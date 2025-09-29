@@ -8,12 +8,23 @@
 import Foundation
 import SwiftUI
 
+private struct UnlockFooterView: View {
+  @EnvironmentObject var paywall: PaywallModel
+
+  var body: some View {
+    if !paywall.isUnlocked {
+      Text("Unlock MNGA Plus to access this feature.")
+    }
+  }
+}
+
 private struct PostRowAppearanceView: View {
   @ObservedObject var pref: PreferencesStorage
+  @EnvironmentObject var paywall: PaywallModel
 
   var body: some View {
     Form {
-      Section(header: Text("Preview")) {
+      Section(header: Text("Preview"), footer: UnlockFooterView()) {
         PostRowView.build(post: .dummy, isAuthor: true, vote: .constant((state: .up, delta: 0)))
           // PostContentView doesn't seem to correctly refresh when larger font setting changes,
           // as it creates a new state object from the global shared one. This won't be a problem
@@ -31,7 +42,7 @@ private struct PostRowAppearanceView: View {
         Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
           Label("Dim Images in Dark Mode", systemImage: "moon.fill")
         }
-      }
+      }.disabled(!paywall.isUnlocked)
 
       Section {
         Picker(selection: $pref.postRowSwipeActionLeading, label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")) {
@@ -64,7 +75,7 @@ private struct PostRowAppearanceView: View {
             Label("Show User Register Date", systemImage: "calendar")
           }
         }
-      }
+      }.disabled(!paywall.isUnlocked)
 
     }.pickerStyle(.menu)
       .tint(.accentColor)
@@ -90,6 +101,40 @@ private struct TopicListAppearanceView: View {
 
 struct PreferencesInnerView: View {
   @StateObject var pref = PreferencesStorage.shared
+  @EnvironmentObject var paywall: PaywallModel
+
+  @ViewBuilder
+  var paywallSection: some View {
+    let status = paywall.cachedStatus
+
+    Section(
+      header: Text("Plus"),
+      footer: Text(status.isPaid ? "Plus Thanks" : "Plus Explanation")
+    ) {
+      if status.isPaid {
+        NavigationLink(destination: PlusView()) {
+          Label("Plus Unlocked", systemImage: "hands.and.sparkles")
+        }
+        Toggle(isOn: $pref.showPlusInTitle) {
+          Label("Show Plus in Title", systemImage: "sparkle")
+        }
+      } else {
+        NavigationLink(destination: PlusView()) {
+          Label(status.tryOrUnlock, systemImage: "sparkles.2")
+        }
+      }
+
+      if case let .trial(expiration) = status {
+        Group {
+          if status.trialValid ?? false {
+            Label("Trial ends on \(expiration, format: .dateTime.year().month().day())", systemImage: "calendar")
+          } else {
+            Label("Your Plus trial has expired", systemImage: "calendar")
+          }
+        }.foregroundColor(.secondaryLabel)
+      }
+    }
+  }
 
   @ViewBuilder
   var appearance: some View {
@@ -98,24 +143,26 @@ struct PreferencesInnerView: View {
         Text(mode.description)
       }
     }
+
+    Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
+      Text("Compact").tag(false)
+      Text("Modern").tag(true)
+    }
+
     Picker(selection: $pref.themeColor, label: Label("Theme Color", systemImage: "circle")) {
       ForEach(ThemeColor.allCases, id: \.self) { color in
         Label(color.description, systemImage: "circle.fill")
           .tint(color.color)
           .tag(color)
       }
-    }
-    Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
-      Text("Compact").tag(false)
-      Text("Modern").tag(true)
-    }
+    }.disabled(!paywall.isUnlocked)
   }
 
   @ViewBuilder
   var reading: some View {
     NavigationLink(destination: BlockWordListView()) {
       Label("Block Contents", systemImage: "hand.raised")
-    }
+    }.disabled(!paywall.isUnlocked)
     NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
       Label("Topic List Style", systemImage: "list.dash")
     }
@@ -125,9 +172,6 @@ struct PreferencesInnerView: View {
 
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
-    }
-    Toggle(isOn: $pref.hideMNGAMeta) {
-      Label("Hide MNGA Meta", systemImage: "eye.slash")
     }
   }
 
@@ -160,6 +204,9 @@ struct PreferencesInnerView: View {
     NavigationLink(destination: CacheView()) {
       Label("Cache Management", systemImage: "internaldrive")
     }
+    Toggle(isOn: $pref.hideMNGAMeta) {
+      Label("Hide MNGA Meta", systemImage: "eye.slash")
+    }
   }
 
   @ViewBuilder
@@ -171,58 +218,38 @@ struct PreferencesInnerView: View {
     }
   }
 
-  #if os(macOS)
-    var body: some View {
-      TabView {
-        Form { appearance }
-          .tabItem { Label("Appearance", systemImage: "circle") }
-          .tag("appearance")
-        Form { reading }
-          .tabItem { Label("Reading", systemImage: "eyeglasses") }
-          .tag("reading")
-        Form { connection }
-          .tabItem { Label("Connection", systemImage: "network") }
-          .tag("connection")
-        Form { advanced }
-          .tabItem { Label("Advanced", systemImage: "gearshape.2") }
-          .tag("advanced")
-      }.tint(.accentColor)
-        .pickerStyle(InlinePickerStyle())
-        .padding(20)
-        .frame(width: 500)
-    }
-  #else
-    var body: some View {
-      Form {
-        Section(header: Text("Appearance")) {
-          appearance
-        }
+  var body: some View {
+    Form {
+      paywallSection
 
-        Section(header: Text("Reading")) {
-          reading
-        }
-
-        Section(header: Text("Connection")) {
-          connection
-        }
-
-        Section(header: Text("Advanced")) {
-          advanced
-        }
-
-        Section(header: Text("Special"), footer: Text("NGA Workaround")) {
-          special
-        }
+      Section(header: Text("Appearance"), footer: UnlockFooterView()) {
+        appearance
       }
-      // Set `pickerStyle` explicitly to fix tint color.
-      // https://stackoverflow.com/questions/74157251/why-doesnt-pickers-tint-color-update
-      .pickerStyle(.menu)
-      .tint(.accentColor)
-      .mayInsetGroupedListStyle()
-      .navigationTitle("Preferences")
-      .preferredColorScheme(pref.colorScheme.scheme) // workaround
+
+      Section(header: Text("Reading"), footer: UnlockFooterView()) {
+        reading
+      }
+
+      Section(header: Text("Connection")) {
+        connection
+      }
+
+      Section(header: Text("Advanced")) {
+        advanced
+      }
+
+      Section(header: Text("Special"), footer: Text("NGA Workaround")) {
+        special
+      }
     }
-  #endif
+    // Set `pickerStyle` explicitly to fix tint color.
+    // https://stackoverflow.com/questions/74157251/why-doesnt-pickers-tint-color-update
+    .pickerStyle(.menu)
+    .tint(.accentColor)
+    .mayInsetGroupedListStyle()
+    .navigationTitle("Preferences")
+    .preferredColorScheme(pref.colorScheme.scheme) // workaround
+  }
 }
 
 struct PreferencesView: View {
@@ -230,6 +257,8 @@ struct PreferencesView: View {
     NavigationStack {
       PreferencesInnerView()
     }
+    .modifier(GlobalSheetsModifier())
+    .modifier(MainToastModifier.main())
   }
 }
 

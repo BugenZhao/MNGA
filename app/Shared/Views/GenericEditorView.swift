@@ -123,7 +123,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
       if postReply.isSending {
         ProgressView()
       } else {
-        Image(systemName: "paperplane.fill")
+        Text("Send")
       }
     }
   }

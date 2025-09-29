@@ -11,6 +11,7 @@ import SwiftUIX
 
 struct ForumListView: View {
   @EnvironmentObject var schemes: SchemesModel
+  @EnvironmentObject var paywall: PaywallModel
 
   @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = GlobalSearchModel()
@@ -119,9 +120,29 @@ struct ForumListView: View {
     }.environment(\.editMode, $editMode)
   }
 
+  @ViewBuilder
+  var unlockButton: some View {
+    if UserInterfaceIdiom.current == .phone {
+      Button(action: { paywall.isShowingModal = true }) {
+        Text(paywall.cachedStatus.tryOrUnlock).bold()
+      }
+      .buttonStyle(.borderedProminent)
+    } else {
+      Button(action: { paywall.isShowingModal = true }) {
+        Image(systemName: "sparkles.2")
+          .foregroundColor(.accentColor)
+      }
+    }
+  }
+
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
+
+    if !paywall.cachedStatus.isPaid {
+      ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
+      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+    }
     ToolbarItem(placement: .navigationBarTrailing) { filter }
 
     if UserInterfaceIdiom.current == .phone {
@@ -141,6 +162,18 @@ struct ForumListView: View {
     }
   }
 
+  var title: String {
+    if paywall.isUnlocked {
+      if prefs.showPlusInTitle {
+        "MNGA 𝐏𝐥𝐮𝐬"
+      } else {
+        "MNGA"
+      }
+    } else {
+      "MNGA Lite"
+    }
+  }
+
   var body: some View {
     Group {
       if searchModel.text != "" {
@@ -151,7 +184,8 @@ struct ForumListView: View {
     }
     .searchable(model: searchModel, prompt: "Search".localized)
     .onAppear { loadData() }
-    .navigationTitle("MNGA")
+    .navigationTitle(title)
+    .navigationBarTitleDisplayMode(.large)
     .compatForumListListStyle()
     .toolbar { toolbar }
   }

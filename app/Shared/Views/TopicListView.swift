@@ -153,9 +153,9 @@ struct TopicListView: View {
             Text(orderOrDefault.description)
           }
 
-          NavigationLink(destination: HotTopicListView.build(forum: forum)) {
+          PlusCheckNavigationLink(destination: HotTopicListView.build(forum: forum), feature: .hotTopic, isDetailLink: false) {
             Label("Hot Topics", systemImage: "flame")
-          }.isDetailLink(false)
+          }
           NavigationLink(destination: RecommendedTopicListView.build(forum: forum)) {
             Label("Recommended Topics", systemImage: "hand.thumbsup")
           }.isDetailLink(false)

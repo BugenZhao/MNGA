@@ -94,6 +94,7 @@ class GenericPostModel<Task: TaskProtocol>: ObservableObject {
   }
 
   func show(action: Task.Action, pageToReload: PageToReload? = nil) {
+    guard checkPlus(.postOrReply) else { return }
     let task = Task(action: action, pageToReload: pageToReload)
 
     if showEditor { return }

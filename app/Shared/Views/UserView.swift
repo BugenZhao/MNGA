@@ -97,7 +97,7 @@ struct UserView: View {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
       } else if let user, let action {
-        Button(action: { action.showUserProfile = user }) {
+        Button(action: { withPlusCheck(.userProfile) { action.showUserProfile = user } }) {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
       } else {

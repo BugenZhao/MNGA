@@ -11,6 +11,10 @@ private let timeAgoFormatter = RelativeDateTimeFormatter()
 
 public func timeAgo(_ timestamp: UInt64) -> String {
   let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+  return timeAgo(date: date)
+}
+
+public func timeAgo(date: Date) -> String {
   let dateString = timeAgoFormatter.localizedString(for: date, relativeTo: Date())
   return dateString
 }

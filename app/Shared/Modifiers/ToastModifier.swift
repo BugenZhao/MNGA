@@ -16,33 +16,43 @@ struct MainToastModifier: ViewModifier {
   @StateObject var alert = ToastModel.alert
   @StateObject var editorAlert = ToastModel.editorAlert
 
+  @EnvironmentObject var paywall: PaywallModel
+
   let enableHud: Bool
   let enableBanner: Bool
   let enableAlert: Bool
   let enableEditorAlert: Bool
 
-  init(enableHud: Bool, enableBanner: Bool, enableAlert: Bool, enableEditorAlert: Bool) {
+  init(enableHud: Bool, enableBanner: Bool, enableEditorAlert: Bool) {
     self.enableHud = enableHud
     self.enableBanner = enableBanner
-    self.enableAlert = enableAlert
+    // Alert is always enabled for paywall.
+    enableAlert = true
     self.enableEditorAlert = enableEditorAlert
   }
 
   static func main() -> Self {
-    Self(enableHud: true, enableBanner: true, enableAlert: true, enableEditorAlert: false)
+    Self(enableHud: true, enableBanner: true, enableEditorAlert: false)
   }
 
   static func editorAlertOnly() -> Self {
-    Self(enableHud: false, enableBanner: false, enableAlert: false, enableEditorAlert: true)
+    Self(enableHud: false, enableBanner: false, enableEditorAlert: true)
   }
 
   static func bannerOnly() -> Self {
-    Self(enableHud: false, enableBanner: true, enableAlert: false, enableEditorAlert: false)
+    Self(enableHud: false, enableBanner: true, enableEditorAlert: false)
   }
 
   var hudOnTap: (() -> Void)? {
     if case .notification = hud.message {
-      return { notis.showingSheet = true }
+      return { withPlusCheck(.notification) { notis.showingSheet = true } }
+    }
+    return nil
+  }
+
+  var alertOnTap: (() -> Void)? {
+    if case .requirePlus = alert.message {
+      return { paywall.isShowingModal = true }
     }
     return nil
   }
@@ -61,9 +71,9 @@ struct MainToastModifier: ViewModifier {
         })
       }
       .if(enableAlert) {
-        $0.toast(isPresenting: $alert.message.isNotNil(), duration: 3, tapToDismiss: true, alert: {
+        $0.toast(isPresenting: $alert.message.isNotNil(), duration: 4, tapToDismiss: alertOnTap == nil, alert: {
           (alert.message ?? .success("")).toastView(for: .alert)
-        })
+        }, onTap: alertOnTap)
       }
       .if(enableEditorAlert) {
         $0.toast(isPresenting: $editorAlert.message.isNotNil(), duration: 3, tapToDismiss: false) {

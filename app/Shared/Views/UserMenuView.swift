@@ -42,7 +42,7 @@ struct UserMenuView: View {
 
   @ViewBuilder
   var notificationButton: some View {
-    NavigationLink(destination: NotificationListView()) {
+    PlusCheckNavigationLink(destination: NotificationListView(), feature: .notification) {
       Label(notification.dataSource.title, systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
     }
   }
@@ -73,7 +73,7 @@ struct UserMenuView: View {
         }
       }
 
-      Button(action: { addUser() }) {
+      Button(action: { withPlusCheck(.multiAccount) { addUser() } }) {
         Label("Add Account", systemImage: "person.crop.circle.fill.badge.plus")
       }
       Button(role: .destructive, action: { reSignIn() }) {
@@ -90,7 +90,7 @@ struct UserMenuView: View {
       if let _ = user {
         Section {
           notificationButton
-          NavigationLink(destination: ShortMessageListView.build()) {
+          PlusCheckNavigationLink(destination: ShortMessageListView.build(), feature: .shortMessage) {
             Label("Short Messages", systemImage: "message")
           }
         }
@@ -100,11 +100,11 @@ struct UserMenuView: View {
           NavigationLink(destination: UserProfileView.build(user: user)) {
             Label("My Profile", systemImage: "person.fill")
           }
-          NavigationLink(destination: FavoriteTopicListView.build()) {
+          PlusCheckNavigationLink(destination: FavoriteTopicListView.build(), feature: .favoriteTopic) {
             Label("Favorite Topics", systemImage: "bookmark")
           }
         }
-        NavigationLink(destination: TopicHistoryListView.build()) {
+        PlusCheckNavigationLink(destination: TopicHistoryListView.build(), feature: .topicHistory) {
           Label("History", systemImage: "clock")
         }
       }
