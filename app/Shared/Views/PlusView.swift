@@ -282,10 +282,12 @@ struct PlusView: View {
 }
 
 struct PlusSheetView: View {
+  @EnvironmentObject var paywall: PaywallModel
+
   var body: some View {
     NavigationStack {
       PlusView()
     }
-    .interactiveDismissDisabled()
+    .if(!paywall.isUnlocked) { $0.interactiveDismissDisabled() }
   }
 }
