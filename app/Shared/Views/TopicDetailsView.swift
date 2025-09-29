@@ -174,7 +174,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var favoriteButton: some View {
     if !mock {
-      Button(action: { withPlusCheck { toggleFavor() } }) {
+      Button(action: { withPlusCheck(.favoriteTopic) { toggleFavor() } }) {
         Label(
           isFavored ? "Remove from Favorites" : "Mark as Favorite",
           systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
@@ -186,7 +186,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var jumpButton: some View {
     if !mock, onlyPost.id == nil {
-      Button(action: { withPlusCheck { showJumpSelector = true } }) {
+      Button(action: { withPlusCheck(.jump) { showJumpSelector = true } }) {
         Label("Jump to...", systemImage: "arrow.up.arrow.down")
       }
     }
@@ -205,7 +205,7 @@ struct TopicDetailsView: View {
     Menu {
       Section(debugID) {
         if enableAuthorOnly, !topic.authorName.isAnonymous {
-          Button(action: { withPlusCheck { action.navigateToAuthorOnly = topic.authorID } }) {
+          Button(action: { withPlusCheck(.authorOnly) { action.navigateToAuthorOnly = topic.authorID } }) {
             Label("Author Only", systemImage: "person.fill")
           }
         }

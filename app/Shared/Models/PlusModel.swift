@@ -9,6 +9,44 @@ import Foundation
 import StoreKit
 import SwiftUI
 
+enum PlusFeature {
+  case postOrReply
+  case favoriteTopic
+  case hotTopic
+  case shortMessage
+  case topicHistory
+  case notification
+  case authorOnly
+  case jump
+  case multiAccount
+  case userProfile
+
+  var description: String {
+    switch self {
+    case .postOrReply:
+      "Post/Reply"
+    case .favoriteTopic:
+      "Favorite Topics"
+    case .hotTopic:
+      "Hot Topics"
+    case .shortMessage:
+      "Short Messages"
+    case .topicHistory:
+      "History"
+    case .notification:
+      "Notifications"
+    case .authorOnly:
+      "Author Only"
+    case .jump:
+      "Jump"
+    case .multiAccount:
+      "Multiple Accounts"
+    case .userProfile:
+      "User Profile"
+    }
+  }
+}
+
 enum UnlockStatus: Codable, Equatable {
   case paid
   case trial(expiration: Date)
@@ -113,17 +151,17 @@ class PaywallModel: ObservableObject {
   }
 }
 
-func checkPlus() -> Bool {
-  withPlusCheck { () } != nil
+func checkPlus(_ feature: PlusFeature) -> Bool {
+  withPlusCheck(feature) { () } != nil
 }
 
-func withPlusCheck<Result>(_ body: () throws -> Result) rethrows -> Result? {
+func withPlusCheck<Result>(_ feature: PlusFeature, _ body: () throws -> Result) rethrows -> Result? {
   let paywall = PaywallModel.shared
 
   if paywall.isUnlocked {
     return try body()
   } else {
-    ToastModel.showAuto(.requirePlus)
+    ToastModel.showAuto(.requirePlus(feature))
     return nil
   }
 }
@@ -132,15 +170,18 @@ struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Dest
   @EnvironmentObject var paywall: PaywallModel
 
   let destination: Destination
+  let feature: PlusFeature
   let isDetailLink: Bool?
   let label: Label
 
   init(
     destination: Destination,
+    feature: PlusFeature,
     isDetailLink: Bool? = nil,
     @ViewBuilder label: () -> Label
   ) {
     self.destination = destination
+    self.feature = feature
     self.isDetailLink = isDetailLink
     self.label = label()
   }
@@ -150,7 +191,7 @@ struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Dest
       NavigationLink(destination: destination, label: { label })
         .if(isDetailLink != nil) { $0.isDetailLink(isDetailLink!) }
     } else {
-      Button(action: { ToastModel.showAuto(.requirePlus) }, label: { label })
+      Button(action: { ToastModel.showAuto(.requirePlus(feature)) }, label: { label })
     }
   }
 }

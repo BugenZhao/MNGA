@@ -10,6 +10,7 @@
 "Topic" = "话题";
 "Post" = "帖子";
 "Replies" = "回复";
+"Post/Reply" = "发帖/回复";
 "Subforums" = "子版块";
 "Subforums (%lld)" = "子版块 (%lld)";
 "Refresh" = "刷新";
@@ -154,6 +155,7 @@
 "Load Page %lld" = "加载第 %lld 页";
 "Accounts" = "账号";
 "Add Account" = "添加账号";
+"Multiple Accounts" = "多账号";
 "Account Switched" = "账号已切换";
 "Select Text" = "选择文本";
 "Text Selection" = "文本选择";
@@ -244,9 +246,9 @@
 "Restore Purchases" = "恢复购买";
 "Redeem Code" = "兑换代码";
 "We couldn't verify your purchase. Please try again." = "无法验证您的购买，请重试。";
-"MNGA Plus Required" = "需要 MNGA Plus";
+"\"%@\" is a Plus feature" = "“%@”是 Plus 功能";
 "Unlock MNGA Plus to access this feature." = "解锁 MNGA Plus 以访问此功能。";
-"Tap to unlock MNGA Plus to access this feature" = "轻触解锁 MNGA Plus 以访问此功能，\n提供免费试用";
+"Tap to unlock MNGA Plus to access this feature" = "轻触来解锁 MNGA Plus，以访问此功能；\n提供 14 天免费试用";
 
 "Error Response" = "错误响应";
 "Missing Field" = "缺少字段";

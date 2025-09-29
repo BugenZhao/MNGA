@@ -24,7 +24,7 @@ class ToastModel: ObservableObject {
     case clockIn(String)
     case openURL(URL)
     case autoRefreshed
-    case requirePlus
+    case requirePlus(PlusFeature)
   }
 
   @Published var message: Message? = nil
@@ -80,8 +80,8 @@ extension ToastModel.Message {
       AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
     case .autoRefreshed:
       AlertToast(displayMode: displayMode, type: .systemImage("checkmark.arrow.trianglehead.clockwise", .accentColor), title: "Auto Refreshed".localized, subTitle: nil)
-    case .requirePlus:
-      AlertToast(displayMode: displayMode, type: .regular, title: "MNGA Plus Required".localized, subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
+    case let .requirePlus(feature):
+      AlertToast(displayMode: displayMode, type: .regular, title: String(format: "\"%@\" is a Plus feature".localized, feature.description.localized), subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
     }
   }
 }
