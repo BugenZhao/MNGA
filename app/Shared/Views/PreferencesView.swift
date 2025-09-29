@@ -105,14 +105,8 @@ struct PreferencesInnerView: View {
           Label("Plus Unlocked", systemImage: "hands.and.sparkles.fill")
         }
       } else {
-        if status.isLiteCanTry {
-          NavigationLink(destination: PlusView()) {
-            Label("Try Plus", systemImage: "sparkles.2")
-          }
-        } else {
-          NavigationLink(destination: PlusView()) {
-            Label("Unlock Plus", systemImage: "sparkles.2")
-          }
+        NavigationLink(destination: PlusView()) {
+          Label(status.tryOrUnlock, systemImage: "sparkles.2")
         }
       }
 
@@ -247,6 +241,7 @@ struct PreferencesView: View {
     NavigationStack {
       PreferencesInnerView()
     }
+    .modifier(GlobalSheetsModifier())
   }
 }
 
