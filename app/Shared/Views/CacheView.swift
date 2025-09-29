@@ -37,7 +37,12 @@ struct CacheRowView: View {
         Button(action: { alertPresented = true }) {
           inner
         }.alert(isPresented: $alertPresented) {
-          Alert(title: Text("Are you sure to clear the cache?"), message: Text("This will take a while."), primaryButton: .destructive(Text("Clear")) { clear() }, secondaryButton: .cancel())
+          Alert(
+            title: Text("Are you sure to clear the cache?"),
+            message: Text("This will take a while."),
+            primaryButton: .destructive(Text("Clear")) { clear() },
+            secondaryButton: .cancel()
+          )
         }
       } else {
         inner
@@ -61,7 +66,7 @@ struct CacheView: View {
         }.onAppear { if imageStatus == nil { loadImageCacheSize() } }
       }
 
-      Section(header: Text("Data")) {
+      Section(header: Text("Data"), footer: Text("Tap an item to clear it.")) {
         ForEach(CacheType.allCases, id: \.self) { type in
           let action = type == .all ? nil : {
             cacheStatus.removeValue(forKey: type)
@@ -77,7 +82,7 @@ struct CacheView: View {
   var body: some View {
     list
       .mayInsetGroupedListStyle()
-      .navigationTitle("Cache")
+      .navigationTitle("Cache Management")
   }
 
   func clearImageCache() {

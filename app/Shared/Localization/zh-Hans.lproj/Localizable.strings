@@ -79,8 +79,9 @@
 "Hidden" = "隐藏";
 "Advanced" = "高级";
 "Dim Images in Dark Mode" = "深色模式下调暗图片";
-"Cache" = "缓存";
+"Cache Management" = "缓存管理";
 "Image Cache" = "图片缓存";
+"Tap an item to clear it." = "轻触一项来清除缓存。";
 "View Image" = "查看图片";
 "Share As Image" = "作为图片分享";
 "Page %lld" = "第 %lld 页";
@@ -113,7 +114,6 @@
 "Device Identity" = "设备身份";
 "Desktop" = "桌面";
 "Enable Zoom for Image Viewer" = "为图片查看器启用缩放";
-"Options here are experimental or unstable." = "这些选项是实验性或不稳定的。";
 "Order by" = "排序方式";
 "Latest Replies" = "最新回复";
 "Latest Topics" = "最新话题";
