@@ -113,7 +113,10 @@ struct PreferencesInnerView: View {
     ) {
       if status.isPaid {
         NavigationLink(destination: PlusView()) {
-          Label("Plus Unlocked", systemImage: "hands.and.sparkles.fill")
+          Label("Plus Unlocked", systemImage: "hands.and.sparkles")
+        }
+        Toggle(isOn: $pref.showPlusInTitle) {
+          Label("Show Plus in Title", systemImage: "sparkle")
         }
       } else {
         NavigationLink(destination: PlusView()) {
@@ -170,9 +173,6 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
     }
-    Toggle(isOn: $pref.hideMNGAMeta) {
-      Label("Hide MNGA Meta", systemImage: "eye.slash")
-    }
   }
 
   @ViewBuilder
@@ -203,6 +203,9 @@ struct PreferencesInnerView: View {
   var advanced: some View {
     NavigationLink(destination: CacheView()) {
       Label("Cache Management", systemImage: "internaldrive")
+    }
+    Toggle(isOn: $pref.hideMNGAMeta) {
+      Label("Hide MNGA Meta", systemImage: "eye.slash")
     }
   }
 

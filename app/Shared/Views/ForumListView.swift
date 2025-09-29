@@ -139,7 +139,7 @@ struct ForumListView: View {
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
 
-    if !paywall.isUnlocked {
+    if !paywall.cachedStatus.isPaid {
       ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
       ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     }
@@ -162,6 +162,18 @@ struct ForumListView: View {
     }
   }
 
+  var title: String {
+    if paywall.isUnlocked {
+      if prefs.showPlusInTitle {
+        "MNGA 𝐏𝐥𝐮𝐬"
+      } else {
+        "MNGA"
+      }
+    } else {
+      "MNGA Lite"
+    }
+  }
+
   var body: some View {
     Group {
       if searchModel.text != "" {
@@ -172,7 +184,7 @@ struct ForumListView: View {
     }
     .searchable(model: searchModel, prompt: "Search".localized)
     .onAppear { loadData() }
-    .navigationTitle(paywall.isUnlocked ? "MNGA Plus" : "MNGA Lite")
+    .navigationTitle(title)
     .navigationBarTitleDisplayMode(.large)
     .compatForumListListStyle()
     .toolbar { toolbar }

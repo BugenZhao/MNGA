@@ -22,6 +22,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true
   @AppStorage("hideMNGAMeta") var hideMNGAMeta = false
+  @AppStorage("showPlusInTitle") var showPlusInTitle = false
 
   @AppStorage("requestOption") var requestOptionWrapper = WrappedMessage(inner: RequestOption()) {
     didSet { syncRequestOptionWithLogic() }
