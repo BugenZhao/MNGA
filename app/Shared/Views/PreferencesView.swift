@@ -102,22 +102,28 @@ struct PreferencesInnerView: View {
     ) {
       if status.isPaid {
         NavigationLink(destination: PlusView()) {
-          Label("Plus Unlocked", systemImage: "star.circle.fill")
+          Label("Plus Unlocked", systemImage: "hands.and.sparkles.fill")
         }
       } else {
         if status.isLiteCanTry {
           NavigationLink(destination: PlusView()) {
-            Label("Try Plus for 14 Days", systemImage: "star.circle")
+            Label("Try Plus", systemImage: "sparkles.2")
           }
         } else {
           NavigationLink(destination: PlusView()) {
-            Label("Unlock Plus", systemImage: "star.circle")
+            Label("Unlock Plus", systemImage: "sparkles.2")
           }
         }
       }
 
       if case let .trial(expiration) = status {
-        Text("Trial ends on \(expiration, format: .dateTime.year().month().day())")
+        Group {
+          if status.trialValid! {
+            Label("Trial ends on \(expiration, format: .dateTime.year().month().day())", systemImage: "calendar")
+          } else {
+            Label("Your Plus trial has expired", systemImage: "calendar")
+          }
+        }.foregroundColor(.secondaryLabel)
       }
     }
   }

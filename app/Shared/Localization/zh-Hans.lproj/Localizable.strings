@@ -235,10 +235,11 @@
 "Unlock Plus" = "解锁 Plus";
 "Plus Unlocked" = "Plus 已解锁 🎉";
 "Plus Thanks" = "MNGA 得以持续开发和维护，离不开您的支持。感谢您解锁 Plus！";
-"Plus Explanation" = "MNGA Lite 仅提供有限的泥潭浏览体验。解锁 Plus 后，您可以与他人互动，并访问更多高级功能。";
-"Try Plus for 14 Days" = "试用 Plus 14 天";
+"Plus Explanation" = "MNGA Plus 提供无限的泥潭浏览和互动体验，并允许您访问 MNGA 的所有高级功能。";
+"Try Plus" = "试用 Plus";
 "You're enjoying a Plus trial" = "您正在享受 Plus 试用";
 "Trial ends on %@" = "试用将于%@结束";
+"Your Plus trial has expired" = "您的 Plus 试用已过期";
 "Products unavailable. Please try again later." = "暂时无法获取商品，请稍后再试。";
 "Restore Purchases" = "恢复购买";
 "Purchases are not allowed on this device." = "此设备不允许购买。";

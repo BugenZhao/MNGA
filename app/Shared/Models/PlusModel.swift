@@ -77,8 +77,12 @@ class PaywallModel: ObservableObject {
   }
 
   func updateStatus() async {
-    cachedStatus = await fetchStatus()
-    isOnlineStatus = true
+    let status = await fetchStatus()
+
+    await MainActor.run {
+      cachedStatus = status
+      isOnlineStatus = true
+    }
   }
 
   func fetchStatus() async -> UnlockStatus {
