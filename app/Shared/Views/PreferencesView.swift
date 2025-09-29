@@ -156,7 +156,11 @@ struct PreferencesInnerView: View {
   }
 
   @ViewBuilder
-  var advanced: some View {}
+  var advanced: some View {
+    NavigationLink(destination: CacheView()) {
+      Label("Cache Management", systemImage: "internaldrive")
+    }
+  }
 
   @ViewBuilder
   var special: some View {
@@ -179,9 +183,9 @@ struct PreferencesInnerView: View {
         Form { connection }
           .tabItem { Label("Connection", systemImage: "network") }
           .tag("connection")
-        // Form { advanced }
-        //   .tabItem { Label("Advanced", systemImage: "gearshape.2") }
-        //   .tag("advanced")
+        Form { advanced }
+          .tabItem { Label("Advanced", systemImage: "gearshape.2") }
+          .tag("advanced")
       }.tint(.accentColor)
         .pickerStyle(InlinePickerStyle())
         .padding(20)
@@ -202,14 +206,9 @@ struct PreferencesInnerView: View {
           connection
         }
 
-        // There's currently no advanced options.
-        //
-        // Section(header: Text("Advanced"), footer: Text("Options here are experimental or unstable.")) {
-        //   NavigationLink(destination: CacheView()) {
-        //     Label("Cache", systemImage: "internaldrive")
-        //   }
-        //   advanced
-        // }
+        Section(header: Text("Advanced")) {
+          advanced
+        }
 
         Section(header: Text("Special"), footer: Text("NGA Workaround")) {
           special
