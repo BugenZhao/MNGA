@@ -16,6 +16,7 @@ struct PlusView: View {
   @State private var allProducts: [Product]?
   @State private var purchasingProductID: String?
   @State private var isRestoring = false
+  @State private var isRedeeming = false
   @State private var errorMessage: String?
 
   var isInProgress: Bool {
@@ -51,6 +52,7 @@ struct PlusView: View {
     }
     .background(Color(.systemGroupedBackground).ignoresSafeArea())
     .toolbar { toolbar }
+    .offerCodeRedemption(isPresented: $isRedeeming) { result in Task { await redeemCompletion(result) } }
     .storeProductsTask(for: Constants.Plus.ids) { allProducts = $0.products }
   }
 
@@ -140,11 +142,18 @@ struct PlusView: View {
           }
         }
 
-        Button(action: { Task { await restorePurchases() } }) {
-          Text("Restore Purchases")
+        HStack(spacing: 16) {
+          Button(action: { Task { await restorePurchases() } }) {
+            Text("Restore Purchases")
+          }
+          .disabled(isRestoring)
+
+          Button(action: { isRedeeming = true }) {
+            Text("Redeem Code")
+          }
+          .disabled(isRedeeming)
         }
         .buttonStyle(.borderless)
-        .disabled(isRestoring)
         .padding(.top, 8)
       }
     }
@@ -243,6 +252,18 @@ struct PlusView: View {
     }
 
     isRestoring = false
+  }
+
+  @MainActor
+  private func redeemCompletion(_ result: Result<Void, any Error>) async {
+    isRedeeming = false
+
+    switch result {
+    case .success:
+      await paywall.updateStatus()
+    case let .failure(error):
+      errorMessage = error.localizedDescription
+    }
   }
 
   @ToolbarContentBuilder
