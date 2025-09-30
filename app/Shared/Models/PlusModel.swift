@@ -20,6 +20,7 @@ enum PlusFeature {
   case jump
   case multiAccount
   case userProfile
+  case uploadImage
 
   var description: String {
     switch self {
@@ -43,6 +44,8 @@ enum PlusFeature {
       "Multiple Accounts"
     case .userProfile:
       "User Profile"
+    case .uploadImage:
+      "Upload Image"
     }
   }
 }

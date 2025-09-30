@@ -204,7 +204,7 @@ struct GenericEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
     #if os(iOS)
       NavigationView {
         GenericEditorViewInner<T, M>()
-      }
+      }.modifier(PaywallSheetModifier())
     #else
       GenericEditorViewInner<T, M>()
         .padding()

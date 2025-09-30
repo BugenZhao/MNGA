@@ -266,7 +266,7 @@ struct PreferencesView: View {
     NavigationStack {
       PreferencesInnerView()
     }
-    .modifier(GlobalSheetsModifier())
+    .modifier(PaywallSheetModifier())
     .modifier(MainToastModifier.main())
   }
 }

@@ -106,15 +106,23 @@ struct GlobalSheetsModifier: ViewModifier {
   @EnvironmentObject var shortMessagePost: ShortMessagePostModel
   @EnvironmentObject var textSelection: TextSelectionModel
   @EnvironmentObject var viewingImage: ViewingImageModel
-  @EnvironmentObject var paywall: PaywallModel
 
   func body(content: Content) -> some View {
     content
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
-      .sheet(isPresented: $paywall.isShowingModal) { PlusSheetView() }
+      .modifier(PaywallSheetModifier())
       .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
+  }
+}
+
+struct PaywallSheetModifier: ViewModifier {
+  @EnvironmentObject var paywall: PaywallModel
+
+  func body(content: Content) -> some View {
+    content
+      .sheet(isPresented: $paywall.isShowingModal) { PlusSheetView() }
   }
 }
 
