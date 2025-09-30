@@ -105,7 +105,7 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var paywallSection: some View {
-    let status = paywall.cachedStatus
+    let status = paywall.status
 
     Section(
       header: Text("Plus"),
@@ -132,6 +132,16 @@ struct PreferencesInnerView: View {
             Label("Your Plus trial has expired", systemImage: "calendar")
           }
         }.foregroundColor(.secondaryLabel)
+      }
+    }
+  }
+
+  @ViewBuilder
+  var debug: some View {
+    Picker(selection: $paywall.debugOverride, label: Text("Override Unlock Status")) {
+      ForEach(UnlockStatus.debugAllCases, id: \.self) { status in
+        let desc = if let status { String(describing: status) } else { "None" }
+        Text(desc).tag(status)
       }
     }
   }
@@ -221,6 +231,10 @@ struct PreferencesInnerView: View {
   var body: some View {
     Form {
       paywallSection
+
+      #if DEBUG
+        Section(header: Text("Debug")) { debug }
+      #endif
 
       Section(header: Text("Appearance"), footer: UnlockFooterView()) {
         appearance

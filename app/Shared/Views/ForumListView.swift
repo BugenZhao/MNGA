@@ -124,9 +124,9 @@ struct ForumListView: View {
   var unlockButton: some View {
     if UserInterfaceIdiom.current == .phone {
       Button(action: { paywall.isShowingModal = true }) {
-        Text(paywall.cachedStatus.tryOrUnlock)
+        Text(paywall.status.tryOrUnlock)
       }
-      .if(paywall.cachedStatus.shouldUseProminent) { $0.buttonStyle(.borderedProminent).bold() }
+      .if(paywall.status.shouldUseProminent) { $0.buttonStyle(.borderedProminent).bold() }
     } else {
       Button(action: { paywall.isShowingModal = true }) {
         Image(systemName: "sparkles.2")
@@ -139,7 +139,7 @@ struct ForumListView: View {
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
 
-    if !paywall.cachedStatus.isPaid {
+    if !paywall.status.isPaid {
       ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
       ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     }
