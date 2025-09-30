@@ -11,6 +11,7 @@ import SwiftUI
 
 enum PlusFeature {
   case quote
+  case comment
   case newTopic
   case hotTopic
   case shortMessage
@@ -28,6 +29,8 @@ enum PlusFeature {
     switch self {
     case .quote:
       "Quote"
+    case .comment:
+      "Comment"
     case .newTopic:
       "New Topic"
     case .hotTopic:
