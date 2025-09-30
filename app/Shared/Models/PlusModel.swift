@@ -10,7 +10,8 @@ import StoreKit
 import SwiftUI
 
 enum PlusFeature {
-  case postOrReply
+  case quote
+  case newTopic
   case hotTopic
   case shortMessage
   case topicHistory
@@ -22,8 +23,10 @@ enum PlusFeature {
 
   var description: String {
     switch self {
-    case .postOrReply:
-      "Post/Reply"
+    case .quote:
+      "Quote"
+    case .newTopic:
+      "New Topic"
     case .hotTopic:
       "Hot Topics"
     case .shortMessage:

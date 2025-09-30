@@ -246,6 +246,7 @@ struct PostRowView: View {
   }
 
   func doQuote(model: PostReplyModel) {
+    guard checkPlus(.quote) else { return }
     if dummy { return }
 
     model.show(action: .with {
