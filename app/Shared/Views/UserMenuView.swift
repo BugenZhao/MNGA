@@ -100,7 +100,7 @@ struct UserMenuView: View {
           NavigationLink(destination: UserProfileView.build(user: user)) {
             Label("My Profile", systemImage: "person.fill")
           }
-          PlusCheckNavigationLink(destination: FavoriteTopicListView.build(), feature: .favoriteTopic) {
+          NavigationLink(destination: FavoriteTopicListView.build()) {
             Label("Favorite Topics", systemImage: "bookmark")
           }
         }

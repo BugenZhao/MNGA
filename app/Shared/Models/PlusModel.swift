@@ -11,7 +11,6 @@ import SwiftUI
 
 enum PlusFeature {
   case postOrReply
-  case favoriteTopic
   case hotTopic
   case shortMessage
   case topicHistory
@@ -25,8 +24,6 @@ enum PlusFeature {
     switch self {
     case .postOrReply:
       "Post/Reply"
-    case .favoriteTopic:
-      "Favorite Topics"
     case .hotTopic:
       "Hot Topics"
     case .shortMessage:
