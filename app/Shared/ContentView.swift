@@ -106,12 +106,14 @@ struct GlobalSheetsModifier: ViewModifier {
   @EnvironmentObject var shortMessagePost: ShortMessagePostModel
   @EnvironmentObject var textSelection: TextSelectionModel
   @EnvironmentObject var viewingImage: ViewingImageModel
+  @StateObject var prefs = PreferencesStorage.shared
 
   func body(content: Content) -> some View {
     content
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
+      .sheet(isPresented: $prefs.showing) { PreferencesView() }
       .modifier(PaywallSheetModifier())
       .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
   }

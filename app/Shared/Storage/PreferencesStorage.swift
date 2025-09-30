@@ -11,6 +11,8 @@ import SwiftUI
 import SwiftUIX
 
 class PreferencesStorage: ObservableObject {
+  @Published var showing = false
+
   static let shared = PreferencesStorage()
 
   @AppStorage("showSignatureNew") var showSignature = false
