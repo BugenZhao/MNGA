@@ -13,10 +13,10 @@ import SwiftUIX
 struct UserMenuView: View {
   @StateObject var notification = NotificationModel.shared
   @StateObject var authStorage = AuthStorage.shared
+  @StateObject var prefs = PreferencesStorage.shared
 
   @EnvironmentObject var model: CurrentUserModel
 
-  @State var showPreferencesModal: Bool = false
   @State var showAboutViewAsModal: Bool = false
 
   var user: User? {
@@ -119,7 +119,7 @@ struct UserMenuView: View {
       }
       Section {
         #if os(iOS)
-          Button(action: { showPreferencesModal = true }) {
+          Button(action: { prefs.showing = true }) {
             Label("Preferences", systemImage: "gear")
           }
         #endif
@@ -136,7 +136,6 @@ struct UserMenuView: View {
       .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
-      .sheet(isPresented: $showPreferencesModal) { PreferencesView() }
       .sheet(isPresented: $showAboutViewAsModal) { AboutNavigationView() }
   }
 

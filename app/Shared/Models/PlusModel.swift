@@ -21,6 +21,8 @@ enum PlusFeature {
   case multiAccount
   case userProfile
   case uploadImage
+  case customAppearance
+  case blockContents
 
   var description: String {
     switch self {
@@ -46,6 +48,10 @@ enum PlusFeature {
       "User Profile"
     case .uploadImage:
       "Upload Image"
+    case .customAppearance:
+      "Custom Appearance"
+    case .blockContents:
+      "Block Contents"
     }
   }
 }
@@ -236,5 +242,28 @@ struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Dest
     } else {
       Button(action: { ToastModel.showAuto(.requirePlus(feature)) }, label: { label })
     }
+  }
+}
+
+struct DisableWithPlusCheckModifier: ViewModifier {
+  @EnvironmentObject var paywall: PaywallModel
+
+  let feature: PlusFeature
+
+  func body(content: Content) -> some View {
+    if paywall.isUnlocked {
+      content
+    } else {
+      content
+        .disabled(true)
+        .contentShape(.rect) // for tap gesture
+        .onTapGesture { ToastModel.showAuto(.requirePlus(feature)) }
+    }
+  }
+}
+
+extension View {
+  func disableWithPlusCheck(_ feature: PlusFeature) -> some View {
+    modifier(DisableWithPlusCheckModifier(feature: feature))
   }
 }
