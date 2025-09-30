@@ -163,12 +163,10 @@ struct ForumListView: View {
   }
 
   var title: String {
-    if paywall.isUnlocked {
-      if prefs.showPlusInTitle {
-        "MNGA 𝐏𝐥𝐮𝐬"
-      } else {
-        "MNGA"
-      }
+    if paywall.status.isPaid, prefs.showPlusInTitle {
+      "MNGA 𝐏𝐥𝐮𝐬"
+    } else if paywall.isUnlocked {
+      "MNGA"
     } else {
       "MNGA Lite"
     }
