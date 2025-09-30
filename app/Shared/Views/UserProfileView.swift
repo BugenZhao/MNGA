@@ -188,6 +188,8 @@ struct UserProfileView: View {
   }
 
   func newShortMessage() {
+    guard checkPlus(.shortMessage) else { return }
+
     postModel.show(action: .with {
       $0.operation = .newSingleTo
       $0.singleTo = user.name.normal

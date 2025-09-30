@@ -105,7 +105,7 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var paywallSection: some View {
-    let status = paywall.cachedStatus
+    let status = paywall.status
 
     Section(
       header: Text("Plus"),
@@ -134,6 +134,11 @@ struct PreferencesInnerView: View {
         }.foregroundColor(.secondaryLabel)
       }
     }
+  }
+
+  @ViewBuilder
+  var debug: some View {
+    UnlockStatusDebugPickerView()
   }
 
   @ViewBuilder
@@ -222,6 +227,10 @@ struct PreferencesInnerView: View {
     Form {
       paywallSection
 
+      #if DEBUG
+        Section(header: Text("Debug")) { debug }
+      #endif
+
       Section(header: Text("Appearance"), footer: UnlockFooterView()) {
         appearance
       }
@@ -257,7 +266,7 @@ struct PreferencesView: View {
     NavigationStack {
       PreferencesInnerView()
     }
-    .modifier(GlobalSheetsModifier())
+    .modifier(PaywallSheetModifier())
     .modifier(MainToastModifier.main())
   }
 }

@@ -10,8 +10,8 @@ import StoreKit
 import SwiftUI
 
 enum PlusFeature {
-  case postOrReply
-  case favoriteTopic
+  case quote
+  case newTopic
   case hotTopic
   case shortMessage
   case topicHistory
@@ -20,13 +20,14 @@ enum PlusFeature {
   case jump
   case multiAccount
   case userProfile
+  case uploadImage
 
   var description: String {
     switch self {
-    case .postOrReply:
-      "Post/Reply"
-    case .favoriteTopic:
-      "Favorite Topics"
+    case .quote:
+      "Quote"
+    case .newTopic:
+      "New Topic"
     case .hotTopic:
       "Hot Topics"
     case .shortMessage:
@@ -43,12 +44,14 @@ enum PlusFeature {
       "Multiple Accounts"
     case .userProfile:
       "User Profile"
+    case .uploadImage:
+      "Upload Image"
     }
   }
 }
 
 // Note the order of all cases for `Comparable`!
-enum UnlockStatus: Codable, Equatable, Comparable {
+enum UnlockStatus: Codable, Equatable, Comparable, Hashable {
   case lite
   case trial(expiration: Date)
   case paid
@@ -81,6 +84,24 @@ enum UnlockStatus: Codable, Equatable, Comparable {
   var tryOrUnlock: LocalizedStringKey {
     isLiteCanTry ? "Try Plus" : "Unlock Plus"
   }
+
+  /// Whether we should present a prominent button to unlock.
+  var shouldUseProminent: Bool {
+    switch self {
+    case .lite: true // try now!!
+    case .trial: !(trialValid ?? false) // expired
+    case .paid: false
+    }
+  }
+
+  /// All cases for debugging purposes.
+  static let debugAllCases: [UnlockStatus?] = [
+    nil,
+    .lite,
+    .trial(expiration: Date(timeIntervalSince1970: 0)),
+    .trial(expiration: Date(timeIntervalSinceNow: 60 * 60 * 24 * 14)),
+    .paid,
+  ]
 }
 
 class PaywallModel: ObservableObject {
@@ -89,7 +110,7 @@ class PaywallModel: ObservableObject {
   @Published var isShowingModal = false
 
   @AppStorage("cachedUnlockStatus") var cachedStatusData: Data = .init()
-  var cachedStatus: UnlockStatus {
+  private var cachedStatus: UnlockStatus {
     get {
       (try? JSONDecoder().decode(UnlockStatus.self, from: cachedStatusData)) ?? .lite
     }
@@ -98,14 +119,26 @@ class PaywallModel: ObservableObject {
     }
   }
 
+  #if DEBUG
+    @Published var debugOverride: UnlockStatus? = nil
+  #endif
+
+  var status: UnlockStatus {
+    #if DEBUG
+      debugOverride ?? cachedStatus
+    #else
+      cachedStatus
+    #endif
+  }
+
   @Published var isOnlineStatus: Bool = false
 
   var onlineStatus: UnlockStatus? {
-    isOnlineStatus ? cachedStatus : nil
+    isOnlineStatus ? status : nil
   }
 
   var isUnlocked: Bool {
-    cachedStatus.isUnlocked
+    status.isUnlocked
   }
 
   init() {
@@ -125,13 +158,13 @@ class PaywallModel: ObservableObject {
   }
 
   func updateStatus() async {
-    let status = await fetchStatus()
+    let newStatus = await fetchStatus()
 
     await MainActor.run {
-      if !isOnlineStatus, cachedStatus != status {
-        logger.warning("mismatch between cached and online status: \(cachedStatus) vs \(status)")
+      if !isOnlineStatus, cachedStatus != newStatus {
+        logger.warning("mismatch between cached and online status: \(cachedStatus) vs \(newStatus)")
       }
-      cachedStatus = status
+      cachedStatus = newStatus
       isOnlineStatus = true
     }
   }

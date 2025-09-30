@@ -174,7 +174,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var favoriteButton: some View {
     if !mock {
-      Button(action: { withPlusCheck(.favoriteTopic) { toggleFavor() } }) {
+      Button(action: { toggleFavor() }) {
         Label(
           isFavored ? "Remove from Favorites" : "Mark as Favorite",
           systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"

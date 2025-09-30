@@ -9,6 +9,19 @@ import Foundation
 import StoreKit
 import SwiftUI
 
+struct UnlockStatusDebugPickerView: View {
+  @EnvironmentObject var paywall: PaywallModel
+
+  var body: some View {
+    Picker(selection: $paywall.debugOverride, label: Text("Override Unlock Status")) {
+      ForEach(UnlockStatus.debugAllCases, id: \.self) { status in
+        let desc = if let status { String(describing: status) } else { "None" }
+        Text(desc).tag(status)
+      }
+    }
+  }
+}
+
 struct PlusView: View {
   @EnvironmentObject var paywall: PaywallModel
   @Environment(\.dismiss) var dismiss
@@ -40,6 +53,10 @@ struct PlusView: View {
                 .foregroundStyle(.red)
                 .multilineTextAlignment(.center)
             }
+
+            #if DEBUG
+              debug
+            #endif
           }
           .padding(.horizontal, 24)
           .padding(.vertical, 32)
@@ -54,6 +71,10 @@ struct PlusView: View {
     .toolbar { toolbar }
     .offerCodeRedemption(isPresented: $isRedeeming) { result in Task { await redeemCompletion(result) } }
     .storeProductsTask(for: Constants.Plus.ids) { allProducts = $0.products }
+  }
+
+  private var debug: some View {
+    UnlockStatusDebugPickerView()
   }
 
   private var header: some View {

@@ -101,6 +101,8 @@ struct TopicListView: View {
   }
 
   func newTopic() {
+    guard checkPlus(.newTopic) else { return }
+
     postReply.show(action: .with {
       $0.operation = .new
       $0.forumID = forum.id
