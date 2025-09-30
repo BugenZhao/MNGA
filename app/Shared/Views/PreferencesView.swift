@@ -138,12 +138,7 @@ struct PreferencesInnerView: View {
 
   @ViewBuilder
   var debug: some View {
-    Picker(selection: $paywall.debugOverride, label: Text("Override Unlock Status")) {
-      ForEach(UnlockStatus.debugAllCases, id: \.self) { status in
-        let desc = if let status { String(describing: status) } else { "None" }
-        Text(desc).tag(status)
-      }
-    }
+    UnlockStatusDebugPickerView()
   }
 
   @ViewBuilder
