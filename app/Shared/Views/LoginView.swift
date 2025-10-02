@@ -49,8 +49,10 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
       return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
 
+    let iframe = document.getElementById("iff")
+
     let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
-    let loginElement = getElementByXpath(document, loginXpath)
+    let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
     loginElement.click()
 
     let xpaths = [
@@ -61,7 +63,7 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
     ]
 
     for (let xpath of xpaths) {
-      let element = getElementByXpath(document, xpath)
+      let element = getElementByXpath(iframe.contentDocument, xpath)
       element.style.display = 'none'
     }
     """
