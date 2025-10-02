@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import TipKit
 
 private struct PostRowAppearanceView: View {
   @ObservedObject var pref: PreferencesStorage
@@ -128,6 +129,9 @@ struct PreferencesInnerView: View {
   @ViewBuilder
   var debug: some View {
     UnlockStatusDebugPickerView()
+    Toggle(isOn: $pref.debugResetTips) {
+      Text("Reset Tips on Next Launch")
+    }
   }
 
   @ViewBuilder

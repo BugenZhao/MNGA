@@ -9,6 +9,7 @@ import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
+import TipKit
 
 struct UserMenuView: View {
   @StateObject var notification = NotificationModel.shared
@@ -138,6 +139,7 @@ struct UserMenuView: View {
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
       .sheet(isPresented: $showAboutViewAsModal) { AboutNavigationView() }
+      .popoverTip(tip)
   }
 
   func reSignIn() {
@@ -149,5 +151,27 @@ struct UserMenuView: View {
 
   func addUser() {
     authStorage.isSigning = true
+  }
+
+  var tip: (any Tip)? {
+    if !authStorage.signedIn {
+      UserMenuTip()
+    } else {
+      nil
+    }
+  }
+}
+
+struct UserMenuTip: Tip {
+  var title: Text {
+    Text("MNGA Main Menu")
+  }
+
+  var message: Text? {
+    Text("Sign in to NGA and discover more features here.")
+  }
+
+  var options: [Option] {
+    MaxDisplayCount(1)
   }
 }

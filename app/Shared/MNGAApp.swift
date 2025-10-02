@@ -6,6 +6,7 @@ import Foundation
 import Inject
 import SwiftUI
 import SwiftUIX
+import TipKit
 
 @main
 struct MNGAApp: App {
@@ -17,6 +18,13 @@ struct MNGAApp: App {
   init() {
     logger.info("MNGA Init")
     logicInitialConfigure()
+
+    #if DEBUG
+      if prefs.debugResetTips {
+        try! Tips.resetDatastore()
+      }
+    #endif
+    try? Tips.configure()
   }
 
   var body: some Scene {

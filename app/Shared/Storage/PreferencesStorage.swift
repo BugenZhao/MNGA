@@ -45,6 +45,9 @@ class PreferencesStorage: ObservableObject {
 
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
 
+  // MARK: - Debug
+  @AppStorage("debugResetTips") var debugResetTips = false
+
   init() {
     syncRequestOptionWithLogic()
   }
