@@ -74,7 +74,6 @@ struct ContentView: View {
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
       .onOpenURL { schemes.navigateTo(url: $0) }
-      .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
       .onChange(of: scenePhase) { paywall.objectWillChange.send() } // trigger trial validity check
       .modifier(MainToastModifier.main())
       .preferredColorScheme(prefs.colorScheme.scheme)

@@ -77,7 +77,7 @@ struct UserMenuView: View {
       Button(action: { withPlusCheck(.multiAccount) { addUser() } }) {
         Label("Add Account", systemImage: "person.crop.circle.fill.badge.plus")
       }
-      Button(role: .destructive, action: { reSignIn() }) {
+      Button(role: .destructive, action: { signOut() }) {
         Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
       }
     } label: {
@@ -135,13 +135,18 @@ struct UserMenuView: View {
   var body: some View {
     menu
       .badge(unreadCount)
-      .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
+      .onChange(of: authStorage.authInfo.uid, initial: true) { model.loadData(uid: $1) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
       .sheet(isPresented: $showAboutViewAsModal) { AboutNavigationView() }
       .popoverTip(tip)
   }
 
+  func signOut() {
+    authStorage.clearCurrentAuth()
+  }
+
+  // Sign out and pop the sign in sheet.
   func reSignIn() {
     authStorage.clearCurrentAuth()
     if !authStorage.signedIn {
