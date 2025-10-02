@@ -16,6 +16,12 @@ func whatsNewTitle(version: String) -> WhatsNew.Title {
     return .init(text: .init(title))
 }
 
+private extension String {
+    var localizedWNText: WhatsNew.Text {
+        .init(localized)
+    }
+}
+
 struct MNGAWhatsNew: WhatsNewCollectionProvider {
     var whatsNewCollection: WhatsNewCollection {
         WhatsNew(
@@ -44,10 +50,10 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
                 ),
             ],
             primaryAction: .init(
-                title: "继续"
+                title: "Continue".localizedWNText
             ),
             secondaryAction: .init(
-                title: "了解 Plus",
+                title: "Check out Plus".localizedWNText,
                 action: .present(PlusSheetView().eraseToAnyView())
             )
         )
