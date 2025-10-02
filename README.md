@@ -24,6 +24,7 @@
   <a href="https://testflight.apple.com/join/UL8mvVKt">
   <img src="https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png" width="200"></img></a> -->
 
+- Find the TestFlight link in the "About & Feedback" page in the app.
 - Or build the project yourself, check instructions below.
 
 ## Features
