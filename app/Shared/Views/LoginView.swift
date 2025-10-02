@@ -34,10 +34,6 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
     }
 
     let hideLoginElement = """
-    function getElementByXpath(document, path) {
-      return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-    }
-
     // Disable viewport scaling
     let viewport = document.querySelector('meta[name="viewport"]');
     if (viewport) {
@@ -49,29 +45,39 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
       document.head.appendChild(meta);
     }
 
-    // Temporarily disable masking. Try our luck to see if it can pass App Store review.
+    // Tweak body background color.
+    document.body.style.backgroundColor = 'rgb(255, 246, 223)';
 
-    // let iframe = document.getElementById("iff")
+    // Remove unwanted login elements.
+    function getElementByXpath(document, path) {
+      return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    }
 
-    // let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
-    // let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
-    // loginElement.click()
+    let iframe = document.getElementById("iff")
 
-    // let xpaths = [
-    //   '//*[@id="main"]/div/div[last()-1]', // Register
-    //   '//*[@id="main"]/div/span[last()]',  // EULA
-    //   '//*[@id="main"]/div/a[2]',          // QRCode login
-    //   '//*[@id="main"]/div/div[last()]',   // 3rd party login
-    // ]
+    let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
+    let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
+    loginElement.click()
 
-    // for (let xpath of xpaths) {
-    //   let element = getElementByXpath(iframe.contentDocument, xpath)
-    //   element.parentElement.removeChild(element)
-    // }
+    let xpaths = [
+      // '//*[@id="main"]/div/div[last()-1]', // Register
+      // '//*[@id="main"]/div/span[last()]',  // EULA
+      // '//*[@id="main"]/div/a[2]',          // QRCode login
+      '//*[@id="main"]/div/div[last()]',   // 3rd party login
+    ]
+
+    for (let xpath of xpaths) {
+      let element = getElementByXpath(iframe.contentDocument, xpath)
+      element.style.display = 'none'
+    }
     """
 
-    webView.evaluateJavaScript(hideLoginElement) { _, _ in
-      self.setLoading(loading: false)
+    // Give the page/iframe some time to load.
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+      webView.evaluateJavaScript(hideLoginElement) { _, err in
+        if let err { logger.warning("evaluateJavaScript: \(err)") }
+        self.setLoading(loading: false)
+      }
     }
   }
 
@@ -95,6 +101,8 @@ struct LoginView: View {
   @State var alertMessage: String? = nil
   @State var alertCompletion: (() -> Void)? = nil
 
+  @State var currentPage: URL = URLs.login
+
   let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
   init() {
@@ -106,18 +114,30 @@ struct LoginView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    ToolbarItem(placement: .cancellationAction) { Button(role: .cancel, action: close) { Text("Cancel") } }
-    ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
-
-    ToolbarItem(placement: .bottomBar) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
-    ToolbarSpacer(.fixed, placement: .bottomBar)
-    ToolbarItemGroup(placement: .bottomBar) {
-      Button(action: { load(url: URLs.agreement) }) { Text("Agreement") }
-      Button(action: { load(url: URLs.privacy) }) { Text("Privacy") }
+    ToolbarItem(placement: .cancellationAction) { Button(role: .cancel, action: close) { Image(systemName: "xmark") } }
+    ToolbarItem(placement: .mayNavigationBarTrailing) {
+      if authing { ProgressView() }
+      else { Button(action: reload) { Image(systemName: "arrow.clockwise") } }
     }
+    ToolbarItem(placement: .bottomBar) { picker }
+  }
+
+  @ViewBuilder
+  var picker: some View {
+    Picker("Page", selection: $currentPage.animation()) {
+      Text("Sign In").tag(URLs.login)
+      Text("Agreement").tag(URLs.agreement)
+      Text("Privacy").tag(URLs.privacy)
+    }.pickerStyle(SegmentedPickerStyle())
+  }
+
+  func reload() {
+    load(url: currentPage)
   }
 
   func load(url: URL) {
+    logger.info("load url: \(url)")
+    loading = true
     webViewStore.webView.load(URLRequest(url: url))
   }
 
@@ -126,13 +146,17 @@ struct LoginView: View {
     WebView(webView: webViewStore.webView)
       .onAppear {
         delegate = .init(parent: self)
-        webViewStore.webView.load(URLRequest(url: URLs.login))
         webViewStore.webView.uiDelegate = delegate
         webViewStore.webView.navigationDelegate = delegate
         load(url: URLs.login)
-      }.onReceive(timer) { _ in
+      }
+      .onChange(of: currentPage) { reload() }
+      .onReceive(timer) { _ in
         webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
-      }.navigationTitleInline(key: "Sign in to NGA")
+      }
+      .navigationTitleInline(key: "Sign in to NGA")
+      .navigationSubtitle(webViewStore.webView.url?.absoluteString ?? "")
+      .ignoresSafeArea() // modern view
   }
 
   @ViewBuilder
@@ -149,7 +173,7 @@ struct LoginView: View {
     #if os(iOS)
       NavigationView {
         inner
-      }
+      }.interactiveDismissDisabled()
     #elseif os(macOS)
       inner.frame(width: 300, height: 450)
     #endif

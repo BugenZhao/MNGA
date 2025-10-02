@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import TipKit
 
 private struct PostRowAppearanceView: View {
   @ObservedObject var pref: PreferencesStorage
@@ -128,6 +129,9 @@ struct PreferencesInnerView: View {
   @ViewBuilder
   var debug: some View {
     UnlockStatusDebugPickerView()
+    Toggle(isOn: $pref.debugResetTips) {
+      Text("Reset Tips on Next Launch")
+    }
   }
 
   @ViewBuilder
@@ -149,7 +153,7 @@ struct PreferencesInnerView: View {
     Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
-    }
+    }.disableWithPlusCheck(.customAppearance)
   }
 
   @ViewBuilder

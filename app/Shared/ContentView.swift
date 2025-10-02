@@ -74,13 +74,12 @@ struct ContentView: View {
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
       .onOpenURL { schemes.navigateTo(url: $0) }
-      .onAppear { if !authStorage.signedIn { authStorage.isSigning = true } }
       .onChange(of: scenePhase) { paywall.objectWillChange.send() } // trigger trial validity check
       .modifier(MainToastModifier.main())
       .preferredColorScheme(prefs.colorScheme.scheme)
       // Sheets
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) } // this is global-wide, no need to attribute again in sheets
-      .fullScreenCover(isPresented: $authStorage.isSigning) { LoginView() }
+      .sheet(isPresented: $authStorage.isSigning) { LoginView() }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })

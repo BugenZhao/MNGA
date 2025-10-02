@@ -45,7 +45,7 @@ struct MainToastModifier: ViewModifier {
 
   var hudOnTap: (() -> Void)? {
     if case .notification = hud.message {
-      return { withPlusCheck(.notification) { notis.showingSheet = true } }
+      return { notis.showingSheet = true }
     }
     return nil
   }

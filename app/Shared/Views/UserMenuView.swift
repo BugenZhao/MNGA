@@ -9,6 +9,7 @@ import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
+import TipKit
 
 struct UserMenuView: View {
   @StateObject var notification = NotificationModel.shared
@@ -42,7 +43,7 @@ struct UserMenuView: View {
 
   @ViewBuilder
   var notificationButton: some View {
-    PlusCheckNavigationLink(destination: NotificationListView(), feature: .notification) {
+    NavigationLink(destination: NotificationListView()) {
       Label(notification.dataSource.title, systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
     }
   }
@@ -70,17 +71,18 @@ struct UserMenuView: View {
           ForEach(authStorage.allAuthInfos.sorted(by: { $0.uid < $1.uid }), id: \.uid) { info in
             Text(info.cachedName.isEmpty ? info.uid : info.cachedName).tag(info)
           }
-        }
+        }.disableWithPlusCheck(.multiAccount)
       }
 
       Button(action: { withPlusCheck(.multiAccount) { addUser() } }) {
         Label("Add Account", systemImage: "person.crop.circle.fill.badge.plus")
       }
-      Button(role: .destructive, action: { reSignIn() }) {
+      Button(role: .destructive, action: { signOut() }) {
         Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
       }
     } label: {
-      Label(user?.name.display ?? authStorage.authInfo.uid, systemImage: "person")
+      Label("Accounts", systemImage: "person.2")
+      Text(user?.name.display ?? authStorage.authInfo.uid)
     }
   }
 
@@ -133,12 +135,18 @@ struct UserMenuView: View {
   var body: some View {
     menu
       .badge(unreadCount)
-      .onAppear { model.loadData(uid: authStorage.authInfo.uid) }
+      .onChange(of: authStorage.authInfo.uid, initial: true) { model.loadData(uid: $1) }
       .onAppear { notification.showing = true }
       .onDisappear { notification.showing = false }
       .sheet(isPresented: $showAboutViewAsModal) { AboutNavigationView() }
+      .popoverTip(tip)
   }
 
+  func signOut() {
+    authStorage.clearCurrentAuth()
+  }
+
+  // Sign out and pop the sign in sheet.
   func reSignIn() {
     authStorage.clearCurrentAuth()
     if !authStorage.signedIn {
@@ -148,5 +156,27 @@ struct UserMenuView: View {
 
   func addUser() {
     authStorage.isSigning = true
+  }
+
+  var tip: (any Tip)? {
+    if !authStorage.signedIn {
+      UserMenuTip()
+    } else {
+      nil
+    }
+  }
+}
+
+struct UserMenuTip: Tip {
+  var title: Text {
+    Text("MNGA Main Menu")
+  }
+
+  var message: Text? {
+    Text("Sign in to NGA and discover more features here.")
+  }
+
+  var options: [Option] {
+    MaxDisplayCount(1)
   }
 }

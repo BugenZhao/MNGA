@@ -38,8 +38,13 @@ struct TopicHistoryListView: View {
         List {
           let items = dataSource.items.filter { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) }
           ForEachOrEmpty(items, id: \.topicSnapshot.id) { snapshot in
-            let topic = snapshot.topicSnapshot
-            CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topic: topic), id: topic.id) {
+            // Set the post date to the snapshot timestamp for display.
+            var topic = snapshot.topicSnapshot
+            let snapshotDate = snapshot.timestamp / 1000 // snapshot timestamp is in milliseconds
+            topic.postDate = snapshotDate
+            topic.lastPostDate = snapshotDate
+
+            return CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topic: topic), id: topic.id) {
               TopicRowView(topic: topic, dimmedSubject: false)
             }
           }

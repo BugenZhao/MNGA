@@ -46,7 +46,11 @@ class CurrentUserModel: ObservableObject {
   }
 
   func loadData(uid: String) {
-    if uid.isEmpty { return }
+    if uid.isEmpty {
+      // Sign out or initial load.
+      user = nil
+      return
+    }
 
     logicCallAsync(.remoteUser(.with { $0.userID = uid }), errorToastModel: nil) { (response: RemoteUserResponse) in
       self.user = response.user
