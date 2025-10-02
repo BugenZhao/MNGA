@@ -20,8 +20,9 @@ struct MNGAApp: App {
     logicInitialConfigure()
 
     #if DEBUG
-      if prefs.debugResetTips {
-        try! Tips.resetDatastore()
+      if prefs.debugResetTips, (try? Tips.resetDatastore()) != nil {
+        prefs.debugResetTips = false
+        logger.info("reset tips datastore and the flag")
       }
     #endif
     try? Tips.configure()
