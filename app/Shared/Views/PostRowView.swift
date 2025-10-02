@@ -259,6 +259,7 @@ struct PostRowView: View {
   }
 
   func doComment(model: PostReplyModel) {
+    guard checkPlus(.comment) else { return }
     model.show(action: .with {
       $0.postID = post.id
       $0.forumID = .with { f in
