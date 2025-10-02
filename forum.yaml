@@ -7,7 +7,7 @@ topics:
     posts:
       - content: |
           出于不明原因，NGA 官方对大多数第三方客户端（安卓开源版、MNGA 等）使用的 XML 接口进行了封锁与干扰，表现为部分帖子返回的数据被中途截断，使得客户端无法正确解析。
-          [b]MNGA 在 v1.2 后，已经在网络请求模块加入了抗封锁能力，遇到该问题的概率已经大大降低[/b]，但无法彻底解决。
+          [b]MNGA 在 v2.0 后，已经在网络请求模块加入了抗封锁能力，遇到该问题的概率已经大大降低[/b]，但无法彻底解决。
           如果您仍然频繁遇到此问题，请在下方链接中的“GitHub Issue 讨论页面”进行反馈，并在设置中调整以下选项尝试是否能够缓解：
 
           [b][*] 特殊 => 封禁时自动访问网页版[/b]
@@ -22,11 +22,11 @@ topics:
     subject: "[FAQ] MNGA 常见问题解答"
     posts:
       - content: |
-          [b][*] MNGA 浏览帖子时频繁出现 XML 解析错误？[/b]
+          [b][*] MNGA 浏览帖子时出现 XML 解析错误？[/b]
           此为 NGA 官方封锁干扰所致，详情与解决方式请参考下方链接。
 
           [b][*] 如何刷新帖子内容或列表？[/b]
-          请点按屏幕最上方回到页面顶部后下拉刷新，或在右上角菜单中选择“刷新”选项。
+          请点按屏幕最上方回到页面顶部后下拉刷新，或在右上角菜单中寻找“刷新”选项。
 
           [b][*] 如何自定义文字大小？[/b]
           如果您需要更大字体，可以在 [b]设置/话题内容样式[/b] 中选择“更大字体”。
@@ -47,15 +47,15 @@ topics:
           ===MNGA [_mnga=version][/_mnga]===
           [b]Make NGA Great Again[/b]
 
-          MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过下方的选项进行反馈。
-          [url=https://github.com/BugenZhao/MNGA/issues][b]GitHub Issues[/b][/url]
-          [url=mailto:mnga.feedback@bugenzhao.com][b]反馈邮箱[/b][/url]
+          感谢您使用 MNGA。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以通过下方的选项进行反馈。
           [url=https://apps.apple.com/cn/app/mnga/id1586461246?l=zh][b]App Store 评论区[/b][/url]
+          [url=mailto:mnga.feedback@bugenzhao.com][b]反馈邮箱[/b][/url]
+          [url=https://github.com/BugenZhao/MNGA/issues][b]GitHub Issues[/b][/url]
 
           === MNGA TestFlight 版本 ===
-          MNGA TestFlight 版本提供更快的迭代速度，如果您喜爱尝鲜，可以在 MNGA GitHub 项目首页获取 TestFlight 邀请链接。
-          如果显示无法加入，则说明当前没有更新的版本供您测试，请过段时间再试。
-          [url]https://github.com/BugenZhao/MNGA[/url]
+          MNGA TestFlight 版本提供更快的迭代速度和免费的 Plus 解锁，如果您喜爱尝鲜，可以在下方链接加入 TestFlight 群组。
+          [url]https://testflight.apple.com/join/urjr3ryK[/url]
+          您需要使用最新的 iOS/iPad OS 才能加入。如果仍然显示无法加入，则说明当前位置已满，或暂时没有更新的测试版本，请过段时间再试。
 
           ===参见===
           [tid=mnga_faq]MNGA 常见问题解答[/tid]
