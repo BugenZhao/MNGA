@@ -48,6 +48,7 @@ class PreferencesStorage: ObservableObject {
   // MARK: - Debug
 
   @AppStorage("debugResetTips") var debugResetTips = false
+  @AppStorage("debugResetWhatsNew") var debugResetWhatsNew = false
 
   init() {
     syncRequestOptionWithLogic()

@@ -122,9 +122,7 @@ class PaywallModel: ObservableObject {
     }
   }
 
-  #if DEBUG
-    @Published var debugOverride: UnlockStatus? = nil
-  #endif
+  @Published var debugOverride: UnlockStatus? = nil
 
   var status: UnlockStatus {
     #if DEBUG

@@ -26,6 +26,14 @@ struct MNGAApp: App {
       }
     #endif
     try? Tips.configure()
+
+    #if DEBUG
+      if prefs.debugResetWhatsNew {
+        MNGAWhatsNew.debugReset()
+        prefs.debugResetWhatsNew = false
+        logger.info("reset whatsnew and the flag")
+      }
+    #endif
   }
 
   var body: some Scene {
@@ -33,6 +41,7 @@ struct MNGAApp: App {
       ContentView()
         .onChange(of: prefs.themeColor) { setupColor() }
         .onAppear { setupColor() }
+        .environment(\.whatsNew, MNGAWhatsNew.environment)
       // .enableInjection()
     }
 

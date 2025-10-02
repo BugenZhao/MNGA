@@ -132,6 +132,9 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.debugResetTips) {
       Text("Reset Tips on Next Launch")
     }
+    Toggle(isOn: $pref.debugResetWhatsNew) {
+      Text("Reset WhatsNew on Next Launch")
+    }
   }
 
   @ViewBuilder
