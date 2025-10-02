@@ -78,6 +78,7 @@ struct ContentView: View {
       .modifier(MainToastModifier.main())
       .preferredColorScheme(prefs.colorScheme.scheme)
       // Sheets
+      .whatsNewSheet()
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) } // this is global-wide, no need to attribute again in sheets
       .sheet(isPresented: $authStorage.isSigning) { LoginView() }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {

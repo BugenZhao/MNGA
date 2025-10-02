@@ -239,7 +239,7 @@
 "Unlock Plus" = "解锁 Plus";
 "Plus Unlocked" = "Plus 已解锁 🎉";
 "Plus Thanks" = "MNGA 得以持续开发和维护，离不开您的支持。感谢您解锁 MNGA Plus！";
-"Plus Explanation" = "MNGA Plus 提供无限的泥潭浏览和互动体验，并允许您访问 MNGA 的所有高级功能。";
+"Plus Explanation" = "MNGA Plus 提供无限的泥潭浏览和互动体验，允许您访问 MNGA 的所有高级功能，更是我们持续改进和长期维护 MNGA 的唯一动力。";
 "Try Plus" = "试用 Plus";
 "You're enjoying a Plus trial" = "您正在享受 Plus 试用";
 "Trial ends on %@" = "试用将于%@结束";
@@ -254,6 +254,8 @@
 "Show Plus in Title" = "在标题中展示 Plus 标识";
 "MNGA Main Menu" = "MNGA 主菜单";
 "Sign in to NGA and discover more features here." = "在这里登录 NGA 账号，探索更多功能。";
+"Continue" = "继续";
+"What's new in MNGA %@" = "MNGA %@ 新功能";
 
 "Error Response" = "错误响应";
 "Missing Field" = "缺少字段";
