@@ -45,6 +45,10 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
       document.head.appendChild(meta);
     }
 
+    // Tweak body background color.
+    document.body.style.backgroundColor = 'rgb(255, 246, 223)';
+
+    // Remove unwanted login elements.
     function getElementByXpath(document, path) {
       return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
@@ -151,6 +155,7 @@ struct LoginView: View {
         webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
       }
       .navigationTitleInline(key: "Sign in to NGA")
+      .navigationSubtitle(webViewStore.webView.url?.absoluteString ?? "")
       .ignoresSafeArea() // modern view
   }
 
