@@ -205,6 +205,7 @@ struct GenericEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
       NavigationView {
         GenericEditorViewInner<T, M>()
       }.modifier(PaywallSheetModifier())
+        // .presentationDetents([.medium, .large])
     #else
       GenericEditorViewInner<T, M>()
         .padding()

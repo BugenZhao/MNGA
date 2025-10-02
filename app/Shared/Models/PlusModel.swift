@@ -10,27 +10,25 @@ import StoreKit
 import SwiftUI
 
 enum PlusFeature {
-  case quote
   case comment
+  case anonymous
   case newTopic
   case hotTopic
   case shortMessage
   case topicHistory
-  case notification
   case authorOnly
   case jump
   case multiAccount
   case userProfile
-  case uploadImage
   case customAppearance
   case blockContents
 
   var description: String {
     switch self {
-    case .quote:
-      "Quote"
     case .comment:
       "Comment"
+    case .anonymous:
+      "Anonymous"
     case .newTopic:
       "New Topic"
     case .hotTopic:
@@ -39,8 +37,6 @@ enum PlusFeature {
       "Short Messages"
     case .topicHistory:
       "History"
-    case .notification:
-      "Notifications"
     case .authorOnly:
       "Author Only"
     case .jump:
@@ -49,8 +45,6 @@ enum PlusFeature {
       "Multiple Accounts"
     case .userProfile:
       "User Profile"
-    case .uploadImage:
-      "Upload Image"
     case .customAppearance:
       "Custom Appearance"
     case .blockContents:

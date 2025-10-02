@@ -28,7 +28,7 @@ struct ContentTextEditorView: View {
             Button(action: model.appendDel) {
               Image(systemName: "strikethrough")
             }
-            Button(action: { withPlusCheck(.uploadImage, model.showImagePicker) }) {
+            Button(action: model.showImagePicker) {
               Image(systemName: "photo")
             }
             Spacer()

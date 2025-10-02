@@ -149,7 +149,7 @@ struct PreferencesInnerView: View {
     Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
-    }
+    }.disableWithPlusCheck(.customAppearance)
   }
 
   @ViewBuilder
