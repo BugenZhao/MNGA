@@ -55,9 +55,8 @@ platform :ios do
 
     upload_to_testflight(
       changelog: changelog,
-      # Disabled external distribution.
-      # distribute_external: true,
-      # groups: ["Nightly", "GitHub", "NGA"], # all groups
+      distribute_external: true,
+      groups: ["AfterPlus"],
     )
 
     add_git_tag
