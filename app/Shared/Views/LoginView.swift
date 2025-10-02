@@ -97,6 +97,8 @@ struct LoginView: View {
   @State var alertMessage: String? = nil
   @State var alertCompletion: (() -> Void)? = nil
 
+  @State var currentPage: URL = URLs.login
+
   let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
   init() {
@@ -110,16 +112,26 @@ struct LoginView: View {
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) { Button(role: .cancel, action: close) { Image(systemName: "xmark") } }
     ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
+    // ToolbarItem(placement: .bottomBar) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
+    // ToolbarSpacer(.fixed, placement: .bottomBar)
+    // ToolbarItemGroup(placement: .bottomBar) {
+    //   Button(action: { load(url: URLs.agreement) }) { Text("Agreement") }
+    //   Button(action: { load(url: URLs.privacy) }) { Text("Privacy") }
+    // }
+    ToolbarItem(placement: .bottomBar) { picker }
+  }
 
-    ToolbarItem(placement: .bottomBar) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
-    ToolbarSpacer(.fixed, placement: .bottomBar)
-    ToolbarItemGroup(placement: .bottomBar) {
-      Button(action: { load(url: URLs.agreement) }) { Text("Agreement") }
-      Button(action: { load(url: URLs.privacy) }) { Text("Privacy") }
-    }
+  @ViewBuilder
+  var picker: some View {
+    Picker("Page", selection: $currentPage.animation()) {
+      Text("Sign In").tag(URLs.login)
+      Text("Agreement").tag(URLs.agreement)
+      Text("Privacy").tag(URLs.privacy)
+    }.pickerStyle(SegmentedPickerStyle())
   }
 
   func load(url: URL) {
+    logger.info("load url: \(url)")
     webViewStore.webView.load(URLRequest(url: url))
   }
 
@@ -128,13 +140,15 @@ struct LoginView: View {
     WebView(webView: webViewStore.webView)
       .onAppear {
         delegate = .init(parent: self)
-        webViewStore.webView.load(URLRequest(url: URLs.login))
         webViewStore.webView.uiDelegate = delegate
         webViewStore.webView.navigationDelegate = delegate
         load(url: URLs.login)
-      }.onReceive(timer) { _ in
+      }
+      .onChange(of: currentPage) { load(url: currentPage) }
+      .onReceive(timer) { _ in
         webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
-      }.navigationTitleInline(key: "Sign in to NGA")
+      }
+      .navigationTitleInline(key: "Sign in to NGA")
   }
 
   @ViewBuilder
