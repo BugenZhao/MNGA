@@ -70,7 +70,7 @@ struct UserMenuView: View {
           ForEach(authStorage.allAuthInfos.sorted(by: { $0.uid < $1.uid }), id: \.uid) { info in
             Text(info.cachedName.isEmpty ? info.uid : info.cachedName).tag(info)
           }
-        }
+        }.disableWithPlusCheck(.multiAccount)
       }
 
       Button(action: { withPlusCheck(.multiAccount) { addUser() } }) {
@@ -80,7 +80,8 @@ struct UserMenuView: View {
         Label("Sign Out", systemImage: "person.crop.circle.fill.badge.minus")
       }
     } label: {
-      Label(user?.name.display ?? authStorage.authInfo.uid, systemImage: "person")
+      Label("Accounts", systemImage: "person.2")
+      Text(user?.name.display ?? authStorage.authInfo.uid)
     }
   }
 
