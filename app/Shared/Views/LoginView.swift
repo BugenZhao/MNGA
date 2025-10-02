@@ -49,10 +49,8 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
       return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
 
-    let iframe = document.getElementById("iff")
-
     let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
-    let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
+    let loginElement = getElementByXpath(document, loginXpath)
     loginElement.click()
 
     let xpaths = [
@@ -63,7 +61,7 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
     ]
 
     for (let xpath of xpaths) {
-      let element = getElementByXpath(iframe.contentDocument, xpath)
+      let element = getElementByXpath(document, xpath)
       element.style.display = 'none'
     }
     """
@@ -111,13 +109,10 @@ struct LoginView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) { Button(role: .cancel, action: close) { Image(systemName: "xmark") } }
-    ToolbarItem(placement: .mayNavigationBarTrailing) { if authing { ProgressView() } }
-    // ToolbarItem(placement: .bottomBar) { Button(action: { load(url: URLs.login) }) { Text("Sign In") } }
-    // ToolbarSpacer(.fixed, placement: .bottomBar)
-    // ToolbarItemGroup(placement: .bottomBar) {
-    //   Button(action: { load(url: URLs.agreement) }) { Text("Agreement") }
-    //   Button(action: { load(url: URLs.privacy) }) { Text("Privacy") }
-    // }
+    ToolbarItem(placement: .mayNavigationBarTrailing) {
+      if authing { ProgressView() }
+      else { Button(action: reload) { Image(systemName: "arrow.clockwise") } }
+    }
     ToolbarItem(placement: .bottomBar) { picker }
   }
 
@@ -130,8 +125,13 @@ struct LoginView: View {
     }.pickerStyle(SegmentedPickerStyle())
   }
 
+  func reload() {
+    load(url: currentPage)
+  }
+
   func load(url: URL) {
     logger.info("load url: \(url)")
+    loading = true
     webViewStore.webView.load(URLRequest(url: url))
   }
 
@@ -144,11 +144,12 @@ struct LoginView: View {
         webViewStore.webView.navigationDelegate = delegate
         load(url: URLs.login)
       }
-      .onChange(of: currentPage) { load(url: currentPage) }
+      .onChange(of: currentPage) { reload() }
       .onReceive(timer) { _ in
         webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
       }
       .navigationTitleInline(key: "Sign in to NGA")
+      .ignoresSafeArea() // modern view
   }
 
   @ViewBuilder

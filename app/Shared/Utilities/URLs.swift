@@ -24,7 +24,8 @@ enum URLs {
   }
 
   static var login: URL {
-    URL(string: "/nuke.php?__lib=login&__act=account&login", relativeTo: base)!
+    // iframe of URL(string: "/nuke.php?__lib=login&__act=account&login", relativeTo: base)!
+    URL(string: "/nuke/account_copy.html?login", relativeTo: base)!
   }
 
   static var agreement: URL {
