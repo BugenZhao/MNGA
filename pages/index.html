@@ -1,63 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MNGA Pages</title>
-    <meta name="description" content="Deployment check page" />
-    <style>
-      :root {
-        color-scheme: light dark;
-        --bg: #ffffff;
-        --fg: #0b0b0c;
-        --muted: #6b7280;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #0b0b0c;
-          --fg: #f5f5f7;
-          --muted: #9aa1aa;
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MNGA 支持与反馈</title>
+  <meta name="description" content="MNGA 的用户支持、联系方式与常见问题（FAQ）。如需帮助，请通过邮箱或 GitHub Issues 联系我们。" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="MNGA 支持与反馈" />
+  <meta property="og:description" content="MNGA 的用户支持、联系方式与常见问题（FAQ）。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/BugenZhao/MNGA/main/assets/MNGA-liquid-glass-compressed.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="MNGA 支持与反馈" />
+  <meta name="twitter:description" content="MNGA 的用户支持、联系方式与常见问题（FAQ）。" />
+
+  <!-- JSON-LD (FAQ schema for better search / optional) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {
+        "@type":"Question",
+        "name":"打开帖子时出现“XML 解析错误”怎么办？",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"这是由于 NGA 官方接口的封锁导致。请在 MNGA 设置中开启「封禁时自动访问网页版」，或更新至最新版本；更多说明见 GitHub 讨论 #104。"
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"如何刷新帖子内容或列表？",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"点按屏幕最上方回到页面顶部后下拉刷新，或在右上角菜单中使用“刷新”。"
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"字体太小/太大怎么办？",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"在 设置 → 话题内容样式 中选择“更大字体”。也可在 iOS 控制中心添加“文字大小”控制，单独调整 MNGA 字体。"
+        }
+      },
+      {
+        "@type":"Question",
+        "name":"网络报错 / 无法加载？",
+        "acceptedAnswer":{
+          "@type":"Answer",
+          "text":"请在 设置 → 后端 中更换域名。若开启了去广告服务，可能导致部分请求失败，建议临时关闭后再试。"
         }
       }
-      html,
-      body {
-        height: 100%;
-      }
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--fg);
-        font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
-          Cantarell, Noto Sans, Arial, sans-serif, Apple Color Emoji,
-          Segoe UI Emoji;
-      }
-      main {
-        min-height: 100%;
-        display: grid;
-        place-items: center;
-        padding: 2rem;
-      }
-      .card {
-        text-align: center;
-        max-width: 42rem;
-      }
-      h1 {
-        margin: 0 0 0.5rem;
-        font-size: clamp(2rem, 5vw, 3rem);
-        letter-spacing: -0.02em;
-      }
-      p {
-        margin: 0;
-        color: var(--muted);
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <section class="card" aria-label="Status">
-        <h1>MNGA Pages</h1>
-        <p>It works.</p>
-      </section>
-    </main>
-  </body>
+    ]
+  }
+  </script>
+
+  <style>
+    :root { --bg:#0b0c0f; --card:#12141a; --text:#e7e9ee; --muted:#a6adbb; --link:#7aa2ff; --accent:#5ee1a9; }
+    * { box-sizing: border-box; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--text); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif; }
+    a { color:var(--link); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .wrap { max-width:900px; margin:0 auto; padding:32px 20px 60px; }
+    header { text-align:center; margin-bottom:28px; }
+    header img { width:96px; height:96px; border-radius:24px; box-shadow:0 8px 30px rgba(0,0,0,.35); }
+    h1 { font-size:28px; margin:16px 0 6px; }
+    .subtitle { color:var(--muted); font-size:14px; }
+    .card { background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:20px; margin:18px 0; }
+    .grid { display:grid; gap:16px; grid-template-columns:1fr; }
+    @media (min-width:720px){ .grid-2 { grid-template-columns:1fr 1fr; } }
+    h2 { font-size:20px; margin:0 0 10px; }
+    .btns a img { display:inline-block; width:180px; height:auto; margin-right:12px; vertical-align:middle; }
+    details { background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:14px 16px; }
+    details + details { margin-top:10px; }
+    summary { cursor:pointer; font-weight:600; }
+    footer { color:var(--muted); font-size:13px; margin-top:26px; }
+    .small { font-size:14px; color:var(--muted); }
+    .list { padding-left:18px; }
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main">
+    <header>
+      <img src="https://raw.githubusercontent.com/BugenZhao/MNGA/main/assets/MNGA-liquid-glass-compressed.png" alt="MNGA App 图标">
+      <h1>MNGA 支持与反馈</h1>
+      <div class="subtitle">如果您在使用过程中遇到问题或有功能建议，请通过以下方式联系我们。</div>
+    </header>
+
+    <section class="grid grid-2" aria-label="联系方式与获取应用">
+      <div class="card" aria-labelledby="contact">
+        <h2 id="contact">联系方式</h2>
+        <ul class="list">
+          <li>邮箱支持：<a href="mailto:mnga.feedback@bugenzhao.com">mnga.feedback@bugenzhao.com</a></li>
+          <li>GitHub Issues：<a href="https://github.com/BugenZhao/MNGA/issues">MNGA Issues 页面</a></li>
+          <li>App Store 评论区：<a href="https://apps.apple.com/cn/app/mnga/id1586461246">MNGA on App Store</a></li>
+        </ul>
+        <p class="small">我们会尽快回复您的反馈。</p>
+      </div>
+
+      <div class="card" aria-labelledby="get">
+        <h2 id="get">获取 MNGA</h2>
+        <div class="btns" style="margin-top:8px;">
+          <a href="https://apps.apple.com/cn/app/mnga/id1586461246" aria-label="在 App Store 下载 MNGA">
+            <img alt="Download on the App Store"
+                 src="https://user-images.githubusercontent.com/25862682/147930330-3076005c-7525-452b-abcf-bef264f7e462.png">
+          </a>
+        </div>
+        <p class="small" style="margin-top:10px;">也可前往项目主页：<a href="https://github.com/BugenZhao/MNGA">GitHub - BugenZhao/MNGA</a></p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="faq">
+      <h2 id="faq">常见问题（FAQ）</h2>
+
+      <details>
+        <summary>打开帖子时出现“XML 解析错误”怎么办？</summary>
+        <p>这是由于 NGA 官方接口的封锁导致。请在 MNGA 设置中开启 <strong>「封禁时自动访问网页版」</strong>，或更新至最新版本。更多说明见
+          <a href="https://github.com/BugenZhao/MNGA/issues/104">GitHub 讨论 #104</a>。</p>
+      </details>
+
+      <details>
+        <summary>如何刷新帖子内容或列表？</summary>
+        <p>点按屏幕最上方回到页面顶部后下拉刷新，或在右上角菜单中使用「刷新」。</p>
+      </details>
+
+      <details>
+        <summary>字体太小/太大怎么办？</summary>
+        <p>在 <strong>设置 → 话题内容样式</strong> 中选择「更大字体」。也可在 iOS 控制中心添加「文字大小」控制，单独调整 MNGA 字体。</p>
+      </details>
+
+      <details>
+        <summary>网络报错 / 无法加载？</summary>
+        <p>请在 <strong>设置 → 后端</strong> 中更换域名。若开启了去广告服务，可能导致部分请求失败，建议临时关闭后再试。</p>
+      </details>
+    </section>
+
+    <section class="card" aria-labelledby="legal">
+      <h2 id="legal">声明</h2>
+      <p>MNGA 与 NGA 官方无关，仅作为第三方客户端供个人学习与交流使用。</p>
+      <p>NGA 论坛（<a href="https://ngabbs.com">https://ngabbs.com</a>）及其相关数据与资源的版权归 NGA BBS 所有。</p>
+    </section>
+
+    <footer>
+      <p><strong>Make NGA Great Again.</strong></p>
+    </footer>
+  </main>
+</body>
 </html>
