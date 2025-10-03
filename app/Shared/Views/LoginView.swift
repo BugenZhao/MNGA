@@ -33,7 +33,7 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
       return
     }
 
-    let hideLoginElement = """
+    let initScript = """
     // Disable viewport scaling
     let viewport = document.querySelector('meta[name="viewport"]');
     if (viewport) {
@@ -47,13 +47,16 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
 
     // Tweak body background color.
     document.body.style.backgroundColor = 'rgb(255, 246, 223)';
+    """
+
+    let hideElementScript = """
+    (function() {
+    let iframe = document.getElementById('iff')
 
     // Remove unwanted login elements.
     function getElementByXpath(document, path) {
       return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
-
-    let iframe = document.getElementById("iff")
 
     let loginXpath = '//*[@id="main"]/div/div[3]/a[2]'
     let loginElement = getElementByXpath(iframe.contentDocument, loginXpath)
@@ -62,7 +65,7 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
     let xpaths = [
       // '//*[@id="main"]/div/div[last()-1]', // Register
       // '//*[@id="main"]/div/span[last()]',  // EULA
-      // '//*[@id="main"]/div/a[2]',          // QRCode login
+      '//*[@id="main"]/div/a[2]',          // QRCode login
       '//*[@id="main"]/div/div[last()]',   // 3rd party login
     ]
 
@@ -70,14 +73,27 @@ private class LoginViewUIDelegate: NSObject, WKUIDelegate, WKNavigationDelegate 
       let element = getElementByXpath(iframe.contentDocument, xpath)
       element.style.display = 'none'
     }
+    })()
     """
 
-    // Give the page/iframe some time to load.
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-      webView.evaluateJavaScript(hideLoginElement) { _, err in
-        if let err { logger.warning("evaluateJavaScript: \(err)") }
-        self.setLoading(loading: false)
+    Task {
+      do { try await webView.evaluateJavaScript(initScript) } catch {
+        logger.warning("failed to evaluate init script: \(error)")
       }
+      logger.info("evaluated init script")
+
+      for i in 0 ..< 60 {
+        try? await Task.sleep(for: .seconds(0.5))
+        do { try await webView.evaluateJavaScript(hideElementScript) } catch {
+          logger.warning("attempt \(i): failed to evaluate hide element script: \(error)")
+          continue
+        }
+        logger.info("successfully evaluated hide element script")
+        break
+      }
+
+      try? await Task.sleep(for: .seconds(0.5))
+      self.setLoading(loading: false)
     }
   }
 
