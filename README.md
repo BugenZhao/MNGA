@@ -19,11 +19,12 @@
   <a href="https://apps.apple.com/cn/app/mnga/id1586461246">
   <img src="https://user-images.githubusercontent.com/25862682/147930330-3076005c-7525-452b-abcf-bef264f7e462.png" width="200"></img></a>
 
-- TestFlight Public Link
+<!-- - TestFlight Public Link
 
   <a href="https://testflight.apple.com/join/UL8mvVKt">
-  <img src="https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png" width="200"></img></a>
+  <img src="https://user-images.githubusercontent.com/25862682/133919629-0f337486-7ef2-4a34-9b36-a09e3b838ca8.png" width="200"></img></a> -->
 
+- Find the TestFlight link in the "About & Feedback" page in the app.
 - Or build the project yourself, check instructions below.
 
 ## Features
@@ -36,21 +37,21 @@
 ### iOS
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/145673784-f079df83-741e-4f95-91bd-58cbea256e00.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145673788-dcc7fd14-533b-4bad-9ee7-a4dc9fd786f0.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145674014-bab62ff3-f7d9-4787-bc0a-7ea79b840d3e.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145673806-7f2ee397-dc99-49d4-9470-9b7c885fd7bb.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145674986-dc7447d8-9d4a-42e9-89df-1653d0812a43.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145673808-e1a295fc-c90d-4dd0-bdef-ed500fd29f9a.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145673820-94fdace7-10be-4c7d-beb3-0676ebf20951.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145673816-bd74b0dd-7d89-4470-ab4c-76bb8000e15b.PNG" width="32%" />
-  <img src="https://user-images.githubusercontent.com/25862682/145673812-3e221651-0824-4545-b8c8-93b860227838.PNG" width="32%" />
+  <img width="32%" src="https://github.com/user-attachments/assets/867459e7-04a7-45bc-9f11-777d7cb49596" />
+  <img width="32%" src="https://github.com/user-attachments/assets/700b5c86-7c6c-4ec6-8499-594da3dd5572" />
+  <img width="32%" src="https://github.com/user-attachments/assets/e6c70147-1f4f-4482-845d-cc7803d8718b" />
+  <img width="32%" src="https://github.com/user-attachments/assets/8b2f8ff9-2dce-4f6f-9ec8-04a0ae95fcf9" />
+  <img width="32%" src="https://github.com/user-attachments/assets/2974faef-1eea-4bc2-b097-7662fb8ab941" />
+  <img width="32%" src="https://github.com/user-attachments/assets/5f9fcabb-904b-465e-b2b1-aa98351bceeb" />
+  <img width="32%" src="https://github.com/user-attachments/assets/64e841fd-1bf0-4971-a3a0-b7fa116bc9fc" />
+  <img width="32%" src="https://github.com/user-attachments/assets/afc2bdda-08bc-4da8-9988-bc5fa86ad050" />
+  <img width="32%" src="https://github.com/user-attachments/assets/85854f32-e8f6-4269-b0ae-2da8b1fdac94" />
 </p>
 
 ### iPadOS
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/145675012-50ad7b2d-e841-4788-9505-b1a299c05df3.PNG"/>
+  <img src="https://github.com/user-attachments/assets/1a0049aa-41cb-46d0-bd8a-f106792fa956"/>
 </p>
 
 <!-- ### macOS
@@ -98,13 +99,13 @@
 
    打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置 Developer Profile 后，编译运行 MNGA。
 
-## Donation
+<!-- ## Donation
 
 如果你喜欢 MNGA，欢迎通过下面的二维码捐赠支持。由于 NGA 官方封锁限制不断加深，我们只能尽最大努力来维持 App 的基本可用性，对于一些无能为力的问题还请谅解，谢谢。
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/25862682/194579914-d27a025c-f00a-44d6-b0e6-ec73f8d16fb9.PNG" width="300"></img>
-</p>
+</p> -->
 
 ## Statements
 
