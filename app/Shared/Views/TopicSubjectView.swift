@@ -40,9 +40,8 @@ struct TopicSubjectView: View {
     }.font(.footnote.bold())
   }
 
-  // for compatibility
   var tags: [String] {
-    topic.subject.tags.isEmpty ? topic.tags : topic.subject.tags
+    topic.tagsCompat
   }
 
   var content: String {

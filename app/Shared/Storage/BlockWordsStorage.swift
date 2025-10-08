@@ -45,7 +45,11 @@ class BlockWordsStorage: ObservableObject {
     }
   }
 
-  static func content(user: UserName, content: String) -> String {
-    "\(BlockWord.fromUser(user).word)|\(content)"
+  static func content(for topic: Topic) -> String {
+    content(user: topic.authorName, content: topic.subjectContentCompat, tags: topic.tagsCompat)
+  }
+
+  static func content(user: UserName, content: String, tags: [String] = []) -> String {
+    "\(BlockWord.fromUser(user).word)|\(content)|\(tags.joined(separator: "|"))"
   }
 }
