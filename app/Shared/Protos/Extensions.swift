@@ -276,6 +276,10 @@ extension Topic {
   var subjectContentCompat: String {
     subject.content.isEmpty ? subjectContent : subject.content
   }
+
+  var tagsCompat: [String] {
+    subject.tags.isEmpty ? tags : subject.tags
+  }
 }
 
 extension CacheType {
