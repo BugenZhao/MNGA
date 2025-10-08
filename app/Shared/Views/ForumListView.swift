@@ -54,6 +54,8 @@ struct ForumListView: View {
         }.onMove { from, to in
           favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
         }
+        // Hack for disordering after `onMove`
+        .id(favorites.favoriteForums.hashValue)
       }
     }
   }
