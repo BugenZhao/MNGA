@@ -38,7 +38,7 @@ struct PlusView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      if let status = paywall.onlineStatus {
+      if let status = paywall.trustedStatus {
         ScrollView {
           VStack(spacing: 28) {
             header
@@ -65,6 +65,8 @@ struct PlusView: View {
       } else {
         ProgressView()
           .padding()
+          // Call `updateStatus` to forcefully get a trusted status.
+          .task { await paywall.updateStatus() }
       }
     }
     .background(Color(.systemGroupedBackground).ignoresSafeArea())
@@ -158,8 +160,8 @@ struct PlusView: View {
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
         } else {
-          ForEach(displayProducts, id: \.id) { product in
-            productCard(for: product)
+          ForEach(displayProducts.enumerated(), id: \.element.id) { i, product in
+            productCard(for: product, isPreferred: i == 0)
           }
         }
 
@@ -192,8 +194,7 @@ struct PlusView: View {
   }
 
   @ViewBuilder
-  private func productCard(for product: Product) -> some View {
-    let isTrialProduct = product.id == Constants.Plus.trialID
+  private func productCard(for product: Product, isPreferred: Bool) -> some View {
     let isPurchasing = purchasingProductID == product.id
 
     Button { Task { await purchase(product) } } label: {
@@ -208,14 +209,14 @@ struct PlusView: View {
 
         Text(product.description)
           .font(.footnote)
-          .if(isTrialProduct) { $0.foregroundStyle(.tint) }
+          .if(isPreferred) { $0.foregroundStyle(.tint) }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(20)
       .background(cardBackground)
       .overlay {
         RoundedRectangle(cornerRadius: 20)
-          .stroke(isTrialProduct ? Color.accentColor : Color.clear, lineWidth: 1.5)
+          .stroke(isPreferred ? Color.accentColor : Color.clear, lineWidth: 1.5)
       }
     }
     .buttonStyle(.plain)
@@ -281,6 +282,7 @@ struct PlusView: View {
 
     switch result {
     case .success:
+      try? await AppStore.sync()
       await paywall.updateStatus()
     case let .failure(error):
       errorMessage = error.localizedDescription

@@ -132,10 +132,10 @@ class PaywallModel: ObservableObject {
     #endif
   }
 
-  @Published var isOnlineStatus: Bool = false
+  @Published var isStatusTrusted = false
 
-  var onlineStatus: UnlockStatus? {
-    isOnlineStatus ? status : nil
+  var trustedStatus: UnlockStatus? {
+    isStatusTrusted ? status : nil
   }
 
   var isUnlocked: Bool {
@@ -147,7 +147,7 @@ class PaywallModel: ObservableObject {
   }
 
   private func listenForTransactions() async {
-    await updateStatus()
+    await updateStatus(initial: true)
 
     for await result in Transaction.updates {
       logger.info("transaction update: \(result)")
@@ -158,15 +158,22 @@ class PaywallModel: ObservableObject {
     }
   }
 
-  func updateStatus() async {
+  // If `initial` is true, we will only update the cached status and set `isStatusTrusted`
+  // if the new status is more powerful.
+  func updateStatus(initial: Bool = false) async {
     let newStatus = await fetchStatus()
 
     await MainActor.run {
-      if !isOnlineStatus, cachedStatus != newStatus {
-        logger.warning("mismatch between cached and online status: \(cachedStatus) vs \(newStatus)")
+      if initial {
+        if cachedStatus != newStatus {
+          logger.warning("mismatch between cached and new status while initializing: \(cachedStatus) vs \(newStatus)")
+        }
+        isStatusTrusted = newStatus >= cachedStatus
+        cachedStatus = max(cachedStatus, newStatus)
+      } else {
+        isStatusTrusted = true
+        cachedStatus = newStatus
       }
-      cachedStatus = newStatus
-      isOnlineStatus = true
     }
   }
 
