@@ -11,15 +11,28 @@ import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
 
+// TODO: webp will be converted to png and lost animation
+struct TransferableImage: Transferable {
+  let image: PlatformImage
+
+  var previewImage: Image {
+    Image(image: image)
+  }
+
+  static var transferRepresentation: some TransferRepresentation {
+    ProxyRepresentation { Image(image: $0.image) }
+  }
+}
+
 class ViewingImageModel: ObservableObject {
   @Published var id: UUID?
   @Published var view: AnyView?
-  @Published var imageData: Data?
+  @Published var transferable: TransferableImage?
   @Published var showing = false
 
   func show(image: PlatformImage) {
     withAnimation {
-      self.imageData = image.sd_imageData()
+      self.transferable = TransferableImage(image: image)
       self.view = Image(image: image)
         .resizable()
         .eraseToAnyView()
@@ -30,11 +43,10 @@ class ViewingImageModel: ObservableObject {
 
   func show(url: URL) {
     withAnimation {
-      self.imageData = nil
       self.view = WebImage(url: url)
         .onSuccess { image, _, _ in
           DispatchQueue.main.async {
-            self.imageData = image.sd_imageData()
+            self.transferable = TransferableImage(image: image)
           }
         }
         .resizable()
