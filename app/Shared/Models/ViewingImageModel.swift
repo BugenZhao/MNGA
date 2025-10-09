@@ -47,7 +47,7 @@ struct TransferableImage: Transferable {
     }
 
     let url = FileManager.default.temporaryDirectory
-      .appendingPathComponent(id.uuidString)
+      .appendingPathComponent("MNGA-\(id.uuidString)")
       .appendingPathExtension(ext)
 
     try? image.sd_imageData()?.write(to: url, options: .atomic)
