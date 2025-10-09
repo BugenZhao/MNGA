@@ -7,6 +7,7 @@ import Inject
 import SwiftUI
 import SwiftUIX
 import TipKit
+import SDWebImageWebPCoder
 
 @main
 struct MNGAApp: App {
@@ -34,6 +35,10 @@ struct MNGAApp: App {
         logger.info("reset whatsnew and the flag")
       }
     #endif
+
+    // Init WebP support from SDWebImage to support animated images
+    let WebPCoder = SDImageWebPCoder.shared
+    SDImageCodersManager.shared.addCoder(WebPCoder)
   }
 
   var body: some Scene {
