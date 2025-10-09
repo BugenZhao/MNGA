@@ -29,6 +29,9 @@ private struct PostRowAppearanceView: View {
         Toggle(isOn: $pref.postRowLargerFont) {
           Label("Larger Font", systemImage: "textformat.size")
         }
+      }
+
+      Section {
         Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
           Label("Dim Images in Dark Mode", systemImage: "moon.fill")
         }
