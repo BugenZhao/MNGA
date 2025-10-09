@@ -42,12 +42,9 @@ struct NewImageViewer: View {
     NavigationStack {
       main
         .toolbar {
-          if let data = model.imageData,
-             let id = model.id,
-             let image = Image(data: data)
-          {
+          if let transferable = model.transferable {
             ToolbarItem(placement: .bottomBar) {
-              ShareLink(item: image, preview: SharePreview("\(id)", image: image)) {
+              ShareLink(item: transferable, preview: SharePreview(transferable.previewName, image: transferable.previewImage)) {
                 Image(systemName: "square.and.arrow.up")
               }
             }
@@ -63,6 +60,5 @@ struct NewImageViewer: View {
     }
     .opacity(opacity)
     .background(ClearFullScreenBackground())
-    .id(model.id)
   }
 }
