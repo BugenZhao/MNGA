@@ -4,10 +4,10 @@
 
 import Foundation
 import Inject
+import SDWebImageWebPCoder
 import SwiftUI
 import SwiftUIX
 import TipKit
-import SDWebImageWebPCoder
 
 @main
 struct MNGAApp: App {
