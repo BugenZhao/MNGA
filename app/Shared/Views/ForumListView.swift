@@ -193,17 +193,17 @@ struct ForumListView: View {
       }
     }
     .searchable(model: searchModel, prompt: "Search".localized)
-    .onAppear { loadData() }
+    .task { await loadData() }
+    .refreshable { await loadData() }
     .navigationTitle(title)
     .navigationBarTitleDisplayMode(.large)
     .listStyle(.sidebar) // collapsible
     .toolbar { toolbar }
   }
 
-  func loadData() {
-    guard categories.isEmpty else { return }
-
-    logicCallAsync(.forumList(.with { _ in })) { (response: ForumListResponse) in
+  func loadData() async {
+    let res: Result<ForumListResponse, LogicError> = await logicCallAsync(.forumList(.with { _ in }))
+    if case let .success(response) = res {
       withAnimation {
         categories = response.categories
       }
