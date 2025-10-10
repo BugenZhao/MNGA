@@ -265,7 +265,7 @@ struct TopicDetailsView: View {
     {
       Button(action: {
         Task {
-          await dataSource.reload(page: prevPage, evenIfNotLoaded: true)
+          await dataSource.reload(page: prevPage, evenIfNotLoaded: true, animated: false)
           guard let floor = dataSource.itemsAtPage(prevPage).map(\.floor).max() else { return }
           action.scrollToFloor = Int(floor) // scroll to last of prev page
         }
@@ -358,7 +358,11 @@ struct TopicDetailsView: View {
       }
 
       if let nextPage = dataSource.nextPage {
-        let loadTrigger = Text("").task { await dataSource.loadMore(alwaysAnimation: true) }
+        let loadTrigger = Text("")
+          .onAppear { Task {
+            try? await Task.sleep(for: .seconds(1)) // less glitch
+            await dataSource.loadMore(alwaysAnimation: true)
+          } }
         Section(header: Text("Page \(nextPage)"), footer: loadTrigger) {
           // BUGEN'S HACK:
           // the first view of this section will unexpectedly call `onAppear(_:)`
@@ -485,11 +489,11 @@ struct TopicDetailsView: View {
       }.onReceive(action.$scrollToFloor) { floor in
         guard let floor else { return }
         let item = dataSource.items.first { $0.floor == UInt32(floor) }
-        withAnimation { proxy.scrollTo(item, anchor: .top) }
+        proxy.scrollTo(item, anchor: .top)
       }.onReceive(action.$scrollToPid) { pid in
         guard let pid else { return }
         let item = dataSource.items.first { $0.id.pid == pid }
-        withAnimation { proxy.scrollTo(item, anchor: .top) }
+        proxy.scrollTo(item, anchor: .top)
       }
     }.mayGroupedListStyle()
       // Action Navigation
