@@ -19,6 +19,16 @@ struct ForumListView: View {
 
   @State var categories = [Category]()
 
+  @State var collapsedCategories = Set<String>()
+
+  // Only when a binding of `isExpanded` is provided, the section is collapsible.
+  func isCategoryExpanded(_ id: String) -> Binding<Bool> {
+    .init(
+      get: { !collapsedCategories.contains(id) },
+      set: { if $0 { collapsedCategories.remove(id) } else { collapsedCategories.insert(id) } }
+    )
+  }
+
   // HACK: do not use @Environment, which causes some sheets (like PostReplyView) popped unexpectedly
   @State var editMode = EditMode.inactive
 
@@ -33,7 +43,7 @@ struct ForumListView: View {
   }
 
   var favoritesSection: some View {
-    Section(header: Text("Favorites").font(.subheadline).fontWeight(.medium)) {
+    Section("Favorites", isExpanded: isCategoryExpanded("MNGA-Favorites")) {
       if favorites.favoriteForums.isEmpty {
         HStack {
           Spacer()
@@ -70,7 +80,7 @@ struct ForumListView: View {
         LoadingRowView()
       } else {
         ForEach(filteredCategories, id: \.id) { category in
-          Section(header: Text(category.name).font(.subheadline).fontWeight(.medium)) {
+          Section(category.name, isExpanded: isCategoryExpanded(category.id)) {
             ForEach(category.forums, id: \.idDescription) { forum in
               buildNormalLink(forum)
             }
@@ -99,7 +109,7 @@ struct ForumListView: View {
       }
     } label: {
       Label("Filters", systemImage: favorites.filterMode.filterIcon)
-    }.imageScale(.large)
+    }
   }
 
   @ViewBuilder
@@ -186,7 +196,7 @@ struct ForumListView: View {
     .onAppear { loadData() }
     .navigationTitle(title)
     .navigationBarTitleDisplayMode(.large)
-    .compatForumListListStyle()
+    .listStyle(.sidebar) // collapsible
     .toolbar { toolbar }
   }
 
