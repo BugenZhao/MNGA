@@ -39,21 +39,6 @@ extension View {
       self
     #endif
   }
-
-  @ViewBuilder
-  func compatForumListListStyle() -> some View {
-    #if os(iOS)
-      if #available(iOS 15.0, *) {
-        self
-      } else if UserInterfaceIdiom.current == .pad {
-        listStyle(.sidebar)
-      } else {
-        listStyle(.insetGrouped)
-      }
-    #else
-      self
-    #endif
-  }
 }
 
 extension View {
