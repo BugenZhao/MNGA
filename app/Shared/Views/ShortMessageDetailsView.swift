@@ -57,7 +57,7 @@ struct ShortMessageDetailsView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           Section(header: Text("Participants")) {
@@ -84,7 +84,7 @@ struct ShortMessageDetailsView: View {
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()
       .toolbar { toolbar }
-      .onChange(of: postModel.sent) { dataSource.reloadLastPages(evenIfNotLoaded: false) }
+      .task(id: postModel.sent) { await dataSource.reloadLastPages(evenIfNotLoaded: false) }
   }
 
   func doReply() {

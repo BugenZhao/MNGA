@@ -82,7 +82,7 @@ struct UserProfileView: View {
     case .topics:
       if topicDataSource.notLoaded {
         LoadingRowView()
-          .onAppear { topicDataSource.initialLoad() }
+          .task { await topicDataSource.initialLoad() }
       } else {
         Section(header: Text("\(user.name.display)'s Topics")) {
           if topicDataSource.items.isEmpty {
@@ -100,7 +100,7 @@ struct UserProfileView: View {
     case .posts:
       if postDataSource.notLoaded {
         LoadingRowView()
-          .onAppear { postDataSource.initialLoad() }
+          .task { await postDataSource.initialLoad() }
       } else {
         Section(header: Text("\(user.name.display)'s Posts")) {
           if postDataSource.items.isEmpty {

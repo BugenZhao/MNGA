@@ -78,7 +78,7 @@ struct ForumSearchView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           Section(header: Text("Search Results")) {
@@ -99,7 +99,7 @@ struct UserSearchView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           Section(header: Text("Search Results")) {

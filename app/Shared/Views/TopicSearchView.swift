@@ -42,7 +42,7 @@ struct TopicSearchItemsView: View {
   var body: some View {
     if dataSource.notLoaded {
       LoadingRowView()
-        .onAppear { dataSource.initialLoad() }
+        .task { await dataSource.initialLoad() }
     } else {
       ForEachOrEmpty($dataSource.items, id: \.wrappedValue.id) { topic in
         CrossStackNavigationLinkHack(id: topic.w.id, destination: {
@@ -61,7 +61,7 @@ struct TopicSearchView: View {
   var body: some View {
     if dataSource.notLoaded {
       ProgressView()
-        .onAppear { dataSource.initialLoad() }
+        .task { await dataSource.initialLoad() }
     } else {
       List {
         Section(header: Text("Search Results")) {

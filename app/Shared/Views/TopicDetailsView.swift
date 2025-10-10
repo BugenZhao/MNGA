@@ -261,14 +261,13 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var mayLoadBackButton: some View {
     if let _ = dataSource.loadFromPage,
-       let prevPage = dataSource.firstLoadedPage?.advanced(by: -1), prevPage >= 1,
-       let currFirst = dataSource.items.min(by: { $0.floor < $1.floor })
+       let prevPage = dataSource.firstLoadedPage?.advanced(by: -1), prevPage >= 1
     {
       Button(action: {
-        action.scrollToFloor = Int(currFirst.floor) // scroll to first for fixing scroll position
-        dataSource.reload(page: prevPage, evenIfNotLoaded: true) {
+        Task {
+          await dataSource.reload(page: prevPage, evenIfNotLoaded: true)
           guard let floor = dataSource.itemsAtPage(prevPage).map(\.floor).max() else { return }
-          DispatchQueue.main.async { action.scrollToFloor = Int(floor) } // scroll to last of prev page
+          action.scrollToFloor = Int(floor) // scroll to last of prev page
         }
       }) {
         Label("Load Page \(prevPage)", systemImage: "arrow.counterclockwise")
@@ -359,7 +358,7 @@ struct TopicDetailsView: View {
       }
 
       if let nextPage = dataSource.nextPage {
-        let loadTrigger = Text("").onAppear { dataSource.loadMore() }
+        let loadTrigger = Text("").task { await dataSource.loadMore(alwaysAnimation: true) }
         Section(header: Text("Page \(nextPage)"), footer: loadTrigger) {
           // BUGEN'S HACK:
           // the first view of this section will unexpectedly call `onAppear(_:)`
@@ -520,11 +519,11 @@ struct TopicDetailsView: View {
       .toolbar { toolbar }
       .refreshable(dataSource: dataSource)
       .toolbarRole(.editor) // make title left aligned
-      .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
+      .task(id: postReply.sent) { await reloadPageAfter(sent: postReply.sent) }
       .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
       .onChange(of: dataSource.latestError) { onError(e: $1) }
       .environmentObject(postReply)
-      .onAppear { dataSource.initialLoad() }
+      .task { await dataSource.initialLoad() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
   }
 
@@ -574,14 +573,14 @@ struct TopicDetailsView: View {
     }, pageToReload: .last)
   }
 
-  func reloadPageAfter(sent: PostReplyModel.Context?) {
+  func reloadPageAfter(sent: PostReplyModel.Context?) async {
     guard let sent else { return }
 
     switch sent.task.pageToReload {
     case let .exact(page):
-      dataSource.reload(page: page, evenIfNotLoaded: false)
+      await dataSource.reload(page: page, evenIfNotLoaded: false)
     case .last:
-      dataSource.reloadLastPages(evenIfNotLoaded: false)
+      await dataSource.reloadLastPages(evenIfNotLoaded: false)
     case .none:
       break
     }
