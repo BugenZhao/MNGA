@@ -261,6 +261,22 @@
 "Collapse All Categories" = "折叠所有分类";
 "Done" = "完成";
 
+"All Plus Features" = "Plus 功能一览";
+"Comment on posts in all topics." = "在话题中对帖子进行贴条。";
+"Post, quote, reply, comment, and create new topics anonymously." = "匿名发帖：回复、引用、贴条和发布新话题。";
+"Create new topics in all forums." = "在所有版块发布新话题。";
+"View hot topics from the past 24 hours, week, or month." = "查看过去 24 小时、一周或一月的热门话题。";
+"Send and receive short messages with other users." = "发送和接收短消息，与其他用户进行交流。";
+"View your footprint of topics you have explored." = "查看您浏览过的所有话题足迹。";
+"Check posts and replies from a specific author in a topic." = "在话题中查看特定作者的帖子和回复。";
+"Jump to arbitrary floor or page in a topic." = "在话题中跳转到任意楼层或页面。";
+"Log in and switch between multiple accounts." = "登录并在多个账号之间切换。";
+"View user profiles, with their posts and replies." = "查看用户档案，包括其回复和帖子。";
+"Full access to customizing the appearance of MNGA." = "获得 MNGA 的所有外观自定义选项。";
+"Block contents from specific users, or with specific keywords." = "屏蔽来自特定用户或包含特定关键词的帖子。";
+"More Features in the Future" = "解锁未来更多功能";
+"Plus More Feature" = "MNGA 得以持续开发和维护，离不开您的支持。更多功能正在开发中！";
+
 "Error Response" = "错误响应";
 "Missing Field" = "缺少字段";
 "Network Connection" = "网络连接";

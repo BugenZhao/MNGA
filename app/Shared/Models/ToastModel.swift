@@ -81,7 +81,7 @@ extension ToastModel.Message {
     case .autoRefreshed:
       AlertToast(displayMode: displayMode, type: .systemImage("checkmark.arrow.trianglehead.clockwise", .accentColor), title: "Auto Refreshed".localized, subTitle: nil)
     case let .requirePlus(feature):
-      AlertToast(displayMode: displayMode, type: .regular, title: String(format: "\"%@\" is a Plus feature".localized, feature.description.localized), subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
+      AlertToast(displayMode: displayMode, type: .regular, title: String(format: "\"%@\" is a Plus feature".localized, feature.name.localized), subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
     }
   }
 }

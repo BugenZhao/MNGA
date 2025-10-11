@@ -9,50 +9,6 @@ import Foundation
 import StoreKit
 import SwiftUI
 
-enum PlusFeature {
-  case comment
-  case anonymous
-  case newTopic
-  case hotTopic
-  case shortMessage
-  case topicHistory
-  case authorOnly
-  case jump
-  case multiAccount
-  case userProfile
-  case customAppearance
-  case blockContents
-
-  var description: String {
-    switch self {
-    case .comment:
-      "Comment"
-    case .anonymous:
-      "Anonymous"
-    case .newTopic:
-      "New Topic"
-    case .hotTopic:
-      "Hot Topics"
-    case .shortMessage:
-      "Short Messages"
-    case .topicHistory:
-      "History"
-    case .authorOnly:
-      "Author Only"
-    case .jump:
-      "Jump"
-    case .multiAccount:
-      "Multiple Accounts"
-    case .userProfile:
-      "User Profile"
-    case .customAppearance:
-      "Custom Appearance"
-    case .blockContents:
-      "Block Contents"
-    }
-  }
-}
-
 // Note the order of all cases for `Comparable`!
 enum UnlockStatus: Codable, Equatable, Comparable, Hashable {
   case lite
