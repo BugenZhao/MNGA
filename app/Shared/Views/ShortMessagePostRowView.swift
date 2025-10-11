@@ -24,20 +24,12 @@ struct ShortMessagePostRowView: View {
 
   @ViewBuilder
   var menuButton: some View {
-    #if os(iOS)
-      if #available(iOS 15.0, *) {
-        Menu(content: { menu }) {
-          Image(systemName: "ellipsis.circle.fill")
-            .symbolRenderingMode(.hierarchical)
-            .imageScale(.large)
-        }
-      } else {
-        Menu(content: { menu }) {
-          Image(systemName: "ellipsis")
-            .imageScale(.large)
-        }
-      }
-    #endif
+    Menu(content: { menu }) {
+      Image(systemName: "ellipsis.circle.fill")
+        .symbolRenderingMode(.hierarchical)
+        .imageScale(.large)
+        .glassEffect()
+    }
   }
 
   @ViewBuilder
@@ -86,8 +78,6 @@ struct ShortMessagePostRowView: View {
       footer
     }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
-    #if os(macOS)
       .contextMenu { menu }
-    #endif
   }
 }

@@ -55,14 +55,12 @@ struct PostRowView: View {
 
   @ViewBuilder
   var menuButton: some View {
-    #if os(iOS)
-      Menu(content: { menu }) {
-        Image(systemName: "ellipsis.circle.fill")
-          .symbolRenderingMode(.hierarchical)
-          .imageScale(.large)
-          .glassEffect()
-      }
-    #endif
+    Menu(content: { menu }) {
+      Image(systemName: "ellipsis.circle.fill")
+        .symbolRenderingMode(.hierarchical)
+        .imageScale(.large)
+        .glassEffect()
+    }
   }
 
   @ViewBuilder
