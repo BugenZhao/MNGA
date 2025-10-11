@@ -16,9 +16,13 @@ func whatsNewTitle(version: String) -> WhatsNew.Title {
   return .init(text: .init(title))
 }
 
-private extension String {
+extension String {
   var localizedWNText: WhatsNew.Text {
     .init(localized)
+  }
+
+  var localizedWNTitle: WhatsNew.Title {
+    .init(text: localizedWNText)
   }
 }
 

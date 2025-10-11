@@ -100,7 +100,7 @@ struct UserMenuView: View {
       Section {
         if let user {
           NavigationLink(destination: UserProfileView.build(user: user)) {
-            Label("My Profile", systemImage: "person.fill")
+            Label("My Profile", systemImage: "person.text.rectangle")
           }
           NavigationLink(destination: FavoriteTopicListView.build()) {
             Label("Favorite Topics", systemImage: "bookmark")

@@ -8,6 +8,7 @@
 import Foundation
 import StoreKit
 import SwiftUI
+import WhatsNewKit
 
 struct UnlockStatusDebugPickerView: View {
   @EnvironmentObject var paywall: PaywallModel
@@ -22,6 +23,44 @@ struct UnlockStatusDebugPickerView: View {
   }
 }
 
+struct PlusFeaturesView: View {
+  var allPlusFeaturesAsWhatsNew: WhatsNew {
+    var features = PlusFeature.allCases.map { feature in
+      WhatsNew.Feature(
+        image: .init(systemName: feature.icon),
+        title: feature.name.localizedWNText,
+        subtitle: feature.description.localizedWNText
+      )
+    }
+
+    features.append(.init(
+      image: .init(systemName: "sparkles.2"),
+      title: "More Features in the Future".localizedWNText,
+      subtitle: "Plus More Feature".localizedWNText
+    ))
+
+    return WhatsNew(
+      title: "All Plus Features".localizedWNTitle,
+      features: features,
+      primaryAction: .init(
+        title: "Done".localizedWNText
+      )
+    )
+  }
+
+  var layout: WhatsNew.Layout {
+    .init(
+      showsScrollViewIndicators: true
+    )
+  }
+
+  var body: some View {
+    WhatsNewView(whatsNew: allPlusFeaturesAsWhatsNew, layout: layout)
+      .symbolColorRenderingMode(.gradient)
+      .background(Color(.systemGroupedBackground).ignoresSafeArea())
+  }
+}
+
 struct PlusView: View {
   @EnvironmentObject var paywall: PaywallModel
   @Environment(\.dismiss) var dismiss
@@ -31,6 +70,8 @@ struct PlusView: View {
   @State private var isRestoring = false
   @State private var isRedeeming = false
   @State private var errorMessage: String?
+
+  @State private var isShowingFeatures = false
 
   var isInProgress: Bool {
     purchasingProductID != nil || isRestoring
@@ -73,6 +114,7 @@ struct PlusView: View {
     .toolbar { toolbar }
     .offerCodeRedemption(isPresented: $isRedeeming) { result in Task { await redeemCompletion(result) } }
     .storeProductsTask(for: Constants.Plus.ids) { allProducts = $0.products }
+    .sheet(isPresented: $isShowingFeatures) { PlusFeaturesView() }
   }
 
   private var debug: some View {
@@ -95,6 +137,11 @@ struct PlusView: View {
           .font(.body)
           .multilineTextAlignment(.center)
       }
+
+      Button(action: { isShowingFeatures = true }) {
+        Text("All Plus Features").bold()
+      }
+      .buttonStyle(.borderless)
     }
   }
 
