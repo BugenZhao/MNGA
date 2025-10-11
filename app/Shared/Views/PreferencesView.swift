@@ -264,7 +264,7 @@ struct PreferencesInnerView: View {
     .pickerStyle(.menu)
     .tint(.accentColor)
     .mayInsetGroupedListStyle()
-    .navigationTitle("Preferences")
+    .navigationTitle("Settings")
     .toolbar { toolbar }
     .preferredColorScheme(pref.colorScheme.scheme) // workaround
   }

@@ -122,7 +122,7 @@ struct UserMenuView: View {
       Section {
         #if os(iOS)
           Button(action: { prefs.showing = true }) {
-            Label("Preferences", systemImage: "gear")
+            Label("Settings", systemImage: "gear")
           }
         #endif
         aboutButton
