@@ -95,18 +95,34 @@ struct ForumListView: View {
     Menu {
       Section {
         Button(action: { editMode = .active }) {
-          Text("Edit Favorites")
+          Label("Edit Favorites", systemImage: "list.star")
         }
       }
 
       Section {
         Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
           ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-            Label(LocalizedStringKey(mode.rawValue), systemImage: mode.icon)
+            Label(mode.rawValue.localized, systemImage: mode.icon)
               .tag(mode)
           }
         }
+        .menuActionDismissBehavior(.disabled)
       }
+
+      if favorites.filterMode == .all {
+        Section {
+          if collapsedCategories.inner.isEmpty {
+            Button(action: { collapsedCategories.inner.formUnion(categories.map(\.id)) }) {
+              Label("Collapse All Categories", systemImage: "chevron.up")
+            }
+          } else {
+            Button(action: { collapsedCategories.inner.removeAll() }) {
+              Label("Expand All Categories", systemImage: "chevron.down")
+            }
+          }
+        }
+      }
+
     } label: {
       Label("Filters", systemImage: favorites.filterMode.filterIcon)
     }
