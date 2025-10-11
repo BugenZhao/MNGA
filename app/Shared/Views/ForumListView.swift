@@ -19,13 +19,13 @@ struct ForumListView: View {
 
   @State var categories = [Category]()
 
-  @State var collapsedCategories = Set<String>()
+  @AppStorage("collapsedCategories") var collapsedCategories = JSONRepr(inner: Set<String>())
 
   // Only when a binding of `isExpanded` is provided, the section is collapsible.
   func isCategoryExpanded(_ id: String) -> Binding<Bool> {
     .init(
-      get: { !collapsedCategories.contains(id) },
-      set: { if $0 { collapsedCategories.remove(id) } else { collapsedCategories.insert(id) } }
+      get: { !collapsedCategories.inner.contains(id) },
+      set: { if $0 { collapsedCategories.inner.remove(id) } else { collapsedCategories.inner.insert(id) } }
     )
   }
 
@@ -95,18 +95,34 @@ struct ForumListView: View {
     Menu {
       Section {
         Button(action: { editMode = .active }) {
-          Text("Edit Favorites")
+          Label("Edit Favorites", systemImage: "list.star")
         }
       }
 
       Section {
         Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
           ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-            Label(LocalizedStringKey(mode.rawValue), systemImage: mode.icon)
+            Label(mode.rawValue.localized, systemImage: mode.icon)
               .tag(mode)
           }
         }
+        .menuActionDismissBehavior(.disabled)
       }
+
+      if favorites.filterMode == .all {
+        Section {
+          if collapsedCategories.inner.isEmpty {
+            Button(action: { collapsedCategories.inner.formUnion(categories.map(\.id)) }) {
+              Label("Collapse All Categories", systemImage: "chevron.up")
+            }
+          } else {
+            Button(action: { collapsedCategories.inner.removeAll() }) {
+              Label("Expand All Categories", systemImage: "chevron.down")
+            }
+          }
+        }
+      }
+
     } label: {
       Label("Filters", systemImage: favorites.filterMode.filterIcon)
     }
@@ -129,7 +145,10 @@ struct ForumListView: View {
         allForumsSection
           .environment(\.editMode, .constant(.inactive))
       }
-    }.environment(\.editMode, $editMode)
+    }
+    .environment(\.editMode, $editMode)
+    // https://stackoverflow.com/a/79319001
+    .animation(.default, value: collapsedCategories)
   }
 
   @ViewBuilder

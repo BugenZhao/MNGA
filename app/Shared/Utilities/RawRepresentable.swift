@@ -96,3 +96,28 @@ extension Optional: @retroactive RawRepresentable where Wrapped: RawRepresentabl
     }
   }
 }
+
+public struct JSONRepr<T> where T: Codable {
+  public var inner: T
+}
+
+extension JSONRepr: RawRepresentable {
+  public init?(rawValue: String) {
+    guard let result = try? JSONDecoder().decode(T.self, from: rawValue.data(using: .utf8)!)
+    else {
+      return nil
+    }
+    inner = result
+  }
+
+  public var rawValue: String {
+    guard let result = try? JSONEncoder().encode(inner),
+          let result = String(data: result, encoding: .utf8)
+    else {
+      return ""
+    }
+    return result
+  }
+}
+
+extension JSONRepr: Equatable {}

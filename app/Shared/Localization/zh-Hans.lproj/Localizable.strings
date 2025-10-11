@@ -257,6 +257,8 @@
 "Continue" = "继续";
 "What's new in MNGA %@" = "MNGA %@ 新功能";
 "Check out Plus" = "了解 Plus";
+"Expand All Categories" = "展开所有分类";
+"Collapse All Categories" = "折叠所有分类";
 
 "Error Response" = "错误响应";
 "Missing Field" = "缺少字段";
