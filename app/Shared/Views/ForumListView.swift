@@ -19,13 +19,13 @@ struct ForumListView: View {
 
   @State var categories = [Category]()
 
-  @State var collapsedCategories = Set<String>()
+  @AppStorage("collapsedCategories") var collapsedCategories = JSONRepr(inner: Set<String>())
 
   // Only when a binding of `isExpanded` is provided, the section is collapsible.
   func isCategoryExpanded(_ id: String) -> Binding<Bool> {
     .init(
-      get: { !collapsedCategories.contains(id) },
-      set: { if $0 { collapsedCategories.remove(id) } else { collapsedCategories.insert(id) } }
+      get: { !collapsedCategories.inner.contains(id) },
+      set: { if $0 { collapsedCategories.inner.remove(id) } else { collapsedCategories.inner.insert(id) } }
     )
   }
 
@@ -129,7 +129,10 @@ struct ForumListView: View {
         allForumsSection
           .environment(\.editMode, .constant(.inactive))
       }
-    }.environment(\.editMode, $editMode)
+    }
+    .environment(\.editMode, $editMode)
+    // https://stackoverflow.com/a/79319001
+    .animation(.default, value: collapsedCategories)
   }
 
   @ViewBuilder
