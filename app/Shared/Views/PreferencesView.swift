@@ -222,6 +222,15 @@ struct PreferencesInnerView: View {
     }
   }
 
+  @ToolbarContentBuilder
+  var toolbar: some ToolbarContent {
+    ToolbarItem(placement: .confirmationAction) {
+      Button(action: { pref.showing = false }) {
+        Label("Done", systemImage: "checkmark")
+      }
+    }
+  }
+
   var body: some View {
     Form {
       paywallSection
@@ -256,6 +265,7 @@ struct PreferencesInnerView: View {
     .tint(.accentColor)
     .mayInsetGroupedListStyle()
     .navigationTitle("Preferences")
+    .toolbar { toolbar }
     .preferredColorScheme(pref.colorScheme.scheme) // workaround
   }
 }
