@@ -71,7 +71,7 @@
 "Blocked" = "已屏蔽";
 "No Block Words" = "没有屏蔽词";
 "New word" = "新关键词";
-"Preferences" = "设置";
+"Settings" = "设置";
 "Reading" = "阅读";
 "Show Signature" = "显示签名";
 "Show Avatar" = "显示头像";
@@ -259,6 +259,7 @@
 "Check out Plus" = "了解 Plus";
 "Expand All Categories" = "展开所有分类";
 "Collapse All Categories" = "折叠所有分类";
+"Done" = "完成";
 
 "Error Response" = "错误响应";
 "Missing Field" = "缺少字段";

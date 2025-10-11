@@ -32,12 +32,11 @@ struct TextSelectionView: View {
         .introspect(.textEditor, on: .iOS(.v26)) { tv in
           if tv.isEditable {
             tv.isEditable = false
-            tv.selectAll(nil)
           }
         }
-        .padding()
-        .background(Color(.systemBackground)) // for the padding background
-        .toolbar { ToolbarItem(placement: .status) { copyButton } }
+        .scrollContentBackground(.hidden) // transparent material in medium detent
+        .padding(.horizontal)
+        .toolbar { ToolbarItem(placement: .bottomBar) { copyButton } }
         .navigationTitleInline(key: "Text Selection")
     }
   }
