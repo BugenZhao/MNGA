@@ -11,16 +11,19 @@ import RichText
 import SwiftUI
 
 private extension TextContent {
+  // Prefer attributed string for better performance.
   static func text(_ text: Text) -> Self {
-    let fragments = TextContentBuilder.buildExpression(text).fragments
-    return Self(fragments)
+    TextContentBuilder.buildExpression(text)
+  }
+
+  static func attributedString(_ string: AttributedString) -> Self {
+    Self(.attributedString(string))
   }
 }
 
 class ContentCombiner {
   enum Subview {
     case text(TextContent)
-    case string(AttributedString)
     case breakline
     case other(AnyView)
   }
@@ -200,7 +203,7 @@ class ContentCombiner {
 
   private func append(_ string: AttributedString) {
     let styledString = styledString(string)
-    subviews.append(.string(styledString))
+    subviews.append(.text(.attributedString(styledString)))
   }
 
   private func append(_ string: String) {
@@ -227,8 +230,6 @@ class ContentCombiner {
       switch subview {
       case let .text(text):
         textBuffer += text
-      case let .string(string):
-        textBuffer += .init(.attributedString(string))
       case .breakline:
         if !textBuffer.fragments.isEmpty {
           textBuffer += .init(.string("\n"))
@@ -260,8 +261,6 @@ class ContentCombiner {
     switch build() {
     case let .text(text):
       TextView { text }
-    case let .string(string):
-      Text(string)
     case .breakline:
       // not reached
       EmptyView()
