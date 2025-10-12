@@ -1,5 +1,5 @@
 {
-  "originHash" : "96354e940245cafaa647d9732b8970714f1940796fb057c444b7a34783652031",
+  "originHash" : "aab12e14249b1bb54284caab18d383aad59b04cef08757f6f257b61a1bf6f932",
   "pins" : [
     {
       "identity" : "alerttoast",
@@ -70,6 +70,14 @@
       "state" : {
         "revision" : "0d60654eeefd5d7d2bef3835804892c40225e8b2",
         "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "richtext",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LiYanan2004/RichText.git",
+      "state" : {
+        "revision" : "c569468fba2df5d76badb034d28858459cc37bd7"
       }
     },
     {

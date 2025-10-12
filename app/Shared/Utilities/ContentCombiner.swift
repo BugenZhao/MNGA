@@ -7,12 +7,19 @@
 
 import Colorful
 import Foundation
+import RichText
 import SwiftUI
-import SwiftUIX
+
+private extension TextContent {
+  static func text(_ text: Text) -> Self {
+    let fragments = TextContentBuilder.buildExpression(text).fragments
+    return Self(fragments)
+  }
+}
 
 class ContentCombiner {
   enum Subview {
-    case text(Text)
+    case text(TextContent)
     case string(AttributedString)
     case breakline
     case other(AnyView)
@@ -181,7 +188,7 @@ class ContentCombiner {
 
     if view is Text {
       let text = styledText(view as! Text)
-      subview = Subview.text(text)
+      subview = Subview.text(.text(text))
     } else if view is AnyView {
       subview = Subview.other(view as! AnyView)
     } else {
@@ -205,39 +212,39 @@ class ContentCombiner {
   }
 
   private func build() -> Subview {
-    var textBuffer: Text?
+    var textBuffer = TextContent()
     var results = [AnyView]()
 
-    func tryAppendTextBuffer() {
-      if let tb = textBuffer {
-        let view = tb.eraseToAnyView()
+    func tryFinishTextBuffer() {
+      if !textBuffer.fragments.isEmpty {
+        let view = TextView { textBuffer }.eraseToAnyView()
         results.append(view)
-        textBuffer = nil
+        textBuffer = TextContent()
       }
     }
 
     for subview in subviews {
       switch subview {
       case let .text(text):
-        textBuffer = (textBuffer ?? Text("")) + text
+        textBuffer += text
       case let .string(string):
-        textBuffer = (textBuffer ?? Text("")) + Text(string)
+        textBuffer += .init(.attributedString(string))
       case .breakline:
-        if textBuffer != nil {
-          textBuffer = textBuffer! + Text("\n")
+        if !textBuffer.fragments.isEmpty {
+          textBuffer += .init(.string("\n"))
         }
       case let .other(view):
-        tryAppendTextBuffer()
+        tryFinishTextBuffer()
         results.append(view)
       }
     }
 
     if results.isEmpty {
       // text-only view
-      return .text(textBuffer ?? Text(""))
+      return .text(textBuffer)
     } else {
       // complex view
-      tryAppendTextBuffer()
+      tryFinishTextBuffer()
       let stack = VStack(alignment: alignment, spacing: 8) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
@@ -252,7 +259,7 @@ class ContentCombiner {
   func buildView() -> some View {
     switch build() {
     case let .text(text):
-      text
+      TextView { text }
     case let .string(string):
       Text(string)
     case .breakline:
@@ -309,7 +316,7 @@ class ContentCombiner {
     let name = sticker.name.replacingOccurrences(of: ":", with: "|")
 
     let view: Text?
-    if let image = AppKitOrUIKitImage(named: name) {
+    if let image = PlatformImage(named: name) {
       let renderingMode: Image.TemplateRenderingMode =
         name.starts(with: "ac") || name.starts(with: "a2") ? .template : .original
       view = Text(
