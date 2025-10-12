@@ -13,6 +13,7 @@ import SwiftUIX
 class ContentCombiner {
   enum Subview {
     case text(Text)
+    case string(AttributedString)
     case breakline
     case other(AnyView)
   }
@@ -145,10 +146,10 @@ class ContentCombiner {
     self.postDate = postDate
   }
 
-  private func styledText(_ text: Text, overridenFont: Font? = nil, overridenColor: Color? = nil) -> Text {
-    var text: Text = text
-      .font(overridenFont ?? font)
-      .foregroundColor(overridenColor ?? color)
+  private func styledText(_ text: Text) -> Text {
+    var text = text
+      .font(font)
+      .foregroundColor(color)
 
     if otherStyles.contains(.underline) {
       text = text.underline()
@@ -158,6 +159,21 @@ class ContentCombiner {
     }
 
     return text
+  }
+
+  private func styledString(_ string: AttributedString) -> AttributedString {
+    var string = string
+    string.font = font
+    string.foregroundColor = color
+
+    if otherStyles.contains(.underline) {
+      string.underlineStyle = .single
+    }
+    if otherStyles.contains(.strikethrough) {
+      string.strikethroughStyle = .single
+    }
+
+    return string
   }
 
   private func append(_ view: some View) {
@@ -173,6 +189,15 @@ class ContentCombiner {
     }
 
     subviews.append(subview)
+  }
+
+  private func append(_ string: AttributedString) {
+    let styledString = styledString(string)
+    subviews.append(.string(styledString))
+  }
+
+  private func append(_ string: String) {
+    append(AttributedString(string))
   }
 
   private func append(_ subview: Subview) {
@@ -195,6 +220,8 @@ class ContentCombiner {
       switch subview {
       case let .text(text):
         textBuffer = (textBuffer ?? Text("")) + text
+      case let .string(string):
+        textBuffer = (textBuffer ?? Text("")) + Text(string)
       case .breakline:
         if textBuffer != nil {
           textBuffer = textBuffer! + Text("\n")
@@ -217,7 +244,7 @@ class ContentCombiner {
             .fixedSize(horizontal: false, vertical: true)
         }
       }
-      return .other(AnyView(stack))
+      return .other(stack.eraseToAnyView())
     }
   }
 
@@ -226,6 +253,8 @@ class ContentCombiner {
     switch build() {
     case let .text(text):
       text
+    case let .string(string):
+      Text(string)
     case .breakline:
       // not reached
       EmptyView()
@@ -254,17 +283,15 @@ class ContentCombiner {
   }
 
   private func visit(plain: Span.Plain) {
-    let text: Text
-
     var plain = plain
     plain.text = plain.text.replacingOccurrences(of: "[*]", with: "→ ")
 
-    if plain.text == "Post by " {
-      text = Text("Post by") + Text(" ")
+    let string = if plain.text == "Post by " {
+      AttributedString(localized: "Post by ")
     } else {
-      text = Text(plain.text)
+      AttributedString(plain.text)
     }
-    append(text)
+    append(string)
   }
 
   private func visit(divider: Span.Tagged) {
@@ -454,13 +481,13 @@ class ContentCombiner {
 
   private func visit(pid: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
-    combiner.append(Text("Post"))
+    combiner.append("Post")
     if pid.attributes.count > 2 {
       let id = PostId.with {
         $0.pid = pid.attributes[0]
         $0.tid = pid.attributes[1]
       }
-      combiner.append(Text(" #\(id.pid) "))
+      combiner.append(" #\(id.pid) ")
       replyTo = id
     }
     append(combiner.build())
