@@ -157,22 +157,11 @@ class ContentCombiner {
   }
 
   private func styledText(_ text: Text) -> Text {
-    var text = text
-      .font(font)
-      .foregroundColor(color)
-
-    if otherStyles.contains(.underline) {
-      text = text.underline()
-    }
-    if otherStyles.contains(.strikethrough) {
-      text = text.strikethrough()
-    }
-
-    return text
+    Text("⚠️\(text)⚠️")
   }
 
-  private func styledString(_ string: AttributedString) -> AttributedString {
-    var string = string
+  private func styledString(_ string: String) -> AttributedString {
+    var string = AttributedString(string)
     string.font = font
     string.foregroundColor = color
 
@@ -184,6 +173,10 @@ class ContentCombiner {
     }
 
     return string
+  }
+
+  private func append(symbol: Image) {
+    subviews.append(.text(.text(Text(symbol))))
   }
 
   private func append(_ view: some View) {
@@ -201,13 +194,9 @@ class ContentCombiner {
     subviews.append(subview)
   }
 
-  private func append(_ string: AttributedString) {
+  private func append(_ string: String) {
     let styledString = styledString(string)
     subviews.append(.text(.attributedString(styledString)))
-  }
-
-  private func append(_ string: String) {
-    append(AttributedString(string))
   }
 
   private func append(_ subview: Subview) {
@@ -293,9 +282,9 @@ class ContentCombiner {
     plain.text = plain.text.replacingOccurrences(of: "[*]", with: "→ ")
 
     let string = if plain.text == "Post by " {
-      AttributedString(localized: "Post by ")
+      "Post by ".localized
     } else {
-      AttributedString(plain.text)
+      plain.text
     }
     append(string)
   }
@@ -314,19 +303,14 @@ class ContentCombiner {
   private func visit(sticker: Span.Sticker) {
     let name = sticker.name.replacingOccurrences(of: ":", with: "|")
 
-    let view: Text?
     if let image = PlatformImage(named: name) {
       let renderingMode: Image.TemplateRenderingMode =
         name.starts(with: "ac") || name.starts(with: "a2") ? .template : .original
-      view = Text(
-        Image(image: image)
-          .renderingMode(renderingMode)
-      )
+      append(symbol: Image(image: image).renderingMode(renderingMode))
     } else {
-      view = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
+      // view = Text("[?\(sticker.name)]").foregroundColor(.secondary)
+      append("[?\(sticker.name)]")
     }
-
-    append(view)
   }
 
   private func visit(tagged: Span.Tagged) {
@@ -468,7 +452,7 @@ class ContentCombiner {
 
   private func visit(uid: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, color: { _ in Color.accentColor })
-    combiner.append(Text(Image(systemName: "person.fill")))
+    combiner.append(symbol: Image(systemName: "person.fill"))
     combiner.visit(spans: uid.spans)
 
     var name: String?
@@ -706,7 +690,7 @@ class ContentCombiner {
     guard let fn = mnga.attributes.first else { return }
     switch fn {
     case "version":
-      append(Text(getVersionWithBuild()))
+      append(getVersionWithBuild())
     default:
       break
     }
@@ -719,10 +703,10 @@ class ContentCombiner {
     }
 
     let combiner = ContentCombiner(parent: self)
-    let tagFont = Font.system(.footnote, design: .monospaced)
-    combiner.append(Text("[\(defaultTagged.tag)]").font(tagFont))
+    // let tagFont = Font.system(.footnote, design: .monospaced)
+    combiner.append("[\(defaultTagged.tag)]") // TODO: font
     combiner.visit(spans: defaultTagged.spans)
-    combiner.append(Text("[/\(defaultTagged.tag)]").font(tagFont))
+    combiner.append("[/\(defaultTagged.tag)]") // TODO: font
     append(combiner.build())
   }
 }
