@@ -87,7 +87,7 @@ struct ShortMessagePostRowView: View {
     }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
     #if os(macOS)
-      .contextMenu { menu }
+      // .contextMenu { menu } // interferes with text selection
     #endif
   }
 }

@@ -7,12 +7,23 @@
 
 import Colorful
 import Foundation
+import RichText
 import SwiftUI
-import SwiftUIX
+
+private extension TextContent {
+  // Prefer attributed string for better performance.
+  static func text(_ text: Text) -> Self {
+    TextContentBuilder.buildExpression(text)
+  }
+
+  static func attributedString(_ string: AttributedString) -> Self {
+    Self(.attributedString(string))
+  }
+}
 
 class ContentCombiner {
   enum Subview {
-    case text(Text)
+    case text(TextContent)
     case breakline
     case other(AnyView)
   }
@@ -145,19 +156,27 @@ class ContentCombiner {
     self.postDate = postDate
   }
 
-  private func styledText(_ text: Text, overridenFont: Font? = nil, overridenColor: Color? = nil) -> Text {
-    var text: Text = text
-      .font(overridenFont ?? font)
-      .foregroundColor(overridenColor ?? color)
+  private func styledText(_ text: Text) -> Text {
+    Text("⚠️\(text)⚠️")
+  }
+
+  private func styledString(_ string: String) -> AttributedString {
+    var string = AttributedString(string)
+    string.font = font
+    string.foregroundColor = color
 
     if otherStyles.contains(.underline) {
-      text = text.underline()
+      string.underlineStyle = .single
     }
     if otherStyles.contains(.strikethrough) {
-      text = text.strikethrough()
+      string.strikethroughStyle = .single
     }
 
-    return text
+    return string
+  }
+
+  private func append(symbol: Image) {
+    subviews.append(.text(.text(Text(symbol))))
   }
 
   private func append(_ view: some View) {
@@ -165,7 +184,7 @@ class ContentCombiner {
 
     if view is Text {
       let text = styledText(view as! Text)
-      subview = Subview.text(text)
+      subview = Subview.text(.text(text))
     } else if view is AnyView {
       subview = Subview.other(view as! AnyView)
     } else {
@@ -175,49 +194,54 @@ class ContentCombiner {
     subviews.append(subview)
   }
 
+  private func append(_ string: String) {
+    let styledString = styledString(string)
+    subviews.append(.text(.attributedString(styledString)))
+  }
+
   private func append(_ subview: Subview) {
     subviews.append(subview)
   }
 
   private func build() -> Subview {
-    var textBuffer: Text?
+    var textBuffer = TextContent()
     var results = [AnyView]()
 
-    func tryAppendTextBuffer() {
-      if let tb = textBuffer {
-        let view = tb.eraseToAnyView()
+    func tryFinishTextBuffer() {
+      if !textBuffer.fragments.isEmpty {
+        let view = TextView { textBuffer }.eraseToAnyView()
         results.append(view)
-        textBuffer = nil
+        textBuffer = TextContent()
       }
     }
 
     for subview in subviews {
       switch subview {
       case let .text(text):
-        textBuffer = (textBuffer ?? Text("")) + text
+        textBuffer += text
       case .breakline:
-        if textBuffer != nil {
-          textBuffer = textBuffer! + Text("\n")
+        if !textBuffer.fragments.isEmpty {
+          textBuffer += .init(.string("\n"))
         }
       case let .other(view):
-        tryAppendTextBuffer()
+        tryFinishTextBuffer()
         results.append(view)
       }
     }
 
     if results.isEmpty {
       // text-only view
-      return .text(textBuffer ?? Text(""))
+      return .text(textBuffer)
     } else {
       // complex view
-      tryAppendTextBuffer()
+      tryFinishTextBuffer()
       let stack = VStack(alignment: alignment, spacing: 8) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
         }
       }
-      return .other(AnyView(stack))
+      return .other(stack.eraseToAnyView())
     }
   }
 
@@ -225,7 +249,7 @@ class ContentCombiner {
   func buildView() -> some View {
     switch build() {
     case let .text(text):
-      text
+      TextView { text }
     case .breakline:
       // not reached
       EmptyView()
@@ -254,17 +278,15 @@ class ContentCombiner {
   }
 
   private func visit(plain: Span.Plain) {
-    let text: Text
-
     var plain = plain
     plain.text = plain.text.replacingOccurrences(of: "[*]", with: "→ ")
 
-    if plain.text == "Post by " {
-      text = Text("Post by") + Text(" ")
+    let string = if plain.text == "Post by " {
+      "Post by ".localized
     } else {
-      text = Text(plain.text)
+      plain.text
     }
-    append(text)
+    append(string)
   }
 
   private func visit(divider: Span.Tagged) {
@@ -281,19 +303,14 @@ class ContentCombiner {
   private func visit(sticker: Span.Sticker) {
     let name = sticker.name.replacingOccurrences(of: ":", with: "|")
 
-    let view: Text?
-    if let image = AppKitOrUIKitImage(named: name) {
+    if let image = PlatformImage(named: name) {
       let renderingMode: Image.TemplateRenderingMode =
         name.starts(with: "ac") || name.starts(with: "a2") ? .template : .original
-      view = Text(
-        Image(image: image)
-          .renderingMode(renderingMode)
-      )
+      append(symbol: Image(image: image).renderingMode(renderingMode))
     } else {
-      view = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
+      // view = Text("[?\(sticker.name)]").foregroundColor(.secondary)
+      append("[?\(sticker.name)]")
     }
-
-    append(view)
   }
 
   private func visit(tagged: Span.Tagged) {
@@ -435,7 +452,7 @@ class ContentCombiner {
 
   private func visit(uid: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, color: { _ in Color.accentColor })
-    combiner.append(Text(Image(systemName: "person.fill")))
+    combiner.append(symbol: Image(systemName: "person.fill"))
     combiner.visit(spans: uid.spans)
 
     var name: String?
@@ -454,13 +471,13 @@ class ContentCombiner {
 
   private func visit(pid: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
-    combiner.append(Text("Post"))
+    combiner.append("Post")
     if pid.attributes.count > 2 {
       let id = PostId.with {
         $0.pid = pid.attributes[0]
         $0.tid = pid.attributes[1]
       }
-      combiner.append(Text(" #\(id.pid) "))
+      combiner.append(" #\(id.pid) ")
       replyTo = id
     }
     append(combiner.build())
@@ -673,7 +690,7 @@ class ContentCombiner {
     guard let fn = mnga.attributes.first else { return }
     switch fn {
     case "version":
-      append(Text(getVersionWithBuild()))
+      append(getVersionWithBuild())
     default:
       break
     }
@@ -686,10 +703,10 @@ class ContentCombiner {
     }
 
     let combiner = ContentCombiner(parent: self)
-    let tagFont = Font.system(.footnote, design: .monospaced)
-    combiner.append(Text("[\(defaultTagged.tag)]").font(tagFont))
+    // let tagFont = Font.system(.footnote, design: .monospaced)
+    combiner.append("[\(defaultTagged.tag)]") // TODO: font
     combiner.visit(spans: defaultTagged.spans)
-    combiner.append(Text("[/\(defaultTagged.tag)]").font(tagFont))
+    combiner.append("[/\(defaultTagged.tag)]") // TODO: font
     append(combiner.build())
   }
 }

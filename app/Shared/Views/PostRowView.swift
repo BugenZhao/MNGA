@@ -198,7 +198,7 @@ struct PostRowView: View {
       signature
     }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
-      .contextMenu { menu }
+    // .contextMenu { menu } // interferes with text selection
     #if os(iOS)
       .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
     #endif
