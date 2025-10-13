@@ -21,7 +21,7 @@ let project = Project(
         .remote(url: "https://github.com/gh123man/LazyPager", requirement: .exact("1.1.13")),
         .remote(url: "https://github.com/tevelee/SwiftUI-Flow", requirement: .exact("3.1.0")),
         .remote(url: "https://github.com/SvenTiigi/WhatsNewKit.git", requirement: .exact("2.2.1")),
-        .remote(url: "https://github.com/LiYanan2004/RichText.git", requirement: .revision("c569468fba2df5d76badb034d28858459cc37bd7")),
+        .remote(url: "https://github.com/LiYanan2004/RichText.git", requirement: .revision("300582da5c632864598cf9e8d86618e101658afa")),
     ],
     targets: [
         // iOS App Target
