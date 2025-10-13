@@ -36,7 +36,7 @@ struct NotificationListView: View {
   @ViewBuilder
   var markAllAsReadButton: some View {
     Button(action: { markAllAsRead() }) {
-      Label("Mark All as Read", systemImage: "checkmark.circle")
+      Label("Mark All as Read", systemImage: "checkmark")
     }.disabled(dataSource.unreadCount == 0)
   }
 

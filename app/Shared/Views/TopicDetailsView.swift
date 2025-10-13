@@ -206,7 +206,7 @@ struct TopicDetailsView: View {
       Section(debugID) {
         if enableAuthorOnly, !topic.authorName.isAnonymous {
           Button(action: { withPlusCheck(.authorOnly) { action.navigateToAuthorOnly = topic.authorID } }) {
-            Label("Author Only", systemImage: "person.fill")
+            Label("Author Only", systemImage: "person")
           }
         }
         if !localMode {
@@ -236,7 +236,7 @@ struct TopicDetailsView: View {
         #endif
       }
     } label: {
-      Label("More", systemImage: "ellipsis.circle")
+      Label("More", systemImage: "ellipsis")
     }
   }
 
@@ -254,7 +254,6 @@ struct TopicDetailsView: View {
   var menu: some View {
     if onlyPost.id == nil {
       moreMenu
-        .imageScale(.large)
     }
   }
 

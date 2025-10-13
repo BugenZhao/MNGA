@@ -186,8 +186,7 @@ struct TopicListView: View {
         #endif
       }
     } label: {
-      Label("More", systemImage: "ellipsis.circle")
-        .imageScale(.large)
+      Label("More", systemImage: "ellipsis")
     }
   }
 

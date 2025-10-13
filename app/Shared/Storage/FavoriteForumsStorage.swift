@@ -32,15 +32,6 @@ class FavoriteForumsStorage: ObservableObject {
         "star.lefthalf.fill"
       }
     }
-
-    var filterIcon: String {
-      switch self {
-      case .all:
-        "line.horizontal.3.decrease.circle"
-      default:
-        "line.horizontal.3.decrease.circle.fill"
-      }
-    }
   }
 
   @AppStorage("favoriteForums") private var oldFavoriteForums = [Forum]()

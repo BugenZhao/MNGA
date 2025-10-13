@@ -59,7 +59,7 @@ struct BlockWordListView: View {
         focused = true
       }
     }) {
-      Label("Add Word", systemImage: "plus.circle")
+      Label("Add Word", systemImage: "plus")
     }
   }
 
