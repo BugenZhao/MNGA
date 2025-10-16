@@ -163,6 +163,16 @@ struct UserView: View {
     }
   }
 
+  var nameWeight: Font.Weight {
+    if style == .huge {
+      .bold
+    } else if isAuthor {
+      .semibold
+    } else {
+      .medium
+    }
+  }
+
   @ViewBuilder
   var nameView: some View {
     HStack(spacing: 4) {
@@ -172,7 +182,7 @@ struct UserView: View {
         } else {
           Text(name)
         }
-      }.font(nameFont, weight: style == .huge ? .bold : .medium)
+      }.font(nameFont, weight: nameWeight)
 
       if style != .vertical {
         Group {
@@ -182,9 +192,9 @@ struct UserView: View {
           }
           if isAuthor, pref.postRowShowAuthorIndicator {
             Image(systemName: "person.fill")
-              .foregroundColor(.secondary)
+              .foregroundColor(.accentColor)
           }
-        }.font(style == .huge ? .body : .footnote)
+        }.font(nameFont)
       }
     }.onTapGesture { withAnimation { showId.toggle() } }
       .redacted(if: shouldRedactName)
