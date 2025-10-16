@@ -14,9 +14,17 @@ struct TopicSubjectContentInnerView: View {
   let lineLimit: Int?
 
   var body: some View {
-    Text(content)
-      .font(.headline)
-      .lineLimit(lineLimit)
+    Group {
+      if content.isEmpty {
+        Text("Untitled")
+          .font(.headline.italic())
+          .foregroundColor(.secondary)
+      } else {
+        Text(content)
+          .font(.headline)
+      }
+    }
+    .lineLimit(lineLimit)
   }
 }
 
