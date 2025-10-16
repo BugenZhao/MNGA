@@ -135,6 +135,9 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.debugResetTips) {
       Text("Reset Tips on Next Launch")
     }
+    Button(action: { Tips.showAllTipsForTesting() }) {
+      Text("Show All Tips")
+    }
     Toggle(isOn: $pref.debugResetWhatsNew) {
       Text("Reset WhatsNew on Next Launch")
     }
