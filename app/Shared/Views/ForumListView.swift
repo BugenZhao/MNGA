@@ -91,6 +91,18 @@ struct ForumListView: View {
   }
 
   @ViewBuilder
+  var filterIcon: some View {
+    switch favorites.filterMode {
+    case .favoritesOnly:
+      Image(systemName: "line.horizontal.3.decrease.circle.fill")
+        .foregroundColor(.accentColor)
+        .scaleEffect(1.6)
+    case .all:
+      Image(systemName: "line.horizontal.3.decrease")
+    }
+  }
+
+  @ViewBuilder
   var filterMenu: some View {
     Menu {
       Section {
@@ -122,9 +134,8 @@ struct ForumListView: View {
           }
         }
       }
-
     } label: {
-      Label("Filters", systemImage: favorites.filterMode.filterIcon)
+      filterIcon
     }
   }
 

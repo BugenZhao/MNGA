@@ -138,6 +138,7 @@
 "Separate multiple users with space." = "使用空格分隔多个用户。";
 "send you a short message" = "发送了一条短消息";
 "Goto %@" = "前往 %@";
+"Goto Forum" = "前往板块";
 "Color Scheme" = "配色方案";
 "Auto" = "自动";
 "Light" = "浅色";
@@ -233,6 +234,7 @@
 "Custom User-Agent" = "自定义 User-Agent";
 "Tag" = "标签";
 "Add Tag" = "添加标签";
+"Untitled" = "无标题";
 "Larger Font" = "更大字体";
 "Unknown" = "未知";
 "Auto Refreshed" = "已自动刷新";
@@ -260,6 +262,7 @@
 "Expand All Categories" = "展开所有分类";
 "Collapse All Categories" = "折叠所有分类";
 "Done" = "完成";
+"Reply not found. It may have been deleted." = "回复未找到，它可能已被删除。";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";

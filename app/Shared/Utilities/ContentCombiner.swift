@@ -175,11 +175,13 @@ class ContentCombiner {
     subviews.append(subview)
   }
 
-  private func append(_ subview: Subview) {
-    subviews.append(subview)
+  private func append(_ subview: Subview?) {
+    if let subview {
+      subviews.append(subview)
+    }
   }
 
-  private func build() -> Subview {
+  private func build() -> Subview? {
     var textBuffer: Text?
     var results = [AnyView]()
 
@@ -194,11 +196,13 @@ class ContentCombiner {
     for subview in subviews {
       switch subview {
       case let .text(text):
-        textBuffer = (textBuffer ?? Text("")) + text
-      case .breakline:
-        if textBuffer != nil {
-          textBuffer = textBuffer! + Text("\n")
+        textBuffer = if let textBuffer {
+          Text("\(textBuffer)\(text)")
+        } else {
+          text
         }
+      case .breakline:
+        tryAppendTextBuffer()
       case let .other(view):
         tryAppendTextBuffer()
         results.append(view)
@@ -207,11 +211,16 @@ class ContentCombiner {
 
     if results.isEmpty {
       // text-only view
-      return .text(textBuffer ?? Text(""))
+      if let textBuffer {
+        return .text(textBuffer)
+      } else {
+        return nil
+      }
     } else {
       // complex view
       tryAppendTextBuffer()
-      let stack = VStack(alignment: alignment, spacing: 8) {
+      let spacing: Double = inQuote ? 8 : 12
+      let stack = VStack(alignment: alignment, spacing: spacing) {
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
@@ -224,11 +233,11 @@ class ContentCombiner {
   @ViewBuilder
   func buildView() -> some View {
     switch build() {
+    case nil, .breakline:
+      // unreachable
+      EmptyView()
     case let .text(text):
       text
-    case .breakline:
-      // not reached
-      EmptyView()
     case let .other(any):
       any
     }

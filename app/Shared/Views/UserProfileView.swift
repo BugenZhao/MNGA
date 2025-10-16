@@ -151,7 +151,7 @@ struct UserProfileView: View {
             }
           }
         } label: {
-          Label("More", systemImage: "ellipsis.circle")
+          Label("More", systemImage: "ellipsis")
         }
       }
     }

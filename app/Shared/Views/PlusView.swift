@@ -56,7 +56,6 @@ struct PlusFeaturesView: View {
 
   var body: some View {
     WhatsNewView(whatsNew: allPlusFeaturesAsWhatsNew, layout: layout)
-      .symbolColorRenderingMode(.gradient)
       .background(Color(.systemGroupedBackground).ignoresSafeArea())
   }
 }

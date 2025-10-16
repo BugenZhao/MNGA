@@ -15,6 +15,7 @@ struct PostReplyChainView: View {
   @StateObject var prefs = PreferencesStorage.shared
 
   @State var remotePosts = [PostId: Post]()
+  @State var failed = Set<PostId>()
 
   let chain: [PostId]
 
@@ -30,6 +31,8 @@ struct PostReplyChainView: View {
           buildRow(post: post)
         } else if let post = remotePosts[id] {
           buildRow(post: post)
+        } else if failed.contains(id) {
+          EmptyRowView(title: "Reply not found. It may have been deleted.")
         } else {
           LoadingRowView(high: true)
             .onAppear { loadRemotePost(id: id) }
@@ -39,6 +42,7 @@ struct PostReplyChainView: View {
       .withTopicDetailsAction()
       .environment(\.enableShowReplyChain, false)
       .mayGroupedListStyle()
+      .refreshable { failed.removeAll() }
   }
 
   func loadRemotePost(id: PostId) {
@@ -46,8 +50,13 @@ struct PostReplyChainView: View {
       $0.topicID = id.tid
       $0.postID = id.pid
     })) { (response: TopicDetailsResponse) in
-      guard let post = response.replies.first else { return }
-      withAnimation { remotePosts[post.id] = post }
+      withAnimation {
+        if let post = response.replies.first {
+          remotePosts[id] = post
+        } else {
+          failed.insert(id)
+        }
+      }
     }
   }
 }

@@ -55,14 +55,12 @@ struct PostRowView: View {
 
   @ViewBuilder
   var menuButton: some View {
-    #if os(iOS)
-      Menu(content: { menu }) {
-        Image(systemName: "ellipsis.circle.fill")
-          .symbolRenderingMode(.hierarchical)
-          .imageScale(.large)
-          .glassEffect()
-      }
-    #endif
+    Menu(content: { menu }) {
+      Image(systemName: "ellipsis.circle.fill")
+        .symbolRenderingMode(.hierarchical)
+        .imageScale(.large)
+        .glassEffect()
+    }
   }
 
   @ViewBuilder
@@ -115,8 +113,9 @@ struct PostRowView: View {
       Button(action: { doVote(.upvote) }) {
         Image(systemName: vote.state == .up ? "hand.thumbsup.fill" : "hand.thumbsup")
           .foregroundColor(vote.state == .up ? .accentColor : .secondary)
+          .symbolEffect(.bounce, value: vote.state == .up)
           .frame(height: 24)
-      }.buttonStyle(PlainButtonStyle())
+      }.buttonStyle(.plain)
 
       let font = Font.subheadline.monospacedDigit()
       Text("\(max(Int32(post.score) + vote.delta, 0))")
@@ -126,8 +125,9 @@ struct PostRowView: View {
       Button(action: { doVote(.downvote) }) {
         Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")
           .foregroundColor(vote.state == .down ? .accentColor : .secondary)
+          .symbolEffect(.bounce, value: vote.state == .down)
           .frame(height: 24)
-      }.buttonStyle(PlainButtonStyle())
+      }.buttonStyle(.plain)
     }
   }
 

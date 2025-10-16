@@ -27,6 +27,7 @@ struct TopicListView: View {
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
   @State var order: TopicListRequest.Order? = nil
+  @State var showPrincipal = false
 
   var orderOrDefault: TopicListRequest.Order {
     order ?? prefs.defaultTopicListOrder
@@ -186,8 +187,7 @@ struct TopicListView: View {
         #endif
       }
     } label: {
-      Label("More", systemImage: "ellipsis.circle")
-        .imageScale(.large)
+      Label("More", systemImage: "ellipsis")
     }
   }
 
@@ -215,15 +215,21 @@ struct TopicListView: View {
   }
 
   @ViewBuilder
-  var icon: some View {
-    ForumIconView(iconURL: forum.iconURL)
+  var principal: some View {
+    HStack(alignment: .center, spacing: 6) {
+      ForumIconView(iconURL: forum.iconURL)
+      Text(forum.name.localized)
+        .fontWeight(.semibold)
+    }
+    // .padding(.small).glassEffect()
+    .opacity(showPrincipal ? 1 : 0)
   }
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
       // -- Navigation Bar
-      ToolbarItem(placement: .navigationBarTrailing) { icon }
+      ToolbarItem(placement: .principal) { principal }
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
 
       // -- Bottom Bar
@@ -253,7 +259,11 @@ struct TopicListView: View {
           }
       } else {
         List {
-          Section(header: Text(orderOrDefault.description)) {
+          Section(header:
+            Text(orderOrDefault.description)
+              .onAppear { showPrincipal = false }
+              .onDisappear { showPrincipal = true }
+          ) {
             EmptyView().id("top-placeholder") // for auto refresh
             ForEach(itemBindings, id: \.id) { topic in
               CrossStackNavigationLinkHack(id: topic.w.id, destination: {
@@ -288,6 +298,7 @@ struct TopicListView: View {
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
     .onChange(of: dataSource.latestResponse) { updateForumMeta($1) }
+    .animation(.easeInOut, value: showPrincipal)
   }
 
   var navID: NavigationIdentifier {
