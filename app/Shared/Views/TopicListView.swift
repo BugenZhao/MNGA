@@ -26,6 +26,7 @@ struct TopicListView: View {
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
+  @State var subforumsModalDetent: PresentationDetent = .medium
   @State var order: TopicListRequest.Order? = nil
   @State var showPrincipal = false
 
@@ -130,7 +131,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var subforumButton: some View {
-    Button(action: { showingSubforumsModal = true }) {
+    Button(action: { showingSubforumsModal = true; subforumsModalDetent = .medium }) {
       Label("Subforums", systemImage: "list.triangle")
     }
   }
@@ -193,7 +194,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var subforumsModal: some View {
-    NavigationView {
+    NavigationStack {
       Group {
         if let subforums = dataSource.latestResponse?.subforums {
           SubforumListView(
@@ -203,7 +204,8 @@ struct TopicListView: View {
             onNavigateToForum: {
               showingSubforumsModal = false
               currentShowingSubforum = $0
-            }
+            },
+            detent: $subforumsModalDetent
           )
         } else {
           ProgressView()
@@ -212,6 +214,7 @@ struct TopicListView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     .navigationTransition(.zoom(sourceID: "subforums", in: transition))
+    .presentationDetents([.medium, .large], selection: $subforumsModalDetent)
   }
 
   @ViewBuilder
@@ -291,7 +294,7 @@ struct TopicListView: View {
     }
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name.localized)
-    .sheet(isPresented: $showingSubforumsModal) { subforumsModal.presentationDetents([.medium, .large]) }
+    .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
     .toolbar { toolbar }

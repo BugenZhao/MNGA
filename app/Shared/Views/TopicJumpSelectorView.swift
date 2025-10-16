@@ -102,7 +102,6 @@ struct TopicJumpSelectorView: View {
     VStack(spacing: 0) {
       modeSelector
         .padding()
-        .background(Color(.systemGroupedBackground))
 
       List {
         switch mode {
@@ -171,6 +170,7 @@ struct TopicJumpSelectorView: View {
       main
         .mayInsetGroupedListStyle()
         .toolbar { ToolbarItem(placement: .primaryAction) { jumpButton } }
+        .scrollContentBackground(.hidden)
     }
   }
 }

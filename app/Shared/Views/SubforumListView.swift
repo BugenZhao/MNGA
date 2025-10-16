@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import TipKit
 
 struct SubforumRowView: View {
   let isFavorite: Bool
@@ -38,6 +39,7 @@ struct SubforumListView: View {
   @State var subforums: [Subforum]
   let refresh: () -> Void
   let onNavigateToForum: (Forum) -> Void
+  @Binding var detent: PresentationDetent
 
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
@@ -62,14 +64,37 @@ struct SubforumListView: View {
     }.modifier(FavoriteModifier(forum: forum))
   }
 
+  @ViewBuilder
+  var tipSection: some View {
+    Section {
+      TipView(SubforumListTip())
+        .tipBackground(Color.secondarySystemGroupedBackground)
+        .listRowInsets(.zero)
+    }
+  }
+
   var body: some View {
     List {
+      tipSection
       ForEachOrEmpty($subforums, id: \.wrappedValue.forum.idDescription) { subforum in
         buildLink(subforum)
       }
     }
-    #if os(iOS)
-    .listStyle(InsetGroupedListStyle())
-    #endif
+    .listStyle(.insetGrouped)
+    .scrollContentBackground(detent == .medium ? .hidden : .automatic)
+  }
+}
+
+struct SubforumListTip: Tip {
+  var title: Text {
+    Text("View and Manage Subforums")
+  }
+
+  var message: Text? {
+    Text("Subforum Tip")
+  }
+
+  var image: Image? {
+    Image(systemName: "list.triangle")
   }
 }
