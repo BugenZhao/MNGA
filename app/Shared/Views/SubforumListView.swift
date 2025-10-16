@@ -39,6 +39,7 @@ struct SubforumListView: View {
   @State var subforums: [Subforum]
   let refresh: () -> Void
   let onNavigateToForum: (Forum) -> Void
+  @Binding var detent: PresentationDetent
 
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
@@ -79,9 +80,8 @@ struct SubforumListView: View {
         buildLink(subforum)
       }
     }
-    #if os(iOS)
-    .listStyle(InsetGroupedListStyle())
-    #endif
+    .listStyle(.insetGrouped)
+    .scrollContentBackground(detent == .medium ? .hidden : .automatic)
   }
 }
 
