@@ -200,7 +200,7 @@ struct PostRowView: View {
       .fixedSize(horizontal: false, vertical: true)
       .contextMenu { menu }
     #if os(iOS)
-      .listRowBackground(action?.scrollToPid == post.id.pid ? Color.tertiarySystemBackground : nil)
+      .listRowBackground(action?.scrollToPid == post.id.pid ? Color.systemGroupedBackground : nil)
     #endif
       .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments, isPresented: $showAttachments) }.presentationDetents([.medium, .large]) }
       .environmentObject(attachments)
