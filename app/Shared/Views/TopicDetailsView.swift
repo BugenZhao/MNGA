@@ -223,7 +223,8 @@ struct TopicDetailsView: View {
       Section {
         if let atForum {
           Button(action: { action.navigateToForum = atForum }) {
-            Label("Goto \(atForum.name)", systemImage: "list.triangle")
+            Label("Goto Forum", systemImage: "list.triangle")
+            Text("\(atForum.name)")
           }
         }
         #if os(iOS)
