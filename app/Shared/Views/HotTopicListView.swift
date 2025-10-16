@@ -40,7 +40,7 @@ struct HotTopicListInnerView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           Section(header: Text(range.description)) {

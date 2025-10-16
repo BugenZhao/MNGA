@@ -80,6 +80,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     return pagedItems.sorted { $0.key < $1.key }.map { (page: $0.key, items: $0.value) }
   }
 
+  @MainActor
   private func upsertItems(_ items: some Sequence<Item>, page: Int) {
     for item in items {
       let id = item[keyPath: id]
@@ -93,6 +94,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
+  @MainActor
   private func replaceItems(_ items: some Sequence<Item>, page: Int) {
     if neverRemove == false {
       self.items.removeAll()
@@ -101,16 +103,11 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     upsertItems(items, page: page)
   }
 
-  func loadMore(after: Double = 0.0) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + after) {
-      self.loadMore(background: false, alwaysAnimation: true)
-    }
-  }
-
+  // TODO: `onAppear` works great while `task` seems glitchy
   func loadMoreIfNeeded(currentItem: Item) {
     if let index = itemToIndexAndPage[currentItem[keyPath: id]]?.index {
-      let threshold = items.index(items.endIndex, offsetBy: -2)
-      if index >= threshold { loadMore(background: true) }
+      let threshold = items.index(items.endIndex, offsetBy: -3)
+      if index >= threshold { Task { await loadMore(backgroundQueue: true) } }
     }
   }
 
@@ -121,6 +118,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     latestError = e
   }
 
+  @MainActor
   private func preRefresh(fromPage: Int) -> AsyncRequest.OneOf_Value? {
     if isRefreshing || isLoading { return nil }
     dataFlowId = UUID()
@@ -135,6 +133,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     return request
   }
 
+  @MainActor
   private func onRefreshSuccess(response: Res, animated: Bool, fromPage: Int) {
     latestResponse = response
     latestError = nil
@@ -152,6 +151,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     lastRefreshTime = Date()
   }
 
+  @MainActor
   private func onRefreshError(_ e: LogicError, animated: Bool) {
     withAnimation(when: animated) {
       self.isRefreshing = false
@@ -160,71 +160,68 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     onError(e)
   }
 
+  // Sync version for compatibility.
   func refresh(animated: Bool = false, silentOnError: Bool = false, fromPage: Int = 1) {
+    Task { await refresh(animated: animated, silentOnError: silentOnError, fromPage: fromPage) }
+  }
+
+  @MainActor
+  func refresh(animated: Bool = false, silentOnError: Bool = false, fromPage: Int = 1) async {
     guard let request = preRefresh(fromPage: fromPage) else { return }
 
-    logicCallAsync(request, errorToastModel: silentOnError ? nil : .banner) { (response: Res) in
-      self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
-    } onError: { e in
-      self.onRefreshError(e, animated: animated)
+    let response: Result<Res, LogicError> = await logicCallAsync(request, errorToastModel: silentOnError ? nil : .banner)
+
+    switch response {
+    case let .success(response):
+      onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
+    case let .failure(e):
+      onRefreshError(e, animated: animated)
     }
   }
 
-  func refreshAsync(animated: Bool = false, fromPage: Int = 1) async {
-    let request = DispatchQueue.main.sync { preRefresh(fromPage: fromPage) }
-    guard let request else { return }
-
-    let response: Result<Res, LogicError> = await logicCallAsync(request)
-
-    DispatchQueue.main.sync {
-      switch response {
-      case let .success(response):
-        self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
-      case let .failure(e):
-        self.onRefreshError(e, animated: animated)
-      }
-    }
-  }
-
-  func initialLoad() {
+  func initialLoad() async {
     if loadedPage == 0, latestError == nil {
-      refresh(animated: true)
+      await refresh(animated: true)
     }
   }
 
-  func reloadLastPages(evenIfNotLoaded: Bool) {
+  func reloadLastPages(evenIfNotLoaded: Bool) async {
     for page in [totalPages, totalPages + 1] {
-      reload(page: page, evenIfNotLoaded: evenIfNotLoaded)
+      await reload(page: page, evenIfNotLoaded: evenIfNotLoaded)
     }
   }
 
-  func reload(page: Int, evenIfNotLoaded: Bool, animated: Bool = true, after: (() -> Void)? = nil) {
+  func reload(page: Int, evenIfNotLoaded: Bool, animated: Bool = true) async {
     guard page <= loadedPage || evenIfNotLoaded else { return }
     let request = buildRequest(page)
     let currentId = dataFlowId
 
-    logicCallAsync(request) { (response: Res) in
-      guard currentId == self.dataFlowId else { return }
+    let response: Result<Res, LogicError> = await logicCallAsync(request)
 
-      self.latestResponse = response
-      self.latestError = nil
-      let (newItems, newTotalPages) = self.onResponse(response)
+    await MainActor.run {
+      switch response {
+      case let .success(response):
+        guard currentId == dataFlowId else { return }
+        latestResponse = response
+        latestError = nil
+        let (newItems, newTotalPages) = onResponse(response)
 
-      withAnimation(when: animated) {
-        self.upsertItems(newItems, page: page)
-        self.isLoading = false
+        withAnimation(when: animated) {
+          upsertItems(newItems, page: page)
+          isLoading = false
+        }
+        totalPages = newTotalPages ?? totalPages
+
+      case let .failure(e):
+        withAnimation {
+          isLoading = false
+        }
+        onError(e)
       }
-      self.totalPages = newTotalPages ?? self.totalPages
-      if let after { after() }
-    } onError: { e in
-      withAnimation {
-        self.isLoading = false
-      }
-      self.onError(e)
     }
   }
 
-  private func loadMore(background: Bool = false, alwaysAnimation: Bool = false) {
+  func loadMore(backgroundQueue: Bool = false, alwaysAnimation: Bool = false) async {
     if isLoading || loadedPage >= totalPages { return }
     isLoading = true
 
@@ -232,27 +229,33 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     let request = buildRequest(page)
     let currentId = dataFlowId
 
-    let queue = DispatchQueue.global(qos: background ? .background : .userInitiated)
+    let queue = DispatchQueue.global(qos: backgroundQueue ? .background : .userInitiated)
 
-    logicCallAsync(request, requestDispatchQueue: queue) { (response: Res) in
-      guard currentId == self.dataFlowId else { return }
+    let response: Result<Res, LogicError> = await logicCallAsync(request, requestDispatchQueue: queue)
 
-      self.latestResponse = response
-      self.latestError = nil
-      let (newItems, newTotalPages) = self.onResponse(response)
-      logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
+    await MainActor.run {
+      switch response {
+      case let .success(response):
+        guard currentId == dataFlowId else { return }
 
-      withAnimation(when: self.items.isEmpty || alwaysAnimation) {
-        self.upsertItems(newItems, page: page)
-        self.isLoading = false
+        latestResponse = response
+        latestError = nil
+        let (newItems, newTotalPages) = onResponse(response)
+        logger.debug("page \(loadedPage + 1), newItems \(newItems.count)")
+
+        withAnimation(when: items.isEmpty || alwaysAnimation) {
+          upsertItems(newItems, page: page)
+          isLoading = false
+        }
+        totalPages = newTotalPages ?? totalPages
+        loadedPage += 1
+
+      case let .failure(e):
+        withAnimation(when: items.isEmpty) {
+          isLoading = false
+        }
+        onError(e)
       }
-      self.totalPages = newTotalPages ?? self.totalPages
-      self.loadedPage += 1
-    } onError: { e in
-      withAnimation(when: self.items.isEmpty) {
-        self.isLoading = false
-      }
-      self.onError(e)
     }
   }
 }
@@ -264,9 +267,9 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
   @Environment(\.scenePhase) var scenePhase
 
   func doRefresh() async {
-    try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
-    await dataSource.refreshAsync(animated: true)
-    try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+    // try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+    await dataSource.refresh(animated: true)
+    // try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
   }
 
   func body(content: Content) -> some View {

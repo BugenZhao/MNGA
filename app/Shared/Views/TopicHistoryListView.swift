@@ -33,7 +33,7 @@ struct TopicHistoryListView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           let items = dataSource.items.filter { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) }

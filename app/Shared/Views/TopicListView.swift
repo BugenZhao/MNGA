@@ -252,11 +252,7 @@ struct TopicListView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation
-              dataSource.initialLoad()
-            }
-          }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           Section(header:
@@ -292,7 +288,7 @@ struct TopicListView: View {
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name.localized)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal.presentationDetents([.medium, .large]) }
-    .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
+    .task(id: postReply.sent) { await dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
     .toolbar { toolbar }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }

@@ -48,7 +48,7 @@ struct ShortMessageListView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           ForEach(dataSource.items, id: \.id) { message in
@@ -65,7 +65,7 @@ struct ShortMessageListView: View {
     .mayGroupedListStyle()
     .refreshable(dataSource: dataSource)
     .toolbar { toolbar }
-    .onChange(of: postModel.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
+    .task(id: postModel.sent) { await dataSource.reload(page: 1, evenIfNotLoaded: false) }
   }
 
   func newShortMessage() {

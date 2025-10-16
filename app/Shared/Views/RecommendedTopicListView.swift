@@ -40,7 +40,7 @@ struct RecommendedTopicListView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .task { await dataSource.initialLoad() }
       } else {
         List {
           ForEach($dataSource.items, id: \.id) { topic in
