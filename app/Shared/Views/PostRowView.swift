@@ -9,6 +9,21 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+struct RowMenuButtonView<MenuContent: View>: View {
+  @ViewBuilder var menu: MenuContent
+
+  var body: some View {
+    Menu(content: { menu }) {
+      Image(systemName: "ellipsis.circle.fill")
+        .symbolRenderingMode(.hierarchical)
+        .resizable()
+        .scaledToFit()
+        .frame(width: 24, height: 24)
+        .glassEffect(in: .circle)
+    }
+  }
+}
+
 struct PostRowView: View {
   let post: Post
   let isAuthor: Bool
@@ -54,22 +69,12 @@ struct PostRowView: View {
   }
 
   @ViewBuilder
-  var menuButton: some View {
-    Menu(content: { menu }) {
-      Image(systemName: "ellipsis.circle.fill")
-        .symbolRenderingMode(.hierarchical)
-        .imageScale(.large)
-        .glassEffect()
-    }
-  }
-
-  @ViewBuilder
   var header: some View {
     HStack {
       PostRowUserView(post: post, compact: false, isAuthor: isAuthor)
       Spacer()
       floor
-      if !dummy { menuButton }
+      if !dummy { RowMenuButtonView { menu } }
     }
   }
 

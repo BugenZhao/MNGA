@@ -23,16 +23,6 @@ struct ShortMessagePostRowView: View {
   }
 
   @ViewBuilder
-  var menuButton: some View {
-    Menu(content: { menu }) {
-      Image(systemName: "ellipsis.circle.fill")
-        .symbolRenderingMode(.hierarchical)
-        .imageScale(.large)
-        .glassEffect()
-    }
-  }
-
-  @ViewBuilder
   var header: some View {
     HStack {
       if let user {
@@ -41,7 +31,7 @@ struct ShortMessagePostRowView: View {
         UserView(id: post.authorID, style: .normal)
       }
       Spacer()
-      menuButton
+      RowMenuButtonView { menu }
     }
   }
 
