@@ -36,6 +36,7 @@ class PreferencesStorage: ObservableObject {
   }
 
   @AppStorage("postRowSwipeActionLeading") var postRowSwipeActionLeading = false
+  @AppStorage("postRowSwipeVoteFirst") var postRowSwipeVoteFirst = false
   @AppStorage("postRowShowUserDetails") var postRowShowUserDetails = true
   @AppStorage("postRowShowUserRegDate") var postRowShowUserRegDate = false
   @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategy = DateTimeTextView.Strategy.automatic
