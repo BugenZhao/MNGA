@@ -21,6 +21,7 @@ private struct PostRowAppearanceView: View {
           // in actual browsing. So here we simply use a trick to force refresh.
           .id("dummy-post-larger-font-\(pref.postRowLargerFont)")
       }
+      .tint(nil) // remove accent color for swipe actions
 
       Section {
         Toggle(isOn: $pref.usePaginatedDetails) {
@@ -29,20 +30,24 @@ private struct PostRowAppearanceView: View {
         Toggle(isOn: $pref.postRowLargerFont) {
           Label("Larger Font", systemImage: "textformat.size")
         }
-      }
-
-      Section {
         Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
           Label("Dim Images in Dark Mode", systemImage: "moon.fill")
         }
-      }.disableWithPlusCheck(.customAppearance)
+        .disableWithPlusCheck(.customAppearance)
+      }
 
       Section {
         Picker(selection: $pref.postRowSwipeActionLeading, label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")) {
           Text("Leading").tag(true)
           Text("Trailing").tag(false)
         }
+        Picker(selection: $pref.postRowSwipeVoteFirst, label: Label("Primary Swipe Action", systemImage: "smallcircle.filled.circle")) {
+          Text("Vote Up").tag(true)
+          Text("Quote").tag(false)
+        }
+      }.disableWithPlusCheck(.customAppearance)
 
+      Section {
         Picker(selection: $pref.postRowDateTimeStrategy.animation(), label: Label("Date Display", systemImage: "calendar")) {
           ForEach(DateTimeTextView.Strategy.allCases, id: \.self) { s in
             Text(s.description).tag(s)

@@ -194,8 +194,34 @@ struct PostRowView: View {
     }
   }
 
+  @ViewBuilder
+  var swipeActions: some View {
+    if let model = postReply, !mock {
+      let quote = Button(action: { doQuote(model: model) }) {
+        Label("Quote", systemImage: "quote.bubble")
+      }
+      let vote = Button(action: { doVote(.upvote) }) {
+        if self.vote.state == .up {
+          Label("Cancel", systemImage: "hand.thumbsup.slash")
+        } else {
+          Label("Vote Up", systemImage: "hand.thumbsup")
+        }
+      }
+
+      Group {
+        if pref.postRowSwipeVoteFirst {
+          vote.if(self.vote.state != .up) { $0.tint(.accentColor) }
+          quote
+        } else {
+          quote.tint(.accentColor)
+          vote
+        }
+      }
+    }
+  }
+
   var body: some View {
-    let body = VStack(alignment: .leading, spacing: 10) {
+    VStack(alignment: .leading, spacing: 10) {
       header
       content
       footer
@@ -209,17 +235,7 @@ struct PostRowView: View {
     #endif
       .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments, isPresented: $showAttachments) }.presentationDetents([.medium, .large]) }
       .environmentObject(attachments)
-
-    if let model = postReply, !mock {
-      body
-        .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) {
-          Button(action: { doQuote(model: model) }) {
-            Label("Quote", systemImage: "quote.bubble")
-          }.tint(.accentColor)
-        }
-    } else {
-      body
-    }
+      .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) { swipeActions }
   }
 
   func doVote(_ operation: PostVoteRequest.Operation) {

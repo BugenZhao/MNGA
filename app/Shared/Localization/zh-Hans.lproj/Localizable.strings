@@ -55,6 +55,7 @@
 "Editor" = "编辑器";
 "Send" = "发送";
 "Quote" = "引用";
+"Vote Up" = "点赞";
 "Edit" = "编辑";
 "Share" = "分享";
 "Notifications" = "通知";
@@ -207,6 +208,7 @@
 "This is a signature." = "这是一个签名。";
 "Collapsed here." = "这里被折叠了。";
 "Swipe Trigger Edge" = "滑动触发边缘";
+"Primary Swipe Action" = "首选滑动操作";
 "Leading" = "前";
 "Trailing" = "后";
 "Show User Details" = "显示用户详情";
