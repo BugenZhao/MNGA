@@ -42,11 +42,14 @@ struct NewImageViewer: View {
     NavigationStack {
       main
         .toolbar {
-          if let transferable = model.transferable {
-            ToolbarItem(placement: .bottomBar) {
+          ToolbarItem(placement: .bottomBar) {
+            if let transferable = model.transferable {
               ShareLink(item: transferable, preview: SharePreview(transferable.previewName, image: transferable.previewImage)) {
                 Image(systemName: "square.and.arrow.up")
               }
+            } else {
+              // Still preparing the image.
+              ProgressView()
             }
           }
 

@@ -642,17 +642,6 @@ struct TopicDetailsView: View {
     .environmentObject(postReply)
   }
 
-  func shareAsImage() {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      let image = screenshotView.snapshot()
-      if image.size == .zero {
-        alert.message = .error("Contents are too large to take a screenshot.".localized)
-      } else {
-        viewingImage.show(image: image)
-      }
-    }
-  }
-
   func openInBrowser() {
     if let url = navID.webpageURL {
       OpenURLModel.shared.open(url: url)

@@ -6,20 +6,29 @@
 //
 
 import Combine
+import CryptoKit
 import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
 
+extension URL {
+  var hashedFilename: String {
+    let data = Data(absoluteString.utf8)
+    let digest = Insecure.MD5.hash(data: data)
+    return digest.map { String(format: "%02hhx", $0) }.joined()
+  }
+}
+
 struct TransferableImage: Transferable {
-  let id: UUID
   let image: PlatformImage
   let ext: String
   let url: URL
+  let localURL: URL
 
-  init?(image: PlatformImage) {
-    id = UUID()
+  init?(url: URL, image: PlatformImage) {
     self.image = image
+    self.url = url
 
     ext = switch image.sd_imageFormat {
     // static const SDImageFormat SDImageFormatJPEG      = 0;
@@ -46,12 +55,13 @@ struct TransferableImage: Transferable {
     default: "png"
     }
 
-    let url = FileManager.default.temporaryDirectory
-      .appendingPathComponent("MNGA-\(id.uuidString)")
+    localURL = FileManager.default.temporaryDirectory
+      .appendingPathComponent("MNGA-\(url.hashedFilename)")
       .appendingPathExtension(ext)
 
-    try? image.sd_imageData()?.write(to: url, options: .atomic)
-    self.url = url
+    if !FileManager.default.fileExists(atPath: localURL.path) {
+      try? image.sd_imageData()?.write(to: localURL, options: .atomic)
+    }
   }
 
   var previewImage: Image {
@@ -59,11 +69,11 @@ struct TransferableImage: Transferable {
   }
 
   var previewName: String {
-    "\(ext.uppercased()) Image"
+    "\(ext.uppercased()) Image (\(url.lastPathComponent))"
   }
 
   static var transferRepresentation: some TransferRepresentation {
-    ProxyRepresentation { $0.url }
+    ProxyRepresentation { $0.localURL }
   }
 }
 
@@ -72,29 +82,20 @@ class ViewingImageModel: ObservableObject {
   @Published var transferable: TransferableImage?
   @Published var showing = false
 
-  func show(image: PlatformImage) {
-    withAnimation {
-      // TODO: can we obtain imageFormat correctly here?
-      self.transferable = TransferableImage(image: image)
-      self.view = Image(image: image)
-        .resizable()
-        .eraseToAnyView()
-      self.showing = true
-    }
-  }
-
   func show(url: URL) {
-    withAnimation {
-      self.view = WebImage(url: url)
-        .onSuccess { image, _, _ in
-          DispatchQueue.main.async {
-            self.transferable = TransferableImage(image: image)
+    view = WebImage(url: url)
+      .onSuccess { image, _, _ in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+          let transferable = TransferableImage(url: url, image: image)
+          DispatchQueue.main.sync {
+            self?.transferable = transferable
           }
         }
-        .resizable()
-        .indicator(.progress)
-        .eraseToAnyView()
-      self.showing = true
-    }
+      }
+      .resizable()
+      .indicator(.progress)
+      .eraseToAnyView()
+
+    withAnimation { showing = true }
   }
 }
