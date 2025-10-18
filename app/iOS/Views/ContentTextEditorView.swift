@@ -19,19 +19,35 @@ struct ContentTextEditorView: View {
         // Show toolbar only when focused, otherwise it will also be shown in other text fields.
         if focused {
           ToolbarItemGroup(placement: .keyboard) {
-            Button(action: model.showSticker) {
-              Image(systemName: "face.smiling")
+            ScrollView(.horizontal, showsIndicators: false) {
+              HStack(spacing: 24) {
+                Button(action: model.showSticker) {
+                  Image(systemName: "face.smiling")
+                }
+                Button(action: model.showImagePicker) {
+                  Image(systemName: "photo")
+                }
+                Button(action: model.appendBold) {
+                  Image(systemName: "bold")
+                }
+                Button(action: model.appendDel) {
+                  Image(systemName: "strikethrough")
+                }
+                Button(action: model.appendCollapsed) {
+                  Image(systemName: "chevron.up.chevron.down")
+                }
+                Button(action: model.insertSeparator) {
+                  Image(systemName: "minus")
+                }
+                Button(action: model.appendHeader) {
+                  Image(systemName: "h.square")
+                }
+              }
+              .padding(.horizontal)
             }
-            Button(action: model.appendBold) {
-              Image(systemName: "bold")
-            }
-            Button(action: model.appendDel) {
-              Image(systemName: "strikethrough")
-            }
-            Button(action: model.showImagePicker) {
-              Image(systemName: "photo")
-            }
+
             Spacer()
+
             Button(action: hideKeyboard) {
               Image(systemName: "keyboard.chevron.compact.down")
             }
