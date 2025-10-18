@@ -21,6 +21,7 @@ let project = Project(
         .remote(url: "https://github.com/gh123man/LazyPager", requirement: .exact("1.1.13")),
         .remote(url: "https://github.com/tevelee/SwiftUI-Flow", requirement: .exact("3.1.0")),
         .remote(url: "https://github.com/SvenTiigi/WhatsNewKit.git", requirement: .exact("2.2.1")),
+        .remote(url: "https://github.com/apple/swift-collections", requirement: .exact("1.3.0")),
     ],
     targets: [
         // iOS App Target
@@ -58,6 +59,7 @@ let project = Project(
                 .package(product: "LazyPager"),
                 .package(product: "Flow"),
                 .package(product: "WhatsNewKit"),
+                .package(product: "Collections"),
                 .xcframework(path: "../out/logic-ios.xcframework"),
             ],
             settings: .settings(

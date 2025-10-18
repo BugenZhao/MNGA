@@ -13,6 +13,19 @@ struct ContentTextEditorView: View {
 
   @Binding var focused: Bool
 
+  @ViewBuilder
+  var colorMenu: some View {
+    ForEach(ContentCombiner.palette.elements, id: \.key) { element in
+      let name = element.key
+      let color = element.value
+
+      Button(action: { model.appendColor(name) }) {
+        Label(name, systemImage: "circle.fill")
+          .tint(color)
+      }
+    }
+  }
+
   var body: some View {
     TextEditor(text: $model.text, selection: $model.selection)
       .toolbar {
@@ -20,7 +33,7 @@ struct ContentTextEditorView: View {
         if focused {
           ToolbarItemGroup(placement: .keyboard) {
             ScrollView(.horizontal, showsIndicators: false) {
-              HStack(spacing: 24) {
+              HStack(spacing: 22) {
                 Button(action: model.showSticker) {
                   Image(systemName: "face.smiling")
                 }
@@ -32,6 +45,9 @@ struct ContentTextEditorView: View {
                 }
                 Button(action: model.appendDel) {
                   Image(systemName: "strikethrough")
+                }
+                Menu { colorMenu } label: {
+                  Image(systemName: "paintpalette")
                 }
                 Button(action: model.appendCollapsed) {
                   Image(systemName: "chevron.up.chevron.down")

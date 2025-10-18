@@ -9,6 +9,7 @@ import Colorful
 import Foundation
 import SwiftUI
 import SwiftUIX
+import Collections
 
 class ContentCombiner {
   enum Subview {
@@ -24,7 +25,7 @@ class ContentCombiner {
     static let strikethrough = Self(rawValue: 1 << 1)
   }
 
-  private static let palette: [String: Color] = [
+  static let palette: OrderedDictionary<String, Color> = [
     "skyblue": .skyBlue,
     "royalblue": .royalBlue,
     "blue": .init(hex: 0x0066BB),

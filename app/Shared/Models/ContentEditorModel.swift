@@ -104,6 +104,10 @@ class ContentEditorModel: ObservableObject {
     appendTag(open: "===", close: "===")
   }
 
+  func appendColor(_ color: String) {
+    appendTag("color", attribute: color)
+  }
+
   func showImagePicker() {
     showingImagePicker = true
   }
