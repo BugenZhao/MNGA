@@ -96,6 +96,10 @@ class ContentEditorModel: ObservableObject {
     appendTag("collapse", attribute: "Collapsed Content".localized)
   }
 
+  func insertQuoted() {
+    appendTag("quote")
+  }
+
   func insertSeparator() {
     insert("\n======\n")
   }
@@ -106,6 +110,10 @@ class ContentEditorModel: ObservableObject {
 
   func appendColor(_ color: String) {
     appendTag("color", attribute: color)
+  }
+
+  func appendSize(_ size: String) {
+    appendTag("size", attribute: size)
   }
 
   func showImagePicker() {

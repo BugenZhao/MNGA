@@ -5,11 +5,11 @@
 //  Created by Bugen Zhao on 7/11/21.
 //
 
+import Collections
 import Colorful
 import Foundation
 import SwiftUI
 import SwiftUIX
-import Collections
 
 class ContentCombiner {
   enum Subview {

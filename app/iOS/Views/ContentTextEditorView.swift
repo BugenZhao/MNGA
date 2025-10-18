@@ -26,6 +26,28 @@ struct ContentTextEditorView: View {
     }
   }
 
+  @ViewBuilder
+  var fontSizeMenu: some View {
+    let smallSizes = ["10%", "50%", "80%", "90%"]
+    let largeSizes = ["110%", "120%", "150%", "200%"]
+
+    Section {
+      ForEach(smallSizes, id: \.self) { size in
+        Button(action: { model.appendSize(size) }) {
+          Label(size, systemImage: "textformat.size.smaller")
+        }
+      }
+    }
+
+    Section {
+      ForEach(largeSizes, id: \.self) { size in
+        Button(action: { model.appendSize(size) }) {
+          Label(size, systemImage: "textformat.size.larger")
+        }
+      }
+    }
+  }
+
   var body: some View {
     TextEditor(text: $model.text, selection: $model.selection)
       .toolbar {
@@ -33,7 +55,7 @@ struct ContentTextEditorView: View {
         if focused {
           ToolbarItemGroup(placement: .keyboard) {
             ScrollView(.horizontal, showsIndicators: false) {
-              HStack(spacing: 22) {
+              HStack(spacing: 20) {
                 Button(action: model.showSticker) {
                   Image(systemName: "face.smiling")
                 }
@@ -49,8 +71,14 @@ struct ContentTextEditorView: View {
                 Menu { colorMenu } label: {
                   Image(systemName: "paintpalette")
                 }
+                Menu { fontSizeMenu } label: {
+                  Image(systemName: "textformat.size")
+                }
                 Button(action: model.appendCollapsed) {
                   Image(systemName: "chevron.up.chevron.down")
+                }
+                Button(action: model.insertQuoted) {
+                  Image(systemName: "quote.bubble")
                 }
                 Button(action: model.insertSeparator) {
                   Image(systemName: "minus")
