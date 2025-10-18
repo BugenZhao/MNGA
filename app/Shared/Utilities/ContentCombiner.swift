@@ -5,6 +5,7 @@
 //  Created by Bugen Zhao on 7/11/21.
 //
 
+import Collections
 import Colorful
 import Foundation
 import SwiftUI
@@ -24,7 +25,7 @@ class ContentCombiner {
     static let strikethrough = Self(rawValue: 1 << 1)
   }
 
-  private static let palette: [String: Color] = [
+  static let palette: OrderedDictionary<String, Color> = [
     "skyblue": .skyBlue,
     "royalblue": .royalBlue,
     "blue": .init(hex: 0x0066BB),

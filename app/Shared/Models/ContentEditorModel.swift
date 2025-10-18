@@ -45,20 +45,26 @@ class ContentEditorModel: ObservableObject {
     text.replaceSubrange(range, with: string)
 
     let insertionPoint = text.index(text.startIndex, offsetBy: prefixLength + string.count)
-    self.selection = TextSelection(insertionPoint: insertionPoint)
 
     // Sometimes it just doesn't work if we set string and selection at the same time...
-    // DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-    //   if let ip = insertionPoint.samePosition(in: self.text) {
-    //     self.selection = TextSelection(insertionPoint: ip)
-    //   }
-    // }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+      if let ip = insertionPoint.samePosition(in: self.text) {
+        self.selection = TextSelection(insertionPoint: ip)
+      }
+    }
   }
 
-  private func appendTag(_ tag: String) {
-    let open = "[\(tag)]"
+  private func appendTag(_ tag: String, attribute: String? = nil) {
+    let open = if let attribute {
+      "[\(tag)=\(attribute)]"
+    } else {
+      "[\(tag)]"
+    }
     let close = "[/\(tag)]"
+    appendTag(open: open, close: close)
+  }
 
+  private func appendTag(open: String, close: String) {
     let selection = selection ?? TextSelection(insertionPoint: text.endIndex)
     guard case let .selection(range) = selection.indices else { return }
     let prefixLength = text.distance(from: text.startIndex, to: range.lowerBound)
@@ -69,14 +75,13 @@ class ContentEditorModel: ObservableObject {
 
     // Note: never reuse index after mutation! if there's re-allocation, the index is invalid!
     let insertionPoint = text.index(text.startIndex, offsetBy: prefixLength + open.count + distance)
-    self.selection = TextSelection(insertionPoint: insertionPoint)
 
     // Sometimes it just doesn't work if we set string and selection at the same time...
-    // DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-    //   if let ip = insertionPoint.samePosition(in: self.text) {
-    //     self.selection = TextSelection(insertionPoint: ip)
-    //   }
-    // }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+      if let ip = insertionPoint.samePosition(in: self.text) {
+        self.selection = TextSelection(insertionPoint: ip)
+      }
+    }
   }
 
   func appendBold() {
@@ -85,6 +90,30 @@ class ContentEditorModel: ObservableObject {
 
   func appendDel() {
     appendTag("del")
+  }
+
+  func appendCollapsed() {
+    appendTag("collapse", attribute: "Collapsed Content".localized)
+  }
+
+  func insertQuoted() {
+    appendTag("quote")
+  }
+
+  func insertSeparator() {
+    insert("\n======\n")
+  }
+
+  func appendHeader() {
+    appendTag(open: "===", close: "===")
+  }
+
+  func appendColor(_ color: String) {
+    appendTag("color", attribute: color)
+  }
+
+  func appendSize(_ size: String) {
+    appendTag("size", attribute: size)
   }
 
   func showImagePicker() {
