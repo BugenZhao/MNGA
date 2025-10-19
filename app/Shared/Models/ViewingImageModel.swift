@@ -87,7 +87,7 @@ class ViewingImageModel: ObservableObject {
       .onSuccess { image, _, _ in
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
           let transferable = TransferableImage(url: url, image: image)
-          DispatchQueue.main.sync {
+          DispatchQueue.main.async {
             self?.transferable = transferable
           }
         }
