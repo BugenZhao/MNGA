@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import Logging
 import SwiftProtobuf
 import SwiftUI
 
@@ -31,6 +32,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private var dataFlowId = UUID()
 
   private var cancellables = Set<AnyCancellable>()
+  fileprivate let logger = Logger.withDefaultLevel(label: "PagingDataSource<\(Res.protoMessageName)>")
 
   var hasMore: Bool { loadedPage < totalPages }
   var nextPage: Int? { hasMore ? loadedPage + 1 : nil }
@@ -240,7 +242,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       self.latestResponse = response
       self.latestError = nil
       let (newItems, newTotalPages) = self.onResponse(response)
-      logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
+      self.logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 
       withAnimation(when: self.items.isEmpty || alwaysAnimation) {
         self.upsertItems(newItems, page: page)
@@ -275,7 +277,7 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
         .refreshable { await doRefresh() }
         .if(refreshWhenEnterForeground) {
           $0.onChange(of: scenePhase) {
-            logger.debug("scenePhase changed from \($0) to \($1)")
+            dataSource.logger.debug("scenePhase changed from \($0) to \($1)")
             // Swipe to home: active -> inactive -> background
             // Back to app: background -> inactive -> active
             // When in multitask mode, app can be inactive if it's not focused.
@@ -286,7 +288,7 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
             let elapsed = Date().timeIntervalSince(last)
             if elapsed > 60 * 60 { // 1 hour
               Task {
-                logger.debug("\(elapsed) seconds elapsed, refreshing...")
+                dataSource.logger.debug("\(elapsed) seconds elapsed, refreshing...")
                 withAnimation { proxy.scrollTo("top-placeholder") }
                 await doRefresh()
                 ToastModel.showAuto(.autoRefreshed)
