@@ -57,7 +57,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
     $loadFromPage
       .drop { $0 == nil }
-      .sink { self.refresh(fromPage: $0 ?? 1) }
+      .sink { [weak self] in self?.refresh(fromPage: $0 ?? 1) }
       .store(in: &cancellables)
   }
 
@@ -255,6 +255,12 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
         self.isLoading = false
       }
       self.onError(e)
+    }
+  }
+
+  deinit {
+    if !items.isEmpty {
+      logger.debug("deinit with non-empty items")
     }
   }
 }

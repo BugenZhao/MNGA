@@ -20,7 +20,7 @@ class BasicSearchModel: ObservableObject {
   init() {
     $text
       .filter(\.isEmpty)
-      .sink { _ in self.commitedText = nil }
+      .sink { [weak self] _ in self?.commitedText = nil }
       .store(in: &cancellables)
   }
 
