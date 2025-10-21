@@ -78,6 +78,7 @@ struct ForumListView: View {
     Group {
       if categories.isEmpty {
         LoadingRowView()
+          .task { await loadData() }
       } else {
         ForEach(filteredCategories, id: \.id) { category in
           Section(category.name, isExpanded: isCategoryExpanded(category.id)) {
@@ -223,7 +224,6 @@ struct ForumListView: View {
       }
     }
     .searchable(model: searchModel, prompt: "Search".localized)
-    .task { await loadData() }
     .refreshable { await loadData() }
     .navigationTitle(title)
     .navigationBarTitleDisplayMode(.large)

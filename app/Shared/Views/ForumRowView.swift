@@ -13,6 +13,12 @@ struct ForumRowLinkView: View {
   let forum: Forum
   let showFavorite: Bool
 
+  // With this counter hack, the topic list will be refreshed every time we navigate into.
+  // Once the `TopicListView` is pushed into the stack, the value of `hack` will be changed,
+  // causing the whole link to be recreated with a different id. This will then create a
+  // new destination `TopicListView`, making the following navigation to be a "fresh" one.
+  @State var hack = 0
+
   @StateObject var favorites = FavoriteForumsStorage.shared
 
   var isFavorite: Bool {
@@ -21,7 +27,11 @@ struct ForumRowLinkView: View {
 
   @ViewBuilder
   var link: some View {
-    CrossStackNavigationLinkHack(destination: TopicListView.build(forum: forum), id: forum.id) {
+    CrossStackNavigationLinkHack(id: forum.id, destination: {
+      TopicListView.build(forum: forum)
+        .onAppearOnce { hack += 1 }
+    }) {
+      EmptyView().id(hack)
       ForumRowView(forum: forum, isFavorite: showFavorite && isFavorite)
     }
   }

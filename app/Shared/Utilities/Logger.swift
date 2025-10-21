@@ -8,12 +8,16 @@
 import Foundation
 import Logging
 
-let logger: Logger = {
-  var logger = Logger(label: "App")
-  #if DEBUG
-    logger.logLevel = .debug
-  #else
-    logger.logLevel = .info
-  #endif
-  return logger
-}()
+let logger = Logger.withDefaultLevel(label: "App")
+
+extension Logger {
+  static func withDefaultLevel(label: String) -> Logger {
+    var logger = Logger(label: label)
+    #if DEBUG
+      logger.logLevel = .debug
+    #else
+      logger.logLevel = .info
+    #endif
+    return logger
+  }
+}

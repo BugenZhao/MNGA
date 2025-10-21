@@ -90,7 +90,7 @@ private class WrappedDataCallback {
 
   func run(_ data: Data?, _ error: LogicError?) {
     DispatchQueue.main.async {
-      logger.debug("running callback on thread `\(Thread.current)`")
+      logger.trace("running callback on thread `\(Thread.current)`")
       if let error {
         self.errorCallback(error)
       } else {
@@ -105,7 +105,7 @@ private func byteBufferCallback(callbackPtr: UnsafeRawPointer?, resByteBuffer: B
   defer { rust_free(resByteBuffer) }
   let dataCallback: WrappedDataCallback = Unmanaged.fromOpaque(callbackPtr!).takeRetainedValue()
 
-  logger.debug("before running callback on thread `\(Thread.current)`")
+  logger.trace("before running callback on thread `\(Thread.current)`")
   dataCallback.run(resData, resError)
 }
 
