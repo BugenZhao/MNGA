@@ -31,9 +31,9 @@ struct ForumRowLinkView: View {
       TopicListView.build(forum: forum)
         .onAppearOnce { hack += 1 }
     }) {
+      EmptyView().id(hack)
       ForumRowView(forum: forum, isFavorite: showFavorite && isFavorite)
     }
-    .id(hack)
   }
 
   var body: some View {
