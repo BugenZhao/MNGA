@@ -94,6 +94,8 @@ struct TopicListView: View {
       },
       id: \.id
     )
+
+    logger.trace("init topic list view for \(forum.idDescription)")
     return Self(
       forum: forum,
       dataSourceLastPost: dataSourceLastPost,
