@@ -168,16 +168,12 @@ fn extract_favorite_folder(node: Node) -> Option<FavoriteTopicFolder> {
 pub async fn get_favorite_topic_list(
     request: FavoriteTopicListRequest,
 ) -> ServiceResult<FavoriteTopicListResponse> {
-    let folder_id = if request.get_folder_id().is_empty() {
-        "1".to_owned()
-    } else {
-        request.get_folder_id().to_owned()
-    };
+    let folder_id = request.get_folder_id();
     let page = request.page.to_string();
 
     let package = fetch_package(
         "thread.php",
-        vec![("favor", folder_id.as_str()), ("page", page.as_str())],
+        vec![("favor", folder_id), ("page", page.as_str())],
         vec![],
     )
     .await?;

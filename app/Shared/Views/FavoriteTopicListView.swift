@@ -8,18 +8,21 @@
 import Foundation
 import SwiftUI
 
-struct FavoriteTopicListView: View {
+struct FavoriteTopicListInnerView: View {
   typealias DataSource = PagingDataSource<FavoriteTopicListResponse, Topic>
+
+  let folderID: String
 
   @StateObject var dataSource: DataSource
 
   @State var searchText = ""
   @State var isSearching = false
 
-  static func build() -> Self {
+  static func build(folderID: String) -> Self {
     let dataSource = DataSource(
       buildRequest: { page in
         .favoriteTopicList(.with {
+          $0.folderID = folderID
           $0.page = UInt32(page)
         })
       },
@@ -31,7 +34,7 @@ struct FavoriteTopicListView: View {
       id: \.id
     )
 
-    return Self(dataSource: dataSource)
+    return Self(folderID: folderID, dataSource: dataSource)
   }
 
   var body: some View {
@@ -50,7 +53,6 @@ struct FavoriteTopicListView: View {
         }
       }
     }
-    .navigationTitle("Favorite Topics")
     .refreshable(dataSource: dataSource)
     .mayGroupedListStyle()
   }
@@ -65,5 +67,66 @@ struct FavoriteTopicListView: View {
     })) { (response: TopicFavorResponse) in
       if !response.isFavored { dataSource.items.remove(at: firstIndex) }
     }
+  }
+}
+
+struct FavoriteTopicListView: View {
+  @State var currentFolder: FavoriteTopicFolder? = nil
+  @State var allFolders: [FavoriteTopicFolder] = []
+
+  var notLoaded: Bool {
+    allFolders.isEmpty && currentFolder == nil
+  }
+
+  func loadFolders() async {
+    if notLoaded {
+      let response: Result<FavoriteFolderListResponse, LogicError> = await logicCallAsync(.favoriteFolderList(.init()))
+      if case let .success(r) = response {
+        withAnimation {
+          allFolders = r.folders
+          currentFolder = r.folders.first(where: { $0.isDefault })
+        }
+      }
+    }
+  }
+
+  var currentFolderID: String {
+    if let currentFolder, !currentFolder.isDefault {
+      currentFolder.id
+    } else {
+      "1"
+    }
+  }
+
+  var currentIsDefault: Bool {
+    currentFolderID == "1"
+  }
+
+  @ViewBuilder
+  var folderMenu: some View {
+    if notLoaded {
+      ProgressView()
+    } else {
+      Menu {
+        Section("All Folders") {
+          Picker(selection: $currentFolder.animation(), label: Text("Folder")) {
+            ForEach(allFolders, id: \.id) { folder in
+              Text(folder.name).tag(folder as FavoriteTopicFolder?)
+            }
+          }
+        }
+      } label: {
+        Label("Folder", systemImage: currentIsDefault ? "folder.fill" : "folder")
+      }
+    }
+  }
+
+  var body: some View {
+    FavoriteTopicListInnerView.build(folderID: currentFolderID)
+      .id(currentFolderID)
+      .navigationTitle("Favorite Topics")
+      .navigationSubtitle(currentFolder?.name ?? "Default Folder".localized)
+      .toolbar { ToolbarItem(placement: .navigationBarTrailing) { folderMenu } }
+      .task { await loadFolders() }
   }
 }

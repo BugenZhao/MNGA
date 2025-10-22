@@ -102,7 +102,7 @@ struct UserMenuView: View {
           NavigationLink(destination: UserProfileView.build(user: user)) {
             Label("My Profile", systemImage: "person.text.rectangle")
           }
-          NavigationLink(destination: FavoriteTopicListView.build()) {
+          NavigationLink(destination: FavoriteTopicListView()) {
             Label("Favorite Topics", systemImage: "bookmark")
           }
         }
