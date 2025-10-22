@@ -147,12 +147,37 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     Some(subforum)
 }
 
+fn extract_favorite_folder(node: Node) -> Option<FavoriteTopicFolder> {
+    use super::macros::get;
+    let map = extract_kv(node);
+
+    let id = get!(map, "id")?;
+    let name = get!(map, "name").unwrap_or_default();
+
+    let folder = FavoriteTopicFolder {
+        id,
+        name,
+        topic_count: get!(map, "length", u32).unwrap_or_default(),
+        is_default: get!(map, "default").is_some(),
+        ..Default::default()
+    };
+
+    Some(folder)
+}
+
 pub async fn get_favorite_topic_list(
     request: FavoriteTopicListRequest,
 ) -> ServiceResult<FavoriteTopicListResponse> {
+    let folder_id = if request.get_folder_id().is_empty() {
+        "1".to_owned()
+    } else {
+        request.get_folder_id().to_owned()
+    };
+    let page = request.page.to_string();
+
     let package = fetch_package(
         "thread.php",
-        vec![("favor", "1"), ("page", &request.page.to_string())],
+        vec![("favor", folder_id.as_str()), ("page", page.as_str())],
         vec![],
     )
     .await?;
@@ -180,6 +205,30 @@ pub async fn get_favorite_topic_list(
     Ok(FavoriteTopicListResponse {
         topics: topics.into(),
         pages,
+        ..Default::default()
+    })
+}
+
+pub async fn get_favorite_folder_list(
+    _request: FavoriteFolderListRequest,
+) -> ServiceResult<FavoriteFolderListResponse> {
+    let package = fetch_package(
+        "nuke.php",
+        vec![
+            ("__lib", "topic_favor_v2"),
+            ("__act", "list_folder"),
+            ("page", "1"),
+        ],
+        vec![],
+    )
+    .await?;
+
+    let folders = extract_nodes(&package, "/root/data/item/item", |ns| {
+        ns.into_iter().filter_map(extract_favorite_folder).collect()
+    })?;
+
+    Ok(FavoriteFolderListResponse {
+        folders: folders.into(),
         ..Default::default()
     })
 }
@@ -560,6 +609,19 @@ mod test {
 
         post(ADD).await?;
         post(DELETE).await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_favor_folder_list() -> ServiceResult<()> {
+        let response = get_favorite_folder_list(FavoriteFolderListRequest::new()).await?;
+
+        println!("response: {:?}", response);
+
+        let folders = response.get_folders();
+        assert!(!folders.is_empty());
+        let _default_folder = folders.iter().find(|f| f.is_default).unwrap();
 
         Ok(())
     }

@@ -10,8 +10,8 @@ use crate::{
         get_user_post_list, post_reply, post_reply_fetch_content, post_vote, upload_attachment,
     },
     topic::{
-        get_favorite_topic_list, get_hot_topic_list, get_topic_details, get_topic_list,
-        get_user_topic_list, search_topic, topic_favor,
+        get_favorite_folder_list, get_favorite_topic_list, get_hot_topic_list, get_topic_details,
+        get_topic_list, get_user_topic_list, search_topic, topic_favor,
     },
     user::get_remote_user,
 };
@@ -38,6 +38,7 @@ handle!(topic_history, get_topic_history);
 handle!(hot_topic_list, get_hot_topic_list);
 handle!(forum_search, search_forum);
 handle!(favorite_topic_list, get_favorite_topic_list);
+handle!(favorite_folder_list, get_favorite_folder_list);
 handle!(topic_favor, topic_favor);
 handle!(post_reply_fetch_content, post_reply_fetch_content);
 handle!(post_reply, post_reply);

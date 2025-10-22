@@ -103,6 +103,13 @@ message Subforum {
   bool selected = 6; // Whether this subforum is subscribed in its parent forum.
 }
 
+message FavoriteTopicFolder {
+  string id = 1;
+  string name = 2;
+  uint32 topic_count = 3;
+  bool is_default = 4; // Default folder can also be listed with `favor=1`.
+}
+
 message Category {
   string id = 1;
   string name = 2;
