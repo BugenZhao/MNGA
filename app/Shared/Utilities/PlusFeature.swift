@@ -10,10 +10,11 @@ enum PlusFeature: CaseIterable {
   case customAppearance
   case multiAccount
   case topicHistory
-  case anonymous
+  case multiFavorite
   case authorOnly
   case jump
   case userProfile
+  case anonymous
   case blockContents
   case comment
   case newTopic
@@ -46,6 +47,8 @@ enum PlusFeature: CaseIterable {
       "Custom Appearance"
     case .blockContents:
       "Block Contents"
+    case .multiFavorite:
+      "Multiple Favorite Folders"
     }
   }
 
@@ -75,6 +78,8 @@ enum PlusFeature: CaseIterable {
       "Full access to customizing the appearance of MNGA."
     case .blockContents:
       "Block contents from specific users, or with specific keywords."
+    case .multiFavorite:
+      "Organize favorite topics into multiple folders."
     }
   }
 
@@ -104,6 +109,8 @@ enum PlusFeature: CaseIterable {
       "paintbrush"
     case .blockContents:
       "hand.raised"
+    case .multiFavorite:
+      "bookmark"
     }
   }
 }

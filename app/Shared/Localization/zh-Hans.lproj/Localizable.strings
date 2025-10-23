@@ -277,6 +277,7 @@
 "Rename Folder..." = "重命名收藏夹...";
 "Rename Folder" = "重命名收藏夹";
 "Folder Name" = "收藏夹名称";
+"Multiple Favorite Folders" = "多收藏夹";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";
@@ -291,6 +292,7 @@
 "View user profiles, with their posts and replies." = "查看用户档案，包括其回复和帖子。";
 "Full access to customizing the appearance of MNGA." = "获得 MNGA 的所有外观自定义选项。";
 "Block contents from specific users, or with specific keywords." = "屏蔽来自特定用户或包含特定关键词的帖子。";
+"Organize favorite topics into multiple folders." = "使用多个收藏夹整理收藏的话题。";
 "More Features in the Future" = "解锁未来更多功能";
 "Plus More Feature" = "MNGA 得以持续开发和维护，离不开您的支持。更多功能正在开发中！";
 

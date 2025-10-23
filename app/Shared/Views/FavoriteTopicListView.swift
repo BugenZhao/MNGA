@@ -148,7 +148,7 @@ struct FavoriteTopicListView: View {
           }
         }
         Menu {
-          Picker(selection: $currentFolder.animation(), label: Text("All Folders")) {
+          Picker(selection: $currentFolder.withPlusCheck(.multiFavorite).animation(), label: Text("All Folders")) {
             ForEach(allFolders, id: \.id) { folder in
               Text(folder.name).tag(folder as FavoriteTopicFolder?)
             }
