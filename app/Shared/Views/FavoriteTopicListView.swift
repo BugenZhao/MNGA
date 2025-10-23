@@ -120,6 +120,8 @@ struct FavoriteTopicListView: View {
     }
   }
 
+  @State var showingRenameAlert = false
+  @State var newName = ""
   @State var showingDeleteConfirmation = false
 
   @ViewBuilder
@@ -134,12 +136,15 @@ struct FavoriteTopicListView: View {
               Label("Make Default Folder", systemImage: "folder.fill")
             }
           }
+          Button(action: { showingRenameAlert = true; newName = currentFolder.name }) {
+            Label("Rename Folder...", systemImage: "pencil")
+          }
           Button(role: .destructive, action: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
               showingDeleteConfirmation = true
             }
           }) {
-            Label("Delete Folder...", systemImage: "folder.badge.minus")
+            Label("Delete Folder...", systemImage: "trash")
           }
         }
         Menu {
@@ -154,6 +159,14 @@ struct FavoriteTopicListView: View {
         }
       } label: {
         Label("Folder", systemImage: currentIsDefault ? "folder.fill" : "folder")
+      }
+
+      .alert("Rename Folder", isPresented: $showingRenameAlert) {
+        TextField("Folder Name", text: $newName)
+        Button("Done", role: .confirm) {
+          modifyCurrentFolder(.with { $0.rename = newName })
+        }
+        Button("Cancel", role: .cancel) { showingRenameAlert = false }
       }
       .confirmationDialog(
         "Delete the folder and all its topics?",

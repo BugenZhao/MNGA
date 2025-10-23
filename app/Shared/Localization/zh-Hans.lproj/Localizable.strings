@@ -273,6 +273,10 @@
 "Delete Folder..." = "删除收藏夹...";
 "Delete" = "删除";
 "Delete the folder and all its topics?" = "删除收藏夹以及其中所有收藏话题？";
+"Rename" = "重命名";
+"Rename Folder..." = "重命名收藏夹...";
+"Rename Folder" = "重命名收藏夹";
+"Folder Name" = "收藏夹名称";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";
