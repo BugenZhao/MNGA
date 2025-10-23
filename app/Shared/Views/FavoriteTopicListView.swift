@@ -126,34 +126,34 @@ struct FavoriteTopicListView: View {
     if let currentFolder {
       Menu {
         Section("#\(currentFolder.id)") {
+          Menu {
+            Picker(selection: $currentFolder.withPlusCheck(.multiFavorite).animation()) {
+              ForEach(allFolders, id: \.id) { folder in
+                Text(folder.name).tag(folder as FavoriteTopicFolder?)
+              }
+            }
+          } label: {
+            Label("Folders", systemImage: "folder")
+            Text(currentFolder.name)
+          }
+        }
+
+        ControlGroup {
           if currentIsDefault {
-            Label("Default Folder", systemImage: "checkmark")
+            Label("Default", systemImage: "checkmark")
           } else {
             Button(action: { modifyCurrentFolder(.with { $0.setDefault = true }) }) {
-              Label("Make Default Folder", systemImage: "folder.fill")
+              Label("Make Default", systemImage: "folder.fill")
             }
           }
           Button(action: { showingRenameAlert = true; newName = currentFolder.name }) {
-            Label("Rename Folder...", systemImage: "pencil")
+            Label("Rename", systemImage: "pencil")
           }
-          Button(role: .destructive, action: {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-              showingDeleteConfirmation = true
-            }
-          }) {
-            Label("Delete Folder...", systemImage: "trash")
+          Button(role: .destructive, action: { showingDeleteConfirmation = true }) {
+            Label("Delete", systemImage: "trash")
           }
         }
-        Menu {
-          Picker(selection: $currentFolder.withPlusCheck(.multiFavorite).animation(), label: Text("All Folders")) {
-            ForEach(allFolders, id: \.id) { folder in
-              Text(folder.name).tag(folder as FavoriteTopicFolder?)
-            }
-          }
-        } label: {
-          Label("All Folders", systemImage: "folder")
-          Text(currentFolder.name)
-        }
+
       } label: {
         Label("Folder", systemImage: currentIsDefault ? "folder.fill" : "folder")
       }
