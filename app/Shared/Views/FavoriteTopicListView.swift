@@ -15,9 +15,6 @@ struct FavoriteTopicListInnerView: View {
 
   @StateObject var dataSource: DataSource
 
-  @State var searchText = ""
-  @State var isSearching = false
-
   static func build(folderID: String) -> Self {
     let dataSource = DataSource(
       buildRequest: { page in
