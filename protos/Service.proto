@@ -104,6 +104,8 @@ message AsyncRequest {
     CacheRequest cache = 23;
     // List favorite topic folders.
     FavoriteFolderListRequest favorite_folder_list = 24;
+    // Modify a favorite topic folder.
+    FavoriteFolderModifyRequest favorite_folder_modify = 25;
   }
 }
 
@@ -210,6 +212,16 @@ message FavoriteTopicListResponse {
 
 message FavoriteFolderListRequest {}
 message FavoriteFolderListResponse { repeated FavoriteTopicFolder folders = 1; }
+
+message FavoriteFolderModifyRequest {
+  string folder_id = 1;
+  oneof change {
+    string rename = 2;
+    bool set_default = 3;
+    bool delete = 4;
+  }
+}
+message FavoriteFolderModifyResponse {}
 
 message TopicFavorRequest {
   enum Operation {

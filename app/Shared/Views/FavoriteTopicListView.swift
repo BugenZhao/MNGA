@@ -72,26 +72,32 @@ struct FavoriteTopicListInnerView: View {
 
 struct FavoriteTopicListView: View {
   @State var currentFolder: FavoriteTopicFolder? = nil
+  // Initially, we don't know the ID of default folder. To avoid reloading the list after initial
+  // folder load, we keep using "1" as the default folder ID. After user performs any action, we
+  // will reload the folder list and use the real ID.
+  @State var forceUseRealID = false
   @State var allFolders: [FavoriteTopicFolder] = []
 
-  var notLoaded: Bool {
-    allFolders.isEmpty && currentFolder == nil
-  }
-
-  func loadFolders() async {
-    if notLoaded {
-      let response: Result<FavoriteFolderListResponse, LogicError> = await logicCallAsync(.favoriteFolderList(.init()))
-      if case let .success(r) = response {
-        withAnimation {
-          allFolders = r.folders
-          currentFolder = r.folders.first(where: { $0.isDefault })
+  func reloadFolders(initial: Bool = false) async {
+    let response: Result<FavoriteFolderListResponse, LogicError> = await logicCallAsync(.favoriteFolderList(.init()))
+    if case let .success(r) = response {
+      withAnimation {
+        allFolders = r.folders
+        currentFolder = r.folders.first { $0.id == currentFolder?.id }
+          ?? r.folders.first(where: { $0.isDefault })
+        if !initial {
+          forceUseRealID = true
         }
       }
     }
   }
 
-  var currentFolderID: String {
-    if let currentFolder, !currentFolder.isDefault {
+  func loadFolders() async {
+    if allFolders.isEmpty, currentFolder == nil { await reloadFolders(initial: true) }
+  }
+
+  var currentFolderNormalizedID: String {
+    if let currentFolder, forceUseRealID || !currentFolder.isDefault {
       currentFolder.id
     } else {
       "1"
@@ -99,31 +105,73 @@ struct FavoriteTopicListView: View {
   }
 
   var currentIsDefault: Bool {
-    currentFolderID == "1"
+    currentFolder?.isDefault ?? true
   }
+
+  func modifyCurrentFolder(_ request: FavoriteFolderModifyRequest) {
+    guard let currentFolder else { return }
+
+    var request = request
+    request.folderID = currentFolder.id
+
+    logicCallAsync(.favoriteFolderModify(request)) { (_: FavoriteFolderModifyResponse) in
+      HapticUtils.play(type: .success)
+      Task { await reloadFolders() }
+    }
+  }
+
+  @State var showingDeleteConfirmation = false
 
   @ViewBuilder
   var folderMenu: some View {
-    if notLoaded {
-      ProgressView()
-    } else {
+    if let currentFolder {
       Menu {
-        Section("All Folders") {
-          Picker(selection: $currentFolder.animation(), label: Text("Folder")) {
+        Section("#\(currentFolder.id)") {
+          if currentIsDefault {
+            Label("Default Folder", systemImage: "checkmark")
+          } else {
+            Button(action: { modifyCurrentFolder(.with { $0.setDefault = true }) }) {
+              Label("Make Default Folder", systemImage: "folder.fill")
+            }
+          }
+          Button(role: .destructive, action: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+              showingDeleteConfirmation = true
+            }
+          }) {
+            Label("Delete Folder...", systemImage: "folder.badge.minus")
+          }
+        }
+        Menu {
+          Picker(selection: $currentFolder.animation(), label: Text("All Folders")) {
             ForEach(allFolders, id: \.id) { folder in
               Text(folder.name).tag(folder as FavoriteTopicFolder?)
             }
           }
+        } label: {
+          Label("All Folders", systemImage: "folder")
+          Text(currentFolder.name)
         }
       } label: {
         Label("Folder", systemImage: currentIsDefault ? "folder.fill" : "folder")
       }
+      .confirmationDialog(
+        "Delete the folder and all its topics?",
+        isPresented: $showingDeleteConfirmation,
+        titleVisibility: .visible
+      ) {
+        Button("Delete", role: .destructive) {
+          modifyCurrentFolder(.with { $0.delete = true })
+        }
+      }
+    } else {
+      ProgressView()
     }
   }
 
   var body: some View {
-    FavoriteTopicListInnerView.build(folderID: currentFolderID)
-      .id(currentFolderID)
+    FavoriteTopicListInnerView.build(folderID: currentFolderNormalizedID)
+      .id(currentFolderNormalizedID)
       .navigationTitle("Favorite Topics")
       .navigationSubtitle(currentFolder?.name ?? "Default Folder".localized)
       .toolbar { ToolbarItem(placement: .navigationBarTrailing) { folderMenu } }

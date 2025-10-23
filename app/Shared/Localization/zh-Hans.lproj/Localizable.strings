@@ -269,6 +269,10 @@
 "Subforum Tip" = "轻触前往子版块，滑动来收藏子版块。\n使用右侧开关订阅或屏蔽子版块的话题。";
 "All Folders" = "所有收藏夹";
 "Default Folder" = "默认收藏夹";
+"Make Default Folder" = "设为默认收藏夹";
+"Delete Folder..." = "删除收藏夹...";
+"Delete" = "删除";
+"Delete the folder and all its topics?" = "删除收藏夹以及其中所有收藏话题？";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";

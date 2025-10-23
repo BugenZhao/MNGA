@@ -229,6 +229,31 @@ pub async fn get_favorite_folder_list(
     })
 }
 
+pub async fn modify_favorite_folder(
+    request: FavoriteFolderModifyRequest,
+) -> ServiceResult<FavoriteFolderModifyResponse> {
+    let folder_id = request.get_folder_id();
+
+    let change = request.change.as_ref().unwrap();
+
+    use FavoriteFolderModifyRequest_oneof_change::*;
+    let (act, mut form): (&str, Vec<(&str, &str)>) = match change {
+        rename(name) => ("modify_folder", vec![("name", name)]),
+        set_default(_) => ("modify_folder", vec![("opt", "2")]),
+        delete(_) => ("del_folder", vec![]),
+    };
+    form.push(("folder", folder_id));
+
+    let _package = fetch_package(
+        "nuke.php",
+        vec![("__lib", "topic_favor_v2"), ("__act", act), ("raw", "3")],
+        form,
+    )
+    .await?;
+
+    Ok(FavoriteFolderModifyResponse::new())
+}
+
 pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
     if request.is_mock() {
         let response = fetch_mock(&request).await?;
