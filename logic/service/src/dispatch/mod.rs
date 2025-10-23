@@ -32,6 +32,8 @@ mod dispatch_async {
             hot_topic_list(r) => r!(handle_hot_topic_list(r)),
             forum_search(r) => r!(handle_forum_search(r)),
             favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
+            favorite_folder_list(r) => r!(handle_favorite_folder_list(r)),
+            favorite_folder_modify(r) => r!(handle_favorite_folder_modify(r)),
             topic_favor(r) => r!(handle_topic_favor(r)),
             post_reply_fetch_content(r) => r!(handle_post_reply_fetch_content(r)),
             post_reply(r) => r!(handle_post_reply(r)),

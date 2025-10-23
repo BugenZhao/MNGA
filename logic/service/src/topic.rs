@@ -147,12 +147,33 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     Some(subforum)
 }
 
+fn extract_favorite_folder(node: Node) -> Option<FavoriteTopicFolder> {
+    use super::macros::get;
+    let map = extract_kv(node);
+
+    let id = get!(map, "id")?;
+    let name = get!(map, "name").unwrap_or_default();
+
+    let folder = FavoriteTopicFolder {
+        id,
+        name,
+        topic_count: get!(map, "length", u32).unwrap_or_default(),
+        is_default: get!(map, "default").is_some(),
+        ..Default::default()
+    };
+
+    Some(folder)
+}
+
 pub async fn get_favorite_topic_list(
     request: FavoriteTopicListRequest,
 ) -> ServiceResult<FavoriteTopicListResponse> {
+    let folder_id = request.get_folder_id();
+    let page = request.page.to_string();
+
     let package = fetch_package(
         "thread.php",
-        vec![("favor", "1"), ("page", &request.page.to_string())],
+        vec![("favor", folder_id), ("page", page.as_str())],
         vec![],
     )
     .await?;
@@ -182,6 +203,55 @@ pub async fn get_favorite_topic_list(
         pages,
         ..Default::default()
     })
+}
+
+pub async fn get_favorite_folder_list(
+    _request: FavoriteFolderListRequest,
+) -> ServiceResult<FavoriteFolderListResponse> {
+    let package = fetch_package(
+        "nuke.php",
+        vec![
+            ("__lib", "topic_favor_v2"),
+            ("__act", "list_folder"),
+            ("page", "1"),
+        ],
+        vec![],
+    )
+    .await?;
+
+    let folders = extract_nodes(&package, "/root/data/item/item", |ns| {
+        ns.into_iter().filter_map(extract_favorite_folder).collect()
+    })?;
+
+    Ok(FavoriteFolderListResponse {
+        folders: folders.into(),
+        ..Default::default()
+    })
+}
+
+pub async fn modify_favorite_folder(
+    request: FavoriteFolderModifyRequest,
+) -> ServiceResult<FavoriteFolderModifyResponse> {
+    let folder_id = request.get_folder_id();
+
+    let change = request.change.as_ref().unwrap();
+
+    use FavoriteFolderModifyRequest_oneof_change::*;
+    let (act, mut form): (&str, Vec<(&str, &str)>) = match change {
+        rename(name) => ("modify_folder", vec![("name", name)]),
+        set_default(_) => ("modify_folder", vec![("opt", "2")]),
+        delete(_) => ("del_folder", vec![]),
+    };
+    form.push(("folder", folder_id));
+
+    let _package = fetch_package(
+        "nuke.php",
+        vec![("__lib", "topic_favor_v2"), ("__act", act), ("raw", "3")],
+        form,
+    )
+    .await?;
+
+    Ok(FavoriteFolderModifyResponse::new())
 }
 
 pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
@@ -560,6 +630,19 @@ mod test {
 
         post(ADD).await?;
         post(DELETE).await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_favor_folder_list() -> ServiceResult<()> {
+        let response = get_favorite_folder_list(FavoriteFolderListRequest::new()).await?;
+
+        println!("response: {:?}", response);
+
+        let folders = response.get_folders();
+        assert!(!folders.is_empty());
+        let _default_folder = folders.iter().find(|f| f.is_default).unwrap();
 
         Ok(())
     }

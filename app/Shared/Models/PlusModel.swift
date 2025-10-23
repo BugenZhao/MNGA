@@ -173,6 +173,18 @@ func withPlusCheck<Result>(_ feature: PlusFeature, _ body: () throws -> Result) 
   }
 }
 
+extension Binding where Value: Equatable {
+  func withPlusCheck(_ feature: PlusFeature) -> Self {
+    Binding(
+      get: { self.wrappedValue },
+      set: { newValue in
+        if newValue == self.wrappedValue { return }
+        MNGA.withPlusCheck(feature) { self.wrappedValue = newValue }
+      }
+    )
+  }
+}
+
 struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Destination: View {
   @EnvironmentObject var paywall: PaywallModel
 

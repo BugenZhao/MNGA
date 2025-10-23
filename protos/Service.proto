@@ -102,6 +102,10 @@ message AsyncRequest {
     ClockInRequest clock_in = 22;
     // Clear or check the cache.
     CacheRequest cache = 23;
+    // List favorite topic folders.
+    FavoriteFolderListRequest favorite_folder_list = 24;
+    // Modify a favorite topic folder.
+    FavoriteFolderModifyRequest favorite_folder_modify = 25;
   }
 }
 
@@ -197,11 +201,27 @@ message HotTopicListResponse {
 message ForumSearchRequest { string key = 1; }
 message ForumSearchResponse { repeated Forum forums = 1; }
 
-message FavoriteTopicListRequest { uint32 page = 1; }
+message FavoriteTopicListRequest {
+  uint32 page = 1;
+  string folder_id = 2;
+}
 message FavoriteTopicListResponse {
   repeated Topic topics = 1;
   uint32 pages = 2;
 }
+
+message FavoriteFolderListRequest {}
+message FavoriteFolderListResponse { repeated FavoriteTopicFolder folders = 1; }
+
+message FavoriteFolderModifyRequest {
+  string folder_id = 1;
+  oneof change {
+    string rename = 2;
+    bool set_default = 3;
+    bool delete = 4;
+  }
+}
+message FavoriteFolderModifyResponse {}
 
 message TopicFavorRequest {
   enum Operation {
