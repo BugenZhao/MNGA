@@ -59,6 +59,7 @@ struct FavoriteTopicListInnerView: View {
     let topic = dataSource.items[firstIndex] // FIXME: only first
 
     logicCallAsync(.topicFavor(.with {
+      // FIXME: folder id
       $0.topicID = topic.id
       $0.operation = .delete
     })) { (response: TopicFavorResponse) in
@@ -91,14 +92,6 @@ struct FavoriteTopicListView: View {
 
   func loadFolders() async {
     if allFolders.isEmpty, currentFolder == nil { await reloadFolders(initial: true) }
-  }
-
-  var currentFolderNormalizedID: String {
-    if let currentFolder, forceUseRealID || !currentFolder.isDefault {
-      currentFolder.id
-    } else {
-      "1"
-    }
   }
 
   var currentIsDefault: Bool {
@@ -179,8 +172,16 @@ struct FavoriteTopicListView: View {
     }
   }
 
+  var currentFolderNormalizedID: String {
+    if let currentFolder, forceUseRealID || !currentFolder.isDefault {
+      currentFolder.id
+    } else {
+      "1"
+    }
+  }
+
   var body: some View {
-    FavoriteTopicListInnerView.build(folderID: currentFolderNormalizedID)
+    FavoriteTopicListInnerView.build(folderID: currentFolder?.id ?? "1")
       .id(currentFolderNormalizedID)
       .navigationTitle("Favorite Topics")
       .navigationSubtitle(currentFolder?.name ?? "Default Folder".localized)
