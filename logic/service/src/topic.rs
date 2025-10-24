@@ -302,6 +302,31 @@ pub async fn modify_favorite_folder(
     Ok(FavoriteFolderModifyResponse::new())
 }
 
+pub async fn create_favorite_folder(
+    request: FavoriteFolderCreateRequest,
+) -> ServiceResult<FavoriteFolderCreateResponse> {
+    let name = request.get_name();
+    let opt_value = if request.get_set_default() { "2" } else { "0" };
+
+    let package = fetch_package(
+        "nuke.php",
+        vec![
+            ("__lib", "topic_favor_v2"),
+            ("__act", "new_folder"),
+            ("raw", "3"),
+        ],
+        vec![("name", name), ("opt", opt_value)],
+    )
+    .await?;
+
+    let folder_id = extract_string(&package, "/root/data/item[2]")?;
+
+    Ok(FavoriteFolderCreateResponse {
+        folder_id,
+        ..Default::default()
+    })
+}
+
 pub async fn get_topic_list(request: TopicListRequest) -> ServiceResult<TopicListResponse> {
     if request.is_mock() {
         let response = fetch_mock(&request).await?;
@@ -717,6 +742,39 @@ mod test {
         let folders = response.get_folders();
         assert!(!folders.is_empty());
         let _default_folder = folders.iter().find(|f| f.is_default).unwrap();
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_create_delete_favor_folder() -> ServiceResult<()> {
+        let response = create_favorite_folder(FavoriteFolderCreateRequest {
+            name: "test".to_owned(),
+            set_default: false,
+            ..Default::default()
+        })
+        .await?;
+
+        println!("response: {:?}", response);
+
+        let new_folder_id = response.get_folder_id();
+
+        let response = get_favorite_folder_list(FavoriteFolderListRequest::new()).await?;
+        let folders = response.get_folders();
+        let folder = folders.iter().find(|f| f.id == new_folder_id).unwrap();
+        assert_eq!(folder.name, "test");
+        assert!(!folder.is_default);
+
+        let _response = modify_favorite_folder(FavoriteFolderModifyRequest {
+            folder_id: new_folder_id.to_owned(),
+            change: Some(FavoriteFolderModifyRequest_oneof_change::delete(true)),
+            ..Default::default()
+        })
+        .await?;
+
+        let response = get_favorite_folder_list(FavoriteFolderListRequest::new()).await?;
+        let folders = response.get_folders();
+        assert!(folders.iter().all(|f| f.id != new_folder_id));
 
         Ok(())
     }

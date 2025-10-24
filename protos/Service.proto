@@ -106,6 +106,8 @@ message AsyncRequest {
     FavoriteFolderListRequest favorite_folder_list = 24;
     // Modify a favorite topic folder.
     FavoriteFolderModifyRequest favorite_folder_modify = 25;
+    // Create a favorite topic folder.
+    FavoriteFolderCreateRequest favorite_folder_create = 26;
   }
 }
 
@@ -222,6 +224,12 @@ message FavoriteFolderModifyRequest {
   }
 }
 message FavoriteFolderModifyResponse {}
+
+message FavoriteFolderCreateRequest {
+  string name = 1;
+  bool set_default = 2;
+}
+message FavoriteFolderCreateResponse { string folder_id = 1; }
 
 message TopicFavorRequest {
   enum Operation {
