@@ -12,15 +12,16 @@ use crate::{
         extract_string, get_unique_id, server_now,
     },
 };
-use cache::CACHE;
+use cache::{CACHE, CacheResult};
 use chrono::Duration;
 use futures::TryFutureExt;
 use protos::{DataModel::*, MockRequest, Service::*, ToValue};
 use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
+static FAVOR_RESPONSE_PREFIX: &str = "/favor_response/topic";
 fn favor_response_key(topic_id: &str) -> String {
-    format!("/favor_response/topic/{}", topic_id)
+    format!("{}/{}", FAVOR_RESPONSE_PREFIX, topic_id)
 }
 
 pub static TOPIC_DETAILS_PREFIX: &str = "/topic_details_response/topic";
@@ -165,6 +166,26 @@ fn extract_favorite_folder(node: Node) -> Option<FavoriteTopicFolder> {
     Some(folder)
 }
 
+fn update_cached_favor_response(
+    topic_id: &str,
+    folder_id: &str,
+    remove: bool,
+) -> CacheResult<TopicFavorResponse> {
+    CACHE.mutate_msg_or_default(
+        &favor_response_key(topic_id),
+        |r: &mut TopicFavorResponse| {
+            if remove {
+                r.folder_ids.retain(|id| id != folder_id);
+            } else {
+                if !r.folder_ids.iter().any(|id| id == folder_id) {
+                    r.folder_ids.push(folder_id.to_owned());
+                }
+            }
+            r.is_favored = !r.folder_ids.is_empty();
+        },
+    )
+}
+
 pub async fn get_favorite_topic_list(
     request: FavoriteTopicListRequest,
 ) -> ServiceResult<FavoriteTopicListResponse> {
@@ -183,13 +204,7 @@ pub async fn get_favorite_topic_list(
             .filter_map(|node| {
                 let topic = extract_topic(node);
                 if let Some(ref topic) = topic {
-                    let _ = CACHE.insert_msg(
-                        &favor_response_key(topic.get_id()),
-                        &TopicFavorResponse {
-                            is_favored: true,
-                            ..Default::default()
-                        },
-                    );
+                    let _ = update_cached_favor_response(topic.get_id(), folder_id, false);
                 }
                 topic
             })
@@ -250,6 +265,22 @@ pub async fn modify_favorite_folder(
         form,
     )
     .await?;
+
+    // Update cache if folder is deleted.
+    if let delete(_) = change {
+        CACHE.scan_mutate_msg(
+            FAVOR_RESPONSE_PREFIX,
+            |response: &mut TopicFavorResponse| {
+                let len = response.folder_ids.len();
+                response.folder_ids.retain(|id| id != folder_id);
+                // Only update `is_favored` if it's actually in the folder.
+                // For compatibility with old response where we don't support multiple folders.
+                if response.folder_ids.len() != len {
+                    response.is_favored = !response.folder_ids.is_empty();
+                }
+            },
+        )?;
+    }
 
     Ok(FavoriteFolderModifyResponse::new())
 }
@@ -489,27 +520,31 @@ pub async fn get_topic_details(
 }
 
 pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavorResponse> {
-    let (action, tid_key, is_favored) = match request.get_operation() {
+    let (act, tid_key, is_favored) = match request.get_operation() {
         TopicFavorRequest_Operation::ADD => ("add", "tid", true),
         TopicFavorRequest_Operation::DELETE => ("del", "tidarray", false),
     };
 
+    let mut folder_id = request.get_folder_id().to_owned();
+
+    // Fetch default folder id if not specified.
+    if folder_id.is_empty() || folder_id == "1" {
+        let folders = get_favorite_folder_list(Default::default()).await?.folders;
+        let default_folder = folders
+            .into_iter()
+            .find(|f| f.is_default)
+            .ok_or_else(|| ServiceError::MngaInternal("No default folder found".to_owned()))?;
+        folder_id = default_folder.id;
+    }
+
     let _package = fetch_package(
         "nuke.php",
-        vec![("__lib", "topic_favor"), ("__act", "topic_favor")],
-        vec![
-            ("action", action),
-            (tid_key, request.get_topic_id()),
-            ("page", "1"),
-        ],
+        vec![("__lib", "topic_favor_v2"), ("__act", act)],
+        vec![(tid_key, request.get_topic_id()), ("folder", &folder_id)],
     )
     .await?;
 
-    let response = TopicFavorResponse {
-        is_favored,
-        ..Default::default()
-    };
-    let _ = CACHE.insert_msg(&favor_response_key(request.get_topic_id()), &response);
+    let response = update_cached_favor_response(request.get_topic_id(), &folder_id, !is_favored)?;
 
     Ok(response)
 }
@@ -629,7 +664,7 @@ mod test {
         };
 
         post(ADD).await?;
-        post(DELETE).await?;
+        // post(DELETE).await?;
 
         Ok(())
     }

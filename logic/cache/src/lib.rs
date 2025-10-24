@@ -76,11 +76,14 @@ impl Cache {
     fn do_mutate_msg<M: protos::Message>(
         &self,
         key: &str,
+        or_default: bool,
         mutate: impl FnOnce(&mut M),
     ) -> CacheResult<Option<M>> {
         let key_bytes = key.as_bytes();
         let value = self.db.get(key_bytes)?;
-        let mut value_msg = value.and_then(|ivec| M::parse_from_bytes(&ivec).ok());
+        let mut value_msg = value
+            .and_then(|ivec| M::parse_from_bytes(&ivec).ok())
+            .or_else(|| if or_default { Some(M::new()) } else { None });
 
         if let Some(msg) = value_msg.as_mut() {
             mutate(msg);
@@ -90,6 +93,21 @@ impl Cache {
         }
 
         Ok(value_msg)
+    }
+
+    fn do_scan_mutate_msg<M: protos::Message>(
+        &self,
+        prefix: &str,
+        mutate: impl Fn(&mut M),
+    ) -> CacheResult<()> {
+        for r in self.db.scan_prefix(prefix) {
+            let (k, v) = r?;
+            let mut msg = M::parse_from_bytes(&v)?;
+            mutate(&mut msg);
+            let value = msg.write_to_bytes()?;
+            self.db.insert(k, value)?;
+        }
+        Ok(())
     }
 
     fn do_scan_msg<M: protos::Message>(&self, prefix: &str) -> impl Iterator<Item = M> {
@@ -136,9 +154,34 @@ impl Cache {
         mutate: impl FnOnce(&mut M),
     ) -> CacheResult<Option<M>> {
         if self.is_test {
-            self.do_mutate_msg(key, mutate)
+            self.do_mutate_msg(key, false, mutate)
         } else {
-            tokio::task::block_in_place(move || self.do_mutate_msg(key, mutate))
+            tokio::task::block_in_place(move || self.do_mutate_msg(key, false, mutate))
+        }
+    }
+
+    pub fn mutate_msg_or_default<M: protos::Message>(
+        &self,
+        key: &str,
+        mutate: impl FnOnce(&mut M),
+    ) -> CacheResult<M> {
+        if self.is_test {
+            self.do_mutate_msg(key, true, mutate)
+        } else {
+            tokio::task::block_in_place(move || self.do_mutate_msg(key, true, mutate))
+        }
+        .map(Option::unwrap)
+    }
+
+    pub fn scan_mutate_msg<M: protos::Message>(
+        &self,
+        prefix: &str,
+        mutate: impl Fn(&mut M),
+    ) -> CacheResult<()> {
+        if self.is_test {
+            self.do_scan_mutate_msg(prefix, mutate)
+        } else {
+            tokio::task::block_in_place(move || self.do_scan_mutate_msg(prefix, mutate))
         }
     }
 
