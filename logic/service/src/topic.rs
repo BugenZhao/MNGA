@@ -577,6 +577,11 @@ pub async fn get_user_topic_list(
 
 #[cfg(test)]
 mod test {
+    use std::sync::{
+        Arc,
+        atomic::{AtomicU32, Ordering::SeqCst},
+    };
+
     use super::*;
     use crate::{constants::REVIEW_UID, fetch::with_fetch_check, user::UserController};
 
@@ -652,9 +657,17 @@ mod test {
     async fn test_topic_favor() -> ServiceResult<()> {
         use TopicFavorRequest_Operation::*;
 
+        let success = Arc::new(AtomicU32::new(0));
         let post = |op| {
             with_fetch_check(
-                |c| assert!(c.contains("操作成功")),
+                {
+                    let success = success.clone();
+                    move |c| {
+                        if c.contains("操作成功") {
+                            success.fetch_add(1, SeqCst);
+                        }
+                    }
+                },
                 topic_favor(TopicFavorRequest {
                     topic_id: "27455825".to_owned(),
                     operation: op,
@@ -664,7 +677,9 @@ mod test {
         };
 
         post(ADD).await?;
-        // post(DELETE).await?;
+        post(DELETE).await?;
+
+        assert_eq!(success.load(SeqCst), 2);
 
         Ok(())
     }
