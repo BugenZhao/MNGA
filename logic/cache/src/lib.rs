@@ -100,13 +100,15 @@ impl Cache {
         prefix: &str,
         mutate: impl Fn(&mut M),
     ) -> CacheResult<()> {
+        let mut batch = sled::Batch::default();
         for r in self.db.scan_prefix(prefix) {
             let (k, v) = r?;
             let mut msg = M::parse_from_bytes(&v)?;
             mutate(&mut msg);
             let value = msg.write_to_bytes()?;
-            self.db.insert(k, value)?;
+            batch.insert(k, value);
         }
+        self.db.apply_batch(batch)?;
         Ok(())
     }
 
