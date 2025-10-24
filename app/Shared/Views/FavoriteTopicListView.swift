@@ -167,6 +167,7 @@ struct FavoriteTopicListView: View {
         } label: {
           Text("All Folders")
         }
+        .menuActionDismissBehavior(.disabled)
 
       } label: {
         Label("Folder", systemImage: currentFolder.isDefault ? "folder.fill" : "folder")

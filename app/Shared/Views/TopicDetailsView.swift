@@ -57,26 +57,31 @@ struct TopicFavorMenuView: View {
     }
   }
 
+  var defaultFolder: FavoriteTopicFolder? {
+    folders.allFolders.first(where: { $0.isDefault })
+  }
+
+  var otherFolders: [FavoriteTopicFolder] {
+    folders.allFolders.filter { !$0.isDefault }
+  }
+
   var body: some View {
     Menu {
       if folders.allFolders.isEmpty {
         Text("Loading...").task { await folders.load() }
       } else {
-        if let defaultFolder = folders.allFolders.first(where: { $0.isDefault }) {
-          Section {
+        if let defaultFolder {
+          Section("Default Folder") {
             folderToggle(for: defaultFolder)
           }
         }
-        Section {
-          ForEach(folders.allFolders.filter { !$0.isDefault }, id: \.id) { folder in
-            folderToggle(for: folder)
-          }
+        ForEach(otherFolders, id: \.id) { folder in
+          folderToggle(for: folder)
         }
       }
     } label: {
       Label("Favorite in...", systemImage: icon)
     }
-    .menuActionDismissBehavior(.disabled)
   }
 }
 
