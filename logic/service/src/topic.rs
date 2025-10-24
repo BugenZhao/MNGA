@@ -19,7 +19,7 @@ use protos::{DataModel::*, MockRequest, Service::*, ToValue};
 use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
-static FAVOR_RESPONSE_PREFIX: &str = "/favor_response/topic";
+pub static FAVOR_RESPONSE_PREFIX: &str = "/favor_response/topic";
 fn favor_response_key(topic_id: &str) -> String {
     format!("{}/{}", FAVOR_RESPONSE_PREFIX, topic_id)
 }
