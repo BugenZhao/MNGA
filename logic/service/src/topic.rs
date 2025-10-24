@@ -86,12 +86,15 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         .filter(|q| !q.is_empty() && q != "0")
         .or_else(|| get!(map, "tid"))?;
 
-    let is_favored = CACHE
+    let TopicFavorResponse {
+        is_favored,
+        folder_ids: favor_folder_ids,
+        ..
+    } = CACHE
         .get_msg::<TopicFavorResponse>(&favor_response_key(&id))
         .ok()
         .flatten()
-        .map(|r| r.is_favored)
-        .unwrap_or(false);
+        .unwrap_or_default();
 
     let replies_num_last_visit = find_topic_history(&id)
         .map(|s| s.get_topic_snapshot().get_replies_num())
@@ -112,6 +115,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         is_favored,
         _replies_num_last_visit: replies_num_last_visit,
         fid,
+        favor_folder_ids,
         ..Default::default()
     };
 
@@ -177,7 +181,7 @@ fn update_cached_favor_response(
             if remove {
                 r.folder_ids.retain(|id| id != folder_id);
             } else {
-                if !r.folder_ids.iter().any(|id| id == folder_id) {
+                if r.folder_ids.iter().all(|id| id != folder_id) {
                     r.folder_ids.push(folder_id.to_owned());
                 }
             }

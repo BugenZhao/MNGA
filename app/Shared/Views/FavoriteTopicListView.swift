@@ -59,7 +59,7 @@ struct FavoriteTopicListInnerView: View {
     let topic = dataSource.items[firstIndex] // FIXME: only first
 
     logicCallAsync(.topicFavor(.with {
-      // FIXME: folder id
+      $0.folderID = folderID
       $0.topicID = topic.id
       $0.operation = .delete
     })) { (response: TopicFavorResponse) in
