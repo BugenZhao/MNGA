@@ -27,8 +27,8 @@ message Topic {
                                     // it's not the exactly requested one.
   optional string fav = 11; // Code for accessing the topic even if it's hidden
                             // or expired, if it's favored before
-  bool is_favored = 12;
-  repeated string favor_folder_ids = 16;
+  bool is_favored = 12; // See `TopicFavorResponse`
+  repeated string favor_folder_ids = 16; // See `TopicFavorResponse`
   optional uint32 replies_num_last_visit = 13;
   string fid = 14; // The id of the topic's parent forum, mainly used for
                    // uploading attachments.

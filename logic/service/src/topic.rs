@@ -170,24 +170,44 @@ fn extract_favorite_folder(node: Node) -> Option<FavoriteTopicFolder> {
     Some(folder)
 }
 
-fn update_cached_favor_response(
+#[derive(Clone, Copy)]
+enum FavorOp {
+    Add,
+    Remove,
+}
+
+/// Add or remove the folder from the cached response.
+fn mutate_favor_response(folder_id: &str, op: FavorOp, r: &mut TopicFavorResponse) {
+    let len = r.folder_ids.len();
+    match op {
+        FavorOp::Add => {
+            if r.folder_ids.iter().all(|id| id != folder_id) {
+                r.folder_ids.push(folder_id.to_owned());
+            }
+        }
+        FavorOp::Remove => {
+            r.folder_ids.retain(|id| id != folder_id);
+        }
+    }
+
+    // Only update `is_favored` if it's actually in the folder.
+    // This is for compatibility with old response where we don't support multiple folders.
+    let updated = r.folder_ids.len() != len;
+    if updated {
+        r.is_favored = !r.folder_ids.is_empty();
+    }
+}
+
+/// Add or remove the folder from the cached response for specific topic.
+/// Create an entry if not exists.
+fn update_topic_cached_favor_response(
     topic_id: &str,
     folder_id: &str,
-    remove: bool,
+    op: FavorOp,
 ) -> CacheResult<TopicFavorResponse> {
-    CACHE.mutate_msg_or_default(
-        &favor_response_key(topic_id),
-        |r: &mut TopicFavorResponse| {
-            if remove {
-                r.folder_ids.retain(|id| id != folder_id);
-            } else {
-                if r.folder_ids.iter().all(|id| id != folder_id) {
-                    r.folder_ids.push(folder_id.to_owned());
-                }
-            }
-            r.is_favored = !r.folder_ids.is_empty();
-        },
-    )
+    CACHE.mutate_msg_or_default(&favor_response_key(topic_id), |r| {
+        mutate_favor_response(folder_id, op, r)
+    })
 }
 
 pub async fn get_favorite_topic_list(
@@ -207,8 +227,10 @@ pub async fn get_favorite_topic_list(
         ns.into_iter()
             .filter_map(|node| {
                 let topic = extract_topic(node);
+                // Update cache when browsing the favorite topic list.
                 if let Some(ref topic) = topic {
-                    let _ = update_cached_favor_response(topic.get_id(), folder_id, false);
+                    let _ =
+                        update_topic_cached_favor_response(topic.get_id(), folder_id, FavorOp::Add);
                 }
                 topic
             })
@@ -272,18 +294,9 @@ pub async fn modify_favorite_folder(
 
     // Update cache if folder is deleted.
     if let delete(_) = change {
-        CACHE.scan_mutate_msg(
-            FAVOR_RESPONSE_PREFIX,
-            |response: &mut TopicFavorResponse| {
-                let len = response.folder_ids.len();
-                response.folder_ids.retain(|id| id != folder_id);
-                // Only update `is_favored` if it's actually in the folder.
-                // For compatibility with old response where we don't support multiple folders.
-                if response.folder_ids.len() != len {
-                    response.is_favored = !response.folder_ids.is_empty();
-                }
-            },
-        )?;
+        CACHE.scan_mutate_msg(FAVOR_RESPONSE_PREFIX, |r| {
+            mutate_favor_response(folder_id, FavorOp::Remove, r)
+        })?;
     }
 
     Ok(FavoriteFolderModifyResponse::new())
@@ -524,13 +537,14 @@ pub async fn get_topic_details(
 }
 
 pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavorResponse> {
-    let (act, tid_key, is_favored) = match request.get_operation() {
-        TopicFavorRequest_Operation::ADD => ("add", "tid", true),
-        TopicFavorRequest_Operation::DELETE => ("del", "tidarray", false),
+    let (act, tid_key, op) = match request.get_operation() {
+        TopicFavorRequest_Operation::ADD => ("add", "tid", FavorOp::Add),
+        TopicFavorRequest_Operation::DELETE => ("del", "tidarray", FavorOp::Remove),
     };
 
     let mut folder_id = request.get_folder_id().to_owned();
 
+    // "-1" means to create a new folder. Record current folders before the request.
     let mut folders = Vec::new();
     if folder_id == "-1" {
         folders = get_favorite_folder_list(Default::default())
@@ -546,6 +560,7 @@ pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavor
     )
     .await?;
 
+    // Find out the info of the new folder. Update `folder_id` to the real id.
     if folder_id == "-1" {
         let new_folders = get_favorite_folder_list(Default::default())
             .await?
@@ -560,7 +575,7 @@ pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavor
         }
     }
 
-    let response = update_cached_favor_response(request.get_topic_id(), &folder_id, !is_favored)?;
+    let response = update_topic_cached_favor_response(request.get_topic_id(), &folder_id, op)?;
 
     Ok(response)
 }
@@ -593,11 +608,6 @@ pub async fn get_user_topic_list(
 
 #[cfg(test)]
 mod test {
-    use std::sync::{
-        Arc,
-        atomic::{AtomicU32, Ordering::SeqCst},
-    };
-
     use super::*;
     use crate::{constants::REVIEW_UID, fetch::with_fetch_check, user::UserController};
 
@@ -673,20 +683,20 @@ mod test {
     async fn test_topic_favor() -> ServiceResult<()> {
         use TopicFavorRequest_Operation::*;
 
-        let success = Arc::new(AtomicU32::new(0));
+        let folder = get_favorite_folder_list(FavoriteFolderListRequest::new())
+            .await?
+            .folders
+            .first()
+            .unwrap()
+            .clone();
+
         let post = |op| {
             with_fetch_check(
-                {
-                    let success = success.clone();
-                    move |c| {
-                        if c.contains("操作成功") {
-                            success.fetch_add(1, SeqCst);
-                        }
-                    }
-                },
+                |c| assert!(c.contains("操作成功")),
                 topic_favor(TopicFavorRequest {
                     topic_id: "27455825".to_owned(),
                     operation: op,
+                    folder_id: folder.id.clone(),
                     ..Default::default()
                 }),
             )
@@ -694,8 +704,6 @@ mod test {
 
         post(ADD).await?;
         post(DELETE).await?;
-
-        assert_eq!(success.load(SeqCst), 2);
 
         Ok(())
     }
