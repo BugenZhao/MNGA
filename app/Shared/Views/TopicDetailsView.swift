@@ -30,12 +30,16 @@ struct TopicFavorMenuView: View {
   @Binding var topic: Topic
   @StateObject var folders = FavoriteFolderModel.shared
 
-  func setFavor(_ operation: TopicFavorRequest.Operation, folderID: String) {
-    logicCallAsync(.topicFavor(.with {
-      $0.topicID = topic.id
-      $0.operation = operation
-      $0.folderID = folderID
-    })) { (response: TopicFavorResponse) in
+  @MainActor
+  func setFavor(_ operation: TopicFavorRequest.Operation, folderID: String) async {
+    let res: Result<TopicFavorResponse, LogicError> = await
+      logicCallAsync(.topicFavor(.with {
+        $0.topicID = topic.id
+        $0.operation = operation
+        $0.folderID = folderID
+      }))
+
+    if case let .success(response) = res {
       topic.isFavored = response.isFavored
       topic.favorFolderIds = response.folderIds
       HapticUtils.play(type: .success)
@@ -49,12 +53,26 @@ struct TopicFavorMenuView: View {
   @ViewBuilder
   func folderToggle(for folder: FavoriteTopicFolder) -> some View {
     let isFavored = topic.favorFolderIds.contains(folder.id)
-    Toggle(isOn: .init(
+    let binding = Binding(
       get: { isFavored },
-      set: { _ in setFavor(isFavored ? .delete : .add, folderID: folder.id) }
-    )) {
+      set: { _ in
+        guard folder.isDefault || checkPlus(.multiFavorite) else { return }
+        Task { await setFavor(isFavored ? .delete : .add, folderID: folder.id) }
+      }
+    )
+
+    Toggle(isOn: binding) {
       Text("\(folder.name)")
+      if folder.isDefault {
+        Text("Default Folder")
+      }
     }
+  }
+
+  func favorToNewFolder() async {
+    guard checkPlus(.multiFavorite) else { return }
+    await setFavor(.add, folderID: "-1")
+    await folders.reload()
   }
 
   var defaultFolder: FavoriteTopicFolder? {
@@ -71,17 +89,20 @@ struct TopicFavorMenuView: View {
         Text("Loading...").task { await folders.load() }
       } else {
         if let defaultFolder {
-          Section("Default Folder") {
-            folderToggle(for: defaultFolder)
-          }
+          folderToggle(for: defaultFolder)
         }
         ForEach(otherFolders, id: \.id) { folder in
           folderToggle(for: folder)
         }
+        Divider()
+        Button(action: { Task { await favorToNewFolder() } }) {
+          Label("New Folder...", systemImage: "plus")
+        }
       }
     } label: {
-      Label("Favorite in...", systemImage: icon)
+      Label("Mark as Favorite", systemImage: icon)
     }
+    .menuActionDismissBehavior(topic.isFavored ? .disabled : .automatic)
   }
 }
 
@@ -277,13 +298,14 @@ struct TopicDetailsView: View {
       #endif
 
       Section {
+        favoriteMenu
+
         if let atForum {
           Button(action: { action.navigateToForum = atForum }) {
             Label("Goto Forum", systemImage: "list.triangle")
             Text("\(atForum.name)")
           }
         }
-        favoriteMenu
       }
     } label: {
       Label("More", systemImage: "ellipsis")

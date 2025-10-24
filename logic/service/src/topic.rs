@@ -531,22 +531,34 @@ pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavor
 
     let mut folder_id = request.get_folder_id().to_owned();
 
-    // Fetch default folder id if not specified.
-    if folder_id.is_empty() || folder_id == "1" {
-        let folders = get_favorite_folder_list(Default::default()).await?.folders;
-        let default_folder = folders
-            .into_iter()
-            .find(|f| f.is_default)
-            .ok_or_else(|| ServiceError::MngaInternal("No default folder found".to_owned()))?;
-        folder_id = default_folder.id;
+    let mut folders = Vec::new();
+    if folder_id == "-1" {
+        folders = get_favorite_folder_list(Default::default())
+            .await?
+            .folders
+            .into_vec();
     }
 
-    let _package = fetch_package(
+    let _ = fetch_package(
         "nuke.php",
         vec![("__lib", "topic_favor_v2"), ("__act", act)],
         vec![(tid_key, request.get_topic_id()), ("folder", &folder_id)],
     )
     .await?;
+
+    if folder_id == "-1" {
+        let new_folders = get_favorite_folder_list(Default::default())
+            .await?
+            .folders
+            .into_vec();
+
+        if let Some(new_folder) = new_folders
+            .into_iter()
+            .find(|f| !folders.iter().any(|old| old.id == f.id))
+        {
+            folder_id = new_folder.id;
+        }
+    }
 
     let response = update_cached_favor_response(request.get_topic_id(), &folder_id, !is_favored)?;
 

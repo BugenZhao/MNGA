@@ -230,7 +230,7 @@ message TopicFavorRequest {
   }
   string topic_id = 1;
   Operation operation = 2;
-  string folder_id = 3; // For default folder, set to empty or "1".
+  string folder_id = 3; // To create a new folder, use "-1".
 }
 message TopicFavorResponse {
   bool is_favored = 1; // Whether `folder_ids` is non-empty.
