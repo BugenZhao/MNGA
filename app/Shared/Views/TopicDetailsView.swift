@@ -26,6 +26,86 @@ final class CurrentViewingFloor {
   }
 }
 
+struct TopicFavorMenuView: View {
+  @Binding var topic: Topic
+  @StateObject var folders = FavoriteFolderModel.shared
+
+  @MainActor
+  func setFavor(_ operation: TopicFavorRequest.Operation, folderID: String) async {
+    let res: Result<TopicFavorResponse, LogicError> = await
+      logicCallAsync(.topicFavor(.with {
+        $0.topicID = topic.id
+        $0.operation = operation
+        $0.folderID = folderID
+      }))
+
+    if case let .success(response) = res {
+      topic.isFavored = response.isFavored
+      topic.favorFolderIds = response.folderIds
+      HapticUtils.play(type: .success)
+    }
+  }
+
+  var icon: String {
+    topic.isFavored ? "bookmark.fill" : "bookmark"
+  }
+
+  @ViewBuilder
+  func folderToggle(for folder: FavoriteTopicFolder) -> some View {
+    let isFavored = topic.favorFolderIds.contains(folder.id)
+    let binding = Binding(
+      get: { isFavored },
+      set: { _ in
+        guard folder.isDefault || checkPlus(.multiFavorite) else { return }
+        Task { await setFavor(isFavored ? .delete : .add, folderID: folder.id) }
+      }
+    )
+
+    Toggle(isOn: binding) {
+      Text("\(folder.name)")
+      if folder.isDefault {
+        Text("Default Folder")
+      }
+    }
+  }
+
+  func favorToNewFolder() async {
+    guard checkPlus(.multiFavorite) else { return }
+    await setFavor(.add, folderID: "-1")
+    await folders.reload()
+  }
+
+  var defaultFolder: FavoriteTopicFolder? {
+    folders.allFolders.first(where: { $0.isDefault })
+  }
+
+  var otherFolders: [FavoriteTopicFolder] {
+    folders.allFolders.filter { !$0.isDefault }
+  }
+
+  var body: some View {
+    Menu {
+      if folders.allFolders.isEmpty {
+        Text("Loading...").task { await folders.load() }
+      } else {
+        if let defaultFolder {
+          folderToggle(for: defaultFolder)
+        }
+        ForEach(otherFolders, id: \.id) { folder in
+          folderToggle(for: folder)
+        }
+        Divider()
+        Button(action: { Task { await favorToNewFolder() } }) {
+          Label("New Folder...", systemImage: "plus")
+        }
+      }
+    } label: {
+      Label("Mark as Favorite", systemImage: icon)
+    }
+    .menuActionDismissBehavior(topic.isFavored ? .disabled : .automatic)
+  }
+}
+
 struct TopicDetailsView: View {
   @Namespace var transition
 
@@ -44,8 +124,6 @@ struct TopicDetailsView: View {
   @StateObject var users = UsersModel.shared
   @StateObject var alert = ToastModel.editorAlert
 
-  @State var isFavored: Bool
-
   let onlyPost: (id: PostId?, atPage: Int?)
   let forceLocalMode: Bool
 
@@ -53,6 +131,10 @@ struct TopicDetailsView: View {
   @State var floorToJump: Int?
   @State var postIdToJump: PostId?
   var currentViewingFloor = CurrentViewingFloor()
+
+  var isFavored: Bool {
+    topic.isFavored
+  }
 
   var localMode: Bool {
     forceLocalMode || (dataSource.latestResponse?.isLocalCache == true)
@@ -100,7 +182,7 @@ struct TopicDetailsView: View {
       loadFromPage: fromPage
     )
 
-    return Self(topic: topicBinding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: onlyPost, forceLocalMode: localMode, postIdToJump: postIdToJump)
+    return Self(topic: topicBinding, dataSource: dataSource, onlyPost: onlyPost, forceLocalMode: localMode, postIdToJump: postIdToJump)
       .environment(\.enableAuthorOnly, !localMode)
   }
 
@@ -129,7 +211,7 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self(topic: binding, dataSource: dataSource, isFavored: topic.isFavored, onlyPost: (nil, nil), forceLocalMode: false)
+      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false)
         .environment(\.enableAuthorOnly, false)
     }
   }
@@ -172,14 +254,9 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
-  var favoriteButton: some View {
+  var favoriteMenu: some View {
     if !mock {
-      Button(action: { toggleFavor() }) {
-        Label(
-          isFavored ? "Remove from Favorites" : "Mark as Favorite",
-          systemImage: isFavored ? "bookmark.slash.fill" : "bookmark"
-        )
-      }
+      TopicFavorMenuView(topic: $topic)
     }
   }
 
@@ -221,20 +298,14 @@ struct TopicDetailsView: View {
       #endif
 
       Section {
+        favoriteMenu
+
         if let atForum {
           Button(action: { action.navigateToForum = atForum }) {
             Label("Goto Forum", systemImage: "list.triangle")
             Text("\(atForum.name)")
           }
         }
-        #if os(iOS)
-          favoriteButton
-        #endif
-        #if os(macOS)
-          Button(action: { dataSource.refresh() }) {
-            Label("Refresh", systemImage: "arrow.clockwise")
-          }
-        #endif
       }
     } label: {
       Label("More", systemImage: "ellipsis")
@@ -547,18 +618,6 @@ struct TopicDetailsView: View {
 
   var navID: NavigationIdentifier {
     .topicID(tid: topic.id, fav: topic.hasFav ? topic.fav : nil)
-  }
-
-  func toggleFavor() {
-    logicCallAsync(.topicFavor(.with {
-      $0.topicID = topic.id
-      $0.operation = isFavored ? .delete : .add
-    })) { (response: TopicFavorResponse) in
-      isFavored = response.isFavored
-      #if os(iOS)
-        HapticUtils.play(type: .success)
-      #endif
-    }
   }
 
   func doReplyTopic() {

@@ -5,28 +5,34 @@ use protos::{
 };
 
 use crate::{
-    error::ServiceResult, history::TOPIC_SNAPSHOT_PREFIX, noti::NOTI_PREFIX,
-    topic::TOPIC_DETAILS_PREFIX,
+    error::ServiceResult,
+    history::TOPIC_SNAPSHOT_PREFIX,
+    noti::NOTI_PREFIX,
+    topic::{FAVOR_RESPONSE_PREFIX, TOPIC_DETAILS_PREFIX},
 };
 
-fn type_to_prefix(t: CacheType) -> &'static str {
+fn type_to_prefix(t: CacheType) -> Vec<&'static str> {
     match t {
-        CacheType::ALL => "/",
-        CacheType::TOPIC_HISTORY => TOPIC_SNAPSHOT_PREFIX,
-        CacheType::TOPIC_DETAILS => TOPIC_DETAILS_PREFIX,
-        CacheType::NOTIFICATION => NOTI_PREFIX,
+        CacheType::ALL => vec!["/"],
+        CacheType::TOPIC_HISTORY => vec![TOPIC_SNAPSHOT_PREFIX],
+        CacheType::TOPIC_DETAILS => vec![TOPIC_DETAILS_PREFIX, FAVOR_RESPONSE_PREFIX],
+        CacheType::NOTIFICATION => vec![NOTI_PREFIX],
     }
 }
 
 pub async fn manipulate_cache(request: CacheRequest) -> ServiceResult<CacheResponse> {
-    let prefix = type_to_prefix(request.get_field_type());
-    let items = match request.get_operation() {
-        CacheOperation::CHECK => CACHE.scan_prefix(prefix).count(),
-        CacheOperation::CLEAR => {
-            let _removed_count = CACHE.remove_prefix(prefix)?;
-            CACHE.scan_prefix(prefix).count()
-        }
-    };
+    let mut items = 0;
+
+    let prefixes = type_to_prefix(request.get_field_type());
+    for prefix in prefixes {
+        items += match request.get_operation() {
+            CacheOperation::CHECK => CACHE.scan_prefix(prefix).count(),
+            CacheOperation::CLEAR => {
+                let _removed_count = CACHE.remove_prefix(prefix)?;
+                CACHE.scan_prefix(prefix).count()
+            }
+        };
+    }
     let total_size = CACHE.total_size()?;
 
     Ok(CacheResponse {
@@ -52,11 +58,13 @@ mod test {
                 content: "Content".to_owned(),
                 ..Default::default()
             };
-            let prefix = type_to_prefix(tp);
+            let prefixes = type_to_prefix(tp);
             for _ in 0..count {
-                CACHE
-                    .insert_msg(&format!("{}/{}", prefix, get_unique_id()), &example_msg())
-                    .unwrap();
+                for prefix in &prefixes {
+                    CACHE
+                        .insert_msg(&format!("{}/{}", prefix, get_unique_id()), &example_msg())
+                        .unwrap();
+                }
             }
             CACHE.flush().unwrap();
         };
