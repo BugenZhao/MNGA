@@ -28,7 +28,7 @@ final class CurrentViewingFloor {
 
 struct TopicFavorMenuView: View {
   @Binding var topic: Topic
-  @State var allFavorFolders: [FavoriteTopicFolder] = []
+  @StateObject var folders = FavoriteFolderModel.shared
 
   func setFavor(_ operation: TopicFavorRequest.Operation, folderID: String) {
     logicCallAsync(.topicFavor(.with {
@@ -39,13 +39,6 @@ struct TopicFavorMenuView: View {
       topic.isFavored = response.isFavored
       topic.favorFolderIds = response.folderIds
       HapticUtils.play(type: .success)
-    }
-  }
-
-  func loadAllFavorFolders() async {
-    let response: Result<FavoriteFolderListResponse, LogicError> = await logicCallAsync(.favoriteFolderList(.init()))
-    if case let .success(r) = response {
-      withAnimation { allFavorFolders = r.folders }
     }
   }
 
@@ -66,16 +59,16 @@ struct TopicFavorMenuView: View {
 
   var body: some View {
     Menu {
-      if allFavorFolders.isEmpty {
-        ProgressView().task { await loadAllFavorFolders() }
+      if folders.allFolders.isEmpty {
+        Text("Loading...").task { await folders.load() }
       } else {
-        if let defaultFolder = allFavorFolders.first(where: { $0.isDefault }) {
+        if let defaultFolder = folders.allFolders.first(where: { $0.isDefault }) {
           Section {
             folderToggle(for: defaultFolder)
           }
         }
         Section {
-          ForEach(allFavorFolders.filter { !$0.isDefault }, id: \.id) { folder in
+          ForEach(folders.allFolders.filter { !$0.isDefault }, id: \.id) { folder in
             folderToggle(for: folder)
           }
         }

@@ -72,6 +72,7 @@ struct UserMenuView: View {
             Text(info.cachedName.isEmpty ? info.uid : info.cachedName).tag(info)
           }
         }.disableWithPlusCheck(.multiAccount)
+          .onChange(of: authStorage.authInfo) { FavoriteFolderModel.shared.reset() }
       }
 
       Button(action: { withPlusCheck(.multiAccount) { addUser() } }) {

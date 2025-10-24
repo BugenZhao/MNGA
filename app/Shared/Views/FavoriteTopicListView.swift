@@ -8,6 +8,41 @@
 import Foundation
 import SwiftUI
 
+class FavoriteFolderModel: ObservableObject {
+  static let shared = FavoriteFolderModel()
+
+  @Published var allFolders: [FavoriteTopicFolder] = []
+
+  @MainActor
+  func load(force: Bool = false) async {
+    if allFolders.isEmpty || force {
+      let response: Result<FavoriteFolderListResponse, LogicError> = await logicCallAsync(.favoriteFolderList(.init()))
+      if case let .success(r) = response {
+        logger.debug("loaded \(r.folders.count) favorite folders")
+        withAnimation { allFolders = r.folders }
+      }
+    }
+  }
+
+  @MainActor
+  func reload() async {
+    await load(force: true)
+  }
+
+  @MainActor
+  func reset() {
+    logger.debug("resetting favorite folders")
+    allFolders = []
+  }
+
+  @MainActor
+  func modify(_ request: FavoriteFolderModifyRequest) async {
+    let _: Result<FavoriteFolderModifyResponse, LogicError> = await logicCallAsync(.favoriteFolderModify(request))
+    HapticUtils.play(type: .success)
+    await reload()
+  }
+}
+
 struct FavoriteTopicListInnerView: View {
   typealias DataSource = PagingDataSource<FavoriteTopicListResponse, Topic>
 
@@ -70,21 +105,21 @@ struct FavoriteTopicListInnerView: View {
 
 struct FavoriteTopicListView: View {
   @State var currentFolder: FavoriteTopicFolder? = nil
-  @State var allFolders: [FavoriteTopicFolder] = []
+  @StateObject var folders = FavoriteFolderModel.shared
 
-  func reloadFolders() async {
-    let response: Result<FavoriteFolderListResponse, LogicError> = await logicCallAsync(.favoriteFolderList(.init()))
-    if case let .success(r) = response {
-      withAnimation {
-        allFolders = r.folders
-        currentFolder = r.folders.first { $0.id == currentFolder?.id }
-          ?? r.folders.first(where: { $0.isDefault })
-      }
+  func refreshCurrent() {
+    withAnimation {
+      currentFolder = folders.allFolders.first { $0.id == currentFolder?.id }
+        ?? folders.allFolders.first(where: { $0.isDefault })
     }
   }
 
+  // Every time we navigate into this view, refresh the folders.
   func loadFolders() async {
-    if allFolders.isEmpty, currentFolder == nil { await reloadFolders() }
+    if currentFolder == nil {
+      await folders.reload()
+      refreshCurrent()
+    }
   }
 
   func modifyCurrentFolder(_ request: FavoriteFolderModifyRequest) {
@@ -93,9 +128,9 @@ struct FavoriteTopicListView: View {
     var request = request
     request.folderID = currentFolder.id
 
-    logicCallAsync(.favoriteFolderModify(request)) { (_: FavoriteFolderModifyResponse) in
-      HapticUtils.play(type: .success)
-      Task { await reloadFolders() }
+    Task {
+      await folders.modify(request)
+      refreshCurrent()
     }
   }
 
@@ -126,7 +161,7 @@ struct FavoriteTopicListView: View {
         }
 
         Picker(selection: $currentFolder.withPlusCheck(.multiFavorite).animation()) {
-          ForEach(allFolders, id: \.id) { folder in
+          ForEach(folders.allFolders, id: \.id) { folder in
             Text(folder.name).tag(folder as FavoriteTopicFolder?)
           }
         } label: {
