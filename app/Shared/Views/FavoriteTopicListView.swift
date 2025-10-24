@@ -139,6 +139,25 @@ struct FavoriteTopicListView: View {
   @State var showingDeleteConfirmation = false
 
   @ViewBuilder
+  var folderSwitcher: some View {
+    // Use toggle instead of picker so that we can display description text.
+    ForEach(folders.allFolders, id: \.id) { folder in
+      Toggle(isOn:
+        Binding(
+          get: { currentFolder?.id == folder.id },
+          set: { _ in withPlusCheck(.multiFavorite) { currentFolder = folder } }
+        )
+      ) {
+        Text(folder.name)
+        if folder.isDefault {
+          Text("Default Folder")
+        }
+      }
+      .menuActionDismissBehavior(.disabled)
+    }
+  }
+
+  @ViewBuilder
   var folderMenu: some View {
     if let currentFolder {
       Menu {
@@ -160,15 +179,7 @@ struct FavoriteTopicListView: View {
           Text("#\(currentFolder.id) \(currentFolder.name)")
         }
 
-        Picker(selection: $currentFolder.withPlusCheck(.multiFavorite).animation()) {
-          ForEach(folders.allFolders, id: \.id) { folder in
-            Text(folder.name).tag(folder as FavoriteTopicFolder?)
-          }
-        } label: {
-          Text("All Folders")
-        }
-        .menuActionDismissBehavior(.disabled)
-
+        folderSwitcher
       } label: {
         Label("Folder", systemImage: currentFolder.isDefault ? "folder.fill" : "folder")
       }
