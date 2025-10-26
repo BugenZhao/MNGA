@@ -586,7 +586,7 @@ struct TopicDetailsView: View {
       .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
         TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
         Button("Done", role: .confirm) {}
-        Button("Cancel", role: .cancel) { newFolderName = nil; showingCreateFolderAlert = false }
+        Button("Cancel", role: .cancel) { newFolderName = nil }
       }
   }
 
