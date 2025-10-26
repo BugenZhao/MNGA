@@ -14,9 +14,9 @@ pub enum ServiceError {
     #[error("{0}")]
     MngaInternal(String),
 
-    #[error("{} ({})", .0.get_info(), .0.get_code())]
+    #[error("{}", .0)]
     Status(ErrorMessage),
-    #[error("{} ({})", .0.get_info(), .0.get_code())]
+    #[error("{}", .0)]
     Nga(ErrorMessage),
     #[error("{0}")]
     MissingField(String),
