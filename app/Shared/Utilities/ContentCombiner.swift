@@ -9,7 +9,6 @@ import Collections
 import Colorful
 import Foundation
 import SwiftUI
-import SwiftUIX
 
 class ContentCombiner {
   enum Subview {
@@ -292,11 +291,11 @@ class ContentCombiner {
     let name = sticker.name.replacingOccurrences(of: ":", with: "|")
 
     let view: Text?
-    if let image = AppKitOrUIKitImage(named: name) {
+    if let image = UIImage(named: name) {
       let renderingMode: Image.TemplateRenderingMode =
         name.starts(with: "ac") || name.starts(with: "a2") ? .template : .original
       view = Text(
-        Image(image: image)
+        Image(uiImage: image)
           .renderingMode(renderingMode)
       )
     } else {
@@ -558,15 +557,7 @@ class ContentCombiner {
 
   private func visit(sized: Span.Tagged) {
     let scale = Double(sized.attributes.first?.trimmingCharacters(in: ["%"]) ?? "100") ?? 100.0
-    let combiner = ContentCombiner(parent: self, font: {
-      #if os(iOS)
-        let baseSize = $0?.getTextStyle()?.defaultMetrics.size ?? Font.TextStyle.callout.defaultMetrics.size
-      #elseif os(macOS)
-        let baseSize = CGFloat(16.0)
-      #endif
-      let newSize = baseSize * CGFloat(scale / 100)
-      return Font.custom("", fixedSize: newSize)
-    })
+    let combiner = ContentCombiner(parent: self, font: { $0?.scaled(by: scale / 100) })
     combiner.visit(spans: sized.spans)
     append(combiner.build())
   }
