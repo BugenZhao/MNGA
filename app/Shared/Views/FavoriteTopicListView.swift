@@ -13,6 +13,11 @@ class FavoriteFolderModel: ObservableObject {
 
   @Published var allFolders: [FavoriteTopicFolder] = []
 
+  // Default folder should be the first one.
+  var sortedFolders: [FavoriteTopicFolder] {
+    allFolders.sorted { $0.isDefault && !$1.isDefault }
+  }
+
   @MainActor
   func load(force: Bool = false) async {
     if allFolders.isEmpty || force {
@@ -158,7 +163,7 @@ struct FavoriteTopicListView: View {
   @ViewBuilder
   var folderSwitcher: some View {
     // Use toggle instead of picker so that we can display description text.
-    ForEach(folders.allFolders, id: \.id) { folder in
+    ForEach(folders.sortedFolders, id: \.id) { folder in
       Toggle(isOn:
         Binding(
           get: { currentFolder?.id == folder.id },

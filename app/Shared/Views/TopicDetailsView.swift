@@ -77,28 +77,17 @@ struct TopicFavorMenuView: View {
     await setFavor(.add, folderID: folderID)
   }
 
-  var defaultFolder: FavoriteTopicFolder? {
-    folders.allFolders.first(where: { $0.isDefault })
-  }
-
-  var otherFolders: [FavoriteTopicFolder] {
-    folders.allFolders.filter { !$0.isDefault }
-  }
-
   var body: some View {
     Menu {
       if folders.allFolders.isEmpty {
         Text("Loading...").task { await folders.load() }
       } else {
-        if let defaultFolder {
-          folderToggle(for: defaultFolder)
-        }
-        ForEach(otherFolders, id: \.id) { folder in
+        ForEach(folders.sortedFolders, id: \.id) { folder in
           folderToggle(for: folder)
         }
         Divider()
         Button(action: { newFolderName = ""; showingCreateFolderAlert = true }) {
-          Label("New Folder...", systemImage: "plus")
+          Label("New Folder...", systemImage: "folder.badge.plus")
         }
       }
     } label: {
