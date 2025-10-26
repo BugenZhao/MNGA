@@ -28,6 +28,8 @@ final class CurrentViewingFloor {
 
 struct TopicFavorMenuView: View {
   @Binding var topic: Topic
+  @Binding var showingCreateFolderAlert: Bool
+  @Binding var newFolderName: String?
   @StateObject var folders = FavoriteFolderModel.shared
 
   @MainActor
@@ -70,9 +72,9 @@ struct TopicFavorMenuView: View {
   }
 
   func favorToNewFolder() async {
-    guard checkPlus(.multiFavorite) else { return }
-    await setFavor(.add, folderID: "-1")
-    await folders.reload()
+    guard let newFolderName else { return }
+    guard let folderID = await folders.create(name: newFolderName, haptic: false) else { return }
+    await setFavor(.add, folderID: folderID)
   }
 
   var defaultFolder: FavoriteTopicFolder? {
@@ -95,7 +97,7 @@ struct TopicFavorMenuView: View {
           folderToggle(for: folder)
         }
         Divider()
-        Button(action: { Task { await favorToNewFolder() } }) {
+        Button(action: { newFolderName = ""; showingCreateFolderAlert = true }) {
           Label("New Folder...", systemImage: "plus")
         }
       }
@@ -103,6 +105,11 @@ struct TopicFavorMenuView: View {
       Label("Mark as Favorite", systemImage: icon)
     }
     .menuActionDismissBehavior(topic.isFavored ? .disabled : .automatic)
+    .onChange(of: showingCreateFolderAlert) {
+      if $0 == true, $1 == false, newFolderName != nil {
+        Task { await favorToNewFolder() }
+      }
+    }
   }
 }
 
@@ -131,6 +138,9 @@ struct TopicDetailsView: View {
   @State var floorToJump: Int?
   @State var postIdToJump: PostId?
   var currentViewingFloor = CurrentViewingFloor()
+
+  @State var showingCreateFolderAlert = false
+  @State var newFolderName: String?
 
   var isFavored: Bool {
     topic.isFavored
@@ -256,7 +266,11 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var favoriteMenu: some View {
     if !mock {
-      TopicFavorMenuView(topic: $topic)
+      TopicFavorMenuView(
+        topic: $topic,
+        showingCreateFolderAlert: $showingCreateFolderAlert.withPlusCheck(.multiFavorite),
+        newFolderName: $newFolderName
+      )
     }
   }
 
@@ -579,6 +593,12 @@ struct TopicDetailsView: View {
       // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
       .sheet(isPresented: $showJumpSelector) { jumpSelector }
+      // Favorite to new folder
+      .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
+        TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
+        Button("Done", role: .confirm) {}
+        Button("Cancel", role: .cancel) { newFolderName = nil; showingCreateFolderAlert = false }
+      }
   }
 
   var body: some View {

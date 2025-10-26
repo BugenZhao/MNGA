@@ -566,41 +566,16 @@ pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavor
         TopicFavorRequest_Operation::ADD => ("add", "tid", FavorOp::Add),
         TopicFavorRequest_Operation::DELETE => ("del", "tidarray", FavorOp::Remove),
     };
-
-    let mut folder_id = request.get_folder_id().to_owned();
-
-    // "-1" means to create a new folder. Record current folders before the request.
-    let mut folders = Vec::new();
-    if folder_id == "-1" {
-        folders = get_favorite_folder_list(Default::default())
-            .await?
-            .folders
-            .into_vec();
-    }
+    let folder_id = request.get_folder_id();
 
     let _ = fetch_package(
         "nuke.php",
         vec![("__lib", "topic_favor_v2"), ("__act", act)],
-        vec![(tid_key, request.get_topic_id()), ("folder", &folder_id)],
+        vec![(tid_key, request.get_topic_id()), ("folder", folder_id)],
     )
     .await?;
 
-    // Find out the info of the new folder. Update `folder_id` to the real id.
-    if folder_id == "-1" {
-        let new_folders = get_favorite_folder_list(Default::default())
-            .await?
-            .folders
-            .into_vec();
-
-        if let Some(new_folder) = new_folders
-            .into_iter()
-            .find(|f| !folders.iter().any(|old| old.id == f.id))
-        {
-            folder_id = new_folder.id;
-        }
-    }
-
-    let response = update_topic_cached_favor_response(request.get_topic_id(), &folder_id, op)?;
+    let response = update_topic_cached_favor_response(request.get_topic_id(), folder_id, op)?;
 
     Ok(response)
 }
