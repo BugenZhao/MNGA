@@ -64,16 +64,17 @@ struct UserView: View {
     self.loadRemote = loadRemote
   }
 
+  @ScaledMetric var avatarSizeBase: CGFloat = 24
   private var avatarSize: CGFloat {
     switch style {
     case .compact:
-      24
+      avatarSizeBase
     case .normal:
-      36
+      avatarSizeBase * 1.5
     case .huge:
-      56
+      avatarSizeBase * 2.5
     case .vertical:
-      48
+      avatarSizeBase * 2
     }
   }
 

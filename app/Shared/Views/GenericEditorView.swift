@@ -62,7 +62,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
       HStack {
         Spacer()
         Image(systemName: device.icon)
-          .frame(width: 10)
+          .frame(minWidth: 10)
           .foregroundColor(.secondary)
           .font(.footnote)
       }

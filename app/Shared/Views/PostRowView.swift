@@ -12,13 +12,16 @@ import SwiftUIX
 struct RowMenuButtonView<MenuContent: View>: View {
   @ViewBuilder var menu: MenuContent
 
+  @ScaledMetric var sizeBase: CGFloat = 24
+  var size: CGFloat { max(sizeBase, 24) }
+
   var body: some View {
     Menu(content: { menu }) {
       Image(systemName: "ellipsis.circle.fill")
         .symbolRenderingMode(.hierarchical)
         .resizable()
         .scaledToFit()
-        .frame(width: 24, height: 24)
+        .frame(width: size, height: size)
         .glassEffect(in: .circle)
     }
   }
@@ -90,7 +93,7 @@ struct PostRowView: View {
         DateTimeTextView.build(timestamp: post.postDate)
           .id(pref.postRowDateTimeStrategy)
         Image(systemName: post.device.icon)
-          .frame(width: 10)
+          .frame(minWidth: 10)
       }.foregroundColor(.secondary)
         .font(.footnote)
     }

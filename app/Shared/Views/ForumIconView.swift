@@ -10,6 +10,8 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 struct ForumIconView: View {
+  @ScaledMetric var size: CGFloat = 28
+
   let iconURL: String
 
   var body: some View {
@@ -18,7 +20,7 @@ struct ForumIconView: View {
       .renderingMode(.template)
 
     WebOrAsyncImage(url: URL(string: iconURL), placeholder: defaultIcon)
-      .frame(width: 28, height: 28)
+      .frame(width: size, height: size)
       .foregroundColor(.accentColor)
   }
 }
