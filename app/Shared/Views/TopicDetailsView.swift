@@ -28,6 +28,8 @@ final class CurrentViewingFloor {
 
 struct TopicFavorMenuView: View {
   @Binding var topic: Topic
+  @Binding var showingCreateFolderAlert: Bool
+  @Binding var newFolderName: String?
   @StateObject var folders = FavoriteFolderModel.shared
 
   @MainActor
@@ -70,17 +72,9 @@ struct TopicFavorMenuView: View {
   }
 
   func favorToNewFolder() async {
-    guard checkPlus(.multiFavorite) else { return }
-    await setFavor(.add, folderID: "-1")
-    await folders.reload()
-  }
-
-  var defaultFolder: FavoriteTopicFolder? {
-    folders.allFolders.first(where: { $0.isDefault })
-  }
-
-  var otherFolders: [FavoriteTopicFolder] {
-    folders.allFolders.filter { !$0.isDefault }
+    guard let newFolderName else { return }
+    guard let folderID = await folders.create(name: newFolderName, haptic: false) else { return }
+    await setFavor(.add, folderID: folderID)
   }
 
   var body: some View {
@@ -88,21 +82,23 @@ struct TopicFavorMenuView: View {
       if folders.allFolders.isEmpty {
         Text("Loading...").task { await folders.load() }
       } else {
-        if let defaultFolder {
-          folderToggle(for: defaultFolder)
-        }
-        ForEach(otherFolders, id: \.id) { folder in
+        ForEach(folders.sortedFolders, id: \.id) { folder in
           folderToggle(for: folder)
         }
         Divider()
-        Button(action: { Task { await favorToNewFolder() } }) {
-          Label("New Folder...", systemImage: "plus")
+        Button(action: { newFolderName = ""; showingCreateFolderAlert = true }) {
+          Label("New Folder...", systemImage: "folder.badge.plus")
         }
       }
     } label: {
       Label("Mark as Favorite", systemImage: icon)
     }
     .menuActionDismissBehavior(topic.isFavored ? .disabled : .automatic)
+    .onChange(of: showingCreateFolderAlert) {
+      if $0 == true, $1 == false, newFolderName != nil {
+        Task { await favorToNewFolder() }
+      }
+    }
   }
 }
 
@@ -131,6 +127,9 @@ struct TopicDetailsView: View {
   @State var floorToJump: Int?
   @State var postIdToJump: PostId?
   var currentViewingFloor = CurrentViewingFloor()
+
+  @State var showingCreateFolderAlert = false
+  @State var newFolderName: String?
 
   var isFavored: Bool {
     topic.isFavored
@@ -256,7 +255,11 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var favoriteMenu: some View {
     if !mock {
-      TopicFavorMenuView(topic: $topic)
+      TopicFavorMenuView(
+        topic: $topic,
+        showingCreateFolderAlert: $showingCreateFolderAlert.withPlusCheck(.multiFavorite),
+        newFolderName: $newFolderName
+      )
     }
   }
 
@@ -579,6 +582,12 @@ struct TopicDetailsView: View {
       // Action Navigation End
       .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
       .sheet(isPresented: $showJumpSelector) { jumpSelector }
+      // Favorite to new folder
+      .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
+        TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
+        Button("Done", role: .confirm) {}
+        Button("Cancel", role: .cancel) { newFolderName = nil }
+      }
   }
 
   var body: some View {

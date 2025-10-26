@@ -13,6 +13,11 @@ class FavoriteFolderModel: ObservableObject {
 
   @Published var allFolders: [FavoriteTopicFolder] = []
 
+  // Default folder should be the first one.
+  var sortedFolders: [FavoriteTopicFolder] {
+    allFolders.sorted { $0.isDefault && !$1.isDefault }
+  }
+
   @MainActor
   func load(force: Bool = false) async {
     if allFolders.isEmpty || force {
@@ -37,9 +42,26 @@ class FavoriteFolderModel: ObservableObject {
 
   @MainActor
   func modify(_ request: FavoriteFolderModifyRequest) async {
-    let _: Result<FavoriteFolderModifyResponse, LogicError> = await logicCallAsync(.favoriteFolderModify(request))
-    HapticUtils.play(type: .success)
-    await reload()
+    let res: Result<FavoriteFolderModifyResponse, LogicError> = await logicCallAsync(.favoriteFolderModify(request))
+    if case .success = res {
+      HapticUtils.play(type: .success)
+      await reload()
+    }
+  }
+
+  @MainActor
+  func create(name: String, haptic: Bool = true) async -> String? {
+    let res: Result<FavoriteFolderCreateResponse, LogicError> = await logicCallAsync(.favoriteFolderCreate(.with {
+      $0.name = name
+      $0.setDefault = false
+    }))
+    if case let .success(r) = res {
+      if haptic { HapticUtils.play(type: .success) }
+      await reload()
+      return r.folderID
+    } else {
+      return nil
+    }
   }
 }
 
@@ -141,7 +163,7 @@ struct FavoriteTopicListView: View {
   @ViewBuilder
   var folderSwitcher: some View {
     // Use toggle instead of picker so that we can display description text.
-    ForEach(folders.allFolders, id: \.id) { folder in
+    ForEach(folders.sortedFolders, id: \.id) { folder in
       Toggle(isOn:
         Binding(
           get: { currentFolder?.id == folder.id },
