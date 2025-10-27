@@ -66,6 +66,8 @@
 "Your post" = "你的回复";
 "received 10 more votes" = "收获了 10 个评价";
 "Discard" = "舍弃";
+"Discard the draft?" = "舍弃草稿？";
+"Save the draft by swiping down to dismiss the editor." = "你可以通过下滑关闭编辑器来保存草稿。";
 "Subject" = "主题";
 "Content" = "内容";
 "Comment" = "贴条";
