@@ -138,8 +138,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 
   private func onRefreshSuccess(response: Res, animated: Bool, fromPage: Int) {
-    latestResponse = response
-    latestError = nil
+    withAnimation(when: animated) {
+      self.latestResponse = response
+      self.latestError = nil
+    }
     let (newItems, newTotalPages) = onResponse(response)
     logger.debug("page \(loadedPage + 1), newItems \(newItems.count)")
 
@@ -208,8 +210,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     logicCallAsync(request) { (response: Res) in
       guard currentId == self.dataFlowId else { return }
 
-      self.latestResponse = response
-      self.latestError = nil
+      withAnimation(when: animated) {
+        self.latestResponse = response
+        self.latestError = nil
+      }
       let (newItems, newTotalPages) = self.onResponse(response)
 
       withAnimation(when: animated) {
@@ -239,8 +243,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     logicCallAsync(request, requestDispatchQueue: queue) { (response: Res) in
       guard currentId == self.dataFlowId else { return }
 
-      self.latestResponse = response
-      self.latestError = nil
+      withAnimation(when: self.items.isEmpty || alwaysAnimation) {
+        self.latestResponse = response
+        self.latestError = nil
+      }
       let (newItems, newTotalPages) = self.onResponse(response)
       self.logger.debug("page \(self.loadedPage + 1), newItems \(newItems.count)")
 

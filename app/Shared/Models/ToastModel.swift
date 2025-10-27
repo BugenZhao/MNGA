@@ -19,6 +19,7 @@ class ToastModel: ObservableObject {
   enum Message {
     case success(String)
     case error(String)
+    case cacheLoaded(String)
     case notification(Int)
     case userSwitch(String)
     case clockIn(String)
@@ -39,7 +40,7 @@ class ToastModel: ObservableObject {
           switch message! {
           case .error:
             HapticUtils.play(type: .error)
-          case .notification, .requirePlus:
+          case .notification, .requirePlus, .cacheLoaded:
             HapticUtils.play(type: .warning)
           default:
             HapticUtils.play(type: .success)
@@ -50,7 +51,7 @@ class ToastModel: ObservableObject {
 
   static func showAuto(_ message: Message?) {
     switch message {
-    case .success, .error:
+    case .success, .error, .cacheLoaded:
       ToastModel.banner.message = message
     case .notification, .userSwitch, .clockIn, .autoRefreshed, .openURL:
       ToastModel.hud.message = message
@@ -70,6 +71,8 @@ extension ToastModel.Message {
       AlertToast(displayMode: displayMode, type: .complete(.green), title: "Success".localized, subTitle: msg, style: .style(backgroundColor: .green.opacity(0.07)))
     case let .error(msg):
       AlertToast(displayMode: displayMode, type: .error(.red), title: "Error".localized, subTitle: msg.errorLocalized, style: .style(backgroundColor: .red.opacity(0.07)))
+    case let .cacheLoaded(msg):
+      AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Cache Loaded".localized, subTitle: msg, style: .style(backgroundColor: .accentColor.opacity(0.2)))
     case let .notification(newCount):
       AlertToast(displayMode: displayMode, type: .systemImage("bell.badge", .accentColor), title: "Notifications".localized, subTitle: String(format: "%lld new unread notifications".localized, newCount))
     case let .userSwitch(user):

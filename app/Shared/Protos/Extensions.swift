@@ -380,3 +380,13 @@ extension BlockWord {
     }
   }
 }
+
+extension TopicDetailsResponse {
+  var cacheLoadedMessage: String? {
+    if hasLocalReason {
+      return String(format: "The topic could not be accessed: %@".localized, localReason)
+    } else {
+      return nil
+    }
+  }
+}

@@ -144,6 +144,7 @@ message TopicDetailsResponse {
   string forum_name = 4;
   uint32 pages = 3;
   bool is_local_cache = 5; // Whether the replies are from local cache.
+  optional string local_reason = 7; // Reason why online load is failed.
   repeated User in_place_users = 6;
 }
 
