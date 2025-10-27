@@ -58,7 +58,8 @@ fn build_client() -> Client {
     log::info!("build reqwest client");
     Client::builder()
         .https_only(true)
-        .timeout(Duration::from_secs(10))
+        .connect_timeout(Duration::from_secs(5))
+        .read_timeout(Duration::from_secs(20))
         .gzip(true)
         .build()
         .expect("failed to build reqwest client")
