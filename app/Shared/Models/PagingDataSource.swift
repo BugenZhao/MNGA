@@ -273,47 +273,62 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
 struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifier {
   let dataSource: PagingDataSource<Res, Item>
-  let refreshWhenEnterForeground: Bool
+  let refreshAfterIdle: Bool
 
   @Environment(\.scenePhase) var scenePhase
+  @State var lastSeen: Date? = nil
 
   func doRefresh() async {
-    try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+    try? await Task.sleep(for: .seconds(0.5))
     await dataSource.refreshAsync(animated: true)
-    try? await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
   }
 
   func body(content: Content) -> some View {
     ScrollViewReader { proxy in
+      let mayRefresh = {
+        guard let last = lastSeen ?? dataSource.lastRefreshTime else { return }
+        let elapsed = Date().timeIntervalSince(last)
+        if elapsed > 60 * 60 { // 1 hour
+          Task {
+            dataSource.logger.debug("\(elapsed) seconds elapsed, refreshing...")
+            withAnimation { proxy.scrollTo("top-placeholder") }
+            await doRefresh()
+            ToastModel.showAuto(.autoRefreshed)
+          }
+        }
+      }
+
       content
         .refreshable { await doRefresh() }
-        .if(refreshWhenEnterForeground) {
-          $0.onChange(of: scenePhase) {
-            dataSource.logger.debug("scenePhase changed from \($0) to \($1)")
-            // Swipe to home: active -> inactive -> background
-            // Back to app: background -> inactive -> active
-            // When in multitask mode, app can be inactive if it's not focused.
-            // So we detect the switch from inactive to active, but not from background.
-            guard $0 == .inactive, $1 == .active else { return }
-            guard let last = dataSource.lastRefreshTime else { return }
+        .if(refreshAfterIdle) {
+          $0
+            .onChange(of: scenePhase) {
+              dataSource.logger.debug("scenePhase changed from \($0) to \($1)")
 
-            let elapsed = Date().timeIntervalSince(last)
-            if elapsed > 60 * 60 { // 1 hour
-              Task {
-                dataSource.logger.debug("\(elapsed) seconds elapsed, refreshing...")
-                withAnimation { proxy.scrollTo("top-placeholder") }
-                await doRefresh()
-                ToastModel.showAuto(.autoRefreshed)
+              // Swipe to home: active -> inactive -> background
+              // Back to app: background -> inactive -> active
+              // When in multitask mode, app can be inactive if it's not focused.
+              // So we detect the switch from inactive to active, but not from background.
+              if $0 == .active, $1 == .inactive {
+                dataSource.logger.debug("active -> inactive, record lastSeen")
+                lastSeen = Date()
+                return
               }
+              guard $0 == .inactive, $1 == .active else { return }
+              mayRefresh()
             }
-          }
+            .onDisappear {
+              dataSource.logger.debug("onDisappear, record lastSeen")
+              lastSeen = Date()
+            }
+            .onAppear { mayRefresh() }
         }
     }
   }
 }
 
 extension View {
-  func refreshable(dataSource: PagingDataSource<some SwiftProtobuf.Message, some Any>, refreshWhenEnterForeground: Bool = false) -> some View {
-    modifier(PagingDataSourceRefreshable(dataSource: dataSource, refreshWhenEnterForeground: refreshWhenEnterForeground))
+  func refreshable(dataSource: PagingDataSource<some SwiftProtobuf.Message, some Any>, refreshAfterIdle: Bool = false) -> some View {
+    modifier(PagingDataSourceRefreshable(dataSource: dataSource, refreshAfterIdle: refreshAfterIdle))
   }
 }

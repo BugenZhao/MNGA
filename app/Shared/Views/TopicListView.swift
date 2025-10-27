@@ -288,7 +288,7 @@ struct TopicListView: View {
         }
       }
     }
-    .refreshable(dataSource: dataSource, refreshWhenEnterForeground: true)
+    .refreshable(dataSource: dataSource, refreshAfterIdle: true)
     .mayGroupedListStyle()
   }
 
