@@ -76,7 +76,7 @@ private struct PostRowAppearanceView: View {
       }.disableWithPlusCheck(.customAppearance)
 
     }.pickerStyle(.menu)
-      .tint(.accentColor)
+      .tint(pref.themeColor.color)
       .navigationTitleInline(string: "")
   }
 }
@@ -91,8 +91,11 @@ private struct TopicListAppearanceView: View {
           Label(order.description, systemImage: order.icon).tag(order)
         }
       }
+      Toggle(isOn: $pref.topicListHideBlocked) {
+        Label("Hide Blocked Topics", systemImage: "eye.slash")
+      }
     }.pickerStyle(.menu)
-      .tint(.accentColor)
+      .tint(pref.themeColor.color)
       .navigationTitleInline(string: "")
   }
 }
@@ -270,7 +273,7 @@ struct PreferencesInnerView: View {
     // Set `pickerStyle` explicitly to fix tint color.
     // https://stackoverflow.com/questions/74157251/why-doesnt-pickers-tint-color-update
     .pickerStyle(.menu)
-    .tint(.accentColor)
+    .tint(pref.themeColor.color)
     .mayInsetGroupedListStyle()
     .navigationTitle("Settings")
     .toolbar { toolbar }

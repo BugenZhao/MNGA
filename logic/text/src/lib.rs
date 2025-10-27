@@ -42,9 +42,16 @@ pub fn parse_content(text: &str) -> PostContent {
 
 pub fn parse_subject(text: &str) -> Subject {
     let text = unescape(text);
-    let (tags, content) = do_parse_subject(&text)
+    let (mut tags, mut content) = do_parse_subject(&text)
         .map(|(ts, c)| (ts.into_iter().map(|t| t.to_owned()).collect(), c.to_owned()))
         .unwrap_or_else(|_| (vec![], text));
+
+    // Use last tag as content if content is empty.
+    if content.is_empty()
+        && let Some(last_tag) = tags.pop()
+    {
+        content = format!("【{}】", last_tag);
+    }
 
     Subject {
         tags: tags.into(),

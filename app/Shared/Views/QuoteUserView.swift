@@ -19,14 +19,15 @@ struct QuoteUserView: View {
     HStack {
       UserView(id: uid, nameHint: nameHint, style: .compact)
       if let action, enableShowReplyChain {
-        Spacer()
         Button(action: action) {
-          HStack(spacing: 2) {
-            Text("    ")
+          HStack {
+            Spacer()
             Image(systemName: "chevron.right")
-          }.font(.callout)
-            .foregroundColor(.secondary)
-        }.buttonStyle(PlainButtonStyle())
+              .font(.callout)
+              .foregroundColor(.secondary)
+          }
+          .contentShape(Rectangle())
+        }.buttonStyle(.plain)
       }
     }
   }

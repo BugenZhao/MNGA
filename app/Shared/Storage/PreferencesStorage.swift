@@ -20,6 +20,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = false
   @AppStorage("useInAppSafari") var useInAppSafari = true
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
+  @AppStorage("topicListHideBlocked") var topicListHideBlocked = false
   @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true

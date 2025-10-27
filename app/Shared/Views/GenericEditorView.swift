@@ -21,6 +21,8 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @State var displayMode = DisplayMode.plain
 
+  @State var showingDiscardConfirmation = false
+
   @State var subject = nil as Subject?
   @State var parsedContent = PostContent()
 
@@ -144,8 +146,19 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @ViewBuilder
   var discardButton: some View {
-    Button(role: .destructive, action: { postReply.discardCurrentContext() }) {
+    Button(role: .destructive, action: { showingDiscardConfirmation = true }) {
       Image(systemName: "trash").foregroundColor(.red)
+    }
+    .confirmationDialog(
+      "Discard the draft?",
+      isPresented: $showingDiscardConfirmation,
+      titleVisibility: .visible
+    ) {
+      Button("Discard", role: .destructive) {
+        postReply.discardCurrentContext()
+      }
+    } message: {
+      Text("Save the draft by swiping down to dismiss the editor.")
     }
   }
 
