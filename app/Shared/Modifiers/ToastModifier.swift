@@ -66,7 +66,7 @@ struct MainToastModifier: ViewModifier {
         }, onTap: hudOnTap)
       }
       .if(enableBanner) {
-        $0.toast(isPresenting: $banner.message.isNotNil(), duration: 3, tapToDismiss: true, alert: {
+        $0.toast(isPresenting: $banner.message.isNotNil(), duration: 4, tapToDismiss: true, alert: {
           (banner.message ?? .success("")).toastView(for: .banner(.pop))
         })
       }

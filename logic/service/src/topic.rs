@@ -518,7 +518,10 @@ pub async fn get_topic_details(
 
     if let Err(e @ ServiceError::Nga(_)) = package_result {
         match get_local_cache() {
-            Ok(response) => return Ok(response),
+            Ok(mut response) => {
+                response.set_local_reason(e.to_string());
+                return Ok(response);
+            }
             Err(_) => return Err(e),
         }
     }
@@ -553,7 +556,6 @@ pub async fn get_topic_details(
         replies: replies.into(),
         forum_name,
         pages,
-        is_local_cache: false,
         ..Default::default()
     };
 

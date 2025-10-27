@@ -171,6 +171,9 @@ struct TopicDetailsView: View {
         })
       },
       onResponse: { response in
+        if let msg = response.cacheLoadedMessage {
+          ToastModel.showAuto(.cacheLoaded(msg))
+        }
         let items = response.replies
         let pages = response.pages
         response.inPlaceUsers.forEach(UsersModel.shared.add(user:))

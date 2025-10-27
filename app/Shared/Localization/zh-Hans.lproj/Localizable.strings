@@ -102,6 +102,8 @@
 "This Author Only" = "只看该作者";
 "Topic (Cached)" = "话题（缓存）";
 "View Cached Topic" = "查看本地缓存";
+"Cache Loaded" = "已加载本地缓存";
+"The topic could not be accessed: %@" = "无法查看话题：%@";
 "About & Feedback" = "关于 & 反馈";
 "MNGA Description" = "MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以轻触上面的按钮以通过 GitHub、NGA 短消息、邮件方式反馈。";
 "MNGA Please Share" = "轻触右上方的按钮分享 MNGA 的获取链接！";
