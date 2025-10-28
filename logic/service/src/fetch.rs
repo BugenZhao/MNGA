@@ -131,6 +131,7 @@ where
     AF: FnOnce(RequestBuilder) -> RequestBuilder,
 {
     let url = resolve_url(api, kind)?;
+    let url_string = url.to_string();
 
     let query = {
         query.push(("__inchst", "UTF8"));
@@ -154,7 +155,8 @@ where
         .request(method.clone(), url)
         .query(&query)
         .header("User-Agent", ua)
-        .header("X-User-Agent", ua);
+        .header("X-User-Agent", ua)
+        .header("Referer", url_string); // use any url begins with base url is fine
     let builder = add_form(builder);
 
     let request = builder.build()?;
