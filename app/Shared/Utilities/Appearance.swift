@@ -34,7 +34,7 @@ extension ColorSchemeMode {
 
 enum ThemeColor: Int, CaseIterable {
   case mnga
-  case blue, gray, green, indigo, orange, pink, purple, red, teal, yellow
+  case red, orange, yellow, green, mint, teal, cyan, blue, indigo, purple, pink, brown, gray
 }
 
 extension ThemeColor {
@@ -42,32 +42,38 @@ extension ThemeColor {
     switch self {
     // Note: Color("AccentColor") is always MNGA color, while `.accentColor` is the user's theme color.
     case .mnga: Color("AccentColor")
-    case .blue: .systemBlue
-    case .gray: .systemGray
-    case .green: .systemGreen
-    case .indigo: .systemIndigo
-    case .orange: .systemOrange
-    case .pink: .systemPink
-    case .purple: .systemPurple
-    case .red: .systemRed
-    case .teal: .systemTeal
-    case .yellow: .systemYellow
+    case .red: .red
+    case .orange: .orange
+    case .yellow: .yellow
+    case .green: .green
+    case .mint: .mint
+    case .teal: .teal
+    case .cyan: .cyan
+    case .blue: .blue
+    case .indigo: .indigo
+    case .purple: .purple
+    case .pink: .pink
+    case .brown: .brown
+    case .gray: .gray
     }
   }
 
   var description: LocalizedStringKey {
     switch self {
     case .mnga: "MNGA"
-    case .blue: "Blue"
-    case .gray: "Gray"
-    case .green: "Green"
-    case .indigo: "Indigo"
-    case .orange: "Orange"
-    case .pink: "Pink"
-    case .purple: "Purple"
     case .red: "Red"
-    case .teal: "Teal"
+    case .orange: "Orange"
     case .yellow: "Yellow"
+    case .green: "Green"
+    case .mint: "Mint"
+    case .teal: "Teal"
+    case .cyan: "Cyan"
+    case .blue: "Blue"
+    case .indigo: "Indigo"
+    case .purple: "Purple"
+    case .pink: "Pink"
+    case .brown: "Brown"
+    case .gray: "Gray"
     }
   }
 }

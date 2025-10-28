@@ -29,7 +29,7 @@ enum PostFontSize {
   case normal
 }
 
-struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
+struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
   @StateObject var pref = PreferencesStorage.shared
 
   let spans: S
@@ -83,7 +83,7 @@ struct PostContentView<S: Sequence & Equatable>: View where S.Element == Span {
       }
       main
     }.fixedSize(horizontal: false, vertical: true)
-      .equatable(by: spans)
+      .equatable(by: spans.hashValue)
   }
 }
 
