@@ -384,7 +384,7 @@ extension BlockWord {
 extension TopicDetailsResponse {
   var cacheLoadedMessage: String? {
     if hasLocalReason {
-      return String(format: "The topic could not be accessed: %@".localized, localReason)
+      return localReason
     } else {
       return nil
     }
