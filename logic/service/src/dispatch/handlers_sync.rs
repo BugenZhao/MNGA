@@ -1,6 +1,6 @@
 use crate::{
-    auth, error::ServiceResult, fetch::invalidate_global_client, noti::mark_noti_read, request,
-    user::UserController,
+    auth, error::ServiceResult, fetch::invalidate_global_client, history, noti::mark_noti_read,
+    request, user::UserController,
 };
 use log::info;
 use protos::Service::*;
@@ -61,5 +61,12 @@ pub fn handle_invalidate_client(
     _: InvalidateClientRequest,
 ) -> ServiceResult<InvalidateClientResponse> {
     invalidate_global_client(true);
+    Ok(Default::default())
+}
+
+pub fn handle_update_topic_progress(
+    request: UpdateTopicProgressRequest,
+) -> ServiceResult<UpdateTopicProgressResponse> {
+    history::update_topic_progress(request.get_topic_id(), request.get_highest_floor());
     Ok(Default::default())
 }

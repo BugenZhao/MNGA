@@ -20,9 +20,20 @@ struct StaticTopicDetailsView<Content: View>: View {
 
 // Track the floors currently on the screen.
 final class CurrentViewingFloor {
-  var floors: Set<Int> = []
-  var highest: Int? {
+  private(set) var floors: Set<Int> = []
+  var highestSeen: Int?
+
+  var highestCurrent: Int? {
     floors.max()
+  }
+
+  func appear(_ floor: Int) {
+    floors.insert(floor)
+  }
+
+  func disappear(_ floor: Int) {
+    floors.remove(floor)
+    highestSeen = max(highestSeen ?? 0, floor)
   }
 }
 
@@ -122,6 +133,7 @@ struct TopicDetailsView: View {
 
   let onlyPost: (id: PostId?, atPage: Int?)
   let forceLocalMode: Bool
+  let initialFloorToJump: Int?
 
   @State var showJumpSelector = false
   @State var floorToJump: Int?
@@ -159,6 +171,21 @@ struct TopicDetailsView: View {
 
   static func build(topicBinding: Binding<Topic>, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
     let topic = topicBinding.wrappedValue
+    var resolvedFromPage = fromPage ?? onlyPost.atPage
+    var initialFloorToJump: Int?
+
+    if resolvedFromPage == nil,
+       onlyPost.id == nil,
+       postIdToJump == nil,
+       PreferencesStorage.shared.resumeTopicFromLastReadFloor
+    {
+      let storedFloor = topic.hasHighestViewedFloor ? Int(topic.highestViewedFloor) : nil
+      if let storedFloor, storedFloor > 0 {
+        initialFloorToJump = storedFloor
+        let page = max(1, (storedFloor + Constants.postPerPage) / Constants.postPerPage)
+        resolvedFromPage = page
+      }
+    }
 
     let dataSource = DataSource(
       buildRequest: { page in
@@ -181,10 +208,10 @@ struct TopicDetailsView: View {
       },
       id: \.floor.description,
       finishOnError: localMode,
-      loadFromPage: fromPage
+      loadFromPage: resolvedFromPage // FIXME: should not set initially
     )
 
-    return Self(topic: topicBinding, dataSource: dataSource, onlyPost: onlyPost, forceLocalMode: localMode, postIdToJump: postIdToJump)
+    return Self(topic: topicBinding, dataSource: dataSource, onlyPost: onlyPost, forceLocalMode: localMode, initialFloorToJump: initialFloorToJump, postIdToJump: postIdToJump)
       .environment(\.enableAuthorOnly, !localMode)
   }
 
@@ -213,7 +240,7 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false)
+      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false, initialFloorToJump: nil)
         .environment(\.enableAuthorOnly, false)
     }
   }
@@ -402,10 +429,10 @@ struct TopicDetailsView: View {
           ForEach(items, id: \.id.pid) { post in
             buildRow(post: post)
               .onAppear {
-                currentViewingFloor.floors.insert(Int(post.floor))
+                currentViewingFloor.appear(Int(post.floor))
                 dataSource.loadMoreIfNeeded(currentItem: post)
               }
-              .onDisappear { currentViewingFloor.floors.remove(Int(post.floor)) }
+              .onDisappear { currentViewingFloor.disappear(Int(post.floor)) }
           }
         }
       }
@@ -431,6 +458,8 @@ struct TopicDetailsView: View {
           let items = pair.items.filter { $0.id != first?.id }
           ForEach(items, id: \.id.pid) { post in
             buildRow(post: post)
+              .onAppear { currentViewingFloor.appear(Int(post.floor)) }
+              .onDisappear { currentViewingFloor.disappear(Int(post.floor)) }
           }
         }
       }
@@ -541,7 +570,7 @@ struct TopicDetailsView: View {
   var jumpSelector: some View {
     TopicJumpSelectorView(
       maxFloor: maxFloor,
-      initialFloor: currentViewingFloor.highest ?? 0,
+      initialFloor: currentViewingFloor.highestCurrent ?? 0,
       floorToJump: $floorToJump,
       pageToJump: $dataSource.loadFromPage
     )
@@ -607,7 +636,13 @@ struct TopicDetailsView: View {
       .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
       .onChange(of: dataSource.latestError) { onError(e: $1) }
       .environmentObject(postReply)
-      .onAppear { dataSource.initialLoad() }
+      .onAppear {
+        if floorToJump == nil, let initialFloorToJump {
+          floorToJump = initialFloorToJump
+        }
+        dataSource.initialLoad()
+      }
+      .onDisappear { syncTopicProgress() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
   }
 
@@ -621,11 +656,25 @@ struct TopicDetailsView: View {
       withAnimation {
         if let floor = floorToJump {
           action.scrollToFloor = floor
+          floorToJump = nil
         } else if let pid = postIdToJump?.pid {
           action.scrollToPid = pid
+          postIdToJump = nil
         }
       }
     }
+  }
+
+  func syncTopicProgress() {
+    guard !topic.id.isEmpty, !mock else { return }
+    guard let seen = currentViewingFloor.highestSeen.map({ UInt32($0) }) else { return }
+    guard seen > topic.highestViewedFloor else { return }
+
+    let _: UpdateTopicProgressResponse? = try? logicCall(.updateTopicProgress(.with {
+      $0.topicID = topic.id
+      $0.highestFloor = seen
+    }))
+    topic.highestViewedFloor = seen
   }
 
   var navID: NavigationIdentifier {
@@ -668,6 +717,7 @@ struct TopicDetailsView: View {
     topic.authorID = newTopic.authorID
     topic.subject = newTopic.subject
     topic.repliesNumLastVisit = newTopic.repliesNum // mark as read at frontend
+    topic.highestViewedFloor = newTopic.highestViewedFloor
 
 //    if let response = response {
 //      DispatchQueue.main.async {

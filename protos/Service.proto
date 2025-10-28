@@ -24,6 +24,8 @@ message SyncRequest {
     SetRequestOptionRequest set_request_option = 7;
     // Invalidate the global HTTP client.
     InvalidateClientRequest invalidate_client = 8;
+    // Update locally cached progress of a topic.
+    UpdateTopicProgressRequest update_topic_progress = 9;
   }
 }
 
@@ -50,6 +52,12 @@ message MarkNotificationReadResponse {}
 
 message SetRequestOptionRequest { RequestOption option = 1; }
 message SetRequestOptionResponse {}
+
+message UpdateTopicProgressRequest {
+  string topic_id = 1;
+  uint32 highest_floor = 2;
+}
+message UpdateTopicProgressResponse {}
 
 /*
  * Asynchronous services that are called in callback manner.
