@@ -35,7 +35,10 @@ struct TopicJumpSelectorView: View {
   @State var text = ""
 
   var selectedPage: Binding<Int> {
-    .init(get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage }, set: { selectedFloor = ($0 - 1) * Constants.postPerPage })
+    .init(
+      get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage },
+      set: { selectedFloor = ($0 - 1) * Constants.postPerPage }
+    )
   }
 
   @ViewBuilder
