@@ -181,6 +181,7 @@ struct TopicDetailsView: View {
 
     if onlyPost.id == nil,
        jumpToPost.id == nil,
+       topic.hasHighestViewedFloor,
        PreferencesStorage.shared.resumeTopicFromLastReadFloor
     {
       initialFloor = Int(topic.highestViewedFloor) + 1
