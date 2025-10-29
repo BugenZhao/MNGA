@@ -168,15 +168,19 @@ struct TopicDetailsView: View {
     return Self.build(topic: topic, onlyPost: onlyPost)
   }
 
-  static func build(topicBinding: Binding<Topic>, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
+  static func build(
+    topicBinding: Binding<Topic>,
+    localMode: Bool = false,
+    onlyPost: (id: PostId?, atPage: Int?) = (nil, nil),
+    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil)
+  ) -> some View {
     let topic = topicBinding.wrappedValue
 
     var initialPage = 1
     var initialFloor: Int?
 
     if onlyPost.id == nil,
-       fromPage == nil,
-       postIdToJump == nil,
+       jumpToPost.id == nil,
        PreferencesStorage.shared.resumeTopicFromLastReadFloor
     {
       initialFloor = Int(topic.highestViewedFloor) + 1
@@ -213,14 +217,19 @@ struct TopicDetailsView: View {
       onlyPost: onlyPost,
       forceLocalMode: localMode,
       floorToJump: initialFloor,
-      postIdToJump: postIdToJump
+      postIdToJump: jumpToPost.id
     )
     .environment(\.enableAuthorOnly, !localMode)
   }
 
-  static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
+  static func build(
+    topic: Topic,
+    localMode: Bool = false,
+    onlyPost: (id: PostId?, atPage: Int?) = (nil, nil),
+    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil)
+  ) -> some View {
     StaticTopicDetailsView(topic: topic) { binding in
-      build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, fromPage: fromPage, postIdToJump: postIdToJump)
+      build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, jumpToPost: jumpToPost)
     }
   }
 
@@ -350,8 +359,8 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var seeFullTopicButton: some View {
-    if let postId = onlyPost.id {
-      let view = TopicDetailsView.build(topic: topic, fromPage: onlyPost.atPage, postIdToJump: postId).eraseToAnyView()
+    if onlyPost.id != nil {
+      let view = TopicDetailsView.build(topic: topic, jumpToPost: onlyPost).eraseToAnyView()
       Button(action: { action.navigateToView = view }) {
         Text("Goto Topic")
       }
