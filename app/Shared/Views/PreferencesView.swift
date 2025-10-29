@@ -187,7 +187,7 @@ struct PreferencesInnerView: View {
 
     Toggle(isOn: $pref.resumeTopicFromLastReadFloor) {
       Label("Resume from Last Read Floor", systemImage: "clock.arrow.circlepath")
-    } // TODO: plus feature
+    }.disableWithPlusCheck(.resumeProgress)
 
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
