@@ -17,6 +17,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let id: KeyPath<Item, String>
   private let finishOnError: Bool
   private let neverRemove: Bool
+  private let initialPage: Int
 
   @Published var items = [Item]()
   @Published var itemToIndexAndPage = [String: (index: Int, page: Int)]()
@@ -45,19 +46,19 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     onResponse: @escaping (_ response: Res) -> ([Item], Int?),
     id: KeyPath<Item, String>,
     finishOnError: Bool = false,
-    loadFromPage: Int? = nil,
+    initialPage: Int = 1,
     neverRemove: Bool = false
   ) {
     self.buildRequest = buildRequest
     self.onResponse = onResponse
     self.id = id
     self.finishOnError = finishOnError
-    self.loadFromPage = loadFromPage
+    self.initialPage = initialPage
     self.neverRemove = neverRemove
 
     $loadFromPage
-      .drop { $0 == nil }
-      .sink { [weak self] in self?.refresh(fromPage: $0 ?? 1) }
+      .compactMap { $0 }
+      .sink { [weak self] in self?.refresh(fromPage: $0) }
       .store(in: &cancellables)
   }
 
@@ -192,7 +193,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   func initialLoad() {
     if loadedPage == 0, latestError == nil {
-      refresh(animated: true)
+      if initialPage != 1 {
+        logger.debug("initialLoad from page \(initialPage)")
+      }
+      refresh(animated: true, fromPage: initialPage)
     }
   }
 

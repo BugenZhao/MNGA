@@ -14,7 +14,6 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var scrollToFloor: Int? = nil
   @Published var showingReplyChain: [PostId]? = nil
   @Published var navigateToTid: String? = nil
-  @Published var navigateToTidWithPidAndPage: (tid: String, pid: String, page: Int?)? = nil
   @Published var navigateToForum: Forum? = nil
   @Published var showUserProfile: User? = nil
   @Published var navigateToAuthorOnly: String? = nil
@@ -90,13 +89,6 @@ struct TopicDetailsActionModifier: ViewModifier {
       .navigationDestination(item: $action.showUserProfile) { UserProfileView.build(user: $0) }
       .navigationDestination(item: $action.navigateToForum) { TopicListView.build(forum: $0) }
       .navigationDestination(isPresented: $action.navigateToView.isNotNil()) { action.navigateToView } // TODO(ng): use item
-      .navigationDestination(isPresented: $action.navigateToTidWithPidAndPage.isNotNil()) { // TODO(ng): use item
-        if let x = action.navigateToTidWithPidAndPage {
-          let withPidTopic = Topic.with { $0.id = x.tid }
-          let postId = PostId.with { $0.pid = x.pid; $0.tid = x.tid }
-          TopicDetailsView.build(topic: withPidTopic, fromPage: x.page, postIdToJump: postId)
-        }
-      }
   }
 }
 

@@ -133,7 +133,6 @@ struct TopicDetailsView: View {
 
   let onlyPost: (id: PostId?, atPage: Int?)
   let forceLocalMode: Bool
-  let initialFloorToJump: Int?
 
   @State var showJumpSelector = false
   @State var floorToJump: Int?
@@ -171,20 +170,17 @@ struct TopicDetailsView: View {
 
   static func build(topicBinding: Binding<Topic>, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
     let topic = topicBinding.wrappedValue
-    var resolvedFromPage = fromPage ?? onlyPost.atPage
-    var initialFloorToJump: Int?
 
-    if resolvedFromPage == nil,
-       onlyPost.id == nil,
+    var initialPage = 1
+    var initialFloor: Int?
+
+    if onlyPost.id == nil,
+       fromPage == nil,
        postIdToJump == nil,
        PreferencesStorage.shared.resumeTopicFromLastReadFloor
     {
-      let storedFloor = topic.hasHighestViewedFloor ? Int(topic.highestViewedFloor) : nil
-      if let storedFloor, storedFloor > 0 {
-        initialFloorToJump = storedFloor
-        let page = max(1, (storedFloor + Constants.postPerPage) / Constants.postPerPage)
-        resolvedFromPage = page
-      }
+      initialFloor = Int(topic.highestViewedFloor) + 1
+      initialPage = (initialFloor! + Constants.postPerPage) / Constants.postPerPage
     }
 
     let dataSource = DataSource(
@@ -208,11 +204,18 @@ struct TopicDetailsView: View {
       },
       id: \.floor.description,
       finishOnError: localMode,
-      loadFromPage: resolvedFromPage // FIXME: should not set initially
+      initialPage: initialPage
     )
 
-    return Self(topic: topicBinding, dataSource: dataSource, onlyPost: onlyPost, forceLocalMode: localMode, initialFloorToJump: initialFloorToJump, postIdToJump: postIdToJump)
-      .environment(\.enableAuthorOnly, !localMode)
+    return Self(
+      topic: topicBinding,
+      dataSource: dataSource,
+      onlyPost: onlyPost,
+      forceLocalMode: localMode,
+      floorToJump: initialFloor,
+      postIdToJump: postIdToJump
+    )
+    .environment(\.enableAuthorOnly, !localMode)
   }
 
   static func build(topic: Topic, localMode: Bool = false, onlyPost: (id: PostId?, atPage: Int?) = (nil, nil), fromPage: Int? = nil, postIdToJump: PostId? = nil) -> some View {
@@ -240,7 +243,7 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false, initialFloorToJump: nil)
+      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false)
         .environment(\.enableAuthorOnly, false)
     }
   }
@@ -364,8 +367,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var mayLoadBackButton: some View {
-    if let _ = dataSource.loadFromPage,
-       let prevPage = dataSource.firstLoadedPage?.advanced(by: -1), prevPage >= 1,
+    if let prevPage = dataSource.firstLoadedPage?.advanced(by: -1), prevPage >= 1,
        let currFirst = dataSource.items.min(by: { $0.floor < $1.floor })
     {
       Button(action: {
@@ -636,12 +638,7 @@ struct TopicDetailsView: View {
       .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
       .onChange(of: dataSource.latestError) { onError(e: $1) }
       .environmentObject(postReply)
-      .onAppear {
-        if floorToJump == nil, let initialFloorToJump {
-          floorToJump = initialFloorToJump
-        }
-        dataSource.initialLoad()
-      }
+      .onAppear { dataSource.initialLoad() }
       .onDisappear { syncTopicProgress() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
   }
@@ -651,8 +648,7 @@ struct TopicDetailsView: View {
   }
 
   func mayScrollToJumpFloor() {
-    guard let _ = dataSource.loadFromPage else { return }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       withAnimation {
         if let floor = floorToJump {
           action.scrollToFloor = floor
@@ -717,7 +713,7 @@ struct TopicDetailsView: View {
     topic.authorID = newTopic.authorID
     topic.subject = newTopic.subject
     topic.repliesNumLastVisit = newTopic.repliesNum // mark as read at frontend
-    topic.highestViewedFloor = newTopic.highestViewedFloor
+    topic.highestViewedFloor = newTopic.highestViewedFloor // for next visit with same entry
 
 //    if let response = response {
 //      DispatchQueue.main.async {
