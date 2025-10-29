@@ -100,13 +100,11 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
 
     let replies_num_last_visit = history
         .as_ref()
-        .map(|s| s.get_topic_snapshot().get_replies_num())
-        .map(Topic_oneof__replies_num_last_visit::replies_num_last_visit);
+        .and_then(|s| s.get_topic_snapshot()._replies_num_last_visit.clone());
 
     let highest_viewed_floor = history
         .as_ref()
-        .map(|s| s.get_topic_snapshot().get_highest_viewed_floor())
-        .map(Topic_oneof__highest_viewed_floor::highest_viewed_floor);
+        .and_then(|s| s.get_topic_snapshot()._highest_viewed_floor.clone());
 
     let fid = get!(map, "fid")?;
 
