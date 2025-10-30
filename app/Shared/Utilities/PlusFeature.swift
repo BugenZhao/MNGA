@@ -13,6 +13,7 @@ enum PlusFeature: CaseIterable {
   case multiFavorite
   case authorOnly
   case jump
+  case resumeProgress
   case userProfile
   case anonymous
   case blockContents
@@ -49,6 +50,8 @@ enum PlusFeature: CaseIterable {
       "Block Contents"
     case .multiFavorite:
       "Multiple Favorite Folders"
+    case .resumeProgress:
+      "Resume Reading Progress"
     }
   }
 
@@ -80,6 +83,8 @@ enum PlusFeature: CaseIterable {
       "Block contents from specific users, or with specific keywords."
     case .multiFavorite:
       "Organize favorite topics into multiple folders."
+    case .resumeProgress:
+      "Resume reading progress from where you left off."
     }
   }
 
@@ -111,6 +116,8 @@ enum PlusFeature: CaseIterable {
       "hand.raised"
     case .multiFavorite:
       "bookmark"
+    case .resumeProgress:
+      "clock.arrow.circlepath"
     }
   }
 }

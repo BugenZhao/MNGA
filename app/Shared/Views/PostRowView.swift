@@ -62,6 +62,11 @@ struct PostRowView: View {
     post.id == .dummy
   }
 
+  @State var highlight = false
+  var shouldHighlight: Bool {
+    action?.scrollToPid == post.id.pid
+  }
+
   @ViewBuilder
   var floor: some View {
     if post.floor != 0 {
@@ -233,12 +238,16 @@ struct PostRowView: View {
     }.padding(.vertical, 2)
       .fixedSize(horizontal: false, vertical: true)
       .contextMenu { menu }
-    #if os(iOS)
-      .listRowBackground(action?.scrollToPid == post.id.pid ? Color.systemGroupedBackground : nil)
-    #endif
       .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments, isPresented: $showAttachments) }.presentationDetents([.medium, .large]) }
       .environmentObject(attachments)
       .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) { swipeActions }
+      .onChange(of: shouldHighlight, initial: true) { if $1 {
+        withAnimation { highlight = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+          withAnimation { highlight = false }
+        }
+      }}
+      .listRowBackground(highlight ? Color.accentColor.opacity(0.1) : nil) // TODO: why not animated?
   }
 
   func doVote(_ operation: PostVoteRequest.Operation) {

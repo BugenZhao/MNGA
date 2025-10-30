@@ -86,6 +86,8 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         .filter(|q| !q.is_empty() && q != "0")
         .or_else(|| get!(map, "tid"))?;
 
+    let history = find_topic_history(&id);
+
     let TopicFavorResponse {
         is_favored,
         folder_ids: favor_folder_ids,
@@ -96,9 +98,15 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         .flatten()
         .unwrap_or_default();
 
-    let replies_num_last_visit = find_topic_history(&id)
-        .map(|s| s.get_topic_snapshot().get_replies_num())
+    let replies_num_last_visit = history
+        .as_ref()
+        .map(|s| s.get_topic_snapshot().get_replies_num()) // save replies num
         .map(Topic_oneof__replies_num_last_visit::replies_num_last_visit);
+
+    let highest_viewed_floor = history
+        .as_ref()
+        .map(|s| s.get_topic_snapshot().get_highest_viewed_floor())
+        .map(Topic_oneof__highest_viewed_floor::highest_viewed_floor);
 
     let fid = get!(map, "fid")?;
 
@@ -114,6 +122,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         _fav: fav,
         is_favored,
         _replies_num_last_visit: replies_num_last_visit,
+        _highest_viewed_floor: highest_viewed_floor,
         fid,
         favor_folder_ids,
         ..Default::default()

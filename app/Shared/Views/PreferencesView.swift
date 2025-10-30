@@ -185,6 +185,10 @@ struct PreferencesInnerView: View {
       Label("Topic Details Style", systemImage: "list.bullet.below.rectangle")
     }
 
+    Toggle(isOn: $pref.resumeTopicFromLastReadFloor) {
+      Label("Resume from Last Read Floor", systemImage: "clock.arrow.circlepath")
+    }.disableWithPlusCheck(.resumeProgress)
+
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
     }
