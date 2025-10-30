@@ -113,6 +113,12 @@ struct TopicFavorMenuView: View {
   }
 }
 
+enum TopicResumeFrom: String {
+  case none
+  case last
+  case highest
+}
+
 struct TopicDetailsView: View {
   @Namespace var transition
 
@@ -179,16 +185,23 @@ struct TopicDetailsView: View {
     var initialPage = jumpToPost.atPage ?? 1
     var initialFloor: Int?
 
-    if onlyPost.id == nil,
-       jumpToPost.id == nil,
-       !localMode,
-       PreferencesStorage.shared.resumeTopicFromLastReadFloor,
-       topic.hasLastViewingFloor, topic.lastViewingFloor >= 3, // at least read some
-       topic.hasHighestViewedFloor, topic.highestViewedFloor >= 3 // at least read some
-    {
-      // initialFloor = Int(topic.highestViewedFloor) + 1
-      initialFloor = Int(topic.lastViewingFloor)
-      initialPage = (initialFloor! + Constants.postPerPage) / Constants.postPerPage
+    // Resume reading progress
+    if onlyPost.id == nil, jumpToPost.id == nil, !localMode {
+      switch PreferencesStorage.shared.resumeTopicFrom {
+      case .none:
+        break
+      case .last:
+        if topic.hasLastViewingFloor, topic.lastViewingFloor >= 3 {
+          initialFloor = Int(topic.lastViewingFloor) + 1
+        }
+      case .highest:
+        if topic.hasHighestViewedFloor, topic.highestViewedFloor >= 3 {
+          initialFloor = Int(topic.highestViewedFloor) + 1
+        }
+      }
+      if let initialFloor {
+        initialPage = (initialFloor + Constants.postPerPage) / Constants.postPerPage
+      }
     }
 
     let dataSource = DataSource(
