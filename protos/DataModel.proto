@@ -31,6 +31,7 @@ message Topic {
   repeated string favor_folder_ids = 16; // See `TopicFavorResponse`
   optional uint32 replies_num_last_visit = 13;
   optional uint32 highest_viewed_floor = 17; // Highest floor visited locally.
+  optional uint32 last_viewing_floor = 18; // Last floor visited locally.
   string fid = 14; // The id of the topic's parent forum, mainly used for
                    // uploading attachments.
 }

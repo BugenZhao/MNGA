@@ -23,8 +23,8 @@ final class CurrentViewingFloor {
   private(set) var floors: Set<Int> = []
   var highestSeen: Int?
 
-  var highestCurrent: Int? {
-    floors.max()
+  var currentLowest: Int? {
+    floors.min()
   }
 
   func appear(_ floor: Int) {
@@ -183,10 +183,11 @@ struct TopicDetailsView: View {
        jumpToPost.id == nil,
        !localMode,
        PreferencesStorage.shared.resumeTopicFromLastReadFloor,
-       topic.hasHighestViewedFloor,
-       topic.highestViewedFloor >= 3 // at least read some
+       topic.hasLastViewingFloor, topic.lastViewingFloor >= 3, // at least read some
+       topic.hasHighestViewedFloor, topic.highestViewedFloor >= 3 // at least read some
     {
-      initialFloor = Int(topic.highestViewedFloor) + 1
+      // initialFloor = Int(topic.highestViewedFloor) + 1
+      initialFloor = Int(topic.lastViewingFloor)
       initialPage = (initialFloor! + Constants.postPerPage) / Constants.postPerPage
     }
 
@@ -583,7 +584,7 @@ struct TopicDetailsView: View {
   var jumpSelector: some View {
     TopicJumpSelectorView(
       maxFloor: maxFloor,
-      initialFloor: currentViewingFloor.highestCurrent ?? 0,
+      initialFloor: currentViewingFloor.currentLowest ?? 0,
       floorToJump: $floorToJump,
       pageToJump: $dataSource.loadFromPage
     )
@@ -650,7 +651,7 @@ struct TopicDetailsView: View {
       .onChange(of: dataSource.latestError) { onError(e: $1) }
       .environmentObject(postReply)
       .onAppear { dataSource.initialLoad() }
-      .onDisappear { syncTopicProgress() }
+      .onDisappearOrInactive { syncTopicProgress() }
       .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
   }
 
@@ -675,13 +676,16 @@ struct TopicDetailsView: View {
   func syncTopicProgress() {
     guard !topic.id.isEmpty, !mock else { return }
     guard let seen = currentViewingFloor.highestSeen.map({ UInt32($0) }) else { return }
-    guard seen > topic.highestViewedFloor else { return }
+    let highest = max(topic.highestViewedFloor, seen)
+    guard let current = currentViewingFloor.currentLowest.map({ UInt32($0) }) else { return }
 
     let _: UpdateTopicProgressResponse? = try? logicCall(.updateTopicProgress(.with {
       $0.topicID = topic.id
-      $0.highestFloor = seen
+      $0.highestFloor = highest
+      $0.currentFloor = current
     }))
-    topic.highestViewedFloor = seen
+    topic.highestViewedFloor = highest
+    topic.lastViewingFloor = current
   }
 
   var navID: NavigationIdentifier {
@@ -723,8 +727,13 @@ struct TopicDetailsView: View {
     }
     topic.authorID = newTopic.authorID
     topic.subject = newTopic.subject
-    topic.repliesNumLastVisit = newTopic.repliesNum // mark as read at frontend
-    topic.highestViewedFloor = newTopic.highestViewedFloor // for next visit with same entry
+
+    // Following fields will be actually updated by logic.
+    // But we still need to update them here to reflect the new state, even without
+    // fetching again. For example, user may navigate to this topic again without refreshing.
+    topic.repliesNumLastVisit = newTopic.repliesNum
+    topic.highestViewedFloor = newTopic.highestViewedFloor
+    topic.lastViewingFloor = newTopic.lastViewingFloor
 
 //    if let response = response {
 //      DispatchQueue.main.async {

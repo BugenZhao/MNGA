@@ -107,6 +107,10 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         .as_ref()
         .map(|s| s.get_topic_snapshot().get_highest_viewed_floor())
         .map(Topic_oneof__highest_viewed_floor::highest_viewed_floor);
+    let last_viewing_floor = history
+        .as_ref()
+        .map(|s| s.get_topic_snapshot().get_last_viewing_floor())
+        .map(Topic_oneof__last_viewing_floor::last_viewing_floor);
 
     let fid = get!(map, "fid")?;
 
@@ -123,6 +127,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         is_favored,
         _replies_num_last_visit: replies_num_last_visit,
         _highest_viewed_floor: highest_viewed_floor,
+        _last_viewing_floor: last_viewing_floor,
         fid,
         favor_folder_ids,
         ..Default::default()
