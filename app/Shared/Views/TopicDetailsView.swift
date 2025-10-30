@@ -364,7 +364,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var seeFullTopicButton: some View {
     if onlyPost.id != nil {
-      let view = TopicDetailsView.build(topic: topic, jumpToPost: onlyPost).eraseToAnyView()
+      let view = TopicDetailsView.build(topicBinding: $topic, jumpToPost: onlyPost).eraseToAnyView()
       Button(action: { action.navigateToView = view }) {
         Text("Goto Topic")
       }
