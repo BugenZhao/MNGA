@@ -108,6 +108,7 @@ struct UserProfileView: View {
           } else {
             ForEach(postDataSource.items, id: \.post.id) { tp in
               // My profile may show on the 2nd stack, requiring cross-stack.
+              // FIXME: we cannot know the page where the post is located at the original topic.
               CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topic: tp.topic, onlyPost: (id: tp.post.id, atPage: nil)), id: tp.post.id) {
                 TopicPostRowView(topic: tp.topic, post: tp.post)
               }.onAppear { postDataSource.loadMoreIfNeeded(currentItem: tp) }

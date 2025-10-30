@@ -176,13 +176,14 @@ struct TopicDetailsView: View {
   ) -> some View {
     let topic = topicBinding.wrappedValue
 
-    var initialPage = 1
+    var initialPage = jumpToPost.atPage ?? 1
     var initialFloor: Int?
 
     if onlyPost.id == nil,
        jumpToPost.id == nil,
-       topic.hasHighestViewedFloor,
+       !localMode,
        PreferencesStorage.shared.resumeTopicFromLastReadFloor,
+       topic.hasHighestViewedFloor,
        topic.highestViewedFloor >= 3 // at least read some
     {
       initialFloor = Int(topic.highestViewedFloor) + 1
@@ -533,7 +534,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var loadFirstPageButton: some View {
     if let page = dataSource.firstLoadedPage, page >= 2 {
-      Button(action: { dataSource.loadFromPage = nil; floorToJump = nil }) {
+      Button(action: { dataSource.loadFromPage = 1; floorToJump = 0 }) {
         Label("Load First Page", systemImage: "arrow.up.to.line")
       }
     }
@@ -548,7 +549,6 @@ struct TopicDetailsView: View {
 
       ToolbarItem(placement: .bottomBar) { jumpButton }
         .matchedTransitionSource(id: "jump", in: transition)
-      ToolbarSpacer(.fixed, placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) { loadFirstPageButton }
       ToolbarSpacer(placement: .bottomBar)
       ToolbarItemGroup(placement: .bottomBar) {
