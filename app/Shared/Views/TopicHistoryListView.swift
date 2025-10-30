@@ -40,7 +40,7 @@ struct TopicHistoryListView: View {
           ForEach(items, id: \.w.topicSnapshot.id) { snapshotBinding in
             let snapshot = snapshotBinding.w
             // Set the post date to the snapshot timestamp for display.
-            var displayTopic = snapshotBinding.w.topicSnapshot
+            var displayTopic = snapshot.topicSnapshot
             let snapshotDate = snapshot.timestamp / 1000 // snapshot timestamp is in milliseconds
             displayTopic.postDate = snapshotDate
             displayTopic.lastPostDate = snapshotDate
