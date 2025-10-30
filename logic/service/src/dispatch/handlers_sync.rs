@@ -67,6 +67,6 @@ pub fn handle_invalidate_client(
 pub fn handle_update_topic_progress(
     request: UpdateTopicProgressRequest,
 ) -> ServiceResult<UpdateTopicProgressResponse> {
-    history::update_topic_progress(request.get_topic_id(), request.get_highest_floor());
+    history::update_topic_progress(request);
     Ok(Default::default())
 }

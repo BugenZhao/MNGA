@@ -191,8 +191,12 @@ struct PreferencesInnerView: View {
       Label("Topic Details Style", systemImage: "list.bullet.below.rectangle")
     }
 
-    Toggle(isOn: $pref.resumeTopicFromLastReadFloor) {
-      Label("Resume from Last Read Floor", systemImage: "clock.arrow.circlepath")
+    Picker(selection: $pref.resumeTopicFrom) {
+      Text("Disabled").tag(TopicResumeFrom.none)
+      Text("Last Read Floor").tag(TopicResumeFrom.last)
+      Text("Highest Read Floor").tag(TopicResumeFrom.highest)
+    } label: {
+      Label("Resume Reading Progress", systemImage: "arrowshape.turn.up.left")
     }.disableWithPlusCheck(.resumeProgress)
 
     Toggle(isOn: $pref.useInAppSafari) {

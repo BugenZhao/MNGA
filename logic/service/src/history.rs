@@ -4,7 +4,7 @@ use chrono::Utc;
 use protos::{
     DataModel::{Topic, TopicSnapshot},
     Message,
-    Service::{TopicHistoryRequest, TopicHistoryResponse},
+    Service::{TopicHistoryRequest, TopicHistoryResponse, UpdateTopicProgressRequest},
 };
 use std::cmp::Reverse;
 
@@ -28,13 +28,20 @@ pub fn find_topic_history(topic_id: &str) -> Option<TopicSnapshot> {
     CACHE.get_msg::<TopicSnapshot>(&key).ok().flatten()
 }
 
-pub fn update_topic_progress(topic_id: &str, highest_floor: u32) {
-    let key = topic_snapshot_key(topic_id);
+pub fn update_topic_progress(request: UpdateTopicProgressRequest) {
+    let UpdateTopicProgressRequest {
+        topic_id,
+        highest_floor,
+        current_floor,
+        ..
+    } = request;
+    let key = topic_snapshot_key(&topic_id);
     let _ = CACHE.mutate_msg(&key, |snapshot: &mut TopicSnapshot| {
         let topic = snapshot.mut_topic_snapshot();
         if highest_floor > topic.get_highest_viewed_floor() {
             topic.set_highest_viewed_floor(highest_floor);
         }
+        topic.set_last_viewing_floor(current_floor);
     });
 }
 
