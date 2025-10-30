@@ -311,24 +311,18 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
         .refreshable { await doRefresh() }
         .if(refreshAfterIdle) {
           $0
+            .onDisappearOrInactive {
+              dataSource.logger.debug("onDisappear or inactive, record lastSeen")
+              lastSeen = Date()
+            }
             .onChange(of: scenePhase) {
               dataSource.logger.debug("scenePhase changed from \($0) to \($1)")
-
               // Swipe to home: active -> inactive -> background
               // Back to app: background -> inactive -> active
               // When in multitask mode, app can be inactive if it's not focused.
               // So we detect the switch from inactive to active, but not from background.
-              if $0 == .active, $1 == .inactive {
-                dataSource.logger.debug("active -> inactive, record lastSeen")
-                lastSeen = Date()
-                return
-              }
               guard $0 == .inactive, $1 == .active else { return }
               refreshIfExpired()
-            }
-            .onDisappear {
-              dataSource.logger.debug("onDisappear, record lastSeen")
-              lastSeen = Date()
             }
             .onAppear { refreshIfExpired() }
         }
