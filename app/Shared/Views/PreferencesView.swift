@@ -91,8 +91,14 @@ private struct TopicListAppearanceView: View {
           Label(order.description, systemImage: order.icon).tag(order)
         }
       }
-      Toggle(isOn: $pref.topicListHideBlocked) {
-        Label("Hide Blocked Topics", systemImage: "eye.slash")
+      Toggle(isOn: $pref.topicListShowRefreshButton) {
+        Label("Refresh Button", systemImage: "arrow.clockwise")
+      }
+      Picker(selection: $pref.topicListHideBlocked) {
+        Label("Redact Subject", systemImage: "text.redaction").tag(false)
+        Label("Hide Topic", systemImage: "eye.slash").tag(true)
+      } label: {
+        Label("Blocked Topics Style", systemImage: "hand.raised")
       }
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)

@@ -80,7 +80,6 @@
 "Resume from Last Read Floor" = "恢复到此前阅读楼层";
 "Show Signature" = "显示签名";
 "Show Avatar" = "显示头像";
-"Hide Blocked Topics" = "隐藏屏蔽话题";
 "Collapsed Style" = "折叠风格";
 "Redact" = "遮盖";
 "Hidden" = "隐藏";
@@ -291,6 +290,10 @@
 "Unnamed Folder" = "未命名的收藏夹";
 "Add to New Folder" = "添加到新收藏夹";
 "Resume Reading Progress" = "恢复阅读进度";
+"Refresh Button" = "刷新按钮";
+"Blocked Topics Style" = "屏蔽话题样式";
+"Redact Subject" = "遮盖主题";
+"Hide Topic" = "隐藏话题";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";

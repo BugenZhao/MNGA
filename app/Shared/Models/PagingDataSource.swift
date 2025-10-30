@@ -278,6 +278,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifier {
   let dataSource: PagingDataSource<Res, Item>
   let refreshAfterIdle: Bool
+  let triggerRefresh: Bool?
 
   @Environment(\.scenePhase) var scenePhase
   @State var lastSeen: Date? = nil
@@ -289,14 +290,18 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
 
   func body(content: Content) -> some View {
     ScrollViewReader { proxy in
-      let mayRefresh = {
+      let scrollThenRefresh = {
+        withAnimation { proxy.scrollTo("top-placeholder") }
+        await doRefresh()
+      }
+
+      let refreshIfExpired = {
         guard let last = lastSeen ?? dataSource.lastRefreshTime else { return }
         let elapsed = Date().timeIntervalSince(last)
         if elapsed > 60 * 60 { // 1 hour
           Task {
             dataSource.logger.debug("\(elapsed) seconds elapsed, refreshing...")
-            withAnimation { proxy.scrollTo("top-placeholder") }
-            await doRefresh()
+            await scrollThenRefresh()
             ToastModel.showAuto(.autoRefreshed)
           }
         }
@@ -319,20 +324,34 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
                 return
               }
               guard $0 == .inactive, $1 == .active else { return }
-              mayRefresh()
+              refreshIfExpired()
             }
             .onDisappear {
               dataSource.logger.debug("onDisappear, record lastSeen")
               lastSeen = Date()
             }
-            .onAppear { mayRefresh() }
+            .onAppear { refreshIfExpired() }
+        }
+        .onChange(of: triggerRefresh) {
+          Task {
+            await scrollThenRefresh()
+            HapticUtils.play(type: .success)
+          }
         }
     }
   }
 }
 
 extension View {
-  func refreshable(dataSource: PagingDataSource<some SwiftProtobuf.Message, some Any>, refreshAfterIdle: Bool = false) -> some View {
-    modifier(PagingDataSourceRefreshable(dataSource: dataSource, refreshAfterIdle: refreshAfterIdle))
+  func refreshable(
+    dataSource: PagingDataSource<some SwiftProtobuf.Message, some Any>,
+    refreshAfterIdle: Bool = false,
+    triggerRefresh: Bool? = nil
+  ) -> some View {
+    modifier(PagingDataSourceRefreshable(
+      dataSource: dataSource,
+      refreshAfterIdle: refreshAfterIdle,
+      triggerRefresh: triggerRefresh
+    ))
   }
 }
