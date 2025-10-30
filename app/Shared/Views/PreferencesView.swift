@@ -91,6 +91,9 @@ private struct TopicListAppearanceView: View {
           Label(order.description, systemImage: order.icon).tag(order)
         }
       }
+      Toggle(isOn: $pref.topicListShowRefreshButton) {
+        Label("Refresh Button", systemImage: "arrow.clockwise")
+      }
       Toggle(isOn: $pref.topicListHideBlocked) {
         Label("Hide Blocked Topics", systemImage: "eye.slash")
       }

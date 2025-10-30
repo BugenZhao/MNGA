@@ -21,6 +21,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("useInAppSafari") var useInAppSafari = true
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
   @AppStorage("topicListHideBlocked") var topicListHideBlocked = false
+  @AppStorage("topicListShowRefreshButton") var topicListShowRefreshButton = true
   @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true

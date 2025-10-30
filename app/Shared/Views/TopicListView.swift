@@ -29,6 +29,7 @@ struct TopicListView: View {
   @State var subforumsModalDetent: PresentationDetent = .medium
   @State var order: TopicListRequest.Order? = nil
   @State var showPrincipal = false
+  @State var triggerRefresh = false
 
   var orderOrDefault: TopicListRequest.Order {
     order ?? prefs.defaultTopicListOrder
@@ -236,6 +237,13 @@ struct TopicListView: View {
     .opacity(showPrincipal ? 1 : 0)
   }
 
+  @ViewBuilder
+  var refreshButton: some View {
+    Button(action: { triggerRefresh.toggle() }) {
+      Label("Refresh", systemImage: "arrow.clockwise")
+    }
+  }
+
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     #if os(iOS)
@@ -246,9 +254,13 @@ struct TopicListView: View {
       // -- Bottom Bar
       ToolbarItem(placement: .bottomBar) { subforumButton }
         .matchedTransitionSource(id: "subforums", in: transition)
-      ToolbarSpacer(placement: .bottomBar)
+      ToolbarSpacer(.fixed, placement: .bottomBar)
       DefaultToolbarItem(kind: .search, placement: .bottomBar)
-      ToolbarSpacer(placement: .bottomBar)
+      if prefs.topicListShowRefreshButton {
+        ToolbarSpacer(.fixed, placement: .bottomBar)
+        ToolbarItem(placement: .bottomBar) { refreshButton }
+      }
+      ToolbarSpacer(.fixed, placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) { newTopicButton }
     #elseif os(macOS)
       ToolbarItemGroup {
@@ -288,7 +300,7 @@ struct TopicListView: View {
         }
       }
     }
-    .refreshable(dataSource: dataSource, refreshAfterIdle: true)
+    .refreshable(dataSource: dataSource, refreshAfterIdle: true, triggerRefresh: triggerRefresh)
     .mayGroupedListStyle()
   }
 
