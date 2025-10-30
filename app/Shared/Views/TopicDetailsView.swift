@@ -183,7 +183,7 @@ struct TopicDetailsView: View {
        jumpToPost.id == nil,
        topic.hasHighestViewedFloor,
        PreferencesStorage.shared.resumeTopicFromLastReadFloor,
-       topic.highestViewedFloor >= 5 // at least read some
+       topic.highestViewedFloor >= 3 // at least read some
     {
       initialFloor = Int(topic.highestViewedFloor) + 1
       initialPage = (initialFloor! + Constants.postPerPage) / Constants.postPerPage
