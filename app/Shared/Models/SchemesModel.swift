@@ -178,8 +178,7 @@ class SchemesModel: ObservableObject {
   }
 
   func navigateToPasteboardURL() {
-    guard let url = UIPasteboard.general.url else { return }
-    guard canNavigateTo(url) else {
+    guard let url = UIPasteboard.general.url, canNavigateTo(url) else {
       ToastModel.showAuto(.error("Not a valid NGA or MNGA link in the pasteboard."))
       return
     }
