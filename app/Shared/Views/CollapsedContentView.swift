@@ -19,11 +19,15 @@ struct CollapsedContentView<Content: View>: View {
       Button(action: { collapsed.toggle() }) {
         HStack {
           Image(systemName: collapsed ? "chevron.down" : "chevron.up")
+            .contentTransition(
+              .symbolEffect(.replace.magic(fallback: .downUp))
+            )
           Text(title)
+            .animation(.none, value: collapsed) // disable animation to avoid glitch
         }.padding(.bottom, 1)
           .foregroundColor(.accentColor)
           .font(.subheadline.bold())
-      }.buttonStyle(PlainButtonStyle())
+      }.buttonStyle(.plain)
 
       Group {
         if !collapsed {
