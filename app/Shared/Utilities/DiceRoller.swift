@@ -96,7 +96,7 @@ enum DiceRoller {
       case let .number(value):
         String(value)
       case .error:
-        "ERROR"
+        "ERROR".localized
       }
     }
   }

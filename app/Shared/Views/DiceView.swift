@@ -9,9 +9,10 @@ import Foundation
 import SwiftUI
 
 struct DiceView: View {
-  let result: DiceRoller.Result
-
+  @StateObject var prefs = PreferencesStorage.shared
   @State var showingExpanded = false
+
+  let result: DiceRoller.Result
 
   init(resolved result: DiceRoller.Result) {
     self.result = result
@@ -19,6 +20,14 @@ struct DiceView: View {
 
   init(unresolvedExpression: String) {
     result = .init(originalExpression: unresolvedExpression, expandedExpression: "???", totalDescription: "???")
+  }
+
+  var font: Font {
+    if prefs.postRowLargerFont {
+      .callout
+    } else {
+      .subheadline
+    }
   }
 
   var body: some View {
@@ -42,8 +51,7 @@ struct DiceView: View {
           }
         }
       }
-      .font(.callout)
-      .monospaced()
+      .font(font.monospaced())
     }
     .contentShape(.rect)
     .onTapGesture { withAnimation { showingExpanded.toggle() } }
