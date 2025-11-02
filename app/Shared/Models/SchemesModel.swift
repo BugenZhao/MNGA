@@ -25,7 +25,7 @@ extension NavigationIdentifier {
     case let .postID(pid):
       pid.isMNGAMockID
     case let .forumID(forumID):
-      forumID.fid.isMNGAMockID
+      forumID.fid.isMNGAMockID || forumID.stid.isMNGAMockID
     }
   }
 
@@ -62,6 +62,7 @@ extension NavigationIdentifier {
   }
 
   var webpageURL: URL? {
+    guard !isMNGAMockID else { return nil }
     var components = URLComponents()
 
     switch self {
@@ -126,21 +127,19 @@ extension URL {
     if URLs.hosts.contains(host ?? ""),
        let components = URLComponents(url: self, resolvingAgainstBaseURL: false)
     {
-      if components.path.contains("read.php") {
+      if components.path == "/read.php" {
         if let tid = components.queryItems?.first(where: { $0.name == "tid" })?.value {
           let fav = components.queryItems?.first(where: { $0.name == "fav" })?.value
           return .topicID(tid: tid, fav: fav)
         } else if let pid = components.queryItems?.first(where: { $0.name == "pid" })?.value {
           return .postID(pid)
         }
-      } else if components.path.contains("thread.php"),
-                let stid = components.queryItems?.first(where: { $0.name == "stid" })?.value
-      {
-        return .forumID(.with { $0.stid = stid })
-      } else if components.path.contains("thread.php"),
-                let fid = components.queryItems?.first(where: { $0.name == "fid" })?.value
-      {
-        return .forumID(.with { $0.fid = fid })
+      } else if components.path == "/thread.php" {
+        if let stid = components.queryItems?.first(where: { $0.name == "stid" })?.value {
+          return .forumID(.with { $0.stid = stid })
+        } else if let fid = components.queryItems?.first(where: { $0.name == "fid" })?.value {
+          return .forumID(.with { $0.fid = fid })
+        }
       }
     }
 

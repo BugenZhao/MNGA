@@ -59,6 +59,7 @@ class FavoriteForumsStorage: ObservableObject {
       favoriteForums.remove(at: index)
     } else {
       favoriteForums.append(forum)
+      HapticUtils.play(type: .success)
     }
   }
 }

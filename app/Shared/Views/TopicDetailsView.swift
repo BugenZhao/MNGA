@@ -585,7 +585,7 @@ struct TopicDetailsView: View {
       headerSection
       Section {
         Button(action: { openInBrowser() }) {
-          Label("Open in Browser", systemImage: "network")
+          Label("Open in Browser", systemImage: "safari")
         }
       }
     }
@@ -700,7 +700,7 @@ struct TopicDetailsView: View {
   }
 
   var navID: NavigationIdentifier {
-    .topicID(tid: topic.id, fav: topic.hasFav ? topic.fav : nil)
+    .topicID(tid: topic.id, fav: topic.fav != "" ? topic.fav : nil)
   }
 
   func doReplyTopic() {
