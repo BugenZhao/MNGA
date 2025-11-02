@@ -17,6 +17,13 @@ class ContentCombiner {
     case other(AnyView)
   }
 
+  // When building view with children, using...
+  enum TableContext {
+    case none // VStack
+    case table // Grid
+    case row // GridRow
+  }
+
   struct OtherStyles: OptionSet {
     let rawValue: Int
 
@@ -49,9 +56,13 @@ class ContentCombiner {
     "chocolate": .chocolate,
     "sienna": .sienna,
     "silver": .init(hex: 0x888888),
+    "white": .white.exposureAdjust(1),
   ]
+
+  // Tags in this list will be ignored and the spans will be visited directly.
   private static let ignoredTags = [
     "list",
+    "font",
   ]
 
   private let parent: ContentCombiner?
@@ -115,6 +126,11 @@ class ContentCombiner {
   private var postDate: UInt64? {
     get { getEnv(key: "postDate") as! UInt64? }
     set { setEnv(key: "postDate", value: newValue) }
+  }
+
+  private var tableContext: TableContext {
+    get { getEnv(key: "tableContext") as! TableContext? ?? .none }
+    set { setEnv(key: "tableContext", value: newValue) }
   }
 
   init(
@@ -219,14 +235,25 @@ class ContentCombiner {
     } else {
       // complex view
       tryAppendTextBuffer()
-      let spacing: Double = inQuote ? 8 : 12
-      let stack = VStack(alignment: alignment, spacing: spacing) {
+      let forEach =
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
         }
+
+      switch tableContext {
+      case .none:
+        let spacing: Double = inQuote ? 8 : 12
+        let stack = VStack(alignment: alignment, spacing: spacing) { forEach }
+        return .other(stack.eraseToAnyView())
+      case .table:
+        let grid = ScrollView(.horizontal) { Grid(alignment: .leading) { forEach } }
+          .scrollBounceBehavior(.basedOnSize, axes: .horizontal) // scroll only if needed
+        return .other(grid.eraseToAnyView())
+      case .row:
+        let gridRow = GridRow { forEach }
+        return .other(gridRow.eraseToAnyView())
       }
-      return .other(AnyView(stack))
     }
   }
 
@@ -234,7 +261,6 @@ class ContentCombiner {
   func buildView() -> some View {
     switch build() {
     case nil, .breakline:
-      // unreachable
       EmptyView()
     case let .text(text):
       text
@@ -345,6 +371,12 @@ class ContentCombiner {
       visit(attach: tagged)
     case "align":
       visit(align: tagged)
+    case "table":
+      visit(table: tagged)
+    case "tr":
+      visit(tableRow: tagged)
+    case let tag where tag.starts(with: "td"):
+      visit(tableCell: tagged)
     case "_mnga":
       visit(mnga: tagged)
     default:
@@ -670,6 +702,44 @@ class ContentCombiner {
     } else {
       append(inner)
     }
+  }
+
+  private func visit(table: Span.Tagged) {
+    let tableCombiner = ContentCombiner(parent: self, font: { $0?.monospacedDigit() })
+    tableCombiner.tableContext = .table
+    tableCombiner.visit(spans: table.spans)
+    append(tableCombiner.build())
+  }
+
+  private func visit(tableRow: Span.Tagged) {
+    let rowCombiner = ContentCombiner(parent: self)
+    rowCombiner.tableContext = .row
+    rowCombiner.visit(spans: tableRow.spans)
+    append(rowCombiner.build())
+  }
+
+  private func visit(tableCell: Span.Tagged) {
+    let colSpan = tableCell.complexAttributes.first { $0.starts(with: "colspan=") }.flatMap { Int($0.dropFirst(8)) }
+    let cellCombiner = ContentCombiner(parent: self)
+    // Reset `tableContext` so that multiple views inside this `td` will be combined normally,
+    // instead of being wrapped in a `Grid` or `GridRow`.
+    cellCombiner.tableContext = .none
+    cellCombiner.visit(spans: tableCell.spans)
+
+    let cellView = Group {
+      switch cellCombiner.build() {
+      case nil, .breakline:
+        Color.clear.gridCellUnsizedAxes([.vertical, .horizontal])
+      case let .text(text):
+        text // do not append it as text, otherwise it will be concatenated to the previous cell
+      case let .other(any):
+        any
+      }
+    }
+    .gridCellColumns(colSpan ?? 1)
+    .eraseToAnyView()
+
+    append(.other(cellView))
   }
 
   private func visit(mnga: Span.Tagged) {
