@@ -51,9 +51,10 @@ enum DiceRoller {
       return next
     }
 
-    func nextRandomUnit() -> Double {
+    func nextRoll(faces: Int) -> Int {
+      precondition(faces > 0, "faces must be positive")
       let seed = nextSeed()
-      return Double(seed) / 233_280.0
+      return (seed * faces) / 233_280 + 1
     }
   }
 
@@ -68,52 +69,30 @@ enum DiceRoller {
   }
 
   private enum Sum {
-    case number(Double)
-    case text(String)
+    case number(Int)
+    case error
 
-    mutating func add(_ value: Double) {
+    mutating func add(_ value: Int) {
       switch self {
       case let .number(current):
         self = .number(current + value)
-      case .text:
+      case .error:
         break
       }
     }
 
     mutating func setError() {
-      self = .text("ERROR")
+      self = .error
     }
 
     func rendered() -> String {
       switch self {
       case let .number(value):
-        if value.isNaN {
-          return "NaN"
-        }
-        if value.isInfinite {
-          return value.sign == .plus ? "Infinity" : "-Infinity"
-        }
-        if value == value.rounded(.towardZero) {
-          return String(Int(value))
-        }
-        return String(value)
-      case let .text(text):
-        return text
+        String(value)
+      case .error:
+        "ERROR"
       }
     }
-  }
-
-  private static func formatNumber(_ value: Double) -> String {
-    if value.isNaN {
-      return "NaN"
-    }
-    if value.isInfinite {
-      return value.sign == .plus ? "Infinity" : "-Infinity"
-    }
-    if value == value.rounded(.towardZero) {
-      return String(Int(value))
-    }
-    return String(value)
   }
 
   static func roll(expression: String, context: Context) -> Result {
@@ -150,22 +129,23 @@ enum DiceRoller {
       if !hasDice {
         let value = diceCount
         output.append("+\(value)")
-        sum.add(Double(value))
+        sum.add(value)
       } else {
-        let facesNumber = Double(facesToken)
-        if diceCount > 10 || (facesNumber ?? Double.nan) > 100_000 {
+        guard let faces = Int(facesToken, radix: 10), faces > 0 else {
+          sum.setError()
+          output.append("+INVALID")
+          cursor = range.upperBound
+          continue
+        }
+
+        if diceCount > 10 || faces > 100_000 {
           sum.setError()
           output.append("+OUT OF LIMIT")
         } else {
           var replacement = ""
           for _ in 0 ..< diceCount {
-            let unit = context.nextRandomUnit()
-            let rollValue: Double = if let facesNumber {
-              floor(unit * facesNumber) + 1
-            } else {
-              .nan
-            }
-            replacement.append("+d\(facesToken)(\(formatNumber(rollValue)))")
+            let rollValue = context.nextRoll(faces: faces)
+            replacement.append("+d\(facesToken)(\(rollValue))")
             sum.add(rollValue)
           }
           output.append(replacement)
