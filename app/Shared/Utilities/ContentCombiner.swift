@@ -17,6 +17,13 @@ class ContentCombiner {
     case other(AnyView)
   }
 
+  // When building view with children, using...
+  enum TableContext {
+    case none // VStack
+    case table // Grid
+    case row // GridRow
+  }
+
   struct OtherStyles: OptionSet {
     let rawValue: Int
 
@@ -121,14 +128,9 @@ class ContentCombiner {
     set { setEnv(key: "postDate", value: newValue) }
   }
 
-  private var inTable: Bool {
-    get { getEnv(key: "inTable") != nil }
-    set { setEnv(key: "inTable", value: newValue ? "true" : nil) }
-  }
-
-  private var inTableRow: Bool {
-    get { getEnv(key: "inTableRow") != nil }
-    set { setEnv(key: "inTableRow", value: newValue ? "true" : nil) }
+  private var tableContext: TableContext {
+    get { getEnv(key: "tableContext") as! TableContext? ?? .none }
+    set { setEnv(key: "tableContext", value: newValue) }
   }
 
   init(
@@ -239,17 +241,18 @@ class ContentCombiner {
             .fixedSize(horizontal: false, vertical: true)
         }
 
-      if inTableRow {
-        let gridRow = GridRow { forEach }
-        return .other(gridRow.eraseToAnyView())
-      } else if inTable {
-        let grid = ScrollView(.horizontal) { Grid(alignment: .leading) { forEach } }
-          .scrollBounceBehavior(.basedOnSize, axes: .horizontal) // scroll only if needed
-        return .other(grid.eraseToAnyView())
-      } else {
+      switch tableContext {
+      case .none:
         let spacing: Double = inQuote ? 8 : 12
         let stack = VStack(alignment: alignment, spacing: spacing) { forEach }
         return .other(stack.eraseToAnyView())
+      case .table:
+        let grid = ScrollView(.horizontal) { Grid(alignment: .leading) { forEach } }
+          .scrollBounceBehavior(.basedOnSize, axes: .horizontal) // scroll only if needed
+        return .other(grid.eraseToAnyView())
+      case .row:
+        let gridRow = GridRow { forEach }
+        return .other(gridRow.eraseToAnyView())
       }
     }
   }
@@ -703,14 +706,14 @@ class ContentCombiner {
 
   private func visit(table: Span.Tagged) {
     let tableCombiner = ContentCombiner(parent: self, font: { $0?.monospacedDigit() })
-    tableCombiner.inTable = true
+    tableCombiner.tableContext = .table
     tableCombiner.visit(spans: table.spans)
     append(tableCombiner.build())
   }
 
   private func visit(tableRow: Span.Tagged) {
     let rowCombiner = ContentCombiner(parent: self)
-    rowCombiner.inTableRow = true
+    rowCombiner.tableContext = .row
     rowCombiner.visit(spans: tableRow.spans)
     append(rowCombiner.build())
   }
@@ -718,6 +721,9 @@ class ContentCombiner {
   private func visit(tableCell: Span.Tagged) {
     let colSpan = tableCell.complexAttributes.first { $0.starts(with: "colspan=") }.flatMap { Int($0.dropFirst(8)) }
     let cellCombiner = ContentCombiner(parent: self)
+    // Reset `tableContext` so that multiple views inside this `td` will be combined normally,
+    // instead of being wrapped in a `Grid` or `GridRow`.
+    cellCombiner.tableContext = .none
     cellCombiner.visit(spans: tableCell.spans)
 
     let cellView = Group {
