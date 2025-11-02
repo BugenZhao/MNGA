@@ -117,6 +117,16 @@ class ContentCombiner {
     set { setEnv(key: "postDate", value: newValue) }
   }
 
+  private var inTable: Bool {
+    get { getEnv(key: "inTable") != nil }
+    set { setEnv(key: "inTable", value: newValue ? "true" : nil) }
+  }
+
+  private var inTableRow: Bool {
+    get { getEnv(key: "inTableRow") != nil }
+    set { setEnv(key: "inTableRow", value: newValue ? "true" : nil) }
+  }
+
   init(
     parent: ContentCombiner?,
     font: @escaping (Font?) -> Font? = { $0 },
@@ -219,14 +229,24 @@ class ContentCombiner {
     } else {
       // complex view
       tryAppendTextBuffer()
-      let spacing: Double = inQuote ? 8 : 12
-      let stack = VStack(alignment: alignment, spacing: spacing) {
+      let forEach =
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
         }
+
+      if inTableRow {
+        let gridRow = GridRow { forEach }
+        return .other(gridRow.eraseToAnyView())
+      } else if inTable {
+        let grid = ScrollView(.horizontal) { Grid(alignment: .leading) { forEach } }
+          .scrollBounceBehavior(.basedOnSize, axes: .horizontal) // scroll only if needed
+        return .other(grid.eraseToAnyView())
+      } else {
+        let spacing: Double = inQuote ? 8 : 12
+        let stack = VStack(alignment: alignment, spacing: spacing) { forEach }
+        return .other(stack.eraseToAnyView())
       }
-      return .other(AnyView(stack))
     }
   }
 
@@ -234,7 +254,6 @@ class ContentCombiner {
   func buildView() -> some View {
     switch build() {
     case nil, .breakline:
-      // unreachable
       EmptyView()
     case let .text(text):
       text
@@ -345,6 +364,12 @@ class ContentCombiner {
       visit(attach: tagged)
     case "align":
       visit(align: tagged)
+    case "table":
+      visit(table: tagged)
+    case "tr":
+      visit(tableRow: tagged)
+    case let tag where tag.starts(with: "td"):
+      visit(tableCell: tagged)
     case "_mnga":
       visit(mnga: tagged)
     default:
@@ -670,6 +695,41 @@ class ContentCombiner {
     } else {
       append(inner)
     }
+  }
+
+  private func visit(table: Span.Tagged) {
+    let tableCombiner = ContentCombiner(parent: self, font: { $0?.monospacedDigit() })
+    tableCombiner.inTable = true
+    tableCombiner.visit(spans: table.spans)
+    append(tableCombiner.build())
+  }
+
+  private func visit(tableRow: Span.Tagged) {
+    let rowCombiner = ContentCombiner(parent: self)
+    rowCombiner.inTableRow = true
+    rowCombiner.visit(spans: tableRow.spans)
+    append(rowCombiner.build())
+  }
+
+  private func visit(tableCell: Span.Tagged) {
+    let colSpan = tableCell.complexAttributes.first { $0.starts(with: "colspan=") }.flatMap { Int($0.dropFirst(8)) }
+    let cellCombiner = ContentCombiner(parent: self)
+    cellCombiner.visit(spans: tableCell.spans)
+
+    let cellView = Group {
+      switch cellCombiner.build() {
+      case nil, .breakline:
+        Color.clear.gridCellUnsizedAxes([.vertical, .horizontal])
+      case let .text(text):
+        text // do not append it as text, otherwise it will be concatenated to the previous cell
+      case let .other(any):
+        any
+      }
+    }
+    .gridCellColumns(colSpan ?? 1)
+    .eraseToAnyView()
+
+    append(.other(cellView))
   }
 
   private func visit(mnga: Span.Tagged) {
