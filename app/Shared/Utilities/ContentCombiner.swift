@@ -49,9 +49,13 @@ class ContentCombiner {
     "chocolate": .chocolate,
     "sienna": .sienna,
     "silver": .init(hex: 0x888888),
+    "white": .white.exposureAdjust(1),
   ]
+
+  // Tags in this list will be ignored and the spans will be visited directly.
   private static let ignoredTags = [
     "list",
+    "font",
   ]
 
   private let parent: ContentCombiner?
