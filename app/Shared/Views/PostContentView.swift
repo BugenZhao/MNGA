@@ -133,19 +133,24 @@ extension PostContentView where S == [Span] {
     )
   }
 
-  init(
-    post: Post,
-    fontSize: PostFontSize = .normal,
-    defaultColor: Color = .primary,
-    initialInQuote: Bool = false
-  ) {
+  init(post: Post) {
     self.init(
       content: post.content,
       id: post.id,
       postDate: post.postDate,
       authorId: post.authorID,
-      fontSize: fontSize,
-      defaultColor: defaultColor,
+    )
+  }
+
+  init(
+    lightPost: LightPost,
+    initialInQuote: Bool = false
+  ) {
+    self.init(
+      content: lightPost.content,
+      id: lightPost.id,
+      postDate: lightPost.postDate,
+      authorId: lightPost.authorID,
       initialInQuote: initialInQuote
     )
   }

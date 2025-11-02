@@ -29,12 +29,18 @@ struct TopicPostRowView: View {
     }
   }
 
+  var cleanPost: LightPost {
+    var post = post
+    post.content = .with { $0.spans = cleanSpans }
+    return post
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       TopicSubjectView(topic: topic, lineLimit: 2)
 
       QuoteView(fullWidth: false) {
-        PostContentView(spans: cleanSpans, initialInQuote: true)
+        PostContentView(lightPost: cleanPost, initialInQuote: true)
           .lineLimit(5)
       }
 
