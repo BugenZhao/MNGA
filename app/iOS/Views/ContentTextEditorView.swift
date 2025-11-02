@@ -88,7 +88,7 @@ struct ContentTextEditorView: View {
                 }
               }
               .padding(.horizontal)
-            }
+            }.scrollTargetBehavior(.paging)
 
             Spacer()
 
