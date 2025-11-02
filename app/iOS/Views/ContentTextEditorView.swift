@@ -77,8 +77,11 @@ struct ContentTextEditorView: View {
                 Button(action: model.appendCollapsed) {
                   Image(systemName: "chevron.up.chevron.down")
                 }
-                Button(action: model.insertQuoted) {
+                Button(action: model.appendQuoted) {
                   Image(systemName: "quote.bubble")
+                }
+                Button(action: model.appendDice) {
+                  Image(systemName: "dice")
                 }
                 Button(action: model.insertSeparator) {
                   Image(systemName: "minus")

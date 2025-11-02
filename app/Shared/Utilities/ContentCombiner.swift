@@ -108,7 +108,7 @@ class ContentCombiner {
     }
   }
 
-  private var inQuote: Bool {
+  var inQuote: Bool {
     get { getEnv(key: "inQuote") != nil }
     set { setEnv(key: "inQuote", value: newValue ? "true" : nil) }
   }
@@ -133,6 +133,18 @@ class ContentCombiner {
     set { setEnv(key: "tableContext", value: newValue) }
   }
 
+  var diceContext: DiceRoller.Context? {
+    get { getEnv(key: "diceContext") as? DiceRoller.Context }
+    set { setEnv(key: "diceContext", value: newValue) }
+  }
+
+  private func nextDiceSeedOffset() -> Int {
+    let current = (getEnv(key: "diceCollapseCounter") as? Int) ?? 0
+    let next = current + 1
+    setEnv(key: "diceCollapseCounter", globalValue: next) // NOTE GLOBAL!
+    return next
+  }
+
   init(
     parent: ContentCombiner?,
     font: @escaping (Font?) -> Font? = { $0 },
@@ -148,14 +160,14 @@ class ContentCombiner {
     alignment = overrideAlignment ?? parent?.alignment ?? .leading
   }
 
-  init(actionModel: TopicDetailsActionModel?, id: PostId?, postDate: UInt64?, defaultFont: Font, defaultColor: Color, initialEnvs: [String: Any]? = nil) {
+  init(actionModel: TopicDetailsActionModel?, id: PostId?, postDate: UInt64?, defaultFont: Font, defaultColor: Color) {
     parent = nil
     self.actionModel = actionModel
     fontModifier = { _ in defaultFont }
     colorModifier = { _ in defaultColor }
     otherStylesModifier = { $0 }
     alignment = .leading
-    envs = initialEnvs ?? [:]
+    envs = [:]
 
     selfId = id
     self.postDate = postDate
@@ -197,7 +209,7 @@ class ContentCombiner {
     }
   }
 
-  private func build() -> Subview? {
+  private consuming func build() -> Subview? {
     var textBuffer: Text?
     var results = [AnyView]()
 
@@ -207,6 +219,15 @@ class ContentCombiner {
         results.append(view)
         textBuffer = nil
       }
+    }
+
+    // Remove all trailing and leading breaklines
+    var subviews = subviews
+    while let first = subviews.first, case .breakline = first {
+      subviews.removeFirst()
+    }
+    while let last = subviews.last, case .breakline = last {
+      subviews.removeLast()
     }
 
     for subview in subviews {
@@ -258,7 +279,7 @@ class ContentCombiner {
   }
 
   @ViewBuilder
-  func buildView() -> some View {
+  consuming func buildView() -> some View {
     switch build() {
     case nil, .breakline:
       EmptyView()
@@ -377,6 +398,8 @@ class ContentCombiner {
       visit(tableRow: tagged)
     case let tag where tag.starts(with: "td"):
       visit(tableCell: tagged)
+    case "dice":
+      visit(dice: tagged)
     case "_mnga":
       visit(mnga: tagged)
     default:
@@ -558,6 +581,19 @@ class ContentCombiner {
     append(link)
   }
 
+  private func visit(dice: Span.Tagged) {
+    guard let value = dice.spans.first?.value else { return }
+    guard case let .plain(plain) = value else { return }
+    let expression = plain.text
+
+    let view = if let diceContext {
+      DiceView(resolved: DiceRoller.roll(expression: expression, context: diceContext))
+    } else {
+      DiceView(unresolvedExpression: expression)
+    }
+    append(view)
+  }
+
   private func visit(code: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.system(.footnote, design: .monospaced) })
     combiner.visit(spans: code.spans)
@@ -600,6 +636,10 @@ class ContentCombiner {
     let title = "\(collapsed.attributes.first ?? "Collapsed Content".localized)..."
 
     let combiner = ContentCombiner(parent: self)
+    let seedOffset = nextDiceSeedOffset()
+    if let context = diceContext {
+      combiner.diceContext = context.copy(withSeedOffset: seedOffset)
+    }
     combiner.visit(spans: collapsed.spans)
     let content = combiner.buildView()
 

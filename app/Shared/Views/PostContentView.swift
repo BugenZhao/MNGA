@@ -36,6 +36,7 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
   let error: String?
   let id: PostId?
   let postDate: UInt64?
+  let authorId: String?
   let fontSize: PostFontSize
   let defaultColor: Color
   let initialInQuote: Bool
@@ -51,11 +52,21 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
     }
   }
 
-  init(spans: S, error: String? = nil, id: PostId? = nil, postDate: UInt64? = nil, fontSize: PostFontSize = .normal, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  init(
+    spans: S,
+    error: String? = nil,
+    id: PostId? = nil,
+    postDate: UInt64? = nil,
+    authorId: String? = nil,
+    fontSize: PostFontSize = .normal,
+    defaultColor: Color = .primary,
+    initialInQuote: Bool = false
+  ) {
     self.spans = spans
     self.error = error
     self.id = id
     self.postDate = postDate
+    self.authorId = authorId
     self.fontSize = fontSize
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote
@@ -64,7 +75,20 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
   @EnvironmentObject<TopicDetailsActionModel>.Optional var actionModel
 
   var main: some View {
-    let combiner = ContentCombiner(actionModel: actionModel, id: id, postDate: postDate, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)
+    var combiner = ContentCombiner(
+      actionModel: actionModel,
+      id: id,
+      postDate: postDate,
+      defaultFont: defaultFont,
+      defaultColor: defaultColor
+    )
+    if initialInQuote {
+      combiner.inQuote = true
+    }
+    if let context = DiceRoller.Context(authorIdString: authorId, topicIdString: id?.tid, postIdString: id?.pid) {
+      combiner.diceContext = context
+    }
+
     combiner.visit(spans: spans)
     return combiner.buildView()
   }
@@ -88,14 +112,47 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
 }
 
 extension PostContentView where S == [Span] {
-  init(content: PostContent, id: PostId? = nil, postDate: UInt64? = nil, fontSize: PostFontSize = .normal, defaultColor: Color = .primary, initialInQuote: Bool = false) {
-    spans = content.spans
-    error = content.error
-    self.id = id
-    self.postDate = postDate
-    self.fontSize = fontSize
-    self.defaultColor = defaultColor
-    self.initialInQuote = initialInQuote
+  init(
+    content: PostContent,
+    id: PostId? = nil,
+    postDate: UInt64? = nil,
+    authorId: String? = nil,
+    fontSize: PostFontSize = .normal,
+    defaultColor: Color = .primary,
+    initialInQuote: Bool = false
+  ) {
+    self.init(
+      spans: content.spans,
+      error: content.error,
+      id: id,
+      postDate: postDate,
+      authorId: authorId,
+      fontSize: fontSize,
+      defaultColor: defaultColor,
+      initialInQuote: initialInQuote
+    )
+  }
+
+  init(post: Post) {
+    self.init(
+      content: post.content,
+      id: post.id,
+      postDate: post.postDate,
+      authorId: post.authorID,
+    )
+  }
+
+  init(
+    lightPost: LightPost,
+    initialInQuote: Bool = false
+  ) {
+    self.init(
+      content: lightPost.content,
+      id: lightPost.id,
+      postDate: lightPost.postDate,
+      authorId: lightPost.authorID,
+      initialInQuote: initialInQuote
+    )
   }
 }
 
