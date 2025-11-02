@@ -24,9 +24,9 @@ enum DiceRoller {
     }
 
     convenience init?(authorIdString: String?, topicIdString: String?, postIdString: String?) {
-      guard let authorIdString, let authorId = Int(from: authorIdString),
-            let topicIdString, let topicId = Int(from: topicIdString),
-            let postIdString, let postId = Int(from: postIdString)
+      guard let authorIdString, let authorId = Int(authorIdString),
+            let topicIdString, let topicId = Int(topicIdString),
+            let postIdString, let postId = Int(postIdString)
       else {
         return nil
       }
