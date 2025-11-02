@@ -209,7 +209,7 @@ class ContentCombiner {
     }
   }
 
-  private func build() -> Subview? {
+  private consuming func build() -> Subview? {
     var textBuffer: Text?
     var results = [AnyView]()
 
@@ -219,6 +219,15 @@ class ContentCombiner {
         results.append(view)
         textBuffer = nil
       }
+    }
+
+    // Remove all trailing and leading breaklines
+    var subviews = subviews
+    while let first = subviews.first, case .breakline = first {
+      subviews.removeFirst()
+    }
+    while let last = subviews.last, case .breakline = last {
+      subviews.removeLast()
     }
 
     for subview in subviews {
@@ -270,7 +279,7 @@ class ContentCombiner {
   }
 
   @ViewBuilder
-  func buildView() -> some View {
+  consuming func buildView() -> some View {
     switch build() {
     case nil, .breakline:
       EmptyView()
