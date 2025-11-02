@@ -585,7 +585,7 @@ struct TopicDetailsView: View {
       headerSection
       Section {
         Button(action: { openInBrowser() }) {
-          Label("Open in Browser", systemImage: "network")
+          Label("Open in Browser", systemImage: "safari")
         }
       }
     }

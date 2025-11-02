@@ -80,7 +80,7 @@ struct ContentView: View {
       .symbolColorRenderingMode(.gradient) // modern look
       // Sheets
       .whatsNewSheet()
-      .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(Color("AccentColor")) } // this is global-wide, no need to attribute again in sheets
+      .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(.accentColor) } // this is global-wide, no need to attribute again in sheets
       .sheet(isPresented: $authStorage.isSigning) { LoginView() }
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])

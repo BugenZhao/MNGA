@@ -20,13 +20,20 @@ struct ShareLinksView<V: View>: View {
         }
       }
 
-      if !navigationID.isMNGAMockID, let webpageURL = navigationID.webpageURL {
+      if let webpageURL = navigationID.webpageURL {
         ShareLink(item: webpageURL) {
           Label("NGA Link", systemImage: "network")
         }
       }
 
       others()
+
+      if let webpageURL = navigationID.webpageURL {
+        Divider()
+        Button(action: { OpenURLModel.shared.open(url: webpageURL) }) {
+          Label("Open in Browser", systemImage: "safari")
+        }
+      }
     } label: {
       Label("Share", systemImage: "square.and.arrow.up")
     }

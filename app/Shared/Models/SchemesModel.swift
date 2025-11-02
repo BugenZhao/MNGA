@@ -62,6 +62,7 @@ extension NavigationIdentifier {
   }
 
   var webpageURL: URL? {
+    guard !isMNGAMockID else { return nil }
     var components = URLComponents()
 
     switch self {

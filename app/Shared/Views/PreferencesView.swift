@@ -242,7 +242,7 @@ struct PreferencesInnerView: View {
   var special: some View {
     Group {
       Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
-        Label("Auto Open in Browser when Banned", systemImage: "network")
+        Label("Auto Open in Browser when Banned", systemImage: "safari")
       }
     }
   }
