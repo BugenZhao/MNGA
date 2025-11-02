@@ -14,6 +14,7 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var scrollToFloor: Int? = nil
   @Published var showingReplyChain: [PostId]? = nil
   @Published var navigateToTid: String? = nil
+  @Published var navigateToPid: String? = nil
   @Published var navigateToForum: Forum? = nil
   @Published var showUserProfile: User? = nil
   @Published var navigateToAuthorOnly: String? = nil
@@ -85,6 +86,10 @@ struct TopicDetailsActionModifier: ViewModifier {
       .navigationDestination(item: $action.navigateToTid) { tid in
         let navTopic = Topic.with { $0.id = tid }
         TopicDetailsView.build(topic: navTopic)
+      }
+      .navigationDestination(item: $action.navigateToPid) { pid in
+        let postId = PostId.with { $0.pid = pid }
+        TopicDetailsView.build(onlyPost: (id: postId, atPage: nil))
       }
       .navigationDestination(item: $action.showUserProfile) { UserProfileView.build(user: $0) }
       .navigationDestination(item: $action.navigateToForum) { TopicListView.build(forum: $0) }

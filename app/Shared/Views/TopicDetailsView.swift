@@ -355,9 +355,7 @@ struct TopicDetailsView: View {
         }
       }
 
-      #if os(iOS)
-        ShareLinksView(navigationID: navID, others: {})
-      #endif
+      ShareLinksView(navigationID: navID, others: {})
 
       Section {
         favoriteMenu
@@ -376,7 +374,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var seeFullTopicButton: some View {
-    if onlyPost.id != nil {
+    if onlyPost.id != nil, !topic.id.isEmpty {
       let view = TopicDetailsView.build(topicBinding: $topic, jumpToPost: onlyPost).eraseToAnyView()
       Button(action: { action.navigateToView = view }) {
         Text("Goto Topic")
@@ -735,6 +733,9 @@ struct TopicDetailsView: View {
     guard let response else { return }
     let newTopic = response.topic
 
+    if topic.id.isEmpty { // for onlyPost, we may not have the topic id initially
+      topic.id = newTopic.id
+    }
     if newTopic.hasParentForum {
       topic.parentForum = newTopic.parentForum
     }

@@ -18,6 +18,7 @@ enum Constants {
   enum MNGA {
     static let scheme = "mnga"
     static let topicBase = "\(scheme)://topic/"
+    static let postBase = "\(scheme)://post/"
     static let forumFBase = "\(scheme)://forum/f/"
     static let forumSTBase = "\(scheme)://forum/st/"
   }
