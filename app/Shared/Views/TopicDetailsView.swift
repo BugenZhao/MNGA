@@ -700,7 +700,7 @@ struct TopicDetailsView: View {
   }
 
   var navID: NavigationIdentifier {
-    .topicID(tid: topic.id, fav: topic.hasFav ? topic.fav : nil)
+    .topicID(tid: topic.id, fav: topic.fav != "" ? topic.fav : nil)
   }
 
   func doReplyTopic() {
