@@ -23,6 +23,16 @@ enum DiceRoller {
       self.rndSeed = rndSeed
     }
 
+    convenience init?(authorIdString: String?, topicIdString: String?, postIdString: String?) {
+      guard let authorIdString, let authorId = Int(from: authorIdString),
+            let topicIdString, let topicId = Int(from: topicIdString),
+            let postIdString, let postId = Int(from: postIdString)
+      else {
+        return nil
+      }
+      self.init(authorId: authorId, topicId: topicId, postId: postId)
+    }
+
     func copy(withSeedOffset offset: Int? = nil) -> Context {
       let copy = Context(authorId: authorId, topicId: topicId, postId: postId, seedOffset: offset ?? seedOffset, rndSeed: rndSeed)
       return copy
@@ -62,10 +72,6 @@ enum DiceRoller {
     let originalExpression: String
     let expandedExpression: String
     let totalDescription: String
-
-    var formattedDescription: String {
-      "ROLL : \(originalExpression) = \(expandedExpression) = \(totalDescription)"
-    }
   }
 
   private enum Sum {

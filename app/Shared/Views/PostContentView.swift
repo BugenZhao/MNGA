@@ -52,11 +52,6 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
     }
   }
 
-  private static func parseId(_ value: String?) -> Int {
-    guard let value, let number = Int(value, radix: 10) else { return 0 }
-    return number
-  }
-
   init(
     spans: S,
     error: String? = nil,
@@ -80,26 +75,20 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
   @EnvironmentObject<TopicDetailsActionModel>.Optional var actionModel
 
   var main: some View {
-    var envs: [String: Any] = [:]
-    if initialInQuote {
-      envs["inQuote"] = "true"
-    }
-    let context = DiceRoller.Context(
-      authorId: Self.parseId(authorId),
-      topicId: Self.parseId(id?.tid),
-      postId: Self.parseId(id?.pid)
-    )
-    envs["diceContext"] = context
-    envs["diceCollapseCounter"] = 0
-
-    let combiner = ContentCombiner(
+    var combiner = ContentCombiner(
       actionModel: actionModel,
       id: id,
       postDate: postDate,
       defaultFont: defaultFont,
-      defaultColor: defaultColor,
-      initialEnvs: envs.isEmpty ? nil : envs
+      defaultColor: defaultColor
     )
+    if initialInQuote {
+      combiner.inQuote = true
+    }
+    if let context = DiceRoller.Context(authorIdString: authorId, topicIdString: id?.tid, postIdString: id?.pid) {
+      combiner.diceContext = context
+    }
+
     combiner.visit(spans: spans)
     return combiner.buildView()
   }
@@ -132,14 +121,33 @@ extension PostContentView where S == [Span] {
     defaultColor: Color = .primary,
     initialInQuote: Bool = false
   ) {
-    spans = content.spans
-    error = content.error
-    self.id = id
-    self.postDate = postDate
-    self.authorId = authorId
-    self.fontSize = fontSize
-    self.defaultColor = defaultColor
-    self.initialInQuote = initialInQuote
+    self.init(
+      spans: content.spans,
+      error: content.error,
+      id: id,
+      postDate: postDate,
+      authorId: authorId,
+      fontSize: fontSize,
+      defaultColor: defaultColor,
+      initialInQuote: initialInQuote
+    )
+  }
+
+  init(
+    post: Post,
+    fontSize: PostFontSize = .normal,
+    defaultColor: Color = .primary,
+    initialInQuote: Bool = false
+  ) {
+    self.init(
+      content: post.content,
+      id: post.id,
+      postDate: post.postDate,
+      authorId: post.authorID,
+      fontSize: fontSize,
+      defaultColor: defaultColor,
+      initialInQuote: initialInQuote
+    )
   }
 }
 

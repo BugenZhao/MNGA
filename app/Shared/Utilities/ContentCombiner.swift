@@ -108,7 +108,7 @@ class ContentCombiner {
     }
   }
 
-  private var inQuote: Bool {
+  var inQuote: Bool {
     get { getEnv(key: "inQuote") != nil }
     set { setEnv(key: "inQuote", value: newValue ? "true" : nil) }
   }
@@ -133,7 +133,7 @@ class ContentCombiner {
     set { setEnv(key: "tableContext", value: newValue) }
   }
 
-  private var diceContext: DiceRoller.Context? {
+  var diceContext: DiceRoller.Context? {
     get { getEnv(key: "diceContext") as? DiceRoller.Context }
     set { setEnv(key: "diceContext", value: newValue) }
   }
@@ -141,7 +141,7 @@ class ContentCombiner {
   private func nextDiceSeedOffset() -> Int {
     let current = (getEnv(key: "diceCollapseCounter") as? Int) ?? 0
     let next = current + 1
-    setEnv(key: "diceCollapseCounter", globalValue: next)
+    setEnv(key: "diceCollapseCounter", globalValue: next) // NOTE GLOBAL!
     return next
   }
 
@@ -160,14 +160,14 @@ class ContentCombiner {
     alignment = overrideAlignment ?? parent?.alignment ?? .leading
   }
 
-  init(actionModel: TopicDetailsActionModel?, id: PostId?, postDate: UInt64?, defaultFont: Font, defaultColor: Color, initialEnvs: [String: Any]? = nil) {
+  init(actionModel: TopicDetailsActionModel?, id: PostId?, postDate: UInt64?, defaultFont: Font, defaultColor: Color) {
     parent = nil
     self.actionModel = actionModel
     fontModifier = { _ in defaultFont }
     colorModifier = { _ in defaultColor }
     otherStylesModifier = { $0 }
     alignment = .leading
-    envs = initialEnvs ?? [:]
+    envs = [:]
 
     selfId = id
     self.postDate = postDate
@@ -573,39 +573,16 @@ class ContentCombiner {
   }
 
   private func visit(dice: Span.Tagged) {
-    let expression = dice.spans.compactMap { span -> String? in
-      if case let .plain(plain) = span.value {
-        return plain.text
-      }
-      return nil
-    }.joined()
+    guard let value = dice.spans.first?.value else { return }
+    guard case let .plain(plain) = value else { return }
+    let expression = plain.text
 
-    guard !expression.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-      visit(defaultTagged: dice)
-      return
+    let view = if let diceContext {
+      DiceView(resolved: DiceRoller.roll(expression: expression, context: diceContext))
+    } else {
+      DiceView(unresolvedExpression: expression)
     }
-
-    if diceContext == nil {
-      func parseInt(_ value: String?) -> Int {
-        guard let value, let number = Int(value, radix: 10) else { return 0 }
-        return number
-      }
-      let context = DiceRoller.Context(
-        authorId: 0,
-        topicId: parseInt(selfId?.tid),
-        postId: parseInt(selfId?.pid)
-      )
-      diceContext = context
-    }
-
-    guard let context = diceContext else {
-      visit(defaultTagged: dice)
-      return
-    }
-
-    let result = DiceRoller.roll(expression: expression, context: context)
-    let text = styledText(Text(result.formattedDescription), overridenFont: .footnote)
-    append(.text(text))
+    append(view)
   }
 
   private func visit(code: Span.Tagged) {

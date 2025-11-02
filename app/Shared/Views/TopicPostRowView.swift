@@ -34,7 +34,7 @@ struct TopicPostRowView: View {
       TopicSubjectView(topic: topic, lineLimit: 2)
 
       QuoteView(fullWidth: false) {
-        PostContentView(spans: cleanSpans, id: post.id, postDate: post.postDate, authorId: post.authorID, initialInQuote: true)
+        PostContentView(spans: cleanSpans, initialInQuote: true)
           .lineLimit(5)
       }
 

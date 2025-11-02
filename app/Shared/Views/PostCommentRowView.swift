@@ -35,7 +35,7 @@ struct PostCommentRowView: View {
   @ViewBuilder
   var content: some View {
     QuoteView(fullWidth: false) {
-      PostContentView(spans: realSpans, id: comment.id, postDate: comment.postDate, authorId: comment.authorID, fontSize: .small, initialInQuote: true)
+      PostContentView(spans: realSpans, fontSize: .small, initialInQuote: true)
     }
   }
 
