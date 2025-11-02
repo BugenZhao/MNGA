@@ -133,6 +133,18 @@ class ContentCombiner {
     set { setEnv(key: "tableContext", value: newValue) }
   }
 
+  private var diceContext: DiceRoller.Context? {
+    get { getEnv(key: "diceContext") as? DiceRoller.Context }
+    set { setEnv(key: "diceContext", value: newValue) }
+  }
+
+  private func nextDiceSeedOffset() -> Int {
+    let current = (getEnv(key: "diceCollapseCounter") as? Int) ?? 0
+    let next = current + 1
+    setEnv(key: "diceCollapseCounter", globalValue: next)
+    return next
+  }
+
   init(
     parent: ContentCombiner?,
     font: @escaping (Font?) -> Font? = { $0 },
@@ -377,6 +389,8 @@ class ContentCombiner {
       visit(tableRow: tagged)
     case let tag where tag.starts(with: "td"):
       visit(tableCell: tagged)
+    case "dice":
+      visit(dice: tagged)
     case "_mnga":
       visit(mnga: tagged)
     default:
@@ -558,6 +572,42 @@ class ContentCombiner {
     append(link)
   }
 
+  private func visit(dice: Span.Tagged) {
+    let expression = dice.spans.compactMap { span -> String? in
+      if case let .plain(plain) = span.value {
+        return plain.text
+      }
+      return nil
+    }.joined()
+
+    guard !expression.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+      visit(defaultTagged: dice)
+      return
+    }
+
+    if diceContext == nil {
+      func parseInt(_ value: String?) -> Int {
+        guard let value, let number = Int(value, radix: 10) else { return 0 }
+        return number
+      }
+      let context = DiceRoller.Context(
+        authorId: 0,
+        topicId: parseInt(selfId?.tid),
+        postId: parseInt(selfId?.pid)
+      )
+      diceContext = context
+    }
+
+    guard let context = diceContext else {
+      visit(defaultTagged: dice)
+      return
+    }
+
+    let result = DiceRoller.roll(expression: expression, context: context)
+    let text = styledText(Text(result.formattedDescription), overridenFont: .footnote)
+    append(.text(text))
+  }
+
   private func visit(code: Span.Tagged) {
     let combiner = ContentCombiner(parent: self, font: { _ in Font.system(.footnote, design: .monospaced) })
     combiner.visit(spans: code.spans)
@@ -600,6 +650,10 @@ class ContentCombiner {
     let title = "\(collapsed.attributes.first ?? "Collapsed Content".localized)..."
 
     let combiner = ContentCombiner(parent: self)
+    let seedOffset = nextDiceSeedOffset()
+    if let context = diceContext {
+      combiner.diceContext = context.copy(withSeedOffset: seedOffset)
+    }
     combiner.visit(spans: collapsed.spans)
     let content = combiner.buildView()
 

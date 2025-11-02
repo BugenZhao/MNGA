@@ -49,7 +49,7 @@ struct ShortMessagePostRowView: View {
   @ViewBuilder
   var content: some View {
     TopicSubjectContentInnerView(content: post.subject, lineLimit: nil)
-    PostContentView(content: post.content)
+    PostContentView(content: post.content, authorId: post.authorID)
   }
 
   @ViewBuilder

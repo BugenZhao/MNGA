@@ -36,6 +36,7 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
   let error: String?
   let id: PostId?
   let postDate: UInt64?
+  let authorId: String?
   let fontSize: PostFontSize
   let defaultColor: Color
   let initialInQuote: Bool
@@ -51,11 +52,26 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
     }
   }
 
-  init(spans: S, error: String? = nil, id: PostId? = nil, postDate: UInt64? = nil, fontSize: PostFontSize = .normal, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  private static func parseId(_ value: String?) -> Int {
+    guard let value, let number = Int(value, radix: 10) else { return 0 }
+    return number
+  }
+
+  init(
+    spans: S,
+    error: String? = nil,
+    id: PostId? = nil,
+    postDate: UInt64? = nil,
+    authorId: String? = nil,
+    fontSize: PostFontSize = .normal,
+    defaultColor: Color = .primary,
+    initialInQuote: Bool = false
+  ) {
     self.spans = spans
     self.error = error
     self.id = id
     self.postDate = postDate
+    self.authorId = authorId
     self.fontSize = fontSize
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote
@@ -64,7 +80,26 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
   @EnvironmentObject<TopicDetailsActionModel>.Optional var actionModel
 
   var main: some View {
-    let combiner = ContentCombiner(actionModel: actionModel, id: id, postDate: postDate, defaultFont: defaultFont, defaultColor: defaultColor, initialEnvs: initialInQuote ? ["inQuote": "true"] : nil)
+    var envs: [String: Any] = [:]
+    if initialInQuote {
+      envs["inQuote"] = "true"
+    }
+    let context = DiceRoller.Context(
+      authorId: Self.parseId(authorId),
+      topicId: Self.parseId(id?.tid),
+      postId: Self.parseId(id?.pid)
+    )
+    envs["diceContext"] = context
+    envs["diceCollapseCounter"] = 0
+
+    let combiner = ContentCombiner(
+      actionModel: actionModel,
+      id: id,
+      postDate: postDate,
+      defaultFont: defaultFont,
+      defaultColor: defaultColor,
+      initialEnvs: envs.isEmpty ? nil : envs
+    )
     combiner.visit(spans: spans)
     return combiner.buildView()
   }
@@ -88,11 +123,20 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
 }
 
 extension PostContentView where S == [Span] {
-  init(content: PostContent, id: PostId? = nil, postDate: UInt64? = nil, fontSize: PostFontSize = .normal, defaultColor: Color = .primary, initialInQuote: Bool = false) {
+  init(
+    content: PostContent,
+    id: PostId? = nil,
+    postDate: UInt64? = nil,
+    authorId: String? = nil,
+    fontSize: PostFontSize = .normal,
+    defaultColor: Color = .primary,
+    initialInQuote: Bool = false
+  ) {
     spans = content.spans
     error = content.error
     self.id = id
     self.postDate = postDate
+    self.authorId = authorId
     self.fontSize = fontSize
     self.defaultColor = defaultColor
     self.initialInQuote = initialInQuote

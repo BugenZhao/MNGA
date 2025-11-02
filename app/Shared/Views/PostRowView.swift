@@ -159,7 +159,7 @@ struct PostRowView: View {
   @ViewBuilder
   var content: some View {
     BlockedView(content: BlockWordsStorage.content(user: user?.name ?? .init(), content: post.content.raw), revealOnTap: true) {
-      PostContentView(content: post.content, id: post.id, postDate: post.postDate)
+      PostContentView(content: post.content, id: post.id, postDate: post.postDate, authorId: post.authorID)
     }
   }
 
