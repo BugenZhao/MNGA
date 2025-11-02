@@ -13,6 +13,7 @@ import SwiftUIX
 
 enum NavigationIdentifier: Hashable {
   case topicID(tid: String, fav: String?)
+  case postID(String)
   case forumID(ForumId)
 }
 
@@ -21,6 +22,8 @@ extension NavigationIdentifier {
     switch self {
     case let .topicID(tid, _):
       tid.isMNGAMockID
+    case let .postID(pid):
+      pid.isMNGAMockID
     case let .forumID(forumID):
       forumID.fid.isMNGAMockID
     }
@@ -37,6 +40,10 @@ extension NavigationIdentifier {
         components.queryItems = [.init(name: "fav", value: fav)]
       }
       url = components.url(relativeTo: URL(string: Constants.MNGA.topicBase))
+
+    case let .postID(pid):
+      components.path = pid
+      url = components.url(relativeTo: URL(string: Constants.MNGA.postBase))
 
     case let .forumID(forumID):
       switch forumID.id {
@@ -64,6 +71,10 @@ extension NavigationIdentifier {
       if let fav {
         components.queryItems!.append(.init(name: "fav", value: fav))
       }
+
+    case let .postID(pid):
+      components.path = "read.php"
+      components.queryItems = [.init(name: "pid", value: pid)]
 
     case let .forumID(forumId):
       components.path = "thread.php"
@@ -93,7 +104,11 @@ extension URL {
         let fav: String? = context[parameter: "fav"]
         return .topicID(tid: tid, fav: fav)
       }
-
+      if let context = parser.parse(self, in: Constants.MNGA.postBase + ":pid"),
+         let pid: String = context[argument: "pid"]
+      {
+        return .postID(pid)
+      }
       if let context = parser.parse(self, in: Constants.MNGA.forumFBase + ":fid"),
          let fid: String = context[argument: "fid"]
       {
@@ -111,11 +126,13 @@ extension URL {
     if URLs.hosts.contains(host ?? ""),
        let components = URLComponents(url: self, resolvingAgainstBaseURL: false)
     {
-      if components.path.contains("read.php"),
-         let tid = components.queryItems?.first(where: { $0.name == "tid" })?.value
-      {
-        let fav = components.queryItems?.first(where: { $0.name == "fav" })?.value
-        return .topicID(tid: tid, fav: fav)
+      if components.path.contains("read.php") {
+        if let tid = components.queryItems?.first(where: { $0.name == "tid" })?.value {
+          let fav = components.queryItems?.first(where: { $0.name == "fav" })?.value
+          return .topicID(tid: tid, fav: fav)
+        } else if let pid = components.queryItems?.first(where: { $0.name == "pid" })?.value {
+          return .postID(pid)
+        }
       } else if components.path.contains("thread.php"),
                 let stid = components.queryItems?.first(where: { $0.name == "stid" })?.value
       {
@@ -178,8 +195,7 @@ class SchemesModel: ObservableObject {
   }
 
   func navigateToPasteboardURL() {
-    guard let url = UIPasteboard.general.url else { return }
-    guard canNavigateTo(url) else {
+    guard let url = UIPasteboard.general.url, canNavigateTo(url) else {
       ToastModel.showAuto(.error("Not a valid NGA or MNGA link in the pasteboard."))
       return
     }
@@ -197,6 +213,9 @@ struct SchemesNavigationModifier: ViewModifier {
         switch navID {
         case let .topicID(tid, fav):
           TopicDetailsView.build(id: tid, fav: fav)
+        case let .postID(pid):
+          let postId = PostId.with { $0.pid = pid }
+          TopicDetailsView.build(onlyPost: (id: postId, atPage: nil))
         case let .forumID(forumID):
           TopicListView.build(id: forumID)
         }

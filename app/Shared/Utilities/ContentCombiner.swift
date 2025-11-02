@@ -514,6 +514,8 @@ class ContentCombiner {
       switch url.mngaNavigationIdentifier {
       case let .topicID(tid, _):
         self.actionModel?.navigateToTid = tid
+      case let .postID(pid):
+        self.actionModel?.navigateToPid = pid
       case let .forumID(id):
         self.actionModel?.navigateToForum = Forum.with { $0.id = id }
       case .none:

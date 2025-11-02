@@ -62,6 +62,10 @@ struct PostRowView: View {
     post.id == .dummy
   }
 
+  var navID: NavigationIdentifier {
+    .postID(post.id.pid)
+  }
+
   @State var highlight = false
   var shouldHighlight: Bool {
     action?.scrollToPid == post.id.pid
@@ -190,16 +194,13 @@ struct PostRowView: View {
           Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
         }
       }
-    }
-    if let action {
-      Section {
-        if enableAuthorOnly, !(user?.isAnonymous ?? false) {
-          Button(action: { withPlusCheck(.authorOnly) { action.navigateToAuthorOnly = post.authorID } }) {
-            Label("This Author Only", systemImage: "person")
-          }
+      if let action, enableAuthorOnly, !(user?.isAnonymous ?? false) {
+        Button(action: { withPlusCheck(.authorOnly) { action.navigateToAuthorOnly = post.authorID } }) {
+          Label("This Author Only", systemImage: "person")
         }
       }
     }
+    ShareLinksView(navigationID: navID, others: {})
   }
 
   @ViewBuilder
