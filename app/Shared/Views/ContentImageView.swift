@@ -31,9 +31,9 @@ enum ContentImageScale: String, CaseIterable {
     case .small:
       0.5
     case .medium:
-      2 / 3
+      2.0 / 3.0
     case .fullSize:
-      1
+      1.0
     }
   }
 }
