@@ -686,9 +686,9 @@ struct TopicDetailsView: View {
 
   func syncTopicProgress() {
     guard !topic.id.isEmpty, !mock else { return }
-    guard let seen = currentViewingFloor.highestSeen.map({ UInt32($0) }) else { return }
+    let seen = currentViewingFloor.highestSeen.map { UInt32($0) } ?? 0
     let highest = max(topic.highestViewedFloor, seen)
-    guard let current = currentViewingFloor.currentLowest.map({ UInt32($0) }) else { return }
+    let current = currentViewingFloor.currentLowest.map { UInt32($0) } ?? 0
 
     let _: UpdateTopicProgressResponse? = try? logicCall(.updateTopicProgress(.with {
       $0.topicID = topic.id
