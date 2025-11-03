@@ -45,6 +45,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicator = true
   @AppStorage("postRowLargerFont") var postRowLargerFont = false
   @AppStorage("postRowDimImagesInDarkMode") var postRowDimImagesInDarkMode = false
+  @AppStorage("postRowImageScale") var postRowImageScale = ContentImageScale.fullSize
   @AppStorage("resumeTopicFrom") var resumeTopicFrom = TopicResumeFrom.none
 
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false

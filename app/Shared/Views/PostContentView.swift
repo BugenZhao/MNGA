@@ -75,7 +75,9 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
   @EnvironmentObject<TopicDetailsActionModel>.Optional var actionModel
 
   var main: some View {
-    var combiner = ContentCombiner(
+    // Self._printChanges()
+
+    let combiner = ContentCombiner(
       actionModel: actionModel,
       id: id,
       postDate: postDate,
