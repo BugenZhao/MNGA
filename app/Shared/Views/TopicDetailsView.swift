@@ -429,26 +429,39 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var headerSection: some View {
-    Section(header: Text("Topic")) {
+    Section("Topic") {
       headerSectionInner
     }.transition(.asymmetric(insertion: .scale, removal: .opacity))
   }
 
+  @State var hotRepliesExpanded = true
+
   @ViewBuilder
   var hotRepliesSection: some View {
     if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
-      Section(header: Text("Hot Replies")) {
+      Section(isExpanded: $hotRepliesExpanded) {
         ForEach(hotReplies, id: \.id.pid) { post in
           buildRow(post: post, withId: false)
         }
+      } header: {
+        HStack {
+          Text("Hot Replies")
+          Spacer()
+          Image(systemName: "chevron.right")
+            .rotationEffect(.degrees(hotRepliesExpanded ? 90 : 0))
+            .animation(.easeInOut(duration: 0.3), value: hotRepliesExpanded)
+        }
+        .contentShape(.rect)
+        .onTapGesture { withAnimation { hotRepliesExpanded.toggle() } }
       }
+      .transition(.asymmetric(insertion: .scale, removal: .opacity))
     }
   }
 
   @ViewBuilder
   var allRepliesSection: some View {
     if shouldShowReplies {
-      Section(header: Text("Replies")) {
+      Section("Replies") {
         mayLoadBackButton
         ForEach(dataSource.pagedItems, id: \.page) { pair in
           let items = pair.items.filter { $0.id != first?.id }
