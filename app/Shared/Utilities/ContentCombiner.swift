@@ -354,7 +354,7 @@ class ContentCombiner {
 
   private func visit(tagged: Span.Tagged) {
     switch tagged.tag {
-    case "_divider":
+    case "_divider", "h":
       visit(divider: tagged)
     case "img":
       visit(image: tagged)
