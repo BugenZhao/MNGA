@@ -354,7 +354,7 @@ class ContentCombiner {
 
   private func visit(tagged: Span.Tagged) {
     switch tagged.tag {
-    case "_divider":
+    case "_divider", "h":
       visit(divider: tagged)
     case "img":
       visit(image: tagged)
@@ -800,9 +800,19 @@ class ContentCombiner {
 
     let combiner = ContentCombiner(parent: self)
     let tagFont = Font.system(.footnote, design: .monospaced)
-    combiner.append(Text("[\(defaultTagged.tag)]").font(tagFont))
+
+    let tag = defaultTagged.tag
+    var openTag = tag
+    if !defaultTagged.attributes.isEmpty {
+      openTag += "=" + defaultTagged.attributes.joined(separator: ",")
+    }
+    if !defaultTagged.complexAttributes.isEmpty {
+      openTag += " " + defaultTagged.complexAttributes.joined(separator: " ")
+    }
+
+    combiner.append(Text("[\(openTag)]").font(tagFont))
     combiner.visit(spans: defaultTagged.spans)
-    combiner.append(Text("[/\(defaultTagged.tag)]").font(tagFont))
+    combiner.append(Text("[/\(tag)]").font(tagFont))
     append(combiner.build())
   }
 }
