@@ -21,7 +21,7 @@ struct StickerInputView: View {
             Image(name)
               .renderingMode(name.starts(with: "a") ? .template : .original)
               .resizable()
-              .aspectRatio(contentMode: .fit)
+              .scaledToFit()
               .background(name.starts(with: "dt") ? .white : .black.opacity(0.0))
               .frame(height: 50)
           }

@@ -23,7 +23,7 @@ struct NewImageViewer: View {
     if let view = model.view {
       // TODO: support multiple images for attachments
       LazyPager(data: [view]) { view in
-        view.aspectRatio(contentMode: .fit)
+        view.scaledToFit()
       }
       // Make the content zoomable
       .zoomable(min: 1, max: 5)

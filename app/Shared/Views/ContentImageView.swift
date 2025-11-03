@@ -28,10 +28,12 @@ struct ContentImageView: View {
     isOpenSourceStickers = openSourceStickersNames.contains(url.lastPathComponent)
   }
 
+  @State var frameWidth: CGFloat? = nil
+
   var body: some View {
     if isOpenSourceStickers {
       WebOrAsyncImage(url: url, placeholder: nil)
-        .aspectRatio(contentMode: .fit)
+        .scaledToFit()
         .frame(width: 50, height: 50)
     } else {
       if onlyThumbs {
@@ -39,15 +41,19 @@ struct ContentImageView: View {
       } else {
         Group {
           if let model = presendAttachmentsModel, let image = model.image(for: url) {
-            Image(image: image)
-              .resizable()
+            Image(image: image).resizable()
+              .scaledToFit()
+              .frame(maxWidth: image.size.width)
           } else {
-            WebOrAsyncImage(url: url, placeholder: nil)
+            WebImage(url: url).resizable()
+              .onSuccess { image, _, _ in frameWidth = image.size.width / 1.5 }
+              .scaledToFit()
+              .frame(maxWidth: imageWidth)
           }
-        }.scaledToFit()
-          .overlay(dimOverlay)
-          .clipShape(RoundedRectangle(cornerRadius: 8))
-          .onTapGesture(perform: showImage)
+        }
+        .overlay(dimOverlay)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .onTapGesture(perform: showImage)
       }
     }
   }
