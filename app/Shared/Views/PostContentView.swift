@@ -109,6 +109,7 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
       }
       main
     }.fixedSize(horizontal: false, vertical: true)
+      .equatable(by: spans.hashValue)
   }
 }
 
