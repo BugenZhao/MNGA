@@ -10,6 +10,34 @@ import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
 
+enum ContentImageScale: String, CaseIterable {
+  case small
+  case medium
+  case fullSize
+
+  var description: LocalizedStringKey {
+    switch self {
+    case .small:
+      "Small"
+    case .medium:
+      "Medium"
+    case .fullSize:
+      "Full Size"
+    }
+  }
+
+  var scale: CGFloat {
+    switch self {
+    case .small:
+      0.5
+    case .medium:
+      2 / 3
+    case .fullSize:
+      1
+    }
+  }
+}
+
 struct ContentImageView: View {
   let url: URL
   let onlyThumbs: Bool
@@ -21,6 +49,8 @@ struct ContentImageView: View {
 
   @EnvironmentObject<AttachmentsModel>.Optional var attachmentsModel
   @EnvironmentObject<PresendAttachmentsModel>.Optional var presendAttachmentsModel
+
+  @StateObject var prefs = PreferencesStorage.shared
 
   init(url: URL, onlyThumbs: Bool = false) {
     self.url = url
@@ -43,12 +73,12 @@ struct ContentImageView: View {
           if let model = presendAttachmentsModel, let image = model.image(for: url) {
             Image(image: image).resizable()
               .scaledToFit()
-              .frame(maxWidth: image.size.width)
+              .frame(maxWidth: image.size.width * prefs.postRowImageScale.scale)
           } else {
             WebImage(url: url).resizable()
-              .onSuccess { image, _, _ in frameWidth = image.size.width / 1.5 }
+              .onSuccess { image, _, _ in frameWidth = image.size.width * prefs.postRowImageScale.scale }
               .scaledToFit()
-              .frame(maxWidth: imageWidth)
+              .frame(maxWidth: frameWidth)
           }
         }
         .overlay(dimOverlay)

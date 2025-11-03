@@ -298,6 +298,10 @@
 "Disabled" = "禁用";
 "Last Read Floor" = "上次阅读楼层";
 "Highest Read Floor" = "最高阅读楼层";
+"Image Scale" = "图片缩放";
+"Small" = "小";
+"Medium" = "中";
+"Full Size" = "完整尺寸";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";

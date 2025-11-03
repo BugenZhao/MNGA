@@ -24,19 +24,6 @@ private struct PostRowAppearanceView: View {
       .tint(nil) // remove accent color for swipe actions
 
       Section {
-        Toggle(isOn: $pref.usePaginatedDetails) {
-          Label("Paginated Reading", systemImage: "square.stack")
-        }
-        Toggle(isOn: $pref.postRowLargerFont) {
-          Label("Larger Font", systemImage: "textformat.size")
-        }
-        Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
-          Label("Dim Images in Dark Mode", systemImage: "moon.fill")
-        }
-        .disableWithPlusCheck(.customAppearance)
-      }
-
-      Section {
         Picker(selection: $pref.postRowSwipeActionLeading, label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")) {
           Text("Leading").tag(true)
           Text("Trailing").tag(false)
@@ -74,6 +61,24 @@ private struct PostRowAppearanceView: View {
           }
         }
       }.disableWithPlusCheck(.customAppearance)
+
+      Section {
+        Toggle(isOn: $pref.usePaginatedDetails) {
+          Label("Paginated Reading", systemImage: "square.stack")
+        }
+        Toggle(isOn: $pref.postRowLargerFont) {
+          Label("Larger Font", systemImage: "textformat.size")
+        }
+        Picker(selection: $pref.postRowImageScale, label: Label("Image Scale", systemImage: "photo")) {
+          ForEach(ContentImageScale.allCases, id: \.self) { s in
+            Text(s.description).tag(s)
+          }
+        }
+        Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
+          Label("Dim Images in Dark Mode", systemImage: "moon.fill")
+        }
+        .disableWithPlusCheck(.customAppearance)
+      }
 
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)
