@@ -81,7 +81,7 @@ struct ContentImageView: View {
               .frame(maxWidth: frameWidth)
           }
         }
-        .overlay(dimOverlay)
+        .if(shouldDimImage) { $0.colorMultiply(Color(white: 0.7)) }
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onTapGesture(perform: showImage)
       }
@@ -92,15 +92,6 @@ struct ContentImageView: View {
     guard inRealPost else { return }
     let attachURL = attachmentsModel?.attachmentURL(for: url) ?? url
     viewingImage.show(url: attachURL)
-  }
-
-  @ViewBuilder
-  private var dimOverlay: some View {
-    if shouldDimImage {
-      Rectangle()
-        .fill(Color.black.opacity(0.35))
-        .allowsHitTesting(false)
-    }
   }
 
   private var shouldDimImage: Bool {
