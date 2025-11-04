@@ -16,11 +16,12 @@ struct ForumIconView: View {
 
   var body: some View {
     let defaultIcon = Image(.defaultForumIcon)
-      .resizable()
       .renderingMode(.template)
 
-    WebOrAsyncImage(url: URL(string: iconURL), placeholder: defaultIcon)
-      .frame(width: size, height: size)
-      .foregroundColor(.accentColor)
+    WebImage(url: URL(string: iconURL)) {
+      ($0.image ?? defaultIcon).resizable()
+    }
+    .frame(width: size, height: size)
+    .foregroundColor(.accentColor)
   }
 }

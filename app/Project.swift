@@ -5,8 +5,8 @@ let project = Project(
     // TODO: avoid using exact requirements
     packages: [
         .remote(url: "https://github.com/apple/swift-protobuf", requirement: .exact("1.31.0")),
-        .remote(url: "https://github.com/SDWebImage/SDWebImageSwiftUI", requirement: .exact("2.2.6")),
-        .remote(url: "https://github.com/SDWebImage/SDWebImageWebPCoder.git", requirement: .exact("0.14.6")),
+        .remote(url: "https://github.com/SDWebImage/SDWebImageSwiftUI", requirement: .exact("3.1.4")),
+        .remote(url: "https://github.com/SDWebImage/SDWebImageWebPCoder.git", requirement: .exact("0.15.0")),
         .remote(url: "https://github.com/SwiftUIX/SwiftUIX", requirement: .exact("0.2.4")),
         .remote(url: "https://github.com/kylehickinson/SwiftUI-WebView", requirement: .exact("0.3.0")),
         .remote(url: "https://github.com/apple/swift-log", requirement: .exact("1.5.3")),

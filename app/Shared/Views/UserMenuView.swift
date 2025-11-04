@@ -31,14 +31,13 @@ struct UserMenuView: View {
   @ViewBuilder
   var icon: some View {
     let icon = Image(systemName: authStorage.signedIn ? "person.crop.circle.fill" : "person.crop.circle")
-    #if os(iOS)
-      WebOrAsyncImage(url: URL(string: user?.avatarURL ?? ""), placeholder: icon.resizable())
-        .clipShape(Circle())
-        .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
-        .frame(width: 24, height: 24)
-    #else
-      icon
-    #endif
+
+    WebImage(url: URL(string: user?.avatarURL ?? "")) {
+      ($0.image ?? icon).resizable()
+    }
+    .clipShape(Circle())
+    .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
+    .frame(width: 24, height: 24)
   }
 
   @ViewBuilder
