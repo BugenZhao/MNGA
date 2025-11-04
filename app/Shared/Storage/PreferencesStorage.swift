@@ -11,22 +11,26 @@ import SwiftUI
 import SwiftUIX
 
 class PreferencesStorage: ObservableObject {
+  private var unlocked: Bool {
+    PaywallModel.shared.isUnlocked
+  }
+
   @Published var showing = false
 
   static let shared = PreferencesStorage()
 
-  @AppStorage("showSignatureNew") var showSignature = false
-  @AppStorage("showAvatar") var showAvatar = true
+  @AppStorage("showSignatureNew") var showSignatureInner = false
+  @AppStorage("showAvatar") var showAvatarInner = true
   @AppStorage("usePaginatedDetails") var usePaginatedDetails = false
   @AppStorage("useInAppSafari") var useInAppSafari = true
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
   @AppStorage("topicListHideBlocked") var topicListHideBlocked = false
   @AppStorage("topicListShowRefreshButton") var topicListShowRefreshButton = true
-  @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
+  @AppStorage("themeColorNew") var themeColorInner = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
-  @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true
+  @AppStorage("useInsetGroupedModern") var useInsetGroupedModernInner = true
   @AppStorage("hideMNGAMeta") var hideMNGAMeta = false
-  @AppStorage("showPlusInTitle") var showPlusInTitle = false
+  @AppStorage("showPlusInTitle") var showPlusInTitleInner = false
 
   @AppStorage("requestOption") var requestOptionWrapper = WrappedMessage(inner: RequestOption()) {
     didSet { syncRequestOptionWithLogic() }
@@ -37,18 +41,89 @@ class PreferencesStorage: ObservableObject {
     set { requestOptionWrapper.inner = newValue }
   }
 
-  @AppStorage("postRowSwipeActionLeading") var postRowSwipeActionLeading = false
-  @AppStorage("postRowSwipeVoteFirst") var postRowSwipeVoteFirst = false
-  @AppStorage("postRowShowUserDetails") var postRowShowUserDetails = true
-  @AppStorage("postRowShowUserRegDate") var postRowShowUserRegDate = false
-  @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategy = DateTimeTextView.Strategy.automatic
-  @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicator = true
+  @AppStorage("postRowSwipeActionLeading") var postRowSwipeActionLeadingInner = false
+  @AppStorage("postRowSwipeVoteFirst") var postRowSwipeVoteFirstInner = false
+  @AppStorage("postRowShowUserDetails") var postRowShowUserDetailsInner = true
+  @AppStorage("postRowShowUserRegDate") var postRowShowUserRegDateInner = false
+  @AppStorage("postRowDateTimeStrategy") var postRowDateTimeStrategyInner = DateTimeTextView.Strategy.automatic
+  @AppStorage("postRowShowAuthorIndicator") var postRowShowAuthorIndicatorInner = true
   @AppStorage("postRowLargerFont") var postRowLargerFont = false
-  @AppStorage("postRowDimImagesInDarkMode") var postRowDimImagesInDarkMode = false
+  @AppStorage("postRowDimImagesInDarkMode") var postRowDimImagesInDarkModeInner = false
   @AppStorage("postRowImageScale") var postRowImageScale = ContentImageScale.fullSize
-  @AppStorage("resumeTopicFrom") var resumeTopicFrom = TopicResumeFrom.none
+  @AppStorage("resumeTopicFrom") var resumeTopicFromInner = TopicResumeFrom.none
 
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
+
+  // MARK: - Paywalled Preferences
+
+  private func paywalledValue<Value>(_ value: Value, default defaultValue: Value) -> Value {
+    unlocked ? value : defaultValue
+  }
+
+  var postRowSwipeActionLeading: Bool {
+    get { paywalledValue(postRowSwipeActionLeadingInner, default: false) }
+    set { postRowSwipeActionLeadingInner = newValue }
+  }
+
+  var postRowSwipeVoteFirst: Bool {
+    get { paywalledValue(postRowSwipeVoteFirstInner, default: false) }
+    set { postRowSwipeVoteFirstInner = newValue }
+  }
+
+  var postRowDateTimeStrategy: DateTimeTextView.Strategy {
+    get { paywalledValue(postRowDateTimeStrategyInner, default: .automatic) }
+    set { postRowDateTimeStrategyInner = newValue }
+  }
+
+  var showSignature: Bool {
+    get { paywalledValue(showSignatureInner, default: false) }
+    set { showSignatureInner = newValue }
+  }
+
+  var showAvatar: Bool {
+    get { paywalledValue(showAvatarInner, default: true) }
+    set { showAvatarInner = newValue }
+  }
+
+  var postRowShowAuthorIndicator: Bool {
+    get { paywalledValue(postRowShowAuthorIndicatorInner, default: true) }
+    set { postRowShowAuthorIndicatorInner = newValue }
+  }
+
+  var postRowShowUserDetails: Bool {
+    get { paywalledValue(postRowShowUserDetailsInner, default: true) }
+    set { postRowShowUserDetailsInner = newValue }
+  }
+
+  var postRowShowUserRegDate: Bool {
+    get { paywalledValue(postRowShowUserRegDateInner, default: false) }
+    set { postRowShowUserRegDateInner = newValue }
+  }
+
+  var postRowDimImagesInDarkMode: Bool {
+    get { paywalledValue(postRowDimImagesInDarkModeInner, default: false) }
+    set { postRowDimImagesInDarkModeInner = newValue }
+  }
+
+  var themeColor: ThemeColor {
+    get { paywalledValue(themeColorInner, default: .mnga) }
+    set { themeColorInner = newValue }
+  }
+
+  var useInsetGroupedModern: Bool {
+    get { paywalledValue(useInsetGroupedModernInner, default: true) }
+    set { useInsetGroupedModernInner = newValue }
+  }
+
+  var resumeTopicFrom: TopicResumeFrom {
+    get { paywalledValue(resumeTopicFromInner, default: .none) }
+    set { resumeTopicFromInner = newValue }
+  }
+
+  var showPlusInTitle: Bool {
+    get { paywalledValue(showPlusInTitleInner, default: false) }
+    set { showPlusInTitleInner = newValue }
+  }
 
   // MARK: - Debug
 
