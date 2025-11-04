@@ -72,7 +72,6 @@ struct BlockWordListView: View {
       }
     }.mayInsetGroupedListStyle()
       .toolbar { ToolbarItem(placement: .mayNavigationBarTrailing) { addButton } }
-      .navigationTitle("Block Contents")
   }
 }
 

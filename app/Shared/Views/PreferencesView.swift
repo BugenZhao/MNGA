@@ -241,14 +241,18 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.hideMNGAMeta) {
       Label("Hide MNGA Meta", systemImage: "eye.slash")
     }
+    Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
+      Label("Auto Open in Browser when Banned", systemImage: "safari")
+    }
   }
 
   @ViewBuilder
-  var special: some View {
-    Group {
-      Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
-        Label("Auto Open in Browser when Banned", systemImage: "safari")
-      }
+  var about: some View {
+    NavigationLink(destination: AboutView()) {
+      Label("About & Feedback", systemImage: "hands.sparkles")
+    }
+    NavigationLink(destination: AllWhatsNewView()) {
+      Label("What's New", systemImage: "newspaper")
     }
   }
 
@@ -285,8 +289,12 @@ struct PreferencesInnerView: View {
         advanced
       }
 
-      Section(header: Text("Special"), footer: Text("NGA Workaround")) {
-        special
+      // Section(header: Text("Special"), footer: Text("NGA Workaround")) {
+      //   special
+      // }
+
+      Section(header: Text("MNGA \(BuildInfo.current.description)")) {
+        about
       }
     }
     // Set `pickerStyle` explicitly to fix tint color.

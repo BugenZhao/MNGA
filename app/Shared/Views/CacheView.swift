@@ -82,7 +82,6 @@ struct CacheView: View {
   var body: some View {
     list
       .mayInsetGroupedListStyle()
-      .navigationTitle("Cache Management")
   }
 
   func clearImageCache() {
