@@ -201,7 +201,7 @@ struct PreferencesInnerView: View {
       Text("Last Read Floor").tag(TopicResumeFrom.last)
       Text("Highest Read Floor").tag(TopicResumeFrom.highest)
     } label: {
-      Label("Resume Reading Progress", systemImage: "arrowshape.turn.up.left")
+      Label("Resume Reading Progress", systemImage: "clock.arrow.circlepath")
     }.disableWithPlusCheck(.resumeProgress)
 
     Toggle(isOn: $pref.useInAppSafari) {

@@ -81,7 +81,7 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
       title: whatsNewTitle(version: "2.1"),
       features: [
         .init(
-          image: .init(systemName: "arrowshape.turn.up.left"),
+          image: .init(systemName: "clock.arrow.circlepath"),
           title: "保存阅读进度",
           subtitle: "自动记录你读过的楼层，久未返回会贴心刷新，一打开就续上最新进度。"
         ),
