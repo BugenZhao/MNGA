@@ -417,21 +417,25 @@ struct TopicDetailsView: View {
     }
   }
 
+  @State var firstFloorExpanded = true
+
   @ViewBuilder
   var headerSectionInner: some View {
     TopicSubjectView(topic: topic, lineLimit: nil)
       .fixedSize(horizontal: false, vertical: true)
 
-    if let first {
+    if let first, firstFloorExpanded {
       buildRow(post: first)
     }
   }
 
   @ViewBuilder
   var headerSection: some View {
-    Section("Topic") {
+    Section {
       headerSectionInner
-    }.transition(.asymmetric(insertion: .scale, removal: .opacity))
+    } header: {
+      CollapsibleSectionHeader(title: "Topic", isExpanded: $firstFloorExpanded)
+    }
   }
 
   @State var hotRepliesExpanded = true
@@ -444,17 +448,8 @@ struct TopicDetailsView: View {
           buildRow(post: post, withId: false)
         }
       } header: {
-        HStack {
-          Text("Hot Replies")
-          Spacer()
-          Image(systemName: "chevron.right")
-            .rotationEffect(.degrees(hotRepliesExpanded ? 90 : 0))
-            .animation(.easeInOut(duration: 0.3), value: hotRepliesExpanded)
-        }
-        .contentShape(.rect)
-        .onTapGesture { withAnimation { hotRepliesExpanded.toggle() } }
+        CollapsibleSectionHeader(title: "Hot Replies", isExpanded: $hotRepliesExpanded)
       }
-      .transition(.asymmetric(insertion: .scale, removal: .opacity))
     }
   }
 

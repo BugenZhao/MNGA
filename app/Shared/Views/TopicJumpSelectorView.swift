@@ -9,6 +9,21 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+private struct NumberField: View {
+  let title: LocalizedStringKey
+  @Binding var text: String
+  @State var selection: TextSelection?
+  @FocusState var isFocused: Bool
+
+  var body: some View {
+    TextField(title, text: $text, selection: $selection)
+      .focused($isFocused)
+      .onChange(of: isFocused) { if $1 { selection = TextSelection(range: text.startIndex ..< text.endIndex) } }
+      .keyboardType(.numberPad)
+      .multilineTextAlignment(.trailing)
+  }
+}
+
 struct TopicJumpSelectorView: View {
   enum Mode: String, CaseIterable {
     case floor = "Floor"
@@ -59,16 +74,12 @@ struct TopicJumpSelectorView: View {
 
   @ViewBuilder
   var floorInputField: some View {
-    TextField("Floor number".localized, text: $text)
-      .keyboardType(.numberPad)
-      .multilineTextAlignment(.trailing)
+    NumberField(title: "Floor number", text: $text)
   }
 
   @ViewBuilder
   var pageInputField: some View {
-    TextField("Page number".localized, text: $text)
-      .keyboardType(.numberPad)
-      .multilineTextAlignment(.trailing)
+    NumberField(title: "Page number", text: $text)
   }
 
   @ViewBuilder
