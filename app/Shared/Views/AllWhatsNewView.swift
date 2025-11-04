@@ -24,7 +24,7 @@ struct AllWhatsNewView: View {
       .sorted(by: { $0.version > $1.version })
       .map { w in
         var w = w
-        w.primaryAction = .init(title: "Done".localizedWNText)
+        w.primaryAction = .done
         return w
       }
   }

@@ -8,12 +8,31 @@
 import SwiftUI
 import WhatsNewKit
 
-func whatsNewTitle(version: String) -> WhatsNew.Title {
+private func whatsNewTitle(version: String) -> WhatsNew.Title {
   var title = AttributedString(localized: "What's new in MNGA \(version)")
   if let range = title.range(of: "MNGA \(version)") {
     title[range].foregroundColor = .accentColor
   }
   return .init(text: .init(title))
+}
+
+extension WhatsNew.PrimaryAction {
+  static var `continue`: Self {
+    .init(title: "Continue".localizedWNText)
+  }
+
+  static var done: Self {
+    .init(title: "Done".localizedWNText)
+  }
+}
+
+extension WhatsNew.SecondaryAction {
+  static var checkOutPlus: Self {
+    .init(
+      title: "Check out Plus".localizedWNText,
+      action: .present(PlusSheetView().eraseToAnyView())
+    )
+  }
 }
 
 extension String {
@@ -53,13 +72,17 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
           subtitle: "MNGA Plus 不仅为您解锁更完整的体验，更是我们持续改进和长期维护 MNGA 的唯一动力。"
         ),
       ],
-      primaryAction: .init(
-        title: "Continue".localizedWNText
-      ),
-      secondaryAction: .init(
-        title: "Check out Plus".localizedWNText,
-        action: .present(PlusSheetView().eraseToAnyView())
-      )
+      primaryAction: .continue,
+      secondaryAction: .checkOutPlus,
+    )
+
+    WhatsNew(
+      version: "2.1",
+      title: whatsNewTitle(version: "2.1"),
+      features: [
+      ],
+      primaryAction: .continue,
+      secondaryAction: .checkOutPlus,
     )
   }
 
