@@ -83,7 +83,7 @@ class ViewingImageModel: ObservableObject {
   @Published var showing = false
 
   func show(url: URL) {
-    view = WebImage(url: url)
+    view = WebImage(url: url).resizable()
       .onSuccess { image, _, _ in
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
           let transferable = TransferableImage(url: url, image: image)
@@ -92,7 +92,6 @@ class ViewingImageModel: ObservableObject {
           }
         }
       }
-      .resizable()
       .indicator(.progress)
       .eraseToAnyView()
 
