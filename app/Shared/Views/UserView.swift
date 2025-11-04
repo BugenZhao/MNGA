@@ -85,9 +85,10 @@ struct UserView: View {
   @ViewBuilder
   var avatarInner: some View {
     let placeholder = Image(systemName: isAnonymous ? "theatermasks.circle.fill" : "person.crop.circle.fill")
-      .resizable()
 
-    WebOrAsyncImage(url: pref.showAvatar ? avatarURL : nil, placeholder: placeholder)
+    WebImage(url: pref.showAvatar ? avatarURL : nil) {
+      ($0.image ?? placeholder).resizable()
+    }
   }
 
   @ViewBuilder

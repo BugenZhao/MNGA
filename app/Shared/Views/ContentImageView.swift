@@ -62,7 +62,8 @@ struct ContentImageView: View {
 
   var body: some View {
     if isOpenSourceStickers {
-      WebOrAsyncImage(url: url, placeholder: nil)
+      WebImage(url: url).resizable()
+        .indicator(.activity)
         .scaledToFit()
         .frame(width: 50, height: 50)
     } else {
@@ -77,6 +78,8 @@ struct ContentImageView: View {
           } else {
             WebImage(url: url).resizable()
               .onSuccess { image, _, _ in frameWidth = image.size.width * prefs.postRowImageScale.scale }
+              .onFailure { logger.error("sdwebimage failed to load image: \(url), error: \($0)") }
+              .indicator(.activity)
               .scaledToFit()
               .frame(maxWidth: frameWidth)
           }
