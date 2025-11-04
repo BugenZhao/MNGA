@@ -792,7 +792,7 @@ class ContentCombiner {
     guard let fn = mnga.attributes.first else { return }
     switch fn {
     case "version":
-      append(Text(getVersionWithBuild()))
+      append(Text(BuildInfo.current.description))
     default:
       break
     }

@@ -293,7 +293,7 @@ struct PreferencesInnerView: View {
       //   special
       // }
 
-      Section(header: Text("MNGA \(getVersionWithBuild())")) {
+      Section(header: Text("MNGA \(BuildInfo.current.description)")) {
         about
       }
     }

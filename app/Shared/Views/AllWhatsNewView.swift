@@ -32,9 +32,19 @@ struct AllWhatsNewView: View {
   var body: some View {
     List {
       ForEach(whatsNewCollection, id: \.id) { w in
-        NavigationLink(w.version.betterDescription) {
+        NavigationLink {
           WhatsNewView(whatsNew: w)
             .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        } label: {
+          HStack {
+            Text(w.version.betterDescription)
+            if let current = BuildInfo.current.version,
+               current.starts(with: w.version.betterDescription)
+            {
+              Spacer()
+              Text("Current Version").foregroundColor(.secondary)
+            }
+          }
         }
       }
     }
