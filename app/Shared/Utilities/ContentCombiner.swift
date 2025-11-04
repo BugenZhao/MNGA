@@ -413,6 +413,9 @@ class ContentCombiner {
 
     let urlText = plain.text
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
+    if url.pathExtension == "mp4" {
+      return visitFlash(video: image)
+    }
 
     let onlyThumbs = inQuote && replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
@@ -436,6 +439,9 @@ class ContentCombiner {
     // Construct the URL
     let p = String(format: "mon_%04d%02d/%02d/", year, month, day)
     guard let url = URL(string: p + urlText, relativeTo: URLs.attachmentBase) else { return }
+    if url.pathExtension == "mp4" {
+      return visitFlash(video: noimg)
+    }
 
     let onlyThumbs = inQuote && replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)

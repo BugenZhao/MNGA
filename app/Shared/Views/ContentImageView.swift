@@ -78,6 +78,7 @@ struct ContentImageView: View {
           } else {
             WebImage(url: url).resizable()
               .onSuccess { image, _, _ in frameWidth = image.size.width * prefs.postRowImageScale.scale }
+              .onFailure { logger.error("sdwebimage failed to load image: \(url), error: \($0)") }
               .indicator(.activity)
               .scaledToFit()
               .frame(maxWidth: frameWidth)
