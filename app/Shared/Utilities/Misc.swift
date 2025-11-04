@@ -29,6 +29,10 @@ public func extractQueryParams(query: String, param: String) -> String? {
 func getVersionWithBuild() -> String {
   let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
   let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+  var debug = ""
+  #if DEBUG
+    debug = "-DEBUG"
+  #endif
 
-  return "\(version ?? "??") (\(build ?? "?"))"
+  return "\(version ?? "??") (\(build ?? "?")\(debug))"
 }
