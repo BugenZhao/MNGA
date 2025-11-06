@@ -61,7 +61,11 @@ extension NavigationIdentifier {
         break
       }
 
-    case .userID, .userName: break // not supported
+    case let .userID(uid):
+      components.path = uid
+      url = components.url(relativeTo: URL(string: Constants.MNGA.userBase))
+
+    case .userName: break // not supported
     }
 
     return url?.absoluteURL
@@ -133,6 +137,11 @@ extension URL {
          let stid: String = context[argument: "stid"]
       {
         return .forumID(.with { $0.stid = stid })
+      }
+      if let context = parser.parse(self, in: Constants.MNGA.userBase + ":uid"),
+         let uid: String = context[argument: "uid"]
+      {
+        return .userID(uid)
       }
 
       return nil

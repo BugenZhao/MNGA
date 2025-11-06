@@ -133,17 +133,15 @@ struct UserProfileView: View {
       }
     }
 
-    if !isMyself {
-      ToolbarItem(placement: .mayNavigationBarTrailing) {
-        Menu {
-          if !user.isAnonymous {
-            Section {
+    ToolbarItem(placement: .mayNavigationBarTrailing) {
+      Menu {
+        if !isMyself {
+          Section {
+            if !user.isAnonymous {
               Button(action: { newShortMessage() }) {
                 Label("New Short Message", systemImage: "message")
               }
             }
-          }
-          Section {
             Button(role: blocked ? nil : .destructive, action: { blockWords.toggle(user: user.name) }) {
               if blocked {
                 Label("Unblock This User", systemImage: "hand.raised")
@@ -152,9 +150,15 @@ struct UserProfileView: View {
               }
             }
           }
-        } label: {
-          Label("More", systemImage: "ellipsis")
         }
+
+        if !user.isAnonymous {
+          Section {
+            ShareLinksView(navigationID: .userID(user.id)) {}
+          }
+        }
+      } label: {
+        Label("More", systemImage: "ellipsis")
       }
     }
   }

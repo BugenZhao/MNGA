@@ -21,6 +21,7 @@ enum Constants {
     static let postBase = "\(scheme)://post/"
     static let forumFBase = "\(scheme)://forum/f/"
     static let forumSTBase = "\(scheme)://forum/st/"
+    static let userBase = "\(scheme)://user/"
   }
 
   enum Key {
