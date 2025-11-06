@@ -434,7 +434,11 @@ struct TopicDetailsView: View {
     Section {
       headerSectionInner
     } header: {
-      CollapsibleSectionHeader(title: "Topic", isExpanded: $firstFloorExpanded)
+      if first == nil {
+        Text("Topic")
+      } else {
+        CollapsibleSectionHeader(title: "Topic", isExpanded: $firstFloorExpanded)
+      }
     }
   }
 
