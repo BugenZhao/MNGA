@@ -198,3 +198,34 @@ struct UserProfileView: View {
     })
   }
 }
+
+struct RemoteUserProfileView: View {
+  let req: RemoteUserRequest
+  let dummyName: String
+
+  @State var user: User?
+
+  init(id: String) {
+    req = .with { $0.userID = id }
+    dummyName = id
+  }
+
+  init(name: String) {
+    req = .with { $0.userName = name }
+    dummyName = name
+  }
+
+  var body: some View {
+    if let user {
+      UserProfileView.build(user: user)
+    } else {
+      ProgressView()
+        .navigationTitleInline(string: dummyName)
+        .task {
+          if let remoteUser = await UsersModel.shared.remoteUser(req) {
+            withAnimation { user = remoteUser }
+          }
+        }
+    }
+  }
+}

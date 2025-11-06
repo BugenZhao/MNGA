@@ -28,6 +28,7 @@ peg::parser! {
         rule _() = ws()*
         rule br_tag() = "<br/>" / "[stripbr]"
         rule divider_tag() = "==="
+        rule at() = "@"
 
         rule token() -> &'input str
             = $( aldig()+ )
@@ -90,6 +91,15 @@ peg::parser! {
                 }))
             }
 
+        rule at_user() -> Span
+            = left_bracket() at() u:sticker_name() right_bracket() {
+                span_of!(tagged(Span_Tagged {
+                    tag: "at".to_owned(),
+                    attributes: vec![u.trim().to_owned()].into(),
+                    ..Default::default()
+                }))
+            }
+
         rule plain() -> Span
             = pt:plain_text() {
                 span_of!(plain(Span_Plain {
@@ -99,7 +109,7 @@ peg::parser! {
             }
 
         rule rich() -> Span
-            = br() / tagged() / sticker()
+            = br() / tagged() / sticker() / at_user()
         rule non_divider_span() -> Span
             = rich() / plain()  // todo: any better way?
         rule span() -> Span
@@ -358,6 +368,13 @@ size=百分比]
 [/randomblock]
         "#;
 
+        let r = do_parse_content(text).unwrap();
+        println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_at_user() {
+        let text = r#"[@  BugenZhao ]<br/>[@ 41417929 ]"#;
         let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
     }

@@ -267,7 +267,7 @@ struct UserView: View {
         horizontal
       }
     }.task {
-      if loadRemote, let remoteUser = await UsersModel.shared.remoteUser(id: id) {
+      if loadRemote, let remoteUser = await UsersModel.shared.remoteUser(id: id, showError: false) {
         withAnimation { user = remoteUser }
       }
     }

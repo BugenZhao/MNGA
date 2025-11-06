@@ -400,6 +400,8 @@ class ContentCombiner {
       visit(tableCell: tagged)
     case "dice":
       visit(dice: tagged)
+    case "at":
+      visit(at: tagged)
     case "_mnga":
       visit(mnga: tagged)
     default:
@@ -555,7 +557,7 @@ class ContentCombiner {
     visit(url: url, defaultTitle: Text("Topic \(id)"))
   }
 
-  private func visit(url: Span.Tagged, defaultTitle: Text? = nil) {
+  private func visit(url: Span.Tagged, defaultTitle: Text? = nil, icon: String = "link") {
     let urlString: String?
 
     let combiner = ContentCombiner(parent: self, font: { _ in .footnote }, color: { _ in .accentColor })
@@ -568,7 +570,7 @@ class ContentCombiner {
       urlString = url.spans.first?.plain.text
     }
 
-    let link = ContentButtonView(icon: "link", title: innerView, inQuote: inQuote) {
+    let link = ContentButtonView(icon: icon, title: innerView, inQuote: inQuote) {
       guard let urlString else { return }
       guard let url = URL(string: urlString, relativeTo: URLs.base) else { return }
 
@@ -579,6 +581,10 @@ class ContentCombiner {
         self.actionModel?.navigateToPid = pid
       case let .forumID(id):
         self.actionModel?.navigateToForum = Forum.with { $0.id = id }
+      case let .userID(uid):
+        self.actionModel?.navigateToRemoteUserID = uid
+      case let .userName(username):
+        self.actionModel?.navigateToRemoteUserName = username
       case .none:
         OpenURLModel.shared.open(url: url)
       }
@@ -786,6 +792,23 @@ class ContentCombiner {
     .eraseToAnyView()
 
     append(.other(cellView))
+  }
+
+  private func visit(at: Span.Tagged) {
+    guard let user = at.attributes.first else { return }
+
+    var urlString = "/nuke.php?func=ucp&"
+    if user.allSatisfy(\.isNumber) {
+      urlString += "uid=\(user)"
+    } else {
+      urlString += "username=\(user)"
+    }
+
+    let url = Span.Tagged.with {
+      $0.spans = [.plainText(user)]
+      $0.attributes = [urlString]
+    }
+    visit(url: url, defaultTitle: Text("\(user)"), icon: "person.text.rectangle")
   }
 
   private func visit(mnga: Span.Tagged) {

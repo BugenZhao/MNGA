@@ -15,6 +15,8 @@ enum NavigationIdentifier: Hashable {
   case topicID(tid: String, fav: String?)
   case postID(String)
   case forumID(ForumId)
+  case userID(String)
+  case userName(String)
 }
 
 extension NavigationIdentifier {
@@ -26,6 +28,8 @@ extension NavigationIdentifier {
       pid.isMNGAMockID
     case let .forumID(forumID):
       forumID.fid.isMNGAMockID || forumID.stid.isMNGAMockID
+    case .userID, .userName:
+      false
     }
   }
 
@@ -56,6 +60,8 @@ extension NavigationIdentifier {
       case .none:
         break
       }
+
+    case .userID, .userName: break // not supported
     }
 
     return url?.absoluteURL
@@ -87,6 +93,14 @@ extension NavigationIdentifier {
       case .none:
         break
       }
+
+    case let .userID(uid):
+      components.path = "nuke.php"
+      components.queryItems = [.init(name: "func", value: "ucp"), .init(name: "uid", value: uid)]
+
+    case let .userName(username):
+      components.path = "nuke.php"
+      components.queryItems = [.init(name: "func", value: "ucp"), .init(name: "username", value: username)]
     }
 
     let url = components.url(relativeTo: URLs.base)
@@ -139,6 +153,12 @@ extension URL {
           return .forumID(.with { $0.stid = stid })
         } else if let fid = components.queryItems?.first(where: { $0.name == "fid" })?.value {
           return .forumID(.with { $0.fid = fid })
+        }
+      } else if components.path == "/nuke.php" {
+        if let uid = components.queryItems?.first(where: { $0.name == "uid" })?.value {
+          return .userID(uid)
+        } else if let username = components.queryItems?.first(where: { $0.name == "username" })?.value {
+          return .userName(username)
         }
       }
     }
@@ -217,6 +237,10 @@ struct SchemesNavigationModifier: ViewModifier {
           TopicDetailsView.build(onlyPost: (id: postId, atPage: nil))
         case let .forumID(forumID):
           TopicListView.build(id: forumID)
+        case let .userID(uid):
+          RemoteUserProfileView(id: uid)
+        case let .userName(username):
+          RemoteUserProfileView(name: username)
         }
       }
       .modifier(MainToastModifier.bannerOnly()) // for network error
