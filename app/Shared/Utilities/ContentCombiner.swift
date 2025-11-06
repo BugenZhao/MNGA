@@ -550,7 +550,7 @@ class ContentCombiner {
     guard let id = tid.attributes.first else { return }
     let url = Span.Tagged.with {
       $0.spans = tid.spans
-      $0.attributes = ["read.php?tid=\(id)"]
+      $0.attributes = ["/read.php?tid=\(id)"]
     }
     visit(url: url, defaultTitle: Text("Topic \(id)"))
   }
