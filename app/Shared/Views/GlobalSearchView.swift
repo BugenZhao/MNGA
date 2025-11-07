@@ -50,7 +50,7 @@ class GlobalSearchModel: SearchModel<DataSource> {
       user: .init(
         buildRequest: { _ in
           .remoteUser(.with {
-            if text.allSatisfy({ $0.isNumber }) {
+            if text.allSatisfy(\.isNumber) {
               $0.userID = text
             } else {
               $0.userName = text
