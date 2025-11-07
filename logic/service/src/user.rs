@@ -9,7 +9,10 @@ use dashmap::DashMap;
 use lazy_static::lazy_static;
 use protos::{
     DataModel::{User, UserName},
-    Service::{RemoteUserRequest, RemoteUserResponse, RemoteUserResponse_oneof__user},
+    Service::{
+        RemoteUserRequest, RemoteUserResponse, RemoteUserResponse_oneof__user,
+        UserSignatureUpdateRequest, UserSignatureUpdateResponse,
+    },
 };
 use sxd_xpath::nodeset::Node;
 
@@ -209,6 +212,19 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
         _user: user.map(RemoteUserResponse_oneof__user::user),
         ..Default::default()
     })
+}
+
+pub async fn update_signature(
+    request: UserSignatureUpdateRequest,
+) -> ServiceResult<UserSignatureUpdateResponse> {
+    let _package = fetch_package(
+        "nuke.php",
+        vec![("func", "sign"), ("sign", request.get_signature())],
+        vec![],
+    )
+    .await?;
+
+    Ok(Default::default())
 }
 
 #[cfg(test)]

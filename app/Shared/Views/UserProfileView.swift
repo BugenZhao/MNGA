@@ -24,6 +24,7 @@ struct UserProfileView: View {
   @StateObject var postDataSource: PostDataSource
 
   @EnvironmentObject var postModel: ShortMessagePostModel
+  @EnvironmentObject var signaturePostModel: UserSignaturePostModel
   @EnvironmentObject var currentUser: CurrentUserModel
 
   @StateObject var blockWords = BlockWordsStorage.shared
@@ -135,6 +136,14 @@ struct UserProfileView: View {
 
     ToolbarItem(placement: .mayNavigationBarTrailing) {
       Menu {
+        if isMyself {
+          Section {
+            Button(action: { editSignature() }) {
+              Label("Edit Signature", systemImage: "pencil.line")
+            }
+          }
+        }
+
         if !isMyself {
           Section {
             if !user.isAnonymous {
@@ -200,6 +209,11 @@ struct UserProfileView: View {
       $0.operation = .newSingleTo
       $0.singleTo = user.name.normal
     })
+  }
+
+  func editSignature() {
+    guard isMyself else { return }
+    signaturePostModel.show(action: user.signature.raw)
   }
 }
 
