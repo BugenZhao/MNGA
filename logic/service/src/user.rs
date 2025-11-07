@@ -170,41 +170,40 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
         });
     }
 
-    let avatar_url = {
-        let avatar_package = fetch_package(
+    let mut user = {
+        let package = fetch_package(
             "nuke.php",
             vec![
                 ("__lib", "ucp"),
-                ("__act", "get_avatar"),
-                ("uid", user_id),
-                ("username", request.get_user_name()),
+                ("__act", "get"),
+                if user_id.is_empty() {
+                    ("username", request.get_user_name())
+                } else {
+                    ("uid", user_id)
+                },
             ],
             vec![],
         )
         .await?;
-        extract_string(&avatar_package, "/root/data/item").unwrap_or_default()
+        extract_node(&package, "/root/data/item", |n| extract_user(n, true))?.flatten()
     };
 
-    let package = fetch_package(
-        "nuke.php",
-        vec![
-            ("__lib", "ucp"),
-            ("__act", "get"),
-            ("uid", user_id),
-            ("username", request.get_user_name()),
-        ],
-        vec![],
-    )
-    .await?;
-
-    let user = extract_node(&package, "/root/data/item", |n| {
-        let mut user = extract_user(n, true)?;
-        if user.avatar_url.is_empty() {
-            user.avatar_url = avatar_url.clone();
-        }
-        Some(cache_user(user, None))
-    })?
-    .flatten();
+    if let Some(user) = &mut user
+        && user.avatar_url.is_empty()
+    {
+        let avatar_url = {
+            let avatar_package = fetch_package(
+                "nuke.php",
+                // Always query avatar with uid instead of user name.
+                vec![("__lib", "ucp"), ("__act", "get_avatar"), ("uid", &user.id)],
+                vec![],
+            )
+            .await?;
+            extract_string(&avatar_package, "/root/data/item").unwrap_or_default()
+        };
+        user.avatar_url = avatar_url;
+    }
+    user = user.map(|user| cache_user(user, None));
 
     Ok(RemoteUserResponse {
         _user: user.map(RemoteUserResponse_oneof__user::user),

@@ -133,17 +133,15 @@ struct UserProfileView: View {
       }
     }
 
-    if !isMyself {
-      ToolbarItem(placement: .mayNavigationBarTrailing) {
-        Menu {
-          if !user.isAnonymous {
-            Section {
+    ToolbarItem(placement: .mayNavigationBarTrailing) {
+      Menu {
+        if !isMyself {
+          Section {
+            if !user.isAnonymous {
               Button(action: { newShortMessage() }) {
                 Label("New Short Message", systemImage: "message")
               }
             }
-          }
-          Section {
             Button(role: blocked ? nil : .destructive, action: { blockWords.toggle(user: user.name) }) {
               if blocked {
                 Label("Unblock This User", systemImage: "hand.raised")
@@ -152,9 +150,15 @@ struct UserProfileView: View {
               }
             }
           }
-        } label: {
-          Label("More", systemImage: "ellipsis")
         }
+
+        if !user.isAnonymous {
+          Section {
+            ShareLinksView(navigationID: .userID(user.id)) {}
+          }
+        }
+      } label: {
+        Label("More", systemImage: "ellipsis")
       }
     }
   }
@@ -196,5 +200,36 @@ struct UserProfileView: View {
       $0.operation = .newSingleTo
       $0.singleTo = user.name.normal
     })
+  }
+}
+
+struct RemoteUserProfileView: View {
+  let req: RemoteUserRequest
+  let dummyName: String
+
+  @State var user: User?
+
+  init(id: String) {
+    req = .with { $0.userID = id }
+    dummyName = id
+  }
+
+  init(name: String) {
+    req = .with { $0.userName = name }
+    dummyName = name
+  }
+
+  var body: some View {
+    if let user {
+      UserProfileView.build(user: user)
+    } else {
+      ProgressView()
+        .navigationTitleInline(string: dummyName)
+        .task {
+          if let remoteUser = await UsersModel.shared.remoteUser(req) {
+            withAnimation { user = remoteUser }
+          }
+        }
+    }
   }
 }

@@ -17,6 +17,8 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var navigateToPid: String? = nil
   @Published var navigateToForum: Forum? = nil
   @Published var showUserProfile: User? = nil
+  @Published var navigateToRemoteUserID: String? = nil
+  @Published var navigateToRemoteUserName: String? = nil
   @Published var navigateToAuthorOnly: String? = nil
   @Published var navigateToLocalMode: Bool = false
   @Published var navigateToView: AnyView? = nil
@@ -93,6 +95,8 @@ struct TopicDetailsActionModifier: ViewModifier {
       }
       .navigationDestination(item: $action.showUserProfile) { UserProfileView.build(user: $0) }
       .navigationDestination(item: $action.navigateToForum) { TopicListView.build(forum: $0) }
+      .navigationDestination(item: $action.navigateToRemoteUserID) { RemoteUserProfileView(id: $0) }
+      .navigationDestination(item: $action.navigateToRemoteUserName) { RemoteUserProfileView(name: $0) }
       .navigationDestination(isPresented: $action.navigateToView.isNotNil()) { action.navigateToView } // TODO(ng): use item
   }
 }

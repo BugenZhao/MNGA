@@ -99,7 +99,7 @@ struct UserView: View {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
       } else if let user, let action {
-        Button(action: { withPlusCheck(.userProfile) { action.showUserProfile = user } }) {
+        Button(action: { action.showUserProfile = user }) {
           avatarInner
         }.buttonStyle(PlainButtonStyle())
       } else {
@@ -267,7 +267,7 @@ struct UserView: View {
         horizontal
       }
     }.task {
-      if loadRemote, let remoteUser = await UsersModel.shared.remoteUser(id: id) {
+      if loadRemote, let remoteUser = await UsersModel.shared.remoteUser(id: id, showError: false) {
         withAnimation { user = remoteUser }
       }
     }

@@ -29,15 +29,21 @@ class UsersModel: ObservableObject {
     return users[id] ?? nil
   }
 
-  func remoteUser(id: String) async -> User? {
+  func remoteUser(id: String, showError: Bool = true) async -> User? {
     if users[id]??.remote != true {
-      let req = RemoteUserRequest.with { $0.userID = id }
-      let res: Result<RemoteUserResponse, LogicError> = await logicCallAsync(.remoteUser(req), errorToastModel: nil)
-      if case let .success(r) = res, r.hasUser {
-        add(user: r.user)
-      }
+      return await remoteUser(.with { $0.userID = id }, showError: showError)
     }
     return users[id] ?? nil
+  }
+
+  func remoteUser(_ req: RemoteUserRequest, showError: Bool = true) async -> User? {
+    let errorToastModel: ToastModel? = showError ? .banner : nil
+    let res: Result<RemoteUserResponse, LogicError> = await logicCallAsync(.remoteUser(req), errorToastModel: errorToastModel)
+    if case let .success(r) = res, r.hasUser {
+      add(user: r.user)
+      return r.user
+    }
+    return nil
   }
 
   func add(user: User) {

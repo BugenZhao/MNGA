@@ -390,3 +390,9 @@ extension TopicDetailsResponse {
     }
   }
 }
+
+extension Span {
+  static func plainText(_ s: some StringProtocol) -> Self {
+    Span.with { $0.plain = .with { $0.text = String(s) } }
+  }
+}
