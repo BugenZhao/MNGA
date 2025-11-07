@@ -32,7 +32,7 @@ extension NotificationDataSource {
     items.filter { $0.read == false }.count
   }
 
-  var title: LocalizedStringKey {
+  var titleWithUnread: LocalizedStringKey {
     if unreadCount > 0 {
       "Notifications (\(unreadCount))"
     } else {

@@ -65,7 +65,8 @@ struct NotificationListView: View {
         }
       }
     }
-    .navigationTitle(dataSource.title)
+    .navigationTitle("Notifications")
+    .if(dataSource.unreadCount > 0) { $0.navigationSubtitle("\(dataSource.unreadCount) unread") }
     .mayGroupedListStyle()
     .refreshable(dataSource: dataSource)
     .toolbar { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }

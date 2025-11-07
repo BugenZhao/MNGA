@@ -43,7 +43,7 @@ struct UserMenuView: View {
   @ViewBuilder
   var notificationButton: some View {
     NavigationLink(destination: NotificationListView()) {
-      Label(notification.dataSource.title, systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
+      Label(notification.dataSource.titleWithUnread, systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
     }
   }
 

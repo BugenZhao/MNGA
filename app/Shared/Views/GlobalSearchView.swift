@@ -50,7 +50,11 @@ class GlobalSearchModel: SearchModel<DataSource> {
       user: .init(
         buildRequest: { _ in
           .remoteUser(.with {
-            $0.userName = text
+            if text.allSatisfy(\.isNumber) {
+              $0.userID = text
+            } else {
+              $0.userName = text
+            }
           })
         },
         onResponse: { response in
@@ -128,10 +132,9 @@ struct GlobalSearchView: View {
           NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search")) {
             Label("All Topics", systemImage: "doc.richtext")
           }
-          // FIXME: the api is broken
-          // NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
-          //   Label("All Users", systemImage: "person.2")
-          // }.isDetailLink(false)
+          NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
+            Label("All Users", systemImage: "person.2")
+          }
         }
       }
     }.mayInsetGroupedListStyle()

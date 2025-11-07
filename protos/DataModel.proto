@@ -230,6 +230,8 @@ message Notification {
     UNKNOWN = 0;
     REPLY_TOPIC = 1;          // One replies to user's topic.
     REPLY_POST = 2;           // One replies to user's post.
+    AT_TOPIC = 7;             // One @-mentions user in a topic.
+    AT_POST = 8;              // One @-mentions user in a post.
     SHORT_MESSAGE_START = 10; // One starts a new short message.
     SHORT_MESSAGE = 11;       // One replies to a short message.
     VOTE = 17;                // User's post receives some votes.

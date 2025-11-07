@@ -26,7 +26,7 @@ struct NotificationRowView: View {
       HStack {
         HStack(alignment: .center) {
           switch noti.type {
-          case .replyPost, .replyTopic, .shortMessage, .shortMessageStart:
+          case .replyPost, .replyTopic, .shortMessage, .shortMessageStart, .atPost, .atTopic:
             Image(systemName: "person")
             Text(noti.otherUser.nameDisplayCompat)
           case .vote:

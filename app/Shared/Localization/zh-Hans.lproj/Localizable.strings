@@ -61,7 +61,7 @@
 "Edit" = "编辑";
 "Share" = "分享";
 "Notifications" = "通知";
-"Notifications (%lld)" = "通知 (%lld)";
+"%lld unread" = "%lld 个未读";
 "replied to your post" = "回复了你的回复";
 "replied to your topic" = "回复了你的话题";
 "Your post" = "你的回复";
@@ -143,7 +143,9 @@
 "New Short Message" = "发表短消息";
 "Send To" = "发送至";
 "Separate multiple users with space." = "使用空格分隔多个用户。";
-"send you a short message" = "发送了一条短消息";
+"sent you a short message" = "发送了一条短消息";
+"mentioned you in a post" = "在回复中提到了你";
+"mentioned you in a topic" = "在话题中提到了你";
 "Goto %@" = "前往 %@";
 "Goto Forum" = "前往板块";
 "Color Scheme" = "配色方案";

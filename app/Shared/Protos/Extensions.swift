@@ -143,6 +143,8 @@ extension Notification.TypeEnum {
       "message"
     case .shortMessageStart:
       "plus.message"
+    case .atPost, .atTopic:
+      "at"
     case .unknown, .UNRECOGNIZED:
       "questionmark.circle"
     }
@@ -157,7 +159,11 @@ extension Notification.TypeEnum {
     case .vote:
       "received 10 more votes"
     case .shortMessage, .shortMessageStart:
-      "send you a short message"
+      "sent you a short message"
+    case .atPost:
+      "mentioned you in a post"
+    case .atTopic:
+      "mentioned you in a topic"
     case .unknown, .UNRECOGNIZED:
       ""
     }

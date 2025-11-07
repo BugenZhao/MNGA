@@ -100,6 +100,10 @@ class ContentEditorModel: ObservableObject {
     appendTag("quote")
   }
 
+  func appendAt() {
+    appendTag(open: "[@", close: "]")
+  }
+
   func insertSeparator() {
     insert("\n======\n")
   }
