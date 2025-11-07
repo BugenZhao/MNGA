@@ -14,7 +14,6 @@ enum PlusFeature: CaseIterable {
   case authorOnly
   case jump
   case resumeProgress
-  case userProfile
   case anonymous
   case blockContents
   case comment
@@ -42,8 +41,6 @@ enum PlusFeature: CaseIterable {
       "Jump"
     case .multiAccount:
       "Multiple Accounts"
-    case .userProfile:
-      "User Profile"
     case .customAppearance:
       "Custom Appearance"
     case .blockContents:
@@ -75,8 +72,6 @@ enum PlusFeature: CaseIterable {
       "Jump to arbitrary floor or page in a topic."
     case .multiAccount:
       "Log in and switch between multiple accounts."
-    case .userProfile:
-      "View user profiles, with their posts and replies."
     case .customAppearance:
       "Full access to customizing the appearance of MNGA."
     case .blockContents:
@@ -108,8 +103,6 @@ enum PlusFeature: CaseIterable {
       "arrow.up.arrow.down"
     case .multiAccount:
       "person.2"
-    case .userProfile:
-      "person.text.rectangle"
     case .customAppearance:
       "paintbrush"
     case .blockContents:
