@@ -25,7 +25,7 @@ struct UserMenuView: View {
   }
 
   var unreadCount: Int {
-    notification.dataSource.unreadCount
+    notification.unreadCount
   }
 
   @ViewBuilder
