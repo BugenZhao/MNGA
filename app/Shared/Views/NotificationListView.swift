@@ -85,13 +85,31 @@ extension EnvironmentValues {
 }
 
 struct NotificationListNavigationView: View {
+  @State var detents: Set<PresentationDetent> = [.medium, .large]
+  @State var detent: PresentationDetent = .medium
+
+  func enableMediumDetent() {
+    detents = [.medium, .large]
+  }
+
+  func disableMediumDetent() {
+    detent = .large
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      detents = [.large]
+    }
+  }
+
   var body: some View {
     NavigationStack {
       NotificationListView()
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear { enableMediumDetent() }
+        .onDisappear { disableMediumDetent() }
     }
     .environment(\.inNotificationSheet, true)
     .modifier(MainToastModifier.bannerOnly())
     .modifier(GlobalSheetsModifier())
+    .presentationDetents(detents, selection: $detent)
   }
 }
 
