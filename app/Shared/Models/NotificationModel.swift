@@ -51,7 +51,7 @@ class NotificationModel: ObservableObject {
   static let shared = NotificationModel()
 
   @Published var dataSource: NotificationDataSource = .build()
-  @Published var showing = false
+  @Published var showingFromUserMenu = false
   @Published var showingSheet = false
 
   let timer = Timer.TimerPublisher(interval: refreshInterval, runLoop: .main, mode: .default).autoconnect()
@@ -70,12 +70,6 @@ class NotificationModel: ObservableObject {
       .prepend(.init())
       .sink { _ in self.refreshNotis() }
       .store(in: &cancellables)
-
-    // may buggy
-    dataSource.objectWillChange
-      .sink { [weak self] _ in
-        if self?.showing == true { self?.objectWillChange.send() }
-      }.store(in: &cancellables)
 
     dataSource.$lastRefreshTime
       .map { _ in self.dataSource.items.filter { n in n.read == false }.count }

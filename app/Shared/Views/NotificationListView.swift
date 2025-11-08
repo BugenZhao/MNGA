@@ -73,11 +73,23 @@ struct NotificationListView: View {
   }
 }
 
+struct InNotificationSheetKey: EnvironmentKey {
+  static let defaultValue = false
+}
+
+extension EnvironmentValues {
+  var inNotificationSheet: Bool {
+    get { self[InNotificationSheetKey.self] }
+    set { self[InNotificationSheetKey.self] = newValue }
+  }
+}
+
 struct NotificationListNavigationView: View {
   var body: some View {
     NavigationStack {
       NotificationListView()
     }
+    .environment(\.inNotificationSheet, true)
     .modifier(MainToastModifier.bannerOnly())
     .modifier(GlobalSheetsModifier())
   }
@@ -87,9 +99,11 @@ struct NotificationToolbarItem: ToolbarContent {
   let placement: ToolbarItemPlacement
 
   @StateObject var notis = NotificationModel.shared
+  @Environment(\.inNotificationSheet) var inNotificationSheet
 
   var body: some ToolbarContent {
-    if notis.unreadCount > 0 {
+    // Only show if not from notification list view.
+    if notis.unreadCount > 0, !notis.showingFromUserMenu, !inNotificationSheet {
       ToolbarItem(placement: placement) {
         Button(action: { notis.showingSheet = true }) {
           Label("Notifications", systemImage: "bell")
