@@ -596,6 +596,9 @@ struct TopicDetailsView: View {
     List {
       headerSection
       Section {
+        Button(action: { dataSource.refresh(animated: true) }) {
+          Label("Refresh", systemImage: "arrow.clockwise")
+        }
         Button(action: { openInBrowser() }) {
           Label("Open in Browser", systemImage: "safari")
         }
