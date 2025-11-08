@@ -49,3 +49,9 @@ extension BuildInfo: CustomStringConvertible {
     "\(version ?? "??") (\(build ?? "?")\(debug ? "-DEBUG" : ""))"
   }
 }
+
+extension String {
+  var trimmingWs: String {
+    trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+}
