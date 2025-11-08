@@ -220,7 +220,7 @@ struct UserProfileView: View {
 
   func editSignature() {
     guard isMyself else { return }
-    let initial = user.signature.raw.replacingOccurrences(of: "<br/>", with: "\n")
+    let initial = user.signature.rawReplacingBr
     signaturePostModel.show(action: .init(userID: user.id, initialSignature: initial))
   }
 

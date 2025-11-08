@@ -55,7 +55,7 @@ struct ShortMessagePostRowView: View {
   @ViewBuilder
   var menu: some View {
     Section {
-      Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
+      Button(action: { textSelection.text = post.content.rawReplacingBr }) {
         Label("Select Text", systemImage: "selection.pin.in.out")
       }
     }
