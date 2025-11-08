@@ -54,6 +54,9 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
 
     // Play haptic when new notis arrive.
     $items
+      // Actually 0ms for debounce is enough to skip intermediate states in the same transaction.
+      // Use 1s here just in case.
+      .debounce(for: .seconds(1), scheduler: RunLoop.main)
       .map { [weak self] items in
         let count = items.filter { $0.read == false }.count
         withAnimation { self?.unreadCount = count }
@@ -61,8 +64,9 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
       }
       .prepend(0)
       .pairwise()
-      .map { $0.1 - $0.0 }
-      .sink { new in if new > 0 { HapticUtils.play(type: .warning) } }
+      .sink { old, new in
+        if new > old { HapticUtils.play(type: .warning) }
+      }
       .store(in: &notificationCancellables)
   }
 }
