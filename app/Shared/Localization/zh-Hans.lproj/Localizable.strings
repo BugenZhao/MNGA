@@ -194,6 +194,7 @@
 "Screenshot (Beta)" = "截图 (Beta)";
 "Navigated to Link" = "跳转至链接";
 "Not a valid NGA or MNGA link in the pasteboard." = "剪贴板中不是有效的 NGA 或 MNGA 链接。";
+"Invalid URL" = "无效的链接";
 "Navigate" = "跳转";
 "Connection" = "连接";
 "Backend" = "后端";

@@ -413,7 +413,7 @@ class ContentCombiner {
     guard let value = image.spans.first?.value else { return }
     guard case let .plain(plain) = value else { return }
 
-    let urlText = plain.text
+    let urlText = plain.text.trimmingWs
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
     if url.pathExtension == "mp4" {
       return visitFlash(video: image)
@@ -429,7 +429,7 @@ class ContentCombiner {
     guard case let .plain(plain) = value else { return }
     guard let postDate else { return }
 
-    let urlText = plain.text
+    let urlText = plain.text.trimmingWs
 
     // Extract year, month, day from postDate in UTC+8
     let date = Date(timeIntervalSince1970: TimeInterval(postDate))
@@ -572,7 +572,10 @@ class ContentCombiner {
 
     let link = ContentButtonView(icon: icon, title: innerView, inQuote: inQuote) {
       guard let urlString else { return }
-      guard let url = URL(string: urlString, relativeTo: URLs.base) else { return }
+      guard let url = URL(string: urlString.trimmingWs, relativeTo: URLs.base) else {
+        ToastModel.showAuto(.error("Invalid URL".localized + ": \(urlString)"))
+        return
+      }
 
       switch url.mngaNavigationIdentifier {
       case let .topicID(tid, _):
@@ -674,7 +677,7 @@ class ContentCombiner {
     guard let value = video.spans.first?.value else { return }
     guard case let .plain(plain) = value else { return }
 
-    let urlText = plain.text
+    let urlText = plain.text.trimmingWs
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
 
     let link = ContentButtonView(icon: "film", title: Text("View Video"), inQuote: inQuote) {
@@ -691,7 +694,7 @@ class ContentCombiner {
     let duration = tokens.last { $0.contains("duration") }
 
     guard let urlText = tokens.first else { return }
-    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
+    guard let url = URL(string: urlText.trimmingWs, relativeTo: URLs.attachmentBase) else { return }
 
     let title = if let duration = extractQueryParams(query: duration ?? "", param: "duration") {
       Text(duration)
@@ -709,7 +712,7 @@ class ContentCombiner {
     guard let value = attach.spans.first?.value else { return }
     guard case let .plain(plain) = value else { return }
 
-    let urlText = plain.text
+    let urlText = plain.text.trimmingWs
     guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
 
     let link = ContentButtonView(icon: "paperclip", title: Text("View Attachment"), inQuote: inQuote) {
