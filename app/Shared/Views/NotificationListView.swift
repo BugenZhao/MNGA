@@ -127,13 +127,15 @@ struct NotificationToolbarItem: ToolbarContent {
        show == .fromUserMenu || !notis.showingFromUserMenu,
        !inNotificationSheet
     {
+      // ToolbarSpacer(.fixed, placement: placement)
       ToolbarItem(placement: placement) {
         Button(action: showAction) {
-          Label("Notifications", systemImage: "bell")
+          Label("Notifications", systemImage: "bell.fill")
             .badge(notis.unreadCount)
         }
         .animation(.default, value: notis.unreadCount)
       }
+      // ToolbarSpacer(.fixed, placement: placement)
     }
   }
 }
