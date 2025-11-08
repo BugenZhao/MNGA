@@ -73,12 +73,87 @@ struct NotificationListView: View {
   }
 }
 
+struct InNotificationSheetKey: EnvironmentKey {
+  static let defaultValue = false
+}
+
+extension EnvironmentValues {
+  var inNotificationSheet: Bool {
+    get { self[InNotificationSheetKey.self] }
+    set { self[InNotificationSheetKey.self] = newValue }
+  }
+}
+
 struct NotificationListNavigationView: View {
+  @State var detents: Set<PresentationDetent> = [.medium, .large]
+  @State var detent: PresentationDetent = .medium
+
+  func enableMediumDetent() {
+    detents = [.medium, .large]
+  }
+
+  func disableMediumDetent() {
+    detent = .large
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      detents = [.large]
+    }
+  }
+
   var body: some View {
     NavigationStack {
       NotificationListView()
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear { enableMediumDetent() }
+        .onDisappear { disableMediumDetent() }
     }
+    .environment(\.inNotificationSheet, true)
     .modifier(MainToastModifier.bannerOnly())
     .modifier(GlobalSheetsModifier())
+    .presentationDetents(detents, selection: $detent)
+  }
+}
+
+struct NotificationToolbarItem: ToolbarContent {
+  enum Show {
+    case sheet
+    case fromUserMenu
+  }
+
+  let placement: ToolbarItemPlacement
+  let show: Show
+
+  init(placement: ToolbarItemPlacement, show: Show = .sheet) {
+    self.placement = placement
+    self.show = show
+  }
+
+  @StateObject var notis = NotificationModel.shared
+  @Environment(\.inNotificationSheet) var inNotificationSheet
+
+  func showAction() {
+    switch show {
+    case .sheet:
+      notis.showingSheet = true
+    case .fromUserMenu:
+      notis.showingFromUserMenu = true
+    }
+  }
+
+  var body: some ToolbarContent {
+    // Only show if not from notification list view.
+    if notis.unreadCount > 0,
+       show == .fromUserMenu || !notis.showingFromUserMenu,
+       !inNotificationSheet
+    {
+      // ToolbarSpacer(.fixed, placement: placement)
+      ToolbarItem(placement: placement) {
+        Button(action: showAction) {
+          Label("Notifications", systemImage: "bell.fill")
+            .badge(notis.unreadCount)
+        }
+        .animation(.default, value: notis.unreadCount)
+      }
+      // ToolbarSpacer(.fixed, placement: placement)
+    }
   }
 }

@@ -181,6 +181,7 @@ struct ForumListView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
+    NotificationToolbarItem(placement: .navigationBarLeading, show: .fromUserMenu)
 
     if !paywall.status.isPaid {
       ToolbarItem(placement: .navigationBarTrailing) { unlockButton }

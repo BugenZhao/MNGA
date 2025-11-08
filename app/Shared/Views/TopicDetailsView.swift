@@ -575,29 +575,20 @@ struct TopicDetailsView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    #if os(iOS)
-      ToolbarItem(placement: .navigationBarTrailing) { progress }
-      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
-      ToolbarItem(placement: .navigationBarTrailing) { menu }
+    ToolbarItem(placement: .navigationBarTrailing) { progress }
+    ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+    NotificationToolbarItem(placement: .navigationBarTrailing)
+    ToolbarItem(placement: .navigationBarTrailing) { menu }
 
-      ToolbarItem(placement: .bottomBar) { jumpButton }
-        .matchedTransitionSource(id: "jump", in: transition)
-      ToolbarItem(placement: .bottomBar) { loadFirstPageButton }
-      ToolbarSpacer(placement: .bottomBar)
-      ToolbarItemGroup(placement: .bottomBar) {
-        // They won't show simultaneously.
-        replyButton
-        seeFullTopicButton
-      }
-    #elseif os(macOS)
-      ToolbarItemGroup {
-        replyButton
-        Spacer()
-        favoriteButton
-        menu
-        ShareMenu(items: [webpageURL as Any])
-      }
-    #endif
+    ToolbarItem(placement: .bottomBar) { jumpButton }
+      .matchedTransitionSource(id: "jump", in: transition)
+    ToolbarItem(placement: .bottomBar) { loadFirstPageButton }
+    ToolbarSpacer(placement: .bottomBar)
+    ToolbarItemGroup(placement: .bottomBar) {
+      // They won't show simultaneously.
+      replyButton
+      seeFullTopicButton
+    }
   }
 
   @ViewBuilder
