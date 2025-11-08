@@ -53,11 +53,10 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
       .store(in: &notificationCancellables)
 
     // Play haptic when new notis arrive.
-    $lastRefreshTime
-      .map { [weak self] _ -> Int in
-        guard let self else { return 0 }
-        let count = self.items.filter { $0.read == false }.count
-        withAnimation { self.unreadCount = count }
+    $items
+      .map { [weak self] items in
+        let count = items.filter { $0.read == false }.count
+        withAnimation { self?.unreadCount = count }
         return count
       }
       .prepend(0)
