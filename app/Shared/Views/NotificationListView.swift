@@ -96,19 +96,43 @@ struct NotificationListNavigationView: View {
 }
 
 struct NotificationToolbarItem: ToolbarContent {
+  enum Show {
+    case sheet
+    case fromUserMenu
+  }
+
   let placement: ToolbarItemPlacement
+  let show: Show
+
+  init(placement: ToolbarItemPlacement, show: Show = .sheet) {
+    self.placement = placement
+    self.show = show
+  }
 
   @StateObject var notis = NotificationModel.shared
   @Environment(\.inNotificationSheet) var inNotificationSheet
 
+  func showAction() {
+    switch show {
+    case .sheet:
+      notis.showingSheet = true
+    case .fromUserMenu:
+      notis.showingFromUserMenu = true
+    }
+  }
+
   var body: some ToolbarContent {
     // Only show if not from notification list view.
-    if notis.unreadCount > 0, !notis.showingFromUserMenu, !inNotificationSheet {
+    if notis.unreadCount > 0,
+       show == .fromUserMenu || !notis.showingFromUserMenu,
+       !inNotificationSheet
+    {
       ToolbarItem(placement: placement) {
-        Button(action: { notis.showingSheet = true }) {
+        Button(action: showAction) {
           Label("Notifications", systemImage: "bell")
             .badge(notis.unreadCount)
         }
+        .animation(.default, value: notis.unreadCount)
       }
     }
   }

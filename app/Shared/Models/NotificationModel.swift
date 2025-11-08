@@ -31,14 +31,6 @@ extension NotificationDataSource {
   var unreadCount: Int {
     items.filter { $0.read == false }.count
   }
-
-  var titleWithUnread: LocalizedStringKey {
-    if unreadCount > 0 {
-      "Notifications (\(unreadCount))"
-    } else {
-      "Notifications"
-    }
-  }
 }
 
 class NotificationModel: ObservableObject {
@@ -60,7 +52,7 @@ class NotificationModel: ObservableObject {
   var cancellables = Set<AnyCancellable>()
 
   private func refreshNotis() {
-    dataSource.refresh(animated: true, silentOnError: true)
+    dataSource.refresh(silentOnError: true)
   }
 
   var unreadCount: Int {
@@ -80,15 +72,12 @@ class NotificationModel: ObservableObject {
       .prepend(0)
       .pairwise()
       .map { $0.1 - $0.0 }
-      .sink { new in if new > 0 {
-        // ToastModel.showAuto(.notification(new))
-        HapticUtils.play(type: .warning)
-      } }
+      .sink { new in if new > 0 { HapticUtils.play(type: .warning) } }
       .store(in: &cancellables)
 
     // Forward nested observable.
     dataSource.objectWillChange
-      .sink { self.objectWillChange.send() }
+      .sink { withAnimation { self.objectWillChange.send() } }
       .store(in: &cancellables)
   }
 }

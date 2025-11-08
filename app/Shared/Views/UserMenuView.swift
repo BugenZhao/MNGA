@@ -43,7 +43,7 @@ struct UserMenuView: View {
   @ViewBuilder
   var notificationButton: some View {
     Button(action: { notification.showingFromUserMenu = true }) {
-      Label(notification.dataSource.titleWithUnread, systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
+      Label("Notifications", systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
     }
   }
 
@@ -134,7 +134,6 @@ struct UserMenuView: View {
 
   var body: some View {
     menu
-      .badge(unreadCount)
       .onChange(of: authStorage.authInfo.uid, initial: true) { model.loadData(uid: $1) }
       .sheet(isPresented: $showAboutViewAsModal) { AboutNavigationView() }
       .popoverTip(tip)
