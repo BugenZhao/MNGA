@@ -103,6 +103,7 @@ struct NotificationToolbarItem: ToolbarContent {
 
   var body: some ToolbarContent {
     // Only show if not from notification list view.
+    // FIXME: why this won't get refreshed when unreadCount changed?
     if notis.unreadCount > 0, !notis.showingFromUserMenu, !inNotificationSheet {
       ToolbarItem(placement: placement) {
         Button(action: { notis.showingSheet = true }) {

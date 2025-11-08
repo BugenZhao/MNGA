@@ -41,14 +41,16 @@ extension NotificationDataSource {
   }
 }
 
-#if targetEnvironment(simulator)
-  fileprivate let refreshInterval: TimeInterval = 10
-#else
-  fileprivate let refreshInterval: TimeInterval = 60
-#endif
-
 class NotificationModel: ObservableObject {
   static let shared = NotificationModel()
+
+  static var refreshInterval: TimeInterval {
+    #if DEBUG
+      10
+    #else
+      60
+    #endif
+  }
 
   @Published var dataSource: NotificationDataSource = .build()
   @Published var showingFromUserMenu = false
