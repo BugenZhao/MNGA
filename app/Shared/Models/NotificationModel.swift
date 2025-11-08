@@ -60,7 +60,7 @@ class NotificationModel: ObservableObject {
   var cancellables = Set<AnyCancellable>()
 
   private func refreshNotis() {
-    dataSource.refresh(silentOnError: true)
+    dataSource.refresh(animated: true, silentOnError: true)
   }
 
   var unreadCount: Int {
@@ -68,17 +68,27 @@ class NotificationModel: ObservableObject {
   }
 
   init() {
+    // Refresh periodically.
     timer
       .prepend(.init())
       .sink { _ in self.refreshNotis() }
       .store(in: &cancellables)
 
+    // Play haptic when new notis arrive.
     dataSource.$lastRefreshTime
       .map { _ in self.dataSource.items.filter { n in n.read == false }.count }
       .prepend(0)
       .pairwise()
       .map { $0.1 - $0.0 }
-      .sink { new in if new > 0 { ToastModel.showAuto(.notification(new)) } }
+      .sink { new in if new > 0 {
+        // ToastModel.showAuto(.notification(new))
+        HapticUtils.play(type: .warning)
+      } }
+      .store(in: &cancellables)
+
+    // Forward nested observable.
+    dataSource.objectWillChange
+      .sink { self.objectWillChange.send() }
       .store(in: &cancellables)
   }
 }
