@@ -107,6 +107,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   func parseContent() {
     DispatchQueue.global(qos: .userInitiated).async {
+      // Restore the breaklines before parsing local content.
       let content = (postReply.context?.content ?? "").replacingOccurrences(of: "\n", with: "<br/>")
       let response: ContentParseResponse? = try? logicCall(.contentParse(.with { $0.raw = content }))
       parsedContent = response?.content ?? .init()

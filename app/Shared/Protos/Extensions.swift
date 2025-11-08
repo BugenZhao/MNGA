@@ -402,3 +402,9 @@ extension Span {
     Span.with { $0.plain = .with { $0.text = String(s) } }
   }
 }
+
+extension PostContent {
+  var rawReplacingBr: String {
+    raw.replacingOccurrences(of: "<br/>", with: "\n")
+  }
+}

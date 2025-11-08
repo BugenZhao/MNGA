@@ -186,7 +186,7 @@ struct PostRowView: View {
       }
     }
     Section {
-      Button(action: { textSelection.text = post.content.raw.replacingOccurrences(of: "<br/>", with: "\n") }) {
+      Button(action: { textSelection.text = post.content.rawReplacingBr }) {
         Label("Select Text", systemImage: "selection.pin.in.out")
       }
       if !attachments.items.isEmpty {
@@ -194,8 +194,11 @@ struct PostRowView: View {
           Label("Attachments (\(attachments.items.count))", systemImage: "paperclip")
         }
       }
-      if let action, enableAuthorOnly, !(user?.isAnonymous ?? false) {
-        Button(action: { withPlusCheck(.authorOnly) { action.navigateToAuthorOnly = post.authorID } }) {
+      if let action, enableAuthorOnly, let user {
+        Button(action: { withPlusCheck(.authorOnly) {
+          action.navigateToAuthorOnly =
+            user.isAnonymous ? .anonymous(post.id) : .uid(post.authorID)
+        } }) {
           Label("This Author Only", systemImage: "person")
         }
       }

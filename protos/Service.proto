@@ -146,6 +146,9 @@ message TopicDetailsRequest {
   string fav = 3; // See `Topic.fav`
   string post_id = 4;
   string author_id = 5;
+  bool anonymous_author_only = 7; // For anonymous author only mode, set this flag,
+                                  // and specify the `post_id` posted by this author.
+                                  // `post_id` can be omitted if it's the topic author.
   uint32 page = 2;
   bool local_cache = 6; // Whether to only request cached version of the topic.
 }

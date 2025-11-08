@@ -250,14 +250,20 @@ struct TopicDetailsView: View {
     }
   }
 
-  static func build(topic: Topic, only authorID: String) -> some View {
+  static func build(topic: Topic, only author: AuthorOnly) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
         .topicDetails(TopicDetailsRequest.with {
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
-          $0.authorID = authorID
           $0.page = UInt32(page)
+          switch author {
+          case let .uid(id):
+            $0.authorID = id
+          case let .anonymous(id):
+            if let id { $0.postID = id.pid }
+            $0.anonymousAuthorOnly = true
+          }
         })
       },
       onResponse: { response in
@@ -343,8 +349,11 @@ struct TopicDetailsView: View {
   var moreMenu: some View {
     Menu {
       Section(debugID) {
-        if enableAuthorOnly, !topic.authorName.isAnonymous {
-          Button(action: { withPlusCheck(.authorOnly) { action.navigateToAuthorOnly = topic.authorID } }) {
+        if enableAuthorOnly {
+          Button(action: { withPlusCheck(.authorOnly) {
+            action.navigateToAuthorOnly =
+              topic.authorName.isAnonymous ? .anonymous(nil) : .uid(topic.authorID)
+          } }) {
             Label("Author Only", systemImage: "person")
           }
         }
