@@ -8,15 +8,20 @@
 import Foundation
 import SwiftUI
 
+struct UserSignatureEditAction: Hashable {
+  var userID: String = ""
+  var initialSignature: String = ""
+}
+
 struct UserSignatureEditTask: TaskProtocol, Hashable {
-  typealias Action = String
+  typealias Action = UserSignatureEditAction
 
-  static var dummy: Self = .init(action: "")
+  static var dummy: Self = .init(action: .init())
 
-  let initialSignature: String
+  var action: UserSignatureEditAction
 
-  init(action: String, pageToReload _: PageToReload? = nil) {
-    initialSignature = action
+  init(action: UserSignatureEditAction, pageToReload _: PageToReload? = nil) {
+    self.action = action
   }
 
   var actionTitle: LocalizedStringKey {
@@ -30,7 +35,7 @@ struct UserSignatureEditTask: TaskProtocol, Hashable {
 
 class UserSignaturePostModel: GenericPostModel<UserSignatureEditTask> {
   override func buildContext(with task: UserSignatureEditTask, ignoreError _: Bool = false) {
-    let context = Context(task: task, content: task.initialSignature)
+    let context = Context(task: task, content: task.action.initialSignature)
     onBuildContextSuccess(task: task, context: context)
   }
 

@@ -5,6 +5,7 @@
 //  Created by Bugen Zhao on 2021/9/10.
 //
 
+import Combine
 import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
@@ -18,7 +19,7 @@ struct UserProfileView: View {
     case posts = "Posts"
   }
 
-  let user: User
+  @State var user: User
 
   @StateObject var topicDataSource: TopicDataSource
   @StateObject var postDataSource: PostDataSource
@@ -28,6 +29,7 @@ struct UserProfileView: View {
   @EnvironmentObject var currentUser: CurrentUserModel
 
   @StateObject var blockWords = BlockWordsStorage.shared
+  @StateObject var users = UsersModel.shared
 
   @State var tab = Tab.topics
 
@@ -194,6 +196,11 @@ struct UserProfileView: View {
       }
     }
     .toolbar { toolbar }
+    .onChange(of: signaturePostModel.sent) {
+      guard isMyself, $1?.task.action.userID == user.id else { return }
+      Task { await reloadUser() }
+    }
+    .refreshable { await refresh() }
     .withTopicDetailsAction() // for signature only
     .mayGroupedListStyle()
     .navigationTitleInline(string: title)
@@ -213,7 +220,24 @@ struct UserProfileView: View {
 
   func editSignature() {
     guard isMyself else { return }
-    signaturePostModel.show(action: user.signature.raw)
+    let initial = user.signature.raw.replacingOccurrences(of: "<br/>", with: "\n")
+    signaturePostModel.show(action: .init(userID: user.id, initialSignature: initial))
+  }
+
+  func reloadUser() async {
+    if let refreshed = await users.remoteUser(id: user.id, ignoreCache: true) {
+      withAnimation { user = refreshed }
+    }
+  }
+
+  func refresh() async {
+    await withTaskGroup { group in
+      group.addTask { await reloadUser() }
+      if shouldShowList {
+        group.addTask { await topicDataSource.refreshAsync(animated: true) }
+        group.addTask { await postDataSource.refreshAsync(animated: true) }
+      }
+    }
   }
 }
 

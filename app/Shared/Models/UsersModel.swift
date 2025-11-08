@@ -12,7 +12,7 @@ class UsersModel: ObservableObject {
   static let shared = UsersModel()
 
   // CAVEATS: should not be @Published here, may lead to bad performance
-  private var users = [String: User?]()
+  private var users = [String: User]()
 
   init() {
     add(user: User.dummy)
@@ -29,14 +29,16 @@ class UsersModel: ObservableObject {
     return users[id] ?? nil
   }
 
-  func remoteUser(id: String, showError: Bool = true) async -> User? {
-    if users[id]??.remote != true {
-      return await remoteUser(.with { $0.userID = id }, showError: showError)
-    }
-    return users[id] ?? nil
+  func remoteUser(id: String, showError: Bool = true, ignoreCache: Bool = false) async -> User? {
+    await remoteUser(.with { $0.userID = id }, showError: showError, ignoreCache: ignoreCache)
   }
 
-  func remoteUser(_ req: RemoteUserRequest, showError: Bool = true) async -> User? {
+  func remoteUser(_ req: RemoteUserRequest, showError: Bool = true, ignoreCache: Bool = false) async -> User? {
+    let id = req.userID
+    if !ignoreCache, !id.isEmpty, let cached = users[id], cached.remote {
+      return cached
+    }
+
     let errorToastModel: ToastModel? = showError ? .banner : nil
     let res: Result<RemoteUserResponse, LogicError> = await logicCallAsync(.remoteUser(req), errorToastModel: errorToastModel)
     if case let .success(r) = res, r.hasUser {
