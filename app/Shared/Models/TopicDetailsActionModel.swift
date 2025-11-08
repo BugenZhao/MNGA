@@ -10,8 +10,8 @@ import Foundation
 import SwiftUI
 
 enum AuthorOnly: Hashable {
-  case id(String)
-  case anonymous
+  case uid(String)
+  case anonymous(PostId?)
 }
 
 class TopicDetailsActionModel: ObservableObject {

@@ -258,9 +258,10 @@ struct TopicDetailsView: View {
           if topic.hasFav { $0.fav = topic.fav }
           $0.page = UInt32(page)
           switch author {
-          case let .id(id):
+          case let .uid(id):
             $0.authorID = id
-          case .anonymous:
+          case let .anonymous(id):
+            if let id { $0.postID = id.pid }
             $0.anonymousAuthorOnly = true
           }
         })
@@ -351,7 +352,7 @@ struct TopicDetailsView: View {
         if enableAuthorOnly {
           Button(action: { withPlusCheck(.authorOnly) {
             action.navigateToAuthorOnly =
-              topic.authorName.isAnonymous ? .anonymous : .id(topic.authorID)
+              topic.authorName.isAnonymous ? .anonymous(nil) : .uid(topic.authorID)
           } }) {
             Label("Author Only", systemImage: "person")
           }
