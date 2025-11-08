@@ -14,6 +14,7 @@ struct ContentView: View {
   @StateObject var activity = ActivityModel()
   @StateObject var postReply = PostReplyModel()
   @StateObject var shortMessagePost = ShortMessagePostModel()
+  @StateObject var userSignaturePost = UserSignaturePostModel()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var openURL = OpenURLModel.shared
   @StateObject var authStorage = AuthStorage.shared
@@ -92,6 +93,7 @@ struct ContentView: View {
       .environmentObject(activity)
       .environmentObject(postReply)
       .environmentObject(shortMessagePost)
+      .environmentObject(userSignaturePost)
       .environmentObject(currentUser)
       .environmentObject(textSelection)
       .environmentObject(paywall)
@@ -105,6 +107,7 @@ struct ContentView: View {
 struct GlobalSheetsModifier: ViewModifier {
   @EnvironmentObject var postReply: PostReplyModel
   @EnvironmentObject var shortMessagePost: ShortMessagePostModel
+  @EnvironmentObject var userSignaturePost: UserSignaturePostModel
   @EnvironmentObject var textSelection: TextSelectionModel
   @EnvironmentObject var viewingImage: ViewingImageModel
   @StateObject var prefs = PreferencesStorage.shared
@@ -113,6 +116,7 @@ struct GlobalSheetsModifier: ViewModifier {
     content
       .sheet(isPresented: $postReply.showEditor) { PostEditorView() }
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
+      .sheet(isPresented: $userSignaturePost.showEditor) { UserSignatureEditorView() }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
       .sheet(isPresented: $prefs.showing) { PreferencesView() }
       .modifier(PaywallSheetModifier())

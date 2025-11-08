@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 use crate::{
-    error::ServiceResult,
+    auth,
+    error::{ServiceError, ServiceResult},
     fetch_package,
     utils::{extract_kv, extract_node, extract_string},
 };
@@ -9,7 +10,10 @@ use dashmap::DashMap;
 use lazy_static::lazy_static;
 use protos::{
     DataModel::{User, UserName},
-    Service::{RemoteUserRequest, RemoteUserResponse, RemoteUserResponse_oneof__user},
+    Service::{
+        RemoteUserRequest, RemoteUserResponse, RemoteUserResponse_oneof__user,
+        UserSignatureUpdateRequest, UserSignatureUpdateResponse,
+    },
 };
 use sxd_xpath::nodeset::Node;
 
@@ -34,6 +38,10 @@ impl UserController {
 
     pub fn update_user(&self, user: User) {
         self.map.insert(user.id.to_owned(), user);
+    }
+
+    pub fn invalidate_user(&self, id: &str) {
+        self.map.remove(id);
     }
 
     pub fn add_anonymous_user(&self, mut user: User, context: &str) -> User {
@@ -211,6 +219,32 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
     })
 }
 
+pub async fn update_signature(
+    request: UserSignatureUpdateRequest,
+) -> ServiceResult<UserSignatureUpdateResponse> {
+    let uid = auth::current_uid();
+    if uid.is_empty() {
+        return Err(ServiceError::MngaInternal("Not logged in".to_owned()));
+    }
+
+    let _package = fetch_package(
+        "nuke.php",
+        vec![
+            ("__lib", "set_sign"),
+            ("__act", "set"),
+            ("uid", &uid),
+            ("sign", request.get_signature()),
+        ],
+        vec![],
+    )
+    .await?;
+
+    // Invalidate the user cache.
+    UserController::get().invalidate_user(&uid);
+
+    Ok(Default::default())
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -271,5 +305,43 @@ mod test {
         assert_eq!(user.get_id(), anony_name);
         assert_eq!(user.get_name().get_normal(), anony_name);
         assert_eq!(user.get_name().get_anonymous(), "壬宫窦丁钱甄");
+    }
+
+    #[tokio::test]
+    async fn test_update_signature() -> ServiceResult<()> {
+        async fn get_signature() -> ServiceResult<String> {
+            Ok(get_remote_user(RemoteUserRequest {
+                user_id: auth::current_uid(),
+                ..Default::default()
+            })
+            .await?
+            .get_user()
+            .get_signature()
+            .get_raw()
+            .to_string())
+        }
+
+        let original_sign = get_signature().await?;
+        let new_sign = "测试签名 from logic test";
+
+        let _response = update_signature(UserSignatureUpdateRequest {
+            signature: new_sign.to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        let new_current_sign = get_signature().await?;
+        assert_eq!(new_current_sign, new_sign);
+
+        // Revert the signature.
+        let _response = update_signature(UserSignatureUpdateRequest {
+            signature: original_sign.clone(),
+            ..Default::default()
+        })
+        .await?;
+        let reverted_sign = get_signature().await?;
+        assert_eq!(reverted_sign, original_sign);
+
+        Ok(())
     }
 }

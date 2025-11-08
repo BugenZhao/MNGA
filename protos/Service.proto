@@ -117,6 +117,8 @@ message AsyncRequest {
     FavoriteFolderModifyRequest favorite_folder_modify = 25;
     // Create a favorite topic folder.
     FavoriteFolderCreateRequest favorite_folder_create = 26;
+    // Update the signature of the current user.
+    UserSignatureUpdateRequest user_signature_update = 27;
   }
 }
 
@@ -318,6 +320,11 @@ message ShortMessagePostRequest {
   repeated string to = 4; // Used if `action.operation`` is `NEW`
 }
 message ShortMessagePostResponse {}
+
+message UserSignatureUpdateRequest {
+  string signature = 1;
+}
+message UserSignatureUpdateResponse {}
 
 message TopicSearchRequest {
   ForumId id = 1; // If not provided, search in all forums.
