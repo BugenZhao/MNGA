@@ -578,6 +578,7 @@ struct TopicDetailsView: View {
     #if os(iOS)
       ToolbarItem(placement: .navigationBarTrailing) { progress }
       ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+      NotificationToolbarItem(placement: .navigationBarTrailing)
       ToolbarItem(placement: .navigationBarTrailing) { menu }
 
       ToolbarItem(placement: .bottomBar) { jumpButton }

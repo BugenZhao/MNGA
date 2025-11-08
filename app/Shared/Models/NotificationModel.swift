@@ -61,6 +61,10 @@ class NotificationModel: ObservableObject {
     dataSource.refresh(silentOnError: true)
   }
 
+  var unreadCount: Int {
+    dataSource.unreadCount
+  }
+
   init() {
     timer
       .prepend(.init())

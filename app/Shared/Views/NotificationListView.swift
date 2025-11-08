@@ -82,3 +82,20 @@ struct NotificationListNavigationView: View {
     .modifier(GlobalSheetsModifier())
   }
 }
+
+struct NotificationToolbarItem: ToolbarContent {
+  let placement: ToolbarItemPlacement
+
+  @StateObject var notis = NotificationModel.shared
+
+  var body: some ToolbarContent {
+    if notis.unreadCount > 0 {
+      ToolbarItem(placement: placement) {
+        Button(action: { notis.showingSheet = true }) {
+          Label("Notifications", systemImage: "bell")
+            .badge(notis.unreadCount)
+        }
+      }
+    }
+  }
+}

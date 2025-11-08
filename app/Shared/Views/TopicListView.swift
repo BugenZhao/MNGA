@@ -249,6 +249,7 @@ struct TopicListView: View {
     #if os(iOS)
       // -- Navigation Bar
       ToolbarItem(placement: .principal) { principal }
+      NotificationToolbarItem(placement: .navigationBarTrailing)
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
 
       // -- Bottom Bar
