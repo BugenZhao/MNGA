@@ -10,7 +10,7 @@ import SwiftUI
 import SwiftUIX
 
 struct NotificationListView: View {
-  @StateObject var dataSource = NotificationModel.shared.dataSource
+  @StateObject var notis = NotificationModel.shared
 
   @ViewBuilder
   func buildLink(for binding: Binding<Notification>) -> some View {
@@ -37,38 +37,38 @@ struct NotificationListView: View {
   var markAllAsReadButton: some View {
     Button(action: { markAllAsRead() }) {
       Label("Mark All as Read", systemImage: "checkmark")
-    }.disabled(dataSource.unreadCount == 0)
+    }.disabled(notis.unreadCount == 0)
   }
 
   func markAllAsRead() {
     DispatchQueue.global(qos: .background).async {
       let request = SyncRequest.OneOf_Value.markNotiRead(.with { n in
-        n.ids = dataSource.items.map(\.id)
+        n.ids = notis.items.map(\.id)
       })
       let _: MarkNotificationReadResponse? = try? logicCall(request)
       DispatchQueue.main.async {
-        dataSource.refresh(animated: true)
+        notis.refresh(animated: true)
       }
     }
   }
 
   var body: some View {
     Group {
-      if dataSource.notLoaded {
+      if notis.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
+          .onAppear { notis.initialLoad() }
       } else {
         List {
-          ForEach($dataSource.items, id: \.id) { notification in
+          ForEach($notis.items, id: \.id) { notification in
             buildLink(for: notification)
           }
         }
       }
     }
     .navigationTitle("Notifications")
-    .if(dataSource.unreadCount > 0) { $0.navigationSubtitle("\(dataSource.unreadCount) unread") }
+    .navigationSubtitle(notis.unreadCount > 0 ? "\(notis.unreadCount) Unread" : "All Read")
     .mayGroupedListStyle()
-    .refreshable(dataSource: dataSource)
+    .refreshable(dataSource: notis)
     .toolbar { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }
   }
 }

@@ -10,30 +10,7 @@ import CombineExt
 import Foundation
 import SwiftUI
 
-typealias NotificationDataSource = PagingDataSource<FetchNotificationResponse, Notification>
-
-private extension NotificationDataSource {
-  static func build() -> NotificationDataSource {
-    NotificationDataSource(
-      buildRequest: { _ in
-        .fetchNotification(.with { _ in })
-      },
-      onResponse: { response in
-        let items = response.notis
-        return (items, 1)
-      },
-      id: \.id
-    )
-  }
-}
-
-extension NotificationDataSource {
-  var unreadCount: Int {
-    items.filter { $0.read == false }.count
-  }
-}
-
-class NotificationModel: ObservableObject {
+class NotificationModel: PagingDataSource<FetchNotificationResponse, Notification> {
   static let shared = NotificationModel()
 
   static var refreshInterval: TimeInterval {
@@ -44,40 +21,48 @@ class NotificationModel: ObservableObject {
     #endif
   }
 
-  @Published var dataSource: NotificationDataSource = .build()
   @Published var showingFromUserMenu = false
   @Published var showingSheet = false
 
-  let timer = Timer.TimerPublisher(interval: refreshInterval, runLoop: .main, mode: .default).autoconnect()
-  var cancellables = Set<AnyCancellable>()
+  private let timer = Timer.TimerPublisher(interval: refreshInterval, runLoop: .main, mode: .default).autoconnect()
+  private var notificationCancellables = Set<AnyCancellable>()
+
+  // HACK: computed property won't trigger animation
+  @Published var unreadCount = 0
 
   private func refreshNotis() {
-    dataSource.refresh(silentOnError: true)
-  }
-
-  var unreadCount: Int {
-    dataSource.unreadCount
+    refresh(animated: true, silentOnError: true)
   }
 
   init() {
+    super.init(
+      buildRequest: { _ in
+        .fetchNotification(.with { _ in })
+      },
+      onResponse: { response in
+        let items = response.notis
+        return (items, 1)
+      },
+      id: \.id
+    )
+
     // Refresh periodically.
     timer
       .prepend(.init())
-      .sink { _ in self.refreshNotis() }
-      .store(in: &cancellables)
+      .sink { [weak self] _ in self?.refreshNotis() }
+      .store(in: &notificationCancellables)
 
     // Play haptic when new notis arrive.
-    dataSource.$lastRefreshTime
-      .map { _ in self.dataSource.items.filter { n in n.read == false }.count }
+    $items
+      .map { [weak self] items in
+        let count = items.filter { $0.read == false }.count
+        withAnimation { self?.unreadCount = count }
+        return count
+      }
       .prepend(0)
       .pairwise()
       .map { $0.1 - $0.0 }
       .sink { new in if new > 0 { HapticUtils.play(type: .warning) } }
-      .store(in: &cancellables)
-
-    // Forward nested observable.
-    dataSource.objectWillChange
-      .sink { withAnimation { self.objectWillChange.send() } }
-      .store(in: &cancellables)
+      .store(in: &notificationCancellables)
   }
 }
