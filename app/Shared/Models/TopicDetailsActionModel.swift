@@ -9,6 +9,11 @@ import Combine
 import Foundation
 import SwiftUI
 
+enum AuthorOnly: Hashable {
+  case id(String)
+  case anonymous
+}
+
 class TopicDetailsActionModel: ObservableObject {
   @Published var scrollToPid: String? = nil
   @Published var scrollToFloor: Int? = nil
@@ -19,7 +24,7 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var showUserProfile: User? = nil
   @Published var navigateToRemoteUserID: String? = nil
   @Published var navigateToRemoteUserName: String? = nil
-  @Published var navigateToAuthorOnly: String? = nil
+  @Published var navigateToAuthorOnly: AuthorOnly? = nil
   @Published var navigateToLocalMode: Bool = false
   @Published var navigateToView: AnyView? = nil
 

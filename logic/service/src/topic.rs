@@ -525,6 +525,14 @@ pub async fn get_topic_details(
             ("fav", request.get_fav()),
             ("pid", request.get_post_id()),
             ("authorid", request.get_author_id()),
+            (
+                "opt",
+                if request.get_anonymous_author_only() {
+                    "512"
+                } else {
+                    ""
+                },
+            ),
         ],
         vec![],
     )
