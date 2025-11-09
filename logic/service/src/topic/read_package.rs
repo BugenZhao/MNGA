@@ -1,6 +1,8 @@
+//! Converts the legacy NGA `read.php` HTML payload into the XML “package” format
+//! that the rest of the topic pipeline expects. This stays lenient so that small
+//! markup shifts on the NGA side do not crash `get_topic_details`.
+
 use crate::error::{ServiceError, ServiceResult};
-#[cfg(test)]
-use crate::post::extract_post;
 use lazy_static::lazy_static;
 use protos::DataModel::ErrorMessage;
 use quick_xml::Writer;
@@ -10,22 +12,32 @@ use scraper::{ElementRef, Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
 use sxd_document::{Package, parser};
+
 const POST_PROC_MARKER: &str = "commonui.postArg.proc(";
 const USER_INFO_MARKER: &str = "commonui.userInfo.setAll(";
 const ALERT_MARKER: &str = "commonui.loadAlertInfo(";
 const PAGE_MARKER: &str = "var __PAGE";
 const MIN_POST_ARGS: usize = 23;
+// NGA wraps error pages inside these HTML comments; keep the markers explicit so
+// we can surface the original error message rather than attempting to parse the
+// bogus HTML as a topic page.
 const ERROR_CODE_START: &str = "<!--msgcodestart-->";
 const ERROR_CODE_END: &str = "<!--msgcodeend-->";
 const ERROR_INFO_START: &str = "<!--msginfostart-->";
 const ERROR_INFO_END: &str = "<!--msginfoend-->";
 
+/// Thread-level identifiers extracted from the inline bootstrap script.
 #[derive(Clone, Debug, Default)]
 struct CurrentVars {
+    /// Forum id extracted from the inline JS block.
     fid: String,
+    /// Topic id extracted from the inline JS block.
     tid: String,
+    /// Server-side page size hint; used to derive `__R__ROWS_PAGE`.
     page_posts: u32,
 }
+
+/// Metadata emitted by `commonui.postArg.proc` for each floor.
 #[derive(Clone, Debug)]
 struct PostArgs {
     pid: String,
@@ -39,6 +51,8 @@ struct PostArgs {
     from_client: String,
     follow: i32,
 }
+
+/// Flattened reply data that becomes `<item>` nodes under `__R`.
 #[derive(Clone, Debug, Default)]
 struct PostEntry {
     floor: u32,
@@ -59,6 +73,8 @@ struct PostEntry {
     post_type: String,
     alter_info: String,
 }
+
+/// Collapsed topic summary that populates `__T` in the synthetic XML.
 #[derive(Clone, Debug, Default)]
 struct TopicMeta {
     fid: String,
@@ -70,25 +86,35 @@ struct TopicMeta {
     last_post_timestamp: u64,
     replies: u32,
 }
+
+/// Pagination hints derived from the `__PAGE` JS struct.
 #[derive(Clone, Copy, Debug, Default)]
 struct PageMeta {
     total_pages: u32,
     per_page: u32,
 }
+
+/// Ready-to-serialize user entries for the `__U` section.
 #[derive(Clone, Debug, Default)]
 struct UserEntry {
     fields: Vec<(String, String)>,
 }
+
+/// Parsed user roster plus a uid -> username map for later lookups.
 #[derive(Clone, Debug, Default)]
 struct ParsedUsers {
     entries: Vec<UserEntry>,
     names: HashMap<String, String>,
 }
+
+/// Converts `quick_xml` errors into `ServiceError`s with a stable message.
 #[inline]
 fn map_xml_err(err: quick_xml::Error) -> ServiceError {
     ServiceError::MngaInternal(format!("XML serialization failed: {err}"))
 }
 
+/// Entry point that turns `read.php` HTML into the XML package consumed by the
+/// rest of the topic pipeline.
 pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
     if let Some(err) = detect_nga_error(raw_html) {
         return Err(err);
@@ -135,6 +161,7 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
     Ok(package)
 }
 
+/// Extracts NGA's inline error payload and converts it into `ServiceError::Nga`.
 fn detect_nga_error(source: &str) -> Option<ServiceError> {
     let code = extract_segment(source, ERROR_CODE_START, ERROR_CODE_END)?
         .trim()
@@ -156,6 +183,7 @@ fn detect_nga_error(source: &str) -> Option<ServiceError> {
     }))
 }
 
+/// Returns the first non-empty substring bounded by the provided markers.
 fn extract_first_non_empty_segment(source: &str, start: &str, end: &str) -> Option<String> {
     let mut offset = 0;
     while let Some(rel_start) = source[offset..].find(start) {
@@ -174,6 +202,7 @@ fn extract_first_non_empty_segment(source: &str, start: &str, end: &str) -> Opti
     None
 }
 
+/// Minimal substring helper that returns the raw text between two sentinels.
 fn extract_segment<'a>(source: &'a str, start: &str, end: &str) -> Option<&'a str> {
     let start_idx = source.find(start)? + start.len();
     let tail = &source[start_idx..];
@@ -181,6 +210,7 @@ fn extract_segment<'a>(source: &'a str, start: &str, end: &str) -> Option<&'a st
     Some(&tail[..end_idx])
 }
 
+/// Strips HTML/whitespace noise and decodes entities in NGA error payloads.
 fn sanitize_error_text(raw: &str) -> String {
     lazy_static! {
         static ref TAG_RE: Regex = Regex::new(r"<[^>]+>").unwrap();
@@ -190,6 +220,7 @@ fn sanitize_error_text(raw: &str) -> String {
     collapse_whitespace(&unescaped)
 }
 
+/// Collapses consecutive whitespace into single spaces for UI-friendly strings.
 fn collapse_whitespace(input: &str) -> String {
     let mut out = String::new();
     let mut seen_space = false;
@@ -206,6 +237,8 @@ fn collapse_whitespace(input: &str) -> String {
     }
     out.trim().to_string()
 }
+
+/// Reads the inline `<script>` block to capture thread-level identifiers.
 fn parse_current_vars(source: &str) -> ServiceResult<CurrentVars> {
     let fid = capture_assignment(source, "__CURRENT_FID")
         .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_FID".to_owned()))?;
@@ -220,6 +253,8 @@ fn parse_current_vars(source: &str) -> ServiceResult<CurrentVars> {
         page_posts,
     })
 }
+
+/// Extracts a JS assignment value (`foo = parseInt('123')` or `foo = 456`).
 fn capture_assignment(source: &str, key: &str) -> Option<String> {
     let idx = source.find(key)?;
     let remainder = &source[idx + key.len()..];
@@ -245,6 +280,8 @@ fn capture_assignment(source: &str, key: &str) -> Option<String> {
             .to_string(),
     )
 }
+
+/// Parses every `commonui.postArg.proc` call into `PostArgs` keyed by floor.
 fn parse_post_args(source: &str) -> HashMap<u32, PostArgs> {
     let mut map = HashMap::new();
     for args_raw in capture_calls(source, POST_PROC_MARKER) {
@@ -280,6 +317,8 @@ fn parse_post_args(source: &str) -> HashMap<u32, PostArgs> {
     }
     map
 }
+
+/// Collects per-floor alert text produced by `commonui.loadAlertInfo`.
 fn parse_alerts(source: &str) -> HashMap<u32, String> {
     let mut map = HashMap::new();
     for args_raw in capture_calls(source, ALERT_MARKER) {
@@ -301,6 +340,8 @@ fn parse_alerts(source: &str) -> HashMap<u32, String> {
     }
     map
 }
+
+/// Extracts pagination hints from the `__PAGE` JS struct.
 fn parse_page_meta(source: &str) -> PageMeta {
     if let Some(pos) = source.find(PAGE_MARKER) {
         let tail = &source[pos..];
@@ -335,7 +376,9 @@ fn parse_page_meta(source: &str) -> PageMeta {
         per_page: 0,
     }
 }
+
 impl PageMeta {
+    /// Resolves the total rows count using pagination hints.
     fn rows(&self, observed: u32) -> u32 {
         if self.total_pages <= 1 || self.per_page == 0 {
             observed
@@ -343,6 +386,7 @@ impl PageMeta {
             self.total_pages.saturating_mul(self.per_page).max(observed)
         }
     }
+    /// Resolves the rows-per-page value with a caller-provided fallback.
     fn rows_per_page(&self, fallback: u32) -> u32 {
         if self.per_page == 0 {
             fallback
@@ -351,7 +395,11 @@ impl PageMeta {
         }
     }
 }
+
+/// Parses the inline user JSON blob into `ParsedUsers`.
 fn parse_user_info(source: &str) -> ServiceResult<ParsedUsers> {
+    // The embedded JSON is produced by inline JS; strip control chars to keep
+    // `serde_json` happy before parsing.
     let mut entries = Vec::new();
     let mut names = HashMap::new();
     if let Some(arg) = capture_calls(source, USER_INFO_MARKER).into_iter().next() {
@@ -390,6 +438,8 @@ fn parse_user_info(source: &str) -> ServiceResult<ParsedUsers> {
     }
     Ok(ParsedUsers { entries, names })
 }
+
+/// Converts arbitrary JSON scalars into owned strings for XML emission.
 fn json_value_to_string(value: &Value) -> Option<String> {
     match value {
         Value::Null => Some(String::new()),
@@ -399,6 +449,8 @@ fn json_value_to_string(value: &Value) -> Option<String> {
         _ => None,
     }
 }
+
+/// Builds `PostEntry` records by aligning DOM nodes with `PostArgs` metadata.
 fn extract_posts(
     document: &Html,
     vars: &CurrentVars,
@@ -451,6 +503,8 @@ fn extract_posts(
     posts.sort_by_key(|p| p.floor);
     Ok(posts)
 }
+
+/// Pulls plain text from the element identified by `id`.
 fn find_descendant_text(node: ElementRef<'_>, id: &str) -> String {
     match Selector::parse(&format!("#{id}")) {
         Ok(selector) => node
@@ -461,6 +515,8 @@ fn find_descendant_text(node: ElementRef<'_>, id: &str) -> String {
         Err(_) => String::new(),
     }
 }
+
+/// Returns trimmed inner HTML from the targeted element.
 fn find_descendant_html(node: ElementRef<'_>, id: &str) -> String {
     match Selector::parse(&format!("#{id}")) {
         Ok(selector) => node
@@ -471,6 +527,8 @@ fn find_descendant_html(node: ElementRef<'_>, id: &str) -> String {
         Err(_) => String::new(),
     }
 }
+
+/// Synthesizes the topic summary (`__T`) using floor 0 plus fallbacks.
 fn build_topic_meta(
     vars: &CurrentVars,
     subject: &str,
@@ -478,6 +536,8 @@ fn build_topic_meta(
     names: &HashMap<String, String>,
     rows_total: u32,
 ) -> ServiceResult<TopicMeta> {
+    // NGA omits a dedicated topic summary in HTML mode; synthesize one using
+    // the first floor so downstream cache logic still works.
     let first = posts
         .iter()
         .find(|p| p.floor == 0)
@@ -507,6 +567,8 @@ fn build_topic_meta(
         replies: rows_total.saturating_sub(1),
     })
 }
+
+/// Emits the synthetic XML matching NGA's `lite=xml` structure.
 fn assemble_xml(
     users: &[UserEntry],
     posts: &[PostEntry],
@@ -515,6 +577,7 @@ fn assemble_xml(
     rows_total: u32,
     rows_per_page: u32,
 ) -> ServiceResult<String> {
+    // Emit the same shape as `lite=xml` so the XPath extractors stay untouched.
     let mut writer = Writer::new(Vec::new());
     writer
         .write_event(Event::Start(BytesStart::new("root")))
@@ -532,6 +595,8 @@ fn assemble_xml(
     String::from_utf8(bytes)
         .map_err(|e| ServiceError::MngaInternal(format!("Generated XML not UTF-8: {e}")))
 }
+
+/// Serializes the `__U` section.
 fn write_users(writer: &mut Writer<Vec<u8>>, users: &[UserEntry]) -> Result<(), ServiceError> {
     writer
         .write_event(Event::Start(BytesStart::new("__U")))
@@ -552,6 +617,8 @@ fn write_users(writer: &mut Writer<Vec<u8>>, users: &[UserEntry]) -> Result<(), 
         .map_err(map_xml_err)?;
     Ok(())
 }
+
+/// Serializes the `__T` topic summary.
 fn write_topic(writer: &mut Writer<Vec<u8>>, topic: &TopicMeta) -> Result<(), ServiceError> {
     writer
         .write_event(Event::Start(BytesStart::new("__T")))
@@ -570,6 +637,8 @@ fn write_topic(writer: &mut Writer<Vec<u8>>, topic: &TopicMeta) -> Result<(), Se
         .map_err(map_xml_err)?;
     Ok(())
 }
+
+/// Serializes the `__F` wrapper that carries the forum name.
 fn write_forum(writer: &mut Writer<Vec<u8>>, name: &str) -> Result<(), ServiceError> {
     writer
         .write_event(Event::Start(BytesStart::new("__F")))
@@ -580,6 +649,8 @@ fn write_forum(writer: &mut Writer<Vec<u8>>, name: &str) -> Result<(), ServiceEr
         .map_err(map_xml_err)?;
     Ok(())
 }
+
+/// Serializes all `__R/item` records.
 fn write_posts(writer: &mut Writer<Vec<u8>>, posts: &[PostEntry]) -> Result<(), ServiceError> {
     writer
         .write_event(Event::Start(BytesStart::new("__R")))
@@ -614,6 +685,8 @@ fn write_posts(writer: &mut Writer<Vec<u8>>, posts: &[PostEntry]) -> Result<(), 
         .map_err(map_xml_err)?;
     Ok(())
 }
+
+/// Helper that emits a `<name>value</name>` pair.
 fn write_text_element(
     writer: &mut Writer<Vec<u8>>,
     name: &str,
@@ -630,9 +703,13 @@ fn write_text_element(
         .map_err(map_xml_err)?;
     Ok(())
 }
+
+/// Collects every argument list for calls that start with the provided marker.
 fn capture_calls(source: &str, marker: &str) -> Vec<String> {
     let mut calls = Vec::new();
     let mut offset = 0;
+    // Some scripts repeat the same helper call; keep scanning past each closed
+    // parenthesis to gather every argument list.
     while let Some(pos) = source[offset..].find(marker) {
         let start = offset + pos + marker.len();
         if let Some((args, consumed)) = capture_parenthesized(&source[start..]) {
@@ -644,6 +721,8 @@ fn capture_calls(source: &str, marker: &str) -> Vec<String> {
     }
     calls
 }
+
+/// Parses nested parentheses while honoring quoted strings.
 fn capture_parenthesized(text: &str) -> Option<(String, usize)> {
     let mut depth = 1;
     let mut in_single = false;
@@ -678,6 +757,8 @@ fn capture_parenthesized(text: &str) -> Option<(String, usize)> {
     }
     None
 }
+
+/// Splits a JS argument list while accounting for nested delimiters.
 fn split_arguments(args: &str) -> Vec<String> {
     let mut out = Vec::new();
     let mut current = String::new();
@@ -747,6 +828,8 @@ fn split_arguments(args: &str) -> Vec<String> {
     }
     out
 }
+
+/// Removes surrounding quotes/escapes from JS literals.
 fn normalize_literal(raw: &str) -> String {
     let trimmed = raw.trim();
     if trimmed.eq_ignore_ascii_case("null") {
@@ -761,6 +844,8 @@ fn normalize_literal(raw: &str) -> String {
         trimmed.to_string()
     }
 }
+
+/// Parses `score,score2,recommend` triples from comma-separated strings.
 fn parse_scores(raw: &str) -> (i32, i32, i32) {
     let mut iter = raw.split(',').filter_map(|s| s.trim().parse::<i32>().ok());
     let score = iter.next().unwrap_or(0);
@@ -768,6 +853,8 @@ fn parse_scores(raw: &str) -> (i32, i32, i32) {
     let recommend = iter.next().unwrap_or(0);
     (score, score_2, recommend)
 }
+
+/// Resolves the topic subject using the DOM heading or the first post.
 fn extract_topic_subject(document: &Html, posts: &[PostEntry]) -> String {
     Selector::parse("#currentTopicName")
         .ok()
@@ -781,6 +868,8 @@ fn extract_topic_subject(document: &Html, posts: &[PostEntry]) -> String {
         .or_else(|| posts.first().map(|p| p.subject.clone()))
         .unwrap_or_default()
 }
+
+/// Extracts the forum name from the DOM header section.
 fn extract_forum_name(document: &Html) -> String {
     Selector::parse("#currentForumName")
         .ok()
@@ -792,10 +881,13 @@ fn extract_forum_name(document: &Html) -> String {
         })
         .unwrap_or_default()
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::post::extract_post;
     use crate::utils::{extract_node, extract_nodes};
+
     #[test]
     fn parses_fixture() -> ServiceResult<()> {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../read.php");
