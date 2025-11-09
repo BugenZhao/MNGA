@@ -331,10 +331,12 @@ struct TopicListView: View {
 
   func updateForumMeta(_ r: TopicListResponse?) {
     guard let r else { return }
-    if forum.name.isEmpty {
-      forum.name = r.forum.name
-      forum.info = r.forum.info
-      forum.iconURL = r.forum.iconURL
+
+    // Enrich the forum meta if possible.
+    // - if constructed with `build(id:)`, we only have id
+    // - if navigated from `ForumListView`, we still lack icon and info
+    if forum != r.forum {
+      forum = r.forum
     }
   }
 }
