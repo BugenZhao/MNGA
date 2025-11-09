@@ -398,6 +398,33 @@ mod json {
     }
 }
 
+mod web {
+    use super::*;
+    use crate::fetch::ResponseFormat;
+
+    pub struct WebHtml(pub String);
+
+    impl ResponseFormat for WebHtml {
+        fn query_pairs() -> &'static [(&'static str, &'static str)] {
+            &[("", "")]
+        }
+
+        fn parse_response(response: String) -> ServiceResult<Self> {
+            Ok(WebHtml(response))
+        }
+    }
+
+    pub async fn fetch_web_html(
+        api: &str,
+        query: Vec<(&str, &str)>,
+        form: Vec<(&str, &str)>,
+    ) -> ServiceResult<String> {
+        fetch_text_with_auth(api, query, form)
+            .await
+            .map(|h: WebHtml| h.0)
+    }
+}
+
 mod mock {
     use super::*;
     use protos::{MockRequest, MockResponse};
@@ -420,4 +447,5 @@ mod mock {
 
 pub use self::json::*;
 pub use self::mock::*;
+pub use self::web::*;
 pub use self::xml::*;
