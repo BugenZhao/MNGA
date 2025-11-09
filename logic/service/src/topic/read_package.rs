@@ -264,9 +264,9 @@ fn capture_assignment(source: &str, key: &str) -> Option<String> {
     }
     let value = remainder[1..].trim_start();
     if value.starts_with("parseInt") {
-        let open = value.find(|c| c == '\'' || c == '"')?;
+        let open = value.find(['\'', '"'])?;
         let tail = &value[open + 1..];
-        let close = tail.find(|c| c == '\'' || c == '"')?;
+        let close = tail.find(['\'', '"'])?;
         return Some(tail[..close].to_string());
     }
     let terminators = [',', ';', '\n'];
@@ -345,30 +345,30 @@ fn parse_alerts(source: &str) -> HashMap<u32, String> {
 fn parse_page_meta(source: &str) -> PageMeta {
     if let Some(pos) = source.find(PAGE_MARKER) {
         let tail = &source[pos..];
-        if let Some(start) = tail.find('{') {
-            if let Some(end) = tail[start..].find('}') {
-                let body = &tail[start + 1..start + end];
-                let mut total_pages = None;
-                let mut per_page = None;
-                for chunk in body.split(',') {
-                    let mut parts = chunk.splitn(2, ':');
-                    let key = parts.next().map(str::trim);
-                    let value = parts.next().map(str::trim);
-                    match (key, value) {
-                        (Some("1"), Some(v)) if total_pages.is_none() => {
-                            total_pages = v.parse::<u32>().ok();
-                        }
-                        (Some("3"), Some(v)) if per_page.is_none() => {
-                            per_page = v.parse::<u32>().ok();
-                        }
-                        _ => {}
+        if let Some(start) = tail.find('{')
+            && let Some(end) = tail[start..].find('}')
+        {
+            let body = &tail[start + 1..start + end];
+            let mut total_pages = None;
+            let mut per_page = None;
+            for chunk in body.split(',') {
+                let mut parts = chunk.splitn(2, ':');
+                let key = parts.next().map(str::trim);
+                let value = parts.next().map(str::trim);
+                match (key, value) {
+                    (Some("1"), Some(v)) if total_pages.is_none() => {
+                        total_pages = v.parse::<u32>().ok();
                     }
+                    (Some("3"), Some(v)) if per_page.is_none() => {
+                        per_page = v.parse::<u32>().ok();
+                    }
+                    _ => {}
                 }
-                return PageMeta {
-                    total_pages: total_pages.unwrap_or(1),
-                    per_page: per_page.unwrap_or(0),
-                };
             }
+            return PageMeta {
+                total_pages: total_pages.unwrap_or(1),
+                per_page: per_page.unwrap_or(0),
+            };
         }
     }
     PageMeta {
