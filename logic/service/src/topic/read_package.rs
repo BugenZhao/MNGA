@@ -1,8 +1,11 @@
 use crate::error::{ServiceError, ServiceResult};
 #[cfg(test)]
 use crate::post::extract_post;
+use lazy_static::lazy_static;
+use protos::DataModel::ErrorMessage;
 use quick_xml::Writer;
 use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
+use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use serde_json::Value;
 use std::collections::HashMap;
@@ -12,6 +15,10 @@ const USER_INFO_MARKER: &str = "commonui.userInfo.setAll(";
 const ALERT_MARKER: &str = "commonui.loadAlertInfo(";
 const PAGE_MARKER: &str = "var __PAGE";
 const MIN_POST_ARGS: usize = 23;
+const ERROR_CODE_START: &str = "<!--msgcodestart-->";
+const ERROR_CODE_END: &str = "<!--msgcodeend-->";
+const ERROR_INFO_START: &str = "<!--msginfostart-->";
+const ERROR_INFO_END: &str = "<!--msginfoend-->";
 
 #[derive(Clone, Debug, Default)]
 struct CurrentVars {
@@ -83,6 +90,9 @@ fn map_xml_err(err: quick_xml::Error) -> ServiceError {
 }
 
 pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
+    if let Some(err) = detect_nga_error(raw_html) {
+        return Err(err);
+    }
     let document = Html::parse_document(raw_html);
     let vars = parse_current_vars(raw_html)?;
     let post_args = parse_post_args(raw_html);
@@ -123,6 +133,78 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
     let package = parser::parse(&xml)
         .map_err(|e| ServiceError::MngaInternal(format!("Synthetic XML parse failed: {e}")))?;
     Ok(package)
+}
+
+fn detect_nga_error(source: &str) -> Option<ServiceError> {
+    let code = extract_segment(source, ERROR_CODE_START, ERROR_CODE_END)?
+        .trim()
+        .to_owned();
+    if code.is_empty() {
+        return None;
+    }
+
+    let info_raw = extract_first_non_empty_segment(source, ERROR_INFO_START, ERROR_INFO_END)?;
+    let info = sanitize_error_text(&info_raw);
+    if info.is_empty() {
+        return None;
+    }
+
+    Some(ServiceError::Nga(ErrorMessage {
+        code,
+        info,
+        ..Default::default()
+    }))
+}
+
+fn extract_first_non_empty_segment(source: &str, start: &str, end: &str) -> Option<String> {
+    let mut offset = 0;
+    while let Some(rel_start) = source[offset..].find(start) {
+        let segment_start = offset + rel_start + start.len();
+        let tail = &source[segment_start..];
+        if let Some(rel_end) = tail.find(end) {
+            let segment = &tail[..rel_end];
+            if !segment.trim().is_empty() {
+                return Some(segment.trim().to_string());
+            }
+            offset = segment_start + rel_end + end.len();
+        } else {
+            break;
+        }
+    }
+    None
+}
+
+fn extract_segment<'a>(source: &'a str, start: &str, end: &str) -> Option<&'a str> {
+    let start_idx = source.find(start)? + start.len();
+    let tail = &source[start_idx..];
+    let end_idx = tail.find(end)?;
+    Some(&tail[..end_idx])
+}
+
+fn sanitize_error_text(raw: &str) -> String {
+    lazy_static! {
+        static ref TAG_RE: Regex = Regex::new(r"<[^>]+>").unwrap();
+    }
+    let without_tags = TAG_RE.replace_all(raw, " ");
+    let unescaped = text::unescape(without_tags.trim());
+    collapse_whitespace(&unescaped)
+}
+
+fn collapse_whitespace(input: &str) -> String {
+    let mut out = String::new();
+    let mut seen_space = false;
+    for ch in input.chars() {
+        if ch.is_whitespace() {
+            if !seen_space {
+                out.push(' ');
+                seen_space = true;
+            }
+        } else {
+            seen_space = false;
+            out.push(ch);
+        }
+    }
+    out.trim().to_string()
 }
 fn parse_current_vars(source: &str) -> ServiceResult<CurrentVars> {
     let fid = capture_assignment(source, "__CURRENT_FID")
@@ -741,5 +823,21 @@ mod tests {
                 .contains("测试测试")
         );
         Ok(())
+    }
+
+    #[test]
+    fn detects_error_page() {
+        let html = r#"
+            <!--msgcodestart-->5<!--msgcodeend-->
+            <!--msginfostart--><span>帖子发布或回复时间超过限制</span><!--msginfoend-->
+        "#;
+
+        match detect_nga_error(html).expect("should detect error") {
+            ServiceError::Nga(message) => {
+                assert_eq!(message.get_code(), "5");
+                assert!(message.get_info().contains("帖子发布或回复时间超过限制"));
+            }
+            other => panic!("unexpected error variant: {other:?}"),
+        }
     }
 }
