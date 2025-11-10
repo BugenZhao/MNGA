@@ -6,7 +6,6 @@ use crate::{
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
     post::extract_post,
-    topic::read_package::build_topic_package,
     user::{extract_local_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
@@ -20,7 +19,9 @@ use protos::{DataModel::*, MockRequest, Service::*, ToValue};
 use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
-mod read_package;
+#[cfg(test)]
+mod parity_tests;
+mod web_to_xml;
 
 pub static FAVOR_RESPONSE_PREFIX: &str = "/favor_response/topic";
 fn favor_response_key(topic_id: &str) -> String {
@@ -550,7 +551,7 @@ pub async fn get_topic_details(
         let web = || async {
             fetch_web_html(api, query(), vec![])
                 .await
-                .and_then(|html| build_topic_package(&html))
+                .and_then(|html| web_to_xml::build_topic_package(&html))
         };
 
         macro_rules! or_else {
