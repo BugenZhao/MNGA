@@ -1,11 +1,12 @@
 use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
-    fetch::fetch_mock,
+    fetch::{fetch_mock, fetch_web_html},
     fetch_package,
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
     post::extract_post,
+    topic::read_package::build_topic_package,
     user::{extract_local_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
@@ -18,6 +19,8 @@ use futures::TryFutureExt;
 use protos::{DataModel::*, MockRequest, Service::*, ToValue};
 use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
+
+mod read_package;
 
 pub static FAVOR_RESPONSE_PREFIX: &str = "/favor_response/topic";
 fn favor_response_key(topic_id: &str) -> String {
@@ -520,7 +523,7 @@ pub async fn get_topic_details(
         return Ok(response);
     }
 
-    let package_result = fetch_package(
+    let package_result = fetch_web_html(
         "read.php",
         vec![
             ("tid", request.get_topic_id()),
@@ -539,7 +542,8 @@ pub async fn get_topic_details(
         ],
         vec![],
     )
-    .await;
+    .await
+    .and_then(|html| build_topic_package(&html));
 
     if let Err(e @ ServiceError::Nga(_)) = package_result {
         match get_local_cache() {
