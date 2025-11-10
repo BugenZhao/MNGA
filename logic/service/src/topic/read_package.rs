@@ -692,7 +692,9 @@ fn build_topic_meta(
                     .find(|p| p.floor == 0)
                     .map(|p| p.author_id.clone())
             })
-            .ok_or_else(|| ServiceError::MissingField("topic.author_id".to_owned()))?
+            .ok_or_else(|| {
+                ServiceError::MngaInternal("Unable to determine topic.author_id".to_owned())
+            })?
     };
     let author_name = names
         .get(&author_id)
