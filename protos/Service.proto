@@ -142,6 +142,13 @@ message TopicListResponse {
 }
 
 message TopicDetailsRequest {
+  enum WebApiStrategy {
+    DISABLED = 0;  // Do not use web API.
+    SECONDARY = 1; // If XML API returns truncated content, fallback to use web API.
+    PRIMARY = 2;   // Prefer to use web API, fallback to XML API if parsing failed.
+    ONLY = 3;      // Only use web API.
+  }
+
   string topic_id = 1;
   string fav = 3; // See `Topic.fav`
   string post_id = 4;
@@ -151,6 +158,7 @@ message TopicDetailsRequest {
                                   // `post_id` can be omitted if it's the topic author.
   uint32 page = 2;
   bool local_cache = 6; // Whether to only request cached version of the topic.
+  WebApiStrategy web_api_strategy = 8; // Whether or in what circumstances to use web API.
 }
 message TopicDetailsResponse {
   Topic topic = 1;
@@ -160,6 +168,7 @@ message TopicDetailsResponse {
   bool is_local_cache = 5; // Whether the replies are from local cache.
   optional string local_reason = 7; // Reason why online load is failed.
   repeated User in_place_users = 6;
+  string api_used = 8;
 }
 
 message SubforumFilterRequest {

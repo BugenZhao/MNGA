@@ -47,6 +47,7 @@ struct PostReplyChainView: View {
 
   func loadRemotePost(id: PostId) {
     logicCallAsync(.topicDetails(.with {
+      $0.webApiStrategy = prefs.topicDetailsWebApiStrategy
       $0.topicID = id.tid
       $0.postID = id.pid
     })) { (response: TopicDetailsResponse) in

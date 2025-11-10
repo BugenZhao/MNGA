@@ -207,6 +207,7 @@ struct TopicDetailsView: View {
     let dataSource = DataSource(
       buildRequest: { page in
         .topicDetails(TopicDetailsRequest.with {
+          $0.webApiStrategy = PreferencesStorage.shared.topicDetailsWebApiStrategy
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
           if let pid = onlyPost.id?.pid { $0.postID = pid }
@@ -254,6 +255,7 @@ struct TopicDetailsView: View {
     let dataSource = DataSource(
       buildRequest: { page in
         .topicDetails(TopicDetailsRequest.with {
+          $0.webApiStrategy = PreferencesStorage.shared.topicDetailsWebApiStrategy
           $0.topicID = topic.id
           if topic.hasFav { $0.fav = topic.fav }
           $0.page = UInt32(page)
@@ -341,6 +343,9 @@ struct TopicDetailsView: View {
     var id = "#\(topic.id)"
     if topic.hasFav, topic.fav != "" {
       id += " @\(topic.fav)"
+    }
+    if let apiUsed = dataSource.latestResponse?.apiUsed, !apiUsed.isEmpty {
+      id += " (\(apiUsed.uppercased()))"
     }
     return id
   }

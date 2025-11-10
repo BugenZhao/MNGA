@@ -523,27 +523,57 @@ pub async fn get_topic_details(
         return Ok(response);
     }
 
-    let package_result = fetch_web_html(
-        "read.php",
-        vec![
-            ("tid", request.get_topic_id()),
-            ("page", &request.get_page().to_string()),
-            ("fav", request.get_fav()),
-            ("pid", request.get_post_id()),
-            ("authorid", request.get_author_id()),
-            (
-                "opt",
-                if request.get_anonymous_author_only() {
-                    "512"
-                } else {
-                    ""
-                },
-            ),
-        ],
-        vec![],
-    )
-    .await
-    .and_then(|html| build_topic_package(&html));
+    let (package_result, api_used) = {
+        use TopicDetailsRequest_WebApiStrategy::*;
+
+        let api = "read.php";
+        let page = &request.get_page().to_string();
+        let query = || {
+            vec![
+                ("tid", request.get_topic_id()),
+                ("page", page),
+                ("fav", request.get_fav()),
+                ("pid", request.get_post_id()),
+                ("authorid", request.get_author_id()),
+                (
+                    "opt",
+                    if request.get_anonymous_author_only() {
+                        "512"
+                    } else {
+                        ""
+                    },
+                ),
+            ]
+        };
+
+        let xml = || fetch_package(api, query(), vec![]);
+        let web = || async {
+            fetch_web_html(api, query(), vec![])
+                .await
+                .and_then(|html| build_topic_package(&html))
+        };
+
+        macro_rules! or_else {
+            ($primary:ident, $secondary:ident, $Error:ident) => {
+                // Ugly writing just to workaround `Package` crossing await point.
+                async {
+                    match $primary().await {
+                        Err(ServiceError::$Error(_)) => {}
+                        result => return (result, stringify!($primary)),
+                    };
+                    ($secondary().await, stringify!($secondary))
+                }
+                .await
+            };
+        }
+
+        match request.get_web_api_strategy() {
+            DISABLED => (xml().await, "xml"),
+            SECONDARY => or_else!(xml, web, XmlParse),
+            PRIMARY => or_else!(web, xml, MngaInternal),
+            ONLY => (web().await, "web"),
+        }
+    };
 
     if let Err(e @ ServiceError::Nga(_)) = package_result {
         match get_local_cache() {
@@ -585,6 +615,7 @@ pub async fn get_topic_details(
         replies: replies.into(),
         forum_name,
         pages,
+        api_used: api_used.to_owned(),
         ..Default::default()
     };
 

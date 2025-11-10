@@ -13,3 +13,4 @@
 "Plus Explanation" = "MNGA Plus offers unlimited forum browsing and interaction experiences, and allows you to access all premium features of MNGA.";
 "Plus More Feature" = "MNGA's continued development and maintenance would not be possible without your support. More features are coming soon!";
 "Subforum Tip" = "Tap to navigate to subforum; swipe to mark as favorite.\nUse the switch to subscribe or block subforum topics.";
+"Web API Explained" = "Use the experimental Web API to load topic details. This can eliminate XML parsing errors, but the returned content might not always be accurate. It is recommended to choose \"Disabled\" or \"Secondary\" in most cases.";
