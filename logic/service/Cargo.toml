@@ -39,3 +39,4 @@ uuid = { version = "1", features = ["v4"] }
 
 [dev-dependencies]
 dotenv = "0.15"
+pretty_assertions = "1"

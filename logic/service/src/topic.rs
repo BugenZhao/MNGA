@@ -21,6 +21,8 @@ use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
 mod read_package;
+#[cfg(test)]
+mod web_api_tests;
 
 pub static FAVOR_RESPONSE_PREFIX: &str = "/favor_response/topic";
 fn favor_response_key(topic_id: &str) -> String {
