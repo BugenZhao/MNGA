@@ -121,7 +121,7 @@ struct ParsedUsers {
 
 /// Converts `quick_xml` errors into `ServiceError`s with a stable message.
 #[inline]
-fn map_xml_err(err: quick_xml::Error) -> ServiceError {
+fn map_xml_err(err: impl std::error::Error) -> ServiceError {
     ServiceError::MngaInternal(format!("XML serialization failed: {err}"))
 }
 
