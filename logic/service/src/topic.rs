@@ -569,8 +569,8 @@ pub async fn get_topic_details(
 
         match request.get_web_api_strategy() {
             DISABLED => (xml().await, "xml"),
-            BACKUP => or_else!(xml, web, XmlParse),
-            PREFERRED => or_else!(web, xml, MngaInternal),
+            SECONDARY => or_else!(xml, web, XmlParse),
+            PRIMARY => or_else!(web, xml, MngaInternal),
             ONLY => (web().await, "web"),
         }
     };

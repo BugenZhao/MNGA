@@ -49,6 +49,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("resumeTopicFrom") var resumeTopicFrom = TopicResumeFrom.none
 
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
+  @AppStorage("topicDetailsWebApiStrategy") var topicDetailsWebApiStrategy = TopicDetailsRequest.WebApiStrategy.disabled
 
   // MARK: - Debug
 

@@ -231,6 +231,14 @@ struct PreferencesInnerView: View {
           .autocorrectionDisabled(true)
       }
     }
+
+    Picker(selection: $pref.topicDetailsWebApiStrategy, label: Label("Web API", systemImage: "network")) {
+      ForEach(TopicDetailsRequest.WebApiStrategy.allCases, id: \.self) { strategy in
+        Label(strategy.description, systemImage: strategy.icon)
+          .tint(strategy.tintColor ?? pref.themeColor.color)
+          .tag(strategy)
+      }
+    }
   }
 
   @ViewBuilder
@@ -281,7 +289,7 @@ struct PreferencesInnerView: View {
         reading
       }
 
-      Section(header: Text("Connection")) {
+      Section(header: Text("Connection"), footer: Text("Web API Explained")) {
         connection
       }
 

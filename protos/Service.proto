@@ -143,10 +143,10 @@ message TopicListResponse {
 
 message TopicDetailsRequest {
   enum WebApiStrategy {
-    DISABLED = 0;
-    BACKUP = 1;
-    PREFERRED = 2;
-    ONLY = 3;
+    DISABLED = 0;  // Do not use web API.
+    SECONDARY = 1; // If XML API returns truncated content, fallback to use web API.
+    PRIMARY = 2;   // Prefer to use web API, fallback to XML API if parsing failed.
+    ONLY = 3;      // Only use web API.
   }
 
   string topic_id = 1;

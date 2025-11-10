@@ -408,3 +408,40 @@ extension PostContent {
     raw.replacingOccurrences(of: "<br/>", with: "\n")
   }
 }
+
+extension TopicDetailsRequest.WebApiStrategy {
+  var description: LocalizedStringKey {
+    switch self {
+    case .disabled:
+      "Disabled"
+    case .secondary:
+      "Secondary"
+    case .primary:
+      "Primary"
+    case .only:
+      "Only Web API"
+    default:
+      "Unknown"
+    }
+  }
+
+  var icon: String {
+    switch self {
+    case .secondary, .primary:
+      "flask"
+    case .only:
+      "exclamationmark.triangle"
+    default:
+      ""
+    }
+  }
+
+  var tintColor: Color? {
+    switch self {
+    case .only:
+      .red
+    default:
+      nil
+    }
+  }
+}
