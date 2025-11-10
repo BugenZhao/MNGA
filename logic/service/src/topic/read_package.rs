@@ -72,6 +72,8 @@ struct PostEntry {
     follow: i32,
     post_type: String,
     alter_info: String,
+    comments: Vec<PostEntry>,
+    hot_replies: Vec<PostEntry>,
 }
 
 /// Collapsed topic summary that populates `__T` in the synthetic XML.
@@ -127,12 +129,13 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
             "Unable to locate post metadata in read.php payload".to_owned(),
         ));
     }
+    let pid_floor_map = build_pid_floor_map(&post_args);
     let alerts = parse_alerts(raw_html);
     let ParsedUsers {
         entries: users,
         names,
     } = parse_user_info(raw_html)?;
-    let posts = extract_posts(&document, &vars, &post_args, &alerts)?;
+    let posts = extract_posts(&document, &vars, &post_args, &alerts, &pid_floor_map)?;
     if posts.is_empty() {
         return Err(ServiceError::MngaInternal(
             "No posts were extracted from the read.php document".to_owned(),
@@ -281,41 +284,56 @@ fn capture_assignment(source: &str, key: &str) -> Option<String> {
     )
 }
 
-/// Parses every `commonui.postArg.proc` call into `PostArgs` keyed by floor.
-fn parse_post_args(source: &str) -> HashMap<u32, PostArgs> {
+/// Parses every `commonui.postArg.proc` call into `PostArgs` keyed by the first
+/// argument (either a floor number or an auxiliary identifier for comments /
+/// hot replies).
+fn parse_post_args(source: &str) -> HashMap<String, PostArgs> {
     let mut map = HashMap::new();
     for args_raw in capture_calls(source, POST_PROC_MARKER) {
         let args = split_arguments(&args_raw);
         if args.len() < MIN_POST_ARGS {
             continue;
         }
-        if let Ok(floor) = args[0].trim().parse::<u32>() {
-            let pid = normalize_literal(&args[10]);
-            let post_type = normalize_literal(&args[11]);
-            let author_id = normalize_literal(&args[13]);
-            let timestamp = normalize_literal(&args[14]).parse::<u64>().unwrap_or(0);
-            let (score, score_2, recommend) = parse_scores(&normalize_literal(&args[15]));
-            let content_length = normalize_literal(&args[16]).parse::<u32>().unwrap_or(0);
-            let from_client = normalize_literal(&args[19]);
-            let follow = normalize_literal(&args[22]).parse::<i32>().unwrap_or(0);
-            map.insert(
-                floor,
-                PostArgs {
-                    pid,
-                    post_type,
-                    author_id,
-                    timestamp,
-                    score,
-                    score_2,
-                    recommend,
-                    content_length,
-                    from_client,
-                    follow,
-                },
-            );
+        let key = normalize_literal(&args[0]);
+        if key.is_empty() {
+            continue;
         }
+        let pid = normalize_literal(&args[10]);
+        let post_type = normalize_literal(&args[11]);
+        let author_id = normalize_literal(&args[13]);
+        let timestamp = normalize_literal(&args[14]).parse::<u64>().unwrap_or(0);
+        let (score, score_2, recommend) = parse_scores(&normalize_literal(&args[15]));
+        let content_length = normalize_literal(&args[16]).parse::<u32>().unwrap_or(0);
+        let from_client = normalize_literal(&args[19]);
+        let follow = normalize_literal(&args[22]).parse::<i32>().unwrap_or(0);
+        map.insert(
+            key,
+            PostArgs {
+                pid,
+                post_type,
+                author_id,
+                timestamp,
+                score,
+                score_2,
+                recommend,
+                content_length,
+                from_client,
+                follow,
+            },
+        );
     }
     map
+}
+
+fn build_pid_floor_map(post_args: &HashMap<String, PostArgs>) -> HashMap<String, u32> {
+    post_args
+        .iter()
+        .filter_map(|(key, args)| {
+            key.parse::<u32>()
+                .ok()
+                .map(|floor| (args.pid.clone(), floor))
+        })
+        .collect()
 }
 
 /// Collects per-floor alert text produced by `commonui.loadAlertInfo`.
@@ -454,8 +472,9 @@ fn json_value_to_string(value: &Value) -> Option<String> {
 fn extract_posts(
     document: &Html,
     vars: &CurrentVars,
-    post_args: &HashMap<u32, PostArgs>,
+    post_args: &HashMap<String, PostArgs>,
     alerts: &HashMap<u32, String>,
+    pid_floor_map: &HashMap<String, u32>,
 ) -> ServiceResult<Vec<PostEntry>> {
     let row_selector = Selector::parse("tr.postrow").unwrap();
     let floor_selector = Selector::parse("a[name^=\"l\"]").unwrap();
@@ -470,7 +489,8 @@ fn extract_posts(
             .ok_or_else(|| {
                 ServiceError::MngaInternal("Unable to read floor marker for a post row".to_owned())
             })?;
-        let args = post_args.get(&floor).ok_or_else(|| {
+        let key = floor.to_string();
+        let args = post_args.get(&key).ok_or_else(|| {
             ServiceError::MngaInternal(format!("Missing post metadata for floor {floor}"))
         })?;
         let content_id = format!("postcontent{floor}");
@@ -480,7 +500,7 @@ fn extract_posts(
         let subject = find_descendant_text(row, &subject_id);
         let post_date_display = find_descendant_text(row, &date_id);
         let alter_info = alerts.get(&floor).cloned().unwrap_or_default();
-        posts.push(PostEntry {
+        let mut post = PostEntry {
             floor,
             pid: args.pid.clone(),
             tid: vars.tid.clone(),
@@ -498,10 +518,107 @@ fn extract_posts(
             follow: args.follow,
             post_type: args.post_type.clone(),
             alter_info,
-        });
+            comments: Vec::new(),
+            hot_replies: Vec::new(),
+        };
+
+        let highlight_selector = format!("#hightlight_for_{floor}");
+        post.hot_replies = extract_inline_posts(
+            &row,
+            &highlight_selector,
+            post_args,
+            pid_floor_map,
+            vars,
+            InlineKind::HotReply,
+        )?;
+
+        let comment_selector = format!("#comment_for_{floor}");
+        post.comments = extract_inline_posts(
+            &row,
+            &comment_selector,
+            post_args,
+            pid_floor_map,
+            vars,
+            InlineKind::Comment,
+        )?;
+
+        posts.push(post);
     }
     posts.sort_by_key(|p| p.floor);
     Ok(posts)
+}
+
+enum InlineKind {
+    Comment,
+    HotReply,
+}
+
+fn extract_inline_posts(
+    row: &ElementRef<'_>,
+    selector_str: &str,
+    post_args: &HashMap<String, PostArgs>,
+    pid_floor_map: &HashMap<String, u32>,
+    vars: &CurrentVars,
+    kind: InlineKind,
+) -> ServiceResult<Vec<PostEntry>> {
+    let selector = match Selector::parse(selector_str) {
+        Ok(sel) => sel,
+        Err(_) => return Ok(vec![]),
+    };
+    let Some(container) = row.select(&selector).next() else {
+        return Ok(vec![]);
+    };
+
+    let entry_selector = Selector::parse("div.comment_c").unwrap();
+    let mut entries = Vec::new();
+    for entry in container.select(&entry_selector) {
+        let Some(suffix) = find_postcomment_suffix(entry) else {
+            continue;
+        };
+        let Some(args) = post_args.get(&suffix) else {
+            continue;
+        };
+        let subject = find_descendant_text(entry, &format!("postcommentsubject{}", suffix));
+        let content = find_descendant_html(entry, &format!("postcomment{}", suffix));
+        let post_date_display = find_descendant_text(entry, &format!("commentInfo{}", suffix));
+        let floor = match kind {
+            InlineKind::HotReply => pid_floor_map.get(&args.pid).copied().unwrap_or(0),
+            InlineKind::Comment => 0,
+        };
+
+        entries.push(PostEntry {
+            floor,
+            pid: args.pid.clone(),
+            tid: vars.tid.clone(),
+            fid: vars.fid.clone(),
+            author_id: args.author_id.clone(),
+            subject,
+            content,
+            post_date_display,
+            timestamp: args.timestamp,
+            score: args.score,
+            score_2: args.score_2,
+            recommend: args.recommend,
+            content_length: args.content_length,
+            from_client: args.from_client.clone(),
+            follow: args.follow,
+            post_type: args.post_type.clone(),
+            alter_info: String::new(),
+            comments: Vec::new(),
+            hot_replies: Vec::new(),
+        });
+    }
+    Ok(entries)
+}
+
+fn find_postcomment_suffix(entry: ElementRef<'_>) -> Option<String> {
+    let selector = Selector::parse("span[id^=\"postcomment\"]").ok()?;
+    entry.select(&selector).find_map(|node| {
+        node.value().attr("id").and_then(|id| {
+            id.strip_prefix("postcomment")
+                .and_then(|suffix| suffix.starts_with('_').then(|| suffix.to_string()))
+        })
+    })
 }
 
 /// Pulls plain text from the element identified by `id`.
@@ -656,32 +773,62 @@ fn write_posts(writer: &mut Writer<Vec<u8>>, posts: &[PostEntry]) -> Result<(), 
         .write_event(Event::Start(BytesStart::new("__R")))
         .map_err(map_xml_err)?;
     for post in posts {
-        writer
-            .write_event(Event::Start(BytesStart::new("item")))
-            .map_err(map_xml_err)?;
-        write_text_element(writer, "content", &post.content)?;
-        write_text_element(writer, "alterinfo", &post.alter_info)?;
-        write_text_element(writer, "tid", &post.tid)?;
-        write_text_element(writer, "score", &post.score.to_string())?;
-        write_text_element(writer, "score_2", &post.score_2.to_string())?;
-        write_text_element(writer, "postdate", &post.post_date_display)?;
-        write_text_element(writer, "authorid", &post.author_id)?;
-        write_text_element(writer, "subject", &post.subject)?;
-        write_text_element(writer, "type", &post.post_type)?;
-        write_text_element(writer, "fid", &post.fid)?;
-        write_text_element(writer, "pid", &post.pid)?;
-        write_text_element(writer, "recommend", &post.recommend.to_string())?;
-        write_text_element(writer, "follow", &post.follow.to_string())?;
-        write_text_element(writer, "lou", &post.floor.to_string())?;
-        write_text_element(writer, "content_length", &post.content_length.to_string())?;
-        write_text_element(writer, "from_client", &post.from_client)?;
-        write_text_element(writer, "postdatetimestamp", &post.timestamp.to_string())?;
-        writer
-            .write_event(Event::End(BytesEnd::new("item")))
-            .map_err(map_xml_err)?;
+        write_post(writer, post)?;
     }
     writer
         .write_event(Event::End(BytesEnd::new("__R")))
+        .map_err(map_xml_err)?;
+    Ok(())
+}
+
+fn write_post(writer: &mut Writer<Vec<u8>>, post: &PostEntry) -> Result<(), ServiceError> {
+    writer
+        .write_event(Event::Start(BytesStart::new("item")))
+        .map_err(map_xml_err)?;
+    write_text_element(writer, "content", &post.content)?;
+    write_text_element(writer, "alterinfo", &post.alter_info)?;
+    write_text_element(writer, "tid", &post.tid)?;
+    write_text_element(writer, "score", &post.score.to_string())?;
+    write_text_element(writer, "score_2", &post.score_2.to_string())?;
+    write_text_element(writer, "postdate", &post.post_date_display)?;
+    write_text_element(writer, "authorid", &post.author_id)?;
+    write_text_element(writer, "subject", &post.subject)?;
+    write_text_element(writer, "type", &post.post_type)?;
+    write_text_element(writer, "fid", &post.fid)?;
+    write_text_element(writer, "pid", &post.pid)?;
+    write_text_element(writer, "recommend", &post.recommend.to_string())?;
+    write_text_element(writer, "follow", &post.follow.to_string())?;
+    write_text_element(writer, "lou", &post.floor.to_string())?;
+    write_text_element(writer, "content_length", &post.content_length.to_string())?;
+    write_text_element(writer, "from_client", &post.from_client)?;
+    write_text_element(writer, "postdatetimestamp", &post.timestamp.to_string())?;
+
+    if !post.hot_replies.is_empty() {
+        writer
+            .write_event(Event::Start(BytesStart::new("hotreply")))
+            .map_err(map_xml_err)?;
+        for reply in &post.hot_replies {
+            write_post(writer, reply)?;
+        }
+        writer
+            .write_event(Event::End(BytesEnd::new("hotreply")))
+            .map_err(map_xml_err)?;
+    }
+
+    if !post.comments.is_empty() {
+        writer
+            .write_event(Event::Start(BytesStart::new("comment")))
+            .map_err(map_xml_err)?;
+        for comment in &post.comments {
+            write_post(writer, comment)?;
+        }
+        writer
+            .write_event(Event::End(BytesEnd::new("comment")))
+            .map_err(map_xml_err)?;
+    }
+
+    writer
+        .write_event(Event::End(BytesEnd::new("item")))
         .map_err(map_xml_err)?;
     Ok(())
 }
@@ -837,9 +984,10 @@ fn normalize_literal(raw: &str) -> String {
     } else if (trimmed.starts_with('\'') && trimmed.ends_with('\''))
         || (trimmed.starts_with('"') && trimmed.ends_with('"'))
     {
-        trimmed[1..trimmed.len() - 1]
+        let inner = trimmed[1..trimmed.len() - 1]
             .replace("\\'", "'")
-            .replace("\\\"", "\"")
+            .replace("\\\"", "\"");
+        inner.trim().to_string()
     } else {
         trimmed.to_string()
     }
@@ -856,7 +1004,7 @@ fn parse_scores(raw: &str) -> (i32, i32, i32) {
         .collect::<Vec<_>>();
     values.resize(3, 0);
     let current = values.get(1).copied().unwrap_or(0);
-    let unused = values.get(0).copied().unwrap_or(0);
+    let unused = values.first().copied().unwrap_or(0);
     let recommend = values.get(2).copied().unwrap_or(0);
     (current, unused, recommend)
 }
@@ -938,5 +1086,35 @@ mod tests {
             }
             other => panic!("unexpected error variant: {other:?}"),
         }
+    }
+
+    #[test]
+    fn parses_score_tuple() {
+        let (score, unused, recommend) = parse_scores("0,251,0");
+        assert_eq!(score, 251);
+        assert_eq!(unused, 0);
+        assert_eq!(recommend, 0);
+
+        let (score, unused, recommend) = parse_scores("5,0,-1");
+        assert_eq!(score, 0);
+        assert_eq!(unused, 5);
+        assert_eq!(recommend, -1);
+    }
+
+    #[test]
+    fn parses_comments_and_hot_replies() -> ServiceResult<()> {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../app/read2.php");
+        let html = std::fs::read_to_string(path).expect("read2.php fixture");
+        let package = build_topic_package(&html)?;
+        let posts = extract_nodes(&package, "/root/__R/item", |nodes| {
+            nodes
+                .into_iter()
+                .filter_map(|node| extract_post(node, 1, "fixture"))
+                .collect::<Vec<_>>()
+        })?;
+        let first = posts.first().expect("first post");
+        assert_eq!(first.get_comments().len(), 2);
+        assert_eq!(first.get_hot_replies().len(), 4);
+        Ok(())
     }
 }
