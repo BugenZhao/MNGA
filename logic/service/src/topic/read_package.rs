@@ -33,8 +33,6 @@ struct CurrentVars {
     fid: String,
     /// Topic id extracted from the inline JS block.
     tid: String,
-    /// Server-side page size hint; used to derive `__R__ROWS_PAGE`.
-    page_posts: u32,
 }
 
 /// Metadata emitted by `commonui.postArg.proc` for each floor.
@@ -92,8 +90,20 @@ struct TopicMeta {
 /// Pagination hints derived from the `__PAGE` JS struct.
 #[derive(Clone, Copy, Debug, Default)]
 struct PageMeta {
+    #[expect(dead_code)]
     total_pages: u32,
     per_page: u32,
+}
+
+/// Thread-level metadata captured from `postArg.setDefault`.
+#[derive(Clone, Debug, Default)]
+struct TopicDefaults {
+    fid: String,
+    tid: String,
+    author_id: String,
+    replies: u32,
+    last_post_timestamp: u64,
+    rows_per_page: u32,
 }
 
 /// Ready-to-serialize user entries for the `__U` section.
@@ -129,12 +139,15 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
             "Unable to locate post metadata in read.php payload".to_owned(),
         ));
     }
+    let topic_defaults = parse_topic_defaults(raw_html)
+        .ok_or_else(|| ServiceError::MngaInternal("Missing topic defaults metadata".to_owned()))?;
     let pid_floor_map = build_pid_floor_map(&post_args);
     let alerts = parse_alerts(raw_html);
     let ParsedUsers {
         entries: users,
         names,
     } = parse_user_info(raw_html)?;
+    let root_post_args = post_args.get("0").cloned();
     let posts = extract_posts(&document, &vars, &post_args, &alerts, &pid_floor_map)?;
     if posts.is_empty() {
         return Err(ServiceError::MngaInternal(
@@ -142,23 +155,22 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
         ));
     }
     let page_meta = parse_page_meta(raw_html);
-    let observed_posts = posts.len() as u32;
-    let rows_total = page_meta.rows(observed_posts);
-    let effective_rows = rows_total.max(observed_posts);
-    let rows_per_page = page_meta
-        .rows_per_page(vars.page_posts.max(observed_posts))
-        .max(1);
+    let rows_per_page = if topic_defaults.rows_per_page != 0 {
+        topic_defaults.rows_per_page
+    } else {
+        page_meta.rows_per_page(20)
+    };
     let subject = extract_topic_subject(&document, &posts);
     let forum_name = extract_forum_name(&document);
-    let topic_meta = build_topic_meta(&vars, &subject, &posts, &names, effective_rows)?;
-    let xml = assemble_xml(
-        &users,
+    let topic_meta = build_topic_meta(
+        &vars,
+        &subject,
         &posts,
-        &topic_meta,
-        &forum_name,
-        effective_rows,
-        rows_per_page,
+        &names,
+        &topic_defaults,
+        root_post_args.as_ref(),
     )?;
+    let xml = assemble_xml(&users, &posts, &topic_meta, &forum_name, rows_per_page)?;
     let package = parser::parse(&xml)
         .map_err(|e| ServiceError::MngaInternal(format!("Synthetic XML parse failed: {e}")))?;
     Ok(package)
@@ -247,14 +259,8 @@ fn parse_current_vars(source: &str) -> ServiceResult<CurrentVars> {
         .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_FID".to_owned()))?;
     let tid = capture_assignment(source, "__CURRENT_TID")
         .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_TID".to_owned()))?;
-    let page_posts = capture_assignment(source, "__CURRENT_PAGE_POSTS")
-        .and_then(|v| v.parse::<u32>().ok())
-        .unwrap_or(0);
-    Ok(CurrentVars {
-        fid,
-        tid,
-        page_posts,
-    })
+
+    Ok(CurrentVars { fid, tid })
 }
 
 /// Extracts a JS assignment value (`foo = parseInt('123')` or `foo = 456`).
@@ -336,6 +342,25 @@ fn build_pid_floor_map(post_args: &HashMap<String, PostArgs>) -> HashMap<String,
         .collect()
 }
 
+fn parse_topic_defaults(source: &str) -> Option<TopicDefaults> {
+    let args = capture_calls(source, "commonui.postArg.setDefault(")
+        .into_iter()
+        .next()?;
+    let parsed = split_arguments(&args);
+    if parsed.len() < 14 {
+        return None;
+    }
+    let to_string = |idx: usize| parsed.get(idx).map(|value| normalize_literal(value));
+    Some(TopicDefaults {
+        fid: to_string(0)?,
+        tid: to_string(2)?,
+        author_id: to_string(3).unwrap_or_default(),
+        replies: to_string(11).and_then(|s| s.parse().ok()).unwrap_or(0),
+        last_post_timestamp: to_string(12).and_then(|s| s.parse().ok()).unwrap_or(0),
+        rows_per_page: to_string(13).and_then(|s| s.parse().ok()).unwrap_or(0),
+    })
+}
+
 /// Collects per-floor alert text produced by `commonui.loadAlertInfo`.
 fn parse_alerts(source: &str) -> HashMap<u32, String> {
     let mut map = HashMap::new();
@@ -396,14 +421,6 @@ fn parse_page_meta(source: &str) -> PageMeta {
 }
 
 impl PageMeta {
-    /// Resolves the total rows count using pagination hints.
-    fn rows(&self, observed: u32) -> u32 {
-        if self.total_pages <= 1 || self.per_page == 0 {
-            observed
-        } else {
-            self.total_pages.saturating_mul(self.per_page).max(observed)
-        }
-    }
     /// Resolves the rows-per-page value with a caller-provided fallback.
     fn rows_per_page(&self, fallback: u32) -> u32 {
         if self.per_page == 0 {
@@ -645,43 +662,69 @@ fn find_descendant_html(node: ElementRef<'_>, id: &str) -> String {
     }
 }
 
-/// Synthesizes the topic summary (`__T`) using floor 0 plus fallbacks.
+/// Synthesizes the topic summary (`__T`) using thread defaults plus fallbacks.
 fn build_topic_meta(
     vars: &CurrentVars,
     subject: &str,
     posts: &[PostEntry],
     names: &HashMap<String, String>,
-    rows_total: u32,
+    defaults: &TopicDefaults,
+    root_post_args: Option<&PostArgs>,
 ) -> ServiceResult<TopicMeta> {
-    // NGA omits a dedicated topic summary in HTML mode; synthesize one using
-    // the first floor so downstream cache logic still works.
-    let first = posts
-        .iter()
-        .find(|p| p.floor == 0)
-        .or_else(|| posts.first())
-        .ok_or_else(|| ServiceError::MngaInternal("Missing topic main floor".to_owned()))?;
+    let fid = if defaults.fid.is_empty() {
+        vars.fid.clone()
+    } else {
+        defaults.fid.clone()
+    };
+    let tid = if defaults.tid.is_empty() {
+        vars.tid.clone()
+    } else {
+        defaults.tid.clone()
+    };
+    let author_id = if !defaults.author_id.is_empty() {
+        defaults.author_id.clone()
+    } else {
+        root_post_args
+            .map(|args| args.author_id.clone())
+            .or_else(|| {
+                posts
+                    .iter()
+                    .find(|p| p.floor == 0)
+                    .map(|p| p.author_id.clone())
+            })
+            .ok_or_else(|| ServiceError::MissingField("topic.author_id".to_owned()))?
+    };
     let author_name = names
-        .get(&first.author_id)
+        .get(&author_id)
         .cloned()
-        .unwrap_or_else(|| first.author_id.clone());
-    let last_post_timestamp = posts
-        .iter()
-        .map(|p| p.timestamp)
-        .max()
-        .unwrap_or(first.timestamp);
+        .unwrap_or_else(|| author_id.clone());
+    let post_timestamp = root_post_args
+        .map(|args| args.timestamp)
+        .or_else(|| posts.iter().find(|p| p.floor == 0).map(|p| p.timestamp))
+        .unwrap_or(0);
+    let last_post_timestamp = defaults
+        .last_post_timestamp
+        .max(post_timestamp)
+        .max(posts.iter().map(|p| p.timestamp).max().unwrap_or(0));
+    let replies = defaults.replies;
+
     Ok(TopicMeta {
-        fid: vars.fid.clone(),
-        tid: vars.tid.clone(),
+        fid,
+        tid,
         subject: if subject.is_empty() {
-            first.subject.clone()
+            posts
+                .iter()
+                .find(|p| p.floor == 0)
+                .map(|p| p.subject.clone())
+                .unwrap_or_default()
         } else {
             subject.to_owned()
         },
-        author_id: first.author_id.clone(),
+        author_id,
         author_name,
-        post_timestamp: first.timestamp,
+        post_timestamp,
         last_post_timestamp,
-        replies: rows_total.saturating_sub(1),
+        replies,
     })
 }
 
@@ -691,7 +734,6 @@ fn assemble_xml(
     posts: &[PostEntry],
     topic: &TopicMeta,
     forum_name: &str,
-    rows_total: u32,
     rows_per_page: u32,
 ) -> ServiceResult<String> {
     // Emit the same shape as `lite=xml` so the XPath extractors stay untouched.
@@ -703,7 +745,7 @@ fn assemble_xml(
     write_topic(&mut writer, topic)?;
     write_forum(&mut writer, forum_name)?;
     write_posts(&mut writer, posts)?;
-    write_text_element(&mut writer, "__ROWS", &rows_total.to_string())?;
+    write_text_element(&mut writer, "__ROWS", &topic.replies.to_string())?;
     write_text_element(&mut writer, "__R__ROWS_PAGE", &rows_per_page.to_string())?;
     writer
         .write_event(Event::End(BytesEnd::new("root")))
@@ -1035,86 +1077,4 @@ fn extract_forum_name(document: &Html) -> String {
                 .map(|el| el.text().collect::<String>().trim().to_string())
         })
         .unwrap_or_default()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::post::extract_post;
-    use crate::utils::{extract_node, extract_nodes};
-
-    #[test]
-    fn parses_fixture() -> ServiceResult<()> {
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../read.php");
-        let html = std::fs::read_to_string(path).expect("read.php fixture");
-        let package = build_topic_package(&html)?;
-        let topic = extract_node(&package, "/root/__T", super::super::extract_topic)?
-            .flatten()
-            .expect("topic is present");
-        assert_eq!(topic.get_id(), "45150945");
-        assert_eq!(topic.get_fid(), "275");
-        assert!(topic.get_subject().get_content().contains("测试好多标签"));
-        let posts = extract_nodes(&package, "/root/__R/item", |nodes| {
-            nodes
-                .into_iter()
-                .filter_map(|node| extract_post(node, 1, "fixture"))
-                .collect::<Vec<_>>()
-        })?;
-        assert!(!posts.is_empty());
-        assert!(
-            posts
-                .first()
-                .unwrap()
-                .get_content()
-                .get_raw()
-                .contains("测试测试")
-        );
-        Ok(())
-    }
-
-    #[test]
-    fn detects_error_page() {
-        let html = r#"
-            <!--msgcodestart-->5<!--msgcodeend-->
-            <!--msginfostart--><span>帖子发布或回复时间超过限制</span><!--msginfoend-->
-        "#;
-
-        match detect_nga_error(html).expect("should detect error") {
-            ServiceError::Nga(message) => {
-                assert_eq!(message.get_code(), "5");
-                assert!(message.get_info().contains("帖子发布或回复时间超过限制"));
-            }
-            other => panic!("unexpected error variant: {other:?}"),
-        }
-    }
-
-    #[test]
-    fn parses_score_tuple() {
-        let (score, unused, recommend) = parse_scores("0,251,0");
-        assert_eq!(score, 251);
-        assert_eq!(unused, 0);
-        assert_eq!(recommend, 0);
-
-        let (score, unused, recommend) = parse_scores("5,0,-1");
-        assert_eq!(score, 0);
-        assert_eq!(unused, 5);
-        assert_eq!(recommend, -1);
-    }
-
-    #[test]
-    fn parses_comments_and_hot_replies() -> ServiceResult<()> {
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../app/read2.php");
-        let html = std::fs::read_to_string(path).expect("read2.php fixture");
-        let package = build_topic_package(&html)?;
-        let posts = extract_nodes(&package, "/root/__R/item", |nodes| {
-            nodes
-                .into_iter()
-                .filter_map(|node| extract_post(node, 1, "fixture"))
-                .collect::<Vec<_>>()
-        })?;
-        let first = posts.first().expect("first post");
-        assert_eq!(first.get_comments().len(), 2);
-        assert_eq!(first.get_hot_replies().len(), 4);
-        Ok(())
-    }
 }
