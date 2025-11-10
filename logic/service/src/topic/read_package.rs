@@ -845,13 +845,20 @@ fn normalize_literal(raw: &str) -> String {
     }
 }
 
-/// Parses `score,score2,recommend` triples from comma-separated strings.
+/// Parses the score tuple exposed in `commonui.postArg.proc`.
+///
+/// NGA encodes it as `unused,current_score,recommend`, but the protobuf expects
+/// `current_score` first.
 fn parse_scores(raw: &str) -> (i32, i32, i32) {
-    let mut iter = raw.split(',').filter_map(|s| s.trim().parse::<i32>().ok());
-    let score = iter.next().unwrap_or(0);
-    let score_2 = iter.next().unwrap_or(0);
-    let recommend = iter.next().unwrap_or(0);
-    (score, score_2, recommend)
+    let mut values = raw
+        .split(',')
+        .map(|s| s.trim().parse::<i32>().unwrap_or(0))
+        .collect::<Vec<_>>();
+    values.resize(3, 0);
+    let current = values.get(1).copied().unwrap_or(0);
+    let unused = values.get(0).copied().unwrap_or(0);
+    let recommend = values.get(2).copied().unwrap_or(0);
+    (current, unused, recommend)
 }
 
 /// Resolves the topic subject using the DOM heading or the first post.
