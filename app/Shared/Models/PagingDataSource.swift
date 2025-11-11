@@ -175,10 +175,13 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func refreshAsync(animated: Bool = false, fromPage: Int = 1) async {
+  func refreshAsync(animated: Bool = false, fromPage: Int = 1, sleep sleepDuration: Duration? = nil) async {
     let request = DispatchQueue.main.sync { preRefresh(fromPage: fromPage) }
     guard let request else { return }
 
+    if let sleepDuration {
+      try? await Task.sleep(for: sleepDuration)
+    }
     let response: Result<Res, LogicError> = await logicCallAsync(request)
 
     DispatchQueue.main.sync {
@@ -284,8 +287,7 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
   @State var lastSeen: Date? = nil
 
   func doRefresh() async {
-    try? await Task.sleep(for: .seconds(0.5))
-    await dataSource.refreshAsync(animated: true)
+    await dataSource.refreshAsync(animated: true, sleep: .seconds(0.5))
   }
 
   func body(content: Content) -> some View {

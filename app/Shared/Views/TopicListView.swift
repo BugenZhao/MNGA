@@ -240,7 +240,12 @@ struct TopicListView: View {
   @ViewBuilder
   var refreshButton: some View {
     Button(action: { triggerRefresh.toggle() }) {
-      Label("Refresh", systemImage: "arrow.clockwise")
+      if dataSource.isRefreshing, !dataSource.notLoaded {
+        // Do not show this progress view when initial load.
+        ProgressView()
+      } else {
+        Label("Refresh", systemImage: "arrow.clockwise")
+      }
     }
   }
 
