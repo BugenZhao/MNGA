@@ -65,7 +65,7 @@ let project = Project(
             settings: .settings(
                 base: [
                     "ASSETCATALOG_COMPILER_APPICON_NAME": "MNGA",
-                    "MARKETING_VERSION": "2.1",
+                    "MARKETING_VERSION": "2.1.1",
                     "CURRENT_PROJECT_VERSION": "1",
                     "SWIFT_VERSION": "5.0",
                     "ENABLE_BITCODE": "NO",
