@@ -15,7 +15,7 @@ use crate::{
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use protos::DataModel::Device;
-use rand::{Rng, seq::SliceRandom as _};
+use rand::Rng;
 use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
 
 fn device_ua(api: &str) -> Cow<'static, str> {
@@ -117,6 +117,36 @@ enum FetchKind {
     Proxy,
 }
 
+/// Determine the retry behavior of the request.
+#[derive(Copy, Clone, Debug)]
+pub struct RetryMode {
+    use_alternative_query_pairs: bool,
+    use_proxy: bool,
+}
+
+impl RetryMode {
+    pub fn never() -> Self {
+        Self {
+            use_alternative_query_pairs: false,
+            use_proxy: false,
+        }
+    }
+
+    pub fn qp_only() -> Self {
+        Self {
+            use_alternative_query_pairs: true,
+            use_proxy: false,
+        }
+    }
+
+    pub fn full() -> Self {
+        Self {
+            use_alternative_query_pairs: true,
+            use_proxy: true,
+        }
+    }
+}
+
 async fn do_fetch<AF>(
     api: &str,
     kind: FetchKind,
@@ -190,24 +220,31 @@ async fn do_fetch_text<RF, AF>(
     api: &str,
     query: Vec<(&str, &str)>,
     add_form: AF,
+    retry: RetryMode,
 ) -> ServiceResult<RF>
 where
     RF: ResponseFormat,
     AF: Fn(RequestBuilder) -> RequestBuilder,
 {
-    let mut attempts = [FetchKind::Normal, FetchKind::Proxy]
-        .into_iter()
-        .cartesian_product(RF::query_pairs())
-        .collect_vec();
-    // Shuffle attempts except for the primary one.
-    attempts[1..].shuffle(&mut rand::rng());
+    let attempts = if retry.use_proxy {
+        &[FetchKind::Normal, FetchKind::Proxy][..]
+    } else {
+        &[FetchKind::Normal][..]
+    }
+    .iter()
+    .cartesian_product(if retry.use_alternative_query_pairs {
+        RF::query_pairs()
+    } else {
+        &RF::query_pairs()[..1]
+    })
+    .collect_vec();
 
     let mut first_error = None;
 
     // Try different query pairs to mitigate blocking.
-    for (kind, query_pair) in attempts {
+    for (&kind, &query_pair) in attempts {
         let mut query = query.clone();
-        query.push(*query_pair);
+        query.push(query_pair);
 
         // Sleep for a random duration.
         let duration = Duration::from_millis(rand::rng().random_range(100..=300));
@@ -273,6 +310,7 @@ async fn fetch_text_with_auth<RF>(
     api: &str,
     query: Vec<(&str, &str)>,
     mut form: Vec<(&str, &str)>,
+    retry: RetryMode,
 ) -> ServiceResult<RF>
 where
     RF: ResponseFormat,
@@ -284,7 +322,7 @@ where
         form
     };
 
-    do_fetch_text(api, query, |b| b.form(&form)).await
+    do_fetch_text(api, query, |b| b.form(&form), retry).await
 }
 
 mod xml {
@@ -331,7 +369,16 @@ mod xml {
         query: Vec<(&str, &str)>,
         form: Vec<(&str, &str)>,
     ) -> ServiceResult<sxd_document::Package> {
-        fetch_text_with_auth(api, query, form).await
+        fetch_text_with_auth(api, query, form, RetryMode::never()).await
+    }
+
+    pub async fn fetch_package_with_retry(
+        api: &str,
+        query: Vec<(&str, &str)>,
+        form: Vec<(&str, &str)>,
+        retry: RetryMode,
+    ) -> ServiceResult<sxd_document::Package> {
+        fetch_text_with_auth(api, query, form, retry).await
     }
 
     pub async fn fetch_package_multipart(
@@ -347,7 +394,7 @@ mod xml {
                 .text("access_uid", auth_info.uid.clone())
         };
 
-        do_fetch_text(api, query, |b| b.multipart(make_form())).await
+        do_fetch_text(api, query, |b| b.multipart(make_form()), RetryMode::never()).await
     }
 }
 
@@ -382,7 +429,7 @@ mod json {
         query: Vec<(&str, &str)>,
         form: Vec<(&str, &str)>,
     ) -> ServiceResult<serde_json::Value> {
-        fetch_text_with_auth(api, query, form).await
+        fetch_text_with_auth(api, query, form, RetryMode::never()).await
     }
 
     #[cfg(test)]
@@ -419,7 +466,7 @@ mod web {
         query: Vec<(&str, &str)>,
         form: Vec<(&str, &str)>,
     ) -> ServiceResult<String> {
-        fetch_text_with_auth(api, query, form)
+        fetch_text_with_auth(api, query, form, RetryMode::never())
             .await
             .map(|h: WebHtml| h.0)
     }
