@@ -1,7 +1,7 @@
 use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
-    fetch::{fetch_mock, fetch_web_html},
+    fetch::{RetryMode, fetch_mock, fetch_package_with_retry, fetch_web_html},
     fetch_package,
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
@@ -547,7 +547,8 @@ pub async fn get_topic_details(
             ]
         };
 
-        let xml = || fetch_package(api, query(), vec![]);
+        let xmlfast = || fetch_package_with_retry(api, query(), vec![], RetryMode::qp_only());
+        let xml = || fetch_package_with_retry(api, query(), vec![], RetryMode::full());
         let web = || async {
             fetch_web_html(api, query(), vec![])
                 .await
@@ -570,7 +571,8 @@ pub async fn get_topic_details(
 
         match request.get_web_api_strategy() {
             DISABLED => (xml().await, "xml"),
-            SECONDARY => or_else!(xml, web, XmlParse),
+            // When using web as secondary, don't retry with proxies to speed up.
+            SECONDARY => or_else!(xmlfast, web, XmlParse),
             PRIMARY => or_else!(web, xml, MngaInternal),
             ONLY => (web().await, "web"),
         }
