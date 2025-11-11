@@ -93,6 +93,7 @@ class ViewingImageModel: ObservableObject {
         }
       }
       .indicator(.progress)
+      .frame(minWidth: 50) // HACK: ensure progress view has width
       .eraseToAnyView()
 
     withAnimation { showing = true }
