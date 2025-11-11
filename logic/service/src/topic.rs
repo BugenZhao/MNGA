@@ -547,7 +547,7 @@ pub async fn get_topic_details(
             ]
         };
 
-        let xml_no_proxy = || fetch_package_with_retry(api, query(), vec![], RetryMode::qp_only());
+        let xmlfast = || fetch_package_with_retry(api, query(), vec![], RetryMode::qp_only());
         let xml = || fetch_package_with_retry(api, query(), vec![], RetryMode::full());
         let web = || async {
             fetch_web_html(api, query(), vec![])
@@ -571,7 +571,8 @@ pub async fn get_topic_details(
 
         match request.get_web_api_strategy() {
             DISABLED => (xml().await, "xml"),
-            SECONDARY => or_else!(xml_no_proxy, web, XmlParse),
+            // When using web as secondary, don't retry with proxies to speed up.
+            SECONDARY => or_else!(xmlfast, web, XmlParse),
             PRIMARY => or_else!(web, xml, MngaInternal),
             ONLY => (web().await, "web"),
         }
