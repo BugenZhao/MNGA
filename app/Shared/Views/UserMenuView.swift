@@ -38,6 +38,7 @@ struct UserMenuView: View {
     .clipShape(Circle())
     .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
     .frame(width: 24, height: 24)
+    .id("user-menu-icon-\(user?.avatarURL ?? "")") // workaround not updating when url changes from nil to valid
   }
 
   @ViewBuilder

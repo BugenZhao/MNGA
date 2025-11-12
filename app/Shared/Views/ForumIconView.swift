@@ -23,5 +23,6 @@ struct ForumIconView: View {
     }
     .frame(width: size, height: size)
     .foregroundColor(.accentColor)
+    .id("forum-icon-\(iconURL)") // workaround not updating when url changes from nil to valid
   }
 }
