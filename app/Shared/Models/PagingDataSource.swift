@@ -175,14 +175,14 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func refreshAsync(animated: Bool = false, fromPage: Int = 1, sleep sleepDuration: Duration? = nil) async {
+  func refreshAsync(animated: Bool = false, silentOnError: Bool = false, fromPage: Int = 1, sleep sleepDuration: Duration? = nil) async {
     let request = DispatchQueue.main.sync { preRefresh(fromPage: fromPage) }
     guard let request else { return }
 
     if let sleepDuration {
       try? await Task.sleep(for: sleepDuration)
     }
-    let response: Result<Res, LogicError> = await logicCallAsync(request)
+    let response: Result<Res, LogicError> = await logicCallAsync(request, errorToastModel: silentOnError ? nil : .banner)
 
     DispatchQueue.main.sync {
       switch response {
