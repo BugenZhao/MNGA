@@ -89,6 +89,7 @@ struct UserView: View {
     WebImage(url: pref.showAvatar ? avatarURL : nil) {
       ($0.image ?? placeholder).resizable()
     }
+    .id("user-avatar-\(avatarURL?.absoluteString ?? "")") // workaround not updating when url changes from nil to valid
   }
 
   @ViewBuilder
