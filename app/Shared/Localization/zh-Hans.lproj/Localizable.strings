@@ -65,6 +65,9 @@
 "Notifications (%lld)" = "通知 (%lld)";
 "%lld Unread" = "%lld个未读";
 "All Read" = "全部已读";
+"Read" = "已读";
+"Unread" = "未读";
+"Mark All as Read" = "全部标记为已读";
 "replied to your post" = "回复了你的回复";
 "replied to your topic" = "回复了你的话题";
 "Your post" = "你的回复";

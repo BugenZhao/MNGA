@@ -47,7 +47,10 @@ message ContentParseResponse { PostContent content = 1; }
 message SubjectParseRequest { string raw = 1; }
 message SubjectParseResponse { Subject subject = 1; }
 
-message MarkNotificationReadRequest { repeated string ids = 1; }
+message MarkNotificationReadRequest {
+  repeated string ids = 1;
+  bool read = 2;
+}
 message MarkNotificationReadResponse {}
 
 message SetRequestOptionRequest { RequestOption option = 1; }

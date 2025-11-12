@@ -27,11 +27,18 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
   private let timer = Timer.TimerPublisher(interval: refreshInterval, runLoop: .main, mode: .default).autoconnect()
   private var notificationCancellables = Set<AnyCancellable>()
 
-  // HACK: computed property won't trigger animation
-  @Published var unreadCount = 0
+  var unreadCount: Int {
+    items.filter { !$0.read }.count
+  }
 
   private func refreshNotis() {
-    refresh(animated: true, silentOnError: true)
+    Task {
+      let currentUnreadCount = unreadCount
+      await refreshAsync(animated: true, silentOnError: true)
+      if unreadCount > currentUnreadCount {
+        HapticUtils.play(type: .warning)
+      }
+    }
   }
 
   init() {
@@ -50,23 +57,6 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
     timer
       .prepend(.init())
       .sink { [weak self] _ in self?.refreshNotis() }
-      .store(in: &notificationCancellables)
-
-    // Play haptic when new notis arrive.
-    $items
-      // Actually 0ms for debounce is enough to skip intermediate states in the same transaction.
-      // Use 1s here just in case.
-      .debounce(for: .seconds(1), scheduler: RunLoop.main)
-      .map { [weak self] items in
-        let count = items.filter { $0.read == false }.count
-        withAnimation { self?.unreadCount = count }
-        return count
-      }
-      .prepend(0)
-      .pairwise()
-      .sink { old, new in
-        if new > old { HapticUtils.play(type: .warning) }
-      }
       .store(in: &notificationCancellables)
   }
 }

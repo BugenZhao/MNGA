@@ -139,13 +139,15 @@ pub async fn fetch_notis(
 pub fn mark_noti_read(
     request: MarkNotificationReadRequest,
 ) -> ServiceResult<MarkNotificationReadResponse> {
+    let read = request.get_read();
+
     request
         .ids
         .iter()
         .map(|id| noti_key(id.as_str()))
         .for_each(|key| {
             let _ = cache::CACHE.mutate_msg(&key, |noti: &mut Notification| {
-                noti.set_read(true);
+                noti.set_read(read);
             });
         });
 

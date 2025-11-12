@@ -25,11 +25,19 @@ struct NotificationListView: View {
           TopicDetailsView.build(onlyPost: (id: notification.otherPostID, atPage: max(Int(notification.page), 1)))
         }
       }.onAppear {
-        binding.w.read = true // frontend
-        let _: MarkNotificationReadResponse? = try? logicCall(.markNotiRead(.with { r in r.ids = [notification.id] })) // backend
+        mark([notification.id], read: true)
       }
     }) {
       NotificationRowView(noti: notification)
+        .swipeActions(edge: .trailing) {
+          Button(action: { mark([notification.id], read: !notification.read) }) {
+            if notification.read {
+              Label("Unread", systemImage: "envelope.badge")
+            } else {
+              Label("Read", systemImage: "envelope.open").tint(.accentColor)
+            }
+          }
+        }
     }
   }
 
@@ -40,15 +48,27 @@ struct NotificationListView: View {
     }.disabled(notis.unreadCount == 0)
   }
 
-  func markAllAsRead() {
+  func mark(_ ids: [String], read: Bool, onSuccess: @escaping () -> Void = {}) {
     DispatchQueue.global(qos: .background).async {
       let request = SyncRequest.OneOf_Value.markNotiRead(.with { n in
-        n.ids = notis.items.map(\.id)
+        n.ids = ids
+        n.read = read
       })
       let _: MarkNotificationReadResponse? = try? logicCall(request)
       DispatchQueue.main.async {
-        notis.refresh(animated: true)
+        for id in ids {
+          if let index = notis.items.firstIndex(where: { $0.id == id }) {
+            notis.items[index].read = read // mark as read in frontend, without triggering real refresh
+          }
+        }
+        onSuccess()
       }
+    }
+  }
+
+  func markAllAsRead() {
+    mark(notis.items.filter { !$0.read }.map(\.id), read: true) {
+      HapticUtils.play(type: .success)
     }
   }
 
@@ -121,10 +141,12 @@ struct NotificationToolbarItem: ToolbarContent {
 
   let placement: ToolbarItemPlacement
   let show: Show
+  @State var unreadCount = 0 // duplicate `notis.unreadCount` to trigger animation
 
   init(placement: ToolbarItemPlacement, show: Show = .sheet) {
     self.placement = placement
     self.show = show
+    unreadCount = notis.unreadCount
   }
 
   @StateObject var notis = NotificationModel.shared
@@ -139,21 +161,30 @@ struct NotificationToolbarItem: ToolbarContent {
     }
   }
 
-  var body: some ToolbarContent {
+  @ViewBuilder
+  var bodyView: some View {
     // Only show if not from notification list view.
-    if notis.unreadCount > 0,
+    if unreadCount > 0,
        show == .fromUserMenu || !notis.showingFromUserMenu,
        !inNotificationSheet
     {
-      // ToolbarSpacer(.fixed, placement: placement)
-      ToolbarItem(placement: placement) {
-        Button(action: showAction) {
-          Label("Notifications", systemImage: "bell.fill")
-            .badge(notis.unreadCount)
-        }
-        .animation(.default, value: notis.unreadCount)
+      Button(action: showAction) {
+        Label("Notifications", systemImage: "bell.fill")
+          .badge(unreadCount)
       }
-      // ToolbarSpacer(.fixed, placement: placement)
+    }
+  }
+
+  var body: some ToolbarContent {
+    ToolbarItem(placement: placement) {
+      bodyView
+        .animation(.default, value: unreadCount)
+        .onChange(of: notis.unreadCount) { _, new in
+          // Only in next tick can we trigger animation.
+          DispatchQueue.main.async {
+            withAnimation { unreadCount = new }
+          }
+        }
     }
   }
 }
