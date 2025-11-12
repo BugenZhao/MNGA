@@ -276,6 +276,16 @@ struct PlusView: View {
     (allProducts ?? []).sorted(by: { $0.price < $1.price })
   }
 
+  @Environment(\.requestReview) private var doRequestReview
+
+  private func mayRequestReview(_ product: Product) {
+    if product.price > 0 {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        doRequestReview()
+      }
+    }
+  }
+
   @MainActor
   private func purchase(_ product: Product) async {
     purchasingProductID = product.id
@@ -290,6 +300,7 @@ struct PlusView: View {
           await transaction.finish()
           await paywall.updateStatus()
           purchasingProductID = nil
+          mayRequestReview(product)
         } else {
           errorMessage = "We couldn't verify your purchase. Please try again.".localized
         }
