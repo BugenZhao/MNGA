@@ -542,7 +542,6 @@ fn extract_posts(
             subject,
             content,
             post_date_display,
-            // TODO: should use `post_date_display` to parse a more accurate timestamp
             timestamp: args.timestamp,
             score: args.score,
             score_2: args.score_2,
@@ -605,19 +604,19 @@ fn extract_inline_posts(
         InlineKind::Comment => selector_candidates.push(format!("#comment_for_{floor}")),
     }
 
-    if matches!(kind, InlineKind::Comment) {
-        if let Some(args) = post_args.get(&floor.to_string()) {
-            selector_candidates.push(format!("#comment_for_{}", args.pid));
-        }
+    if matches!(kind, InlineKind::Comment)
+        && let Some(args) = post_args.get(&floor.to_string())
+    {
+        selector_candidates.push(format!("#comment_for_{}", args.pid));
     }
 
     let mut container = None;
     for candidate in selector_candidates {
-        if let Ok(sel) = Selector::parse(&candidate) {
-            if let Some(node) = row.select(&sel).next() {
-                container = Some(node);
-                break;
-            }
+        if let Ok(sel) = Selector::parse(&candidate)
+            && let Some(node) = row.select(&sel).next()
+        {
+            container = Some(node);
+            break;
         }
     }
 
@@ -642,10 +641,10 @@ fn extract_inline_posts(
             InlineKind::Comment => pid_floor_map.get(&args.pid).copied().unwrap_or(0),
         };
 
-        if matches!(kind, InlineKind::Comment) {
-            if let Some(set) = comment_pids.as_deref_mut() {
-                set.insert(args.pid.clone());
-            }
+        if matches!(kind, InlineKind::Comment)
+            && let Some(set) = comment_pids.as_deref_mut()
+        {
+            set.insert(args.pid.clone());
         }
 
         entries.push(PostEntry {
