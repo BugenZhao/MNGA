@@ -78,7 +78,7 @@ struct TransferableImage: Transferable {
     FileRepresentation(exportedContentType: .data) {
       let tempURL = FileManager.default.temporaryDirectory
         // This method will check the extension from given name and attach the right extension if needed.
-        .appendingPathComponent("MNGA_\($0.url.lastPathComponent)", conformingTo: $0.utType)
+        .appendingPathComponent("MNGA_\($0.url.hashedFilename)_\($0.url.lastPathComponent)", conformingTo: $0.utType)
 
       if !FileManager.default.fileExists(atPath: tempURL.path) {
         try $0.imageData.write(to: tempURL, options: .atomic)
