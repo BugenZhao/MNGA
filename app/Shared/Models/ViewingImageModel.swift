@@ -21,6 +21,34 @@ extension URL {
   }
 }
 
+extension PlatformImage {
+  var utType: UTType? {
+    switch sd_imageFormat {
+    case .JPEG: .jpeg
+    case .PNG: .png
+    case .GIF: .gif
+    case .TIFF: .tiff
+    case .webP: .webP
+    case .HEIC: .heic
+    case .HEIF: .heif
+    case .PDF: .pdf
+    case .SVG: .svg
+    case .BMP: .bmp
+    default: nil
+    }
+  }
+
+  // TODO: prefer sharing with jpeg encoding, instead of "file"
+  var isPlainImage: Bool {
+    if sd_isAnimated { return false }
+
+    switch utType {
+    case .jpeg, .png, .webP: return true
+    default: return false
+    }
+  }
+}
+
 struct TransferableImage: Transferable {
   let image: PlatformImage
   let imageData: Data
@@ -34,19 +62,7 @@ struct TransferableImage: Transferable {
     guard let imageData = image.sd_imageData() else { return nil }
     self.imageData = imageData
 
-    guard let utType: UTType = switch image.sd_imageFormat {
-    case .JPEG: .jpeg
-    case .PNG: .png
-    case .GIF: .gif
-    case .TIFF: .tiff
-    case .webP: .webP
-    case .HEIC: .heic
-    case .HEIF: .heif
-    case .PDF: .pdf
-    case .SVG: .svg
-    case .BMP: .bmp
-    default: nil
-    } else { return nil }
+    guard let utType = image.utType else { return nil }
     self.utType = utType
   }
 
