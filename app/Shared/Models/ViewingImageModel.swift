@@ -49,6 +49,8 @@ extension PlatformImage {
   }
 }
 
+// We don't use a single type with `TransferRepresentation.exportingCondition` since it doesn't seem to always work...
+// Determine the type ahead of time always work well.
 enum TransferableImage {
   // Plain image will be encoded to JPEG and exported as JPEG Data.
   case plain(TransferablePlainImage)
