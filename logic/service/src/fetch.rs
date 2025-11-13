@@ -258,7 +258,7 @@ where
             #[cfg(test)]
             let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
             #[cfg(test)]
-            println!("http response: {}", response);
+            println!("http response (kind={kind:?}, query_pair={query_pair:?}):\n{response}");
 
             if response.is_empty() && !status.is_success() {
                 // Parse must fail. Here we use the error message from the status code.
