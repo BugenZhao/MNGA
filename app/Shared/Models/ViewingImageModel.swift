@@ -78,6 +78,7 @@ class ViewingImageModel: ObservableObject {
   @Published var showing = false
 
   func show(url: URL) {
+    transferable = nil
     view = WebImage(url: url).resizable()
       .onSuccess { image, _, _ in
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
