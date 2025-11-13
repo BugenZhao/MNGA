@@ -42,7 +42,7 @@ struct NewImageViewer: View {
   func shareLink(for t: TransferableImage) -> some View {
     switch t {
     case let .plain(plain):
-      ShareLink(item: plain, preview: SharePreview("\(plain.base.previewName) (Plain)", image: plain.base.previewImage)) {
+      ShareLink(item: plain, preview: SharePreview("\(plain.base.previewName) (as JPEG)", image: plain.base.previewImage)) {
         Image(systemName: "square.and.arrow.up")
       }
     case let .file(file):

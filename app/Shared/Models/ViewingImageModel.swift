@@ -77,7 +77,7 @@ struct TransferableImageBase {
   }
 
   var previewName: String {
-    "\(utType.localizedDescription, default: "Image".localized) @ MNGA"
+    "MNGA \(utType.localizedDescription, default: "Image".localized)"
   }
 
   var partialName: String {
@@ -125,7 +125,7 @@ class ViewingImageModel: ObservableObject {
     transferable = nil
     view = WebImage(url: url).resizable()
       .onSuccess { image, _, _ in
-        let forceFile = self.prefs.alwaysShareOriginalImage
+        let forceFile = self.prefs.alwaysShareImageAsFile
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
           // In case the constructor is heavy, let's do it in a background thread.
           let transferable = TransferableImage(url: url, image: image, forceFile: forceFile)

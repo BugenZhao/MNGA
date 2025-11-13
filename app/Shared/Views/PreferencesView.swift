@@ -252,8 +252,8 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
       Label("Auto Open in Browser when Banned", systemImage: "safari")
     }
-    Toggle(isOn: $pref.alwaysShareOriginalImage) {
-      Label("Always Share Original Image", systemImage: "square.and.arrow.up")
+    Toggle(isOn: $pref.alwaysShareImageAsFile) {
+      Label("Always Share Image as File", systemImage: "square.and.arrow.up")
     }
   }
 
