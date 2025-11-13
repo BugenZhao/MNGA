@@ -107,7 +107,7 @@ async fn test_specific_post() {
     .await;
 }
 
-// FIXME: incorrect: pages; missing: attachments
+// FIXME: incorrect: pages
 #[tokio::test]
 async fn test_author_only() {
     do_test(TopicDetailsRequest {
@@ -118,7 +118,7 @@ async fn test_author_only() {
     .await;
 }
 
-// FIXME: missing: comments; extra: post?
+// PASSED
 #[tokio::test]
 async fn test_anonymous() {
     do_test(TopicDetailsRequest {
