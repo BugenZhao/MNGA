@@ -55,11 +55,11 @@ enum TransferableImage {
   // File image will be exported as original file.
   case file(TransferableFileImage)
 
-  init?(url: URL, image: PlatformImage) {
+  init?(url: URL, image: PlatformImage, forceFile: Bool) {
     guard let utType = image.utType else { return nil }
     let base = TransferableImageBase(image: image, utType: utType, url: url)
 
-    self = if image.isPlainImage {
+    self = if !forceFile, image.isPlainImage {
       .plain(.init(base: base))
     } else {
       .file(.init(base: base))
@@ -115,6 +115,8 @@ struct TransferablePlainImage: Transferable {
 }
 
 class ViewingImageModel: ObservableObject {
+  private let prefs = PreferencesStorage.shared
+
   @Published var view: AnyView?
   @Published var transferable: TransferableImage?
   @Published var showing = false
@@ -123,9 +125,10 @@ class ViewingImageModel: ObservableObject {
     transferable = nil
     view = WebImage(url: url).resizable()
       .onSuccess { image, _, _ in
+        let forceFile = self.prefs.alwaysShareOriginalImage
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
           // In case the constructor is heavy, let's do it in a background thread.
-          let transferable = TransferableImage(url: url, image: image)
+          let transferable = TransferableImage(url: url, image: image, forceFile: forceFile)
           DispatchQueue.main.async {
             self?.transferable = transferable
           }
