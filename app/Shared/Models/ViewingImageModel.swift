@@ -22,13 +22,13 @@ extension URL {
 }
 
 struct TransferableImage: Transferable {
-  let image: Image
+  let image: PlatformImage
   let imageData: Data
   let utType: UTType
   let url: URL
 
   init?(url: URL, image: PlatformImage) {
-    self.image = Image(image: image)
+    self.image = image
     self.url = url
 
     guard let imageData = image.sd_imageData() else { return nil }
@@ -50,6 +50,10 @@ struct TransferableImage: Transferable {
     self.utType = utType
   }
 
+  var previewImage: Image {
+    Image(image: image)
+  }
+
   var previewName: String {
     "\(utType.localizedDescription, default: "Image".localized) @ MNGA"
   }
@@ -61,7 +65,7 @@ struct TransferableImage: Transferable {
         .appendingPathComponent("MNGA_\($0.url.lastPathComponent)", conformingTo: $0.utType)
 
       if !FileManager.default.fileExists(atPath: tempURL.path) {
-        try? $0.imageData.write(to: tempURL, options: .atomic)
+        try $0.imageData.write(to: tempURL, options: .atomic)
       }
       return SentTransferredFile(tempURL)
     }

@@ -44,7 +44,7 @@ struct NewImageViewer: View {
         .toolbar {
           ToolbarItem(placement: .bottomBar) {
             if let t = model.transferable {
-              ShareLink(item: t, preview: SharePreview(t.previewName, image: t.image)) {
+              ShareLink(item: t, preview: SharePreview(t.previewName, image: t.previewImage)) {
                 Image(systemName: "square.and.arrow.up")
               }
             } else {
