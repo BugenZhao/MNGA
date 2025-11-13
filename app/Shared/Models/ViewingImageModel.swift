@@ -22,13 +22,13 @@ extension URL {
 }
 
 struct TransferableImage: Transferable {
-  let image: PlatformImage
+  let image: Image
   let imageData: Data
   let utType: UTType
   let url: URL
 
   init?(url: URL, image: PlatformImage) {
-    self.image = image
+    self.image = Image(image: image)
     self.url = url
 
     guard let imageData = image.sd_imageData() else { return nil }
@@ -50,12 +50,8 @@ struct TransferableImage: Transferable {
     self.utType = utType
   }
 
-  var previewImage: Image {
-    Image(image: image)
-  }
-
   var previewName: String {
-    "MNGA \(utType.preferredFilenameExtension?.uppercased(), default: "Unknown") Image"
+    "\(utType.localizedDescription, default: "Image".localized) @ MNGA"
   }
 
   static var transferRepresentation: some TransferRepresentation {

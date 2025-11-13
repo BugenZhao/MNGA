@@ -93,6 +93,7 @@
 "Advanced" = "高级";
 "Dim Images in Dark Mode" = "深色模式下调暗图片";
 "Cache Management" = "缓存管理";
+"Image" = "图片";
 "Image Cache" = "图片缓存";
 "Tap an item to clear it." = "轻触一项来清除缓存。";
 "View Image" = "查看图片";
