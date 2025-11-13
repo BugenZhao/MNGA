@@ -50,6 +50,7 @@ class PreferencesStorage: ObservableObject {
 
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
   @AppStorage("topicDetailsWebApiStrategy") var topicDetailsWebApiStrategy = TopicDetailsRequest.WebApiStrategy.disabled
+  @AppStorage("alwaysShareImageAsFile") var alwaysShareImageAsFile = false
 
   // MARK: - Debug
 

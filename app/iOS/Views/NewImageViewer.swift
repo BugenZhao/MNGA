@@ -38,15 +38,27 @@ struct NewImageViewer: View {
     }
   }
 
+  @ViewBuilder
+  func shareLink(for t: TransferableImage) -> some View {
+    switch t {
+    case let .plain(plain):
+      ShareLink(item: plain, preview: SharePreview("\(plain.base.previewName) (as JPEG)", image: plain.base.previewImage)) {
+        Image(systemName: "square.and.arrow.up")
+      }
+    case let .file(file):
+      ShareLink(item: file, preview: SharePreview(file.base.previewName, image: file.base.previewImage)) {
+        Image(systemName: "square.and.arrow.up")
+      }
+    }
+  }
+
   var body: some View {
     NavigationStack {
       main
         .toolbar {
           ToolbarItem(placement: .bottomBar) {
             if let t = model.transferable {
-              ShareLink(item: t, preview: SharePreview(t.previewName, image: t.previewImage)) {
-                Image(systemName: "square.and.arrow.up")
-              }
+              shareLink(for: t)
             } else {
               // Still preparing the image.
               ProgressView()
