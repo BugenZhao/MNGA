@@ -38,33 +38,39 @@ extension PlatformImage {
     }
   }
 
-  // TODO: for plain image, prefer proxying to `Image`, instead of using `FileRepresentation`
   var isPlainImage: Bool {
     if sd_isAnimated { return false }
 
     switch utType {
+    // This covers almost all common image formats in use.
     case .jpeg, .png, .webP: return true
     default: return false
     }
   }
 }
 
-struct TransferableImage: Transferable {
-  let image: PlatformImage
-  let imageData: Data
-  let utType: UTType
-  let url: URL
+enum TransferableImage {
+  // Plain image will be encoded to JPEG and exported as JPEG Data.
+  case plain(TransferablePlainImage)
+  // File image will be exported as original file.
+  case file(TransferableFileImage)
 
   init?(url: URL, image: PlatformImage) {
-    self.image = image
-    self.url = url
-
-    guard let imageData = image.sd_imageData() else { return nil }
-    self.imageData = imageData
-
     guard let utType = image.utType else { return nil }
-    self.utType = utType
+    let base = TransferableImageBase(image: image, utType: utType, url: url)
+
+    self = if image.isPlainImage {
+      .plain(.init(base: base))
+    } else {
+      .file(.init(base: base))
+    }
   }
+}
+
+struct TransferableImageBase {
+  let image: PlatformImage
+  let utType: UTType
+  let url: URL
 
   var previewImage: Image {
     Image(image: image)
@@ -74,17 +80,37 @@ struct TransferableImage: Transferable {
     "\(utType.localizedDescription, default: "Image".localized) @ MNGA"
   }
 
+  var partialName: String {
+    "MNGA_\(url.hashedFilename)_\(url.lastPathComponent)"
+  }
+}
+
+struct TransferableFileImage: Transferable {
+  let base: TransferableImageBase
+
   static var transferRepresentation: some TransferRepresentation {
     FileRepresentation(exportedContentType: .data) {
       let tempURL = FileManager.default.temporaryDirectory
         // This method will check the extension from given name and attach the right extension if needed.
-        .appendingPathComponent("MNGA_\($0.url.hashedFilename)_\($0.url.lastPathComponent)", conformingTo: $0.utType)
+        .appendingPathComponent($0.base.partialName, conformingTo: $0.base.utType)
 
       if !FileManager.default.fileExists(atPath: tempURL.path) {
-        try $0.imageData.write(to: tempURL, options: .atomic)
+        let imageData = $0.base.image.sd_imageData() ?? Data()
+        try imageData.write(to: tempURL, options: .atomic)
       }
       return SentTransferredFile(tempURL)
     }
+  }
+}
+
+struct TransferablePlainImage: Transferable {
+  let base: TransferableImageBase
+
+  static var transferRepresentation: some TransferRepresentation {
+    DataRepresentation(exportedContentType: .jpeg) {
+      $0.base.image.jpegData(compressionQuality: 0.9) ?? Data()
+    }
+    .suggestedFileName { $0.base.partialName }
   }
 }
 
@@ -98,8 +124,7 @@ class ViewingImageModel: ObservableObject {
     view = WebImage(url: url).resizable()
       .onSuccess { image, _, _ in
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-          // The constructor will decode image data, which might be expensive.
-          // So we do it in a background thread.
+          // In case the constructor is heavy, let's do it in a background thread.
           let transferable = TransferableImage(url: url, image: image)
           DispatchQueue.main.async {
             self?.transferable = transferable
