@@ -33,6 +33,8 @@ struct CurrentVars {
     fid: String,
     /// Topic id extracted from the inline JS block.
     tid: String,
+    /// Page number extracted from the inline JS block.
+    page: String,
 }
 
 /// Metadata emitted by `commonui.postArg.proc` for each floor.
@@ -140,7 +142,7 @@ fn map_xml_err(err: impl std::error::Error) -> ServiceError {
 
 /// Entry point that turns `read.php` HTML into the XML package consumed by the
 /// rest of the topic pipeline.
-pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
+pub fn build_topic_package(raw_html: &str, req_page: u32) -> ServiceResult<Package> {
     if let Some(err) = detect_nga_error(raw_html) {
         return Err(err);
     }
@@ -163,11 +165,6 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
     let root_post_args = post_args.get("0").cloned();
     let (mut posts, comment_pids) =
         extract_posts(&document, &vars, &post_args, &alerts, &pid_floor_map)?;
-    if posts.is_empty() {
-        return Err(ServiceError::MngaInternal(
-            "No posts were extracted from the read.php document".to_owned(),
-        ));
-    }
     posts.retain(|post| !comment_pids.contains(&post.pid));
     let page_meta = parse_page_meta(raw_html);
     let rows_per_page = if topic_defaults.rows_per_page != 0 {
@@ -177,6 +174,12 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
     };
     let subject = extract_topic_subject(&document, &posts);
     let forum_name = extract_forum_name(&document);
+    if let Ok(res_page) = vars.page.parse::<u32>()
+        && res_page < req_page
+    {
+        // We've overflown the page, return an empty page.
+        posts.clear();
+    }
     let topic_meta = build_topic_meta(
         &vars,
         &subject,
@@ -274,8 +277,10 @@ fn parse_current_vars(source: &str) -> ServiceResult<CurrentVars> {
         .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_FID".to_owned()))?;
     let tid = capture_assignment(source, "__CURRENT_TID")
         .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_TID".to_owned()))?;
+    let page = capture_assignment(source, "__CURRENT_PAGE")
+        .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_PAGE".to_owned()))?;
 
-    Ok(CurrentVars { fid, tid })
+    Ok(CurrentVars { fid, tid, page })
 }
 
 /// Extracts a JS assignment value (`foo = parseInt('123')` or `foo = 456`).
