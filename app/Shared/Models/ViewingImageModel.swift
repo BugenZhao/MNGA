@@ -38,7 +38,7 @@ extension PlatformImage {
     }
   }
 
-  // TODO: prefer sharing with jpeg encoding, instead of "file"
+  // TODO: for plain image, prefer proxying to `Image`, instead of using `FileRepresentation`
   var isPlainImage: Bool {
     if sd_isAnimated { return false }
 
