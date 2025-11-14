@@ -195,12 +195,10 @@ where
     RF: ResponseFormat,
     AF: Fn(RequestBuilder) -> RequestBuilder,
 {
-    let mut attempts = [FetchKind::Normal, FetchKind::Proxy]
+    let attempts = [FetchKind::Normal, FetchKind::Proxy]
         .into_iter()
         .cartesian_product(RF::query_pairs())
         .collect_vec();
-    // Shuffle attempts except for the primary one.
-    attempts[1..].shuffle(&mut rand::rng());
 
     let mut first_error = None;
 
@@ -208,10 +206,6 @@ where
     for (kind, query_pair) in attempts {
         let mut query = query.clone();
         query.push(*query_pair);
-
-        // Sleep for a random duration.
-        let duration = Duration::from_millis(rand::rng().random_range(100..=300));
-        tokio::time::sleep(duration).await;
 
         let result = async {
             let response = do_fetch(api, kind, query, Method::POST, false, &add_form).await?;
