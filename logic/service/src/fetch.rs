@@ -15,7 +15,6 @@ use crate::{
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use protos::DataModel::Device;
-use rand::Rng;
 use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
 
 fn device_ua(api: &str) -> Cow<'static, str> {
@@ -145,6 +144,22 @@ impl RetryMode {
             use_proxy: true,
         }
     }
+
+    fn fetch_kinds(self) -> &'static [FetchKind] {
+        if self.use_proxy {
+            &[FetchKind::Normal, FetchKind::Proxy][..]
+        } else {
+            &[FetchKind::Normal][..]
+        }
+    }
+
+    fn query_pairs<RF: ResponseFormat>(self) -> &'static [(&'static str, &'static str)] {
+        if self.use_alternative_query_pairs {
+            RF::query_pairs()
+        } else {
+            &RF::query_pairs()[..1]
+        }
+    }
 }
 
 async fn do_fetch<AF>(
@@ -226,18 +241,10 @@ where
     RF: ResponseFormat,
     AF: Fn(RequestBuilder) -> RequestBuilder,
 {
-    let attempts = if retry.use_proxy {
-        &[FetchKind::Normal, FetchKind::Proxy][..]
-    } else {
-        &[FetchKind::Normal][..]
-    }
-    .iter()
-    .cartesian_product(if retry.use_alternative_query_pairs {
-        RF::query_pairs()
-    } else {
-        &RF::query_pairs()[..1]
-    })
-    .collect_vec();
+    let attempts = (retry.fetch_kinds())
+        .iter()
+        .cartesian_product(retry.query_pairs::<RF>())
+        .collect_vec();
 
     let mut first_error = None;
 
@@ -246,59 +253,60 @@ where
         let mut query = query.clone();
         query.push(query_pair);
 
+        let error = {
+            let result = async {
+                let response = do_fetch(api, kind, query, Method::POST, false, &add_form).await?;
+                let status = response.status();
+                let response = response.text_with_charset("gb18030").await?;
+
+                #[cfg(test)]
+                let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
+                #[cfg(test)]
+                println!("http response (kind={kind:?}, query_pair={query_pair:?}):\n{response}");
+
+                if response.is_empty() && !status.is_success() {
+                    // Parse must fail. Here we use the error message from the status code.
+                    return Err(ServiceError::from_status(status));
+                }
+                RF::parse_response(response)
+            }
+            .await;
+
+            match result {
+                Ok(r) => {
+                    if first_error.is_some() {
+                        log::info!(
+                            "successfully parsed with `{}={}`",
+                            query_pair.0,
+                            query_pair.1
+                        );
+                    }
+                    return Ok(r);
+                }
+                Err(error) => error,
+            }
+        };
+
+        // We may get `Status` error when being rate limited or via proxy.
+        if error.is_response_parse_error() || matches!(error, ServiceError::Status(_)) {
+            log::error!(
+                "failed to parse response with `{}={}`, retrying: {}",
+                query_pair.0,
+                query_pair.1,
+                error
+            );
+            invalidate_global_client(false);
+            if first_error.is_none() {
+                first_error = Some(error);
+            }
+        } else {
+            // For other errors, we don't need to retry.
+            return Err(error);
+        }
+
         // Sleep for a random duration.
-        let duration = Duration::from_millis(rand::rng().random_range(100..=300));
-        tokio::time::sleep(duration).await;
-
-        let result = async {
-            let response = do_fetch(api, kind, query, Method::POST, false, &add_form).await?;
-            let status = response.status();
-            let response = response.text_with_charset("gb18030").await?;
-
-            #[cfg(test)]
-            let _ = RESPONSE_CB.try_with(|c| c.borrow_mut()(&response));
-            #[cfg(test)]
-            println!("http response (kind={kind:?}, query_pair={query_pair:?}):\n{response}");
-
-            if response.is_empty() && !status.is_success() {
-                // Parse must fail. Here we use the error message from the status code.
-                return Err(ServiceError::from_status(status));
-            }
-            RF::parse_response(response)
-        }
-        .await;
-
-        match result {
-            Ok(r) => {
-                if first_error.is_some() {
-                    log::info!(
-                        "successfully parsed with `{}={}`",
-                        query_pair.0,
-                        query_pair.1
-                    );
-                }
-                return Ok(r);
-            }
-            // We may get `Status` error when being rate limited or via proxy.
-            Err(error)
-                if error.is_response_parse_error() || matches!(error, ServiceError::Status(_)) =>
-            {
-                log::error!(
-                    "failed to parse response with `{}={}`, retrying: {}",
-                    query_pair.0,
-                    query_pair.1,
-                    error
-                );
-                invalidate_global_client(false);
-                if first_error.is_none() {
-                    first_error = Some(error);
-                }
-            }
-            Err(error) => {
-                // For other errors, we don't need to retry.
-                return Err(error);
-            }
-        }
+        // let duration = Duration::from_millis(rand::rng().random_range(200..=400));
+        // tokio::time::sleep(duration).await;
     }
 
     log::error!("all query pairs failed, giving up");
