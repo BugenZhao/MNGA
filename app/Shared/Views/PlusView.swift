@@ -366,6 +366,6 @@ struct PlusSheetView: View {
     NavigationStack {
       PlusView()
     }
-    .if(!paywall.isUnlocked) { $0.interactiveDismissDisabled() }
+    .interactiveDismissDisabled(!paywall.isUnlocked)
   }
 }

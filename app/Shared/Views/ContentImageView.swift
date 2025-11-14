@@ -84,7 +84,9 @@ struct ContentImageView: View {
               .frame(maxWidth: frameWidth)
           }
         }
-        .if(shouldDimImage) { $0.colorMultiply(Color(white: 0.7)) }
+        // When switching to background, system will automatically trigger changes to colorScheme.
+        // Avoid using an `.if()` here, otherwise we lose the state of WebImage and then lose the scroll offset.
+        .colorMultiply(shouldDimImage ? Color(white: 0.7) : Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onTapGesture(perform: showImage)
       }
