@@ -243,6 +243,14 @@ trait ResponseFormat: Sized {
 type Attempt = (FetchKind, (&'static str, &'static str));
 static RETRY_ATTEMPT_CACHE: LazyLock<DashMap<String, Attempt>> = LazyLock::new(DashMap::new);
 
+pub fn was_proxied(key: &str) -> bool {
+    if let Some(attempt) = RETRY_ATTEMPT_CACHE.get(key) {
+        attempt.0 == FetchKind::Proxy
+    } else {
+        false
+    }
+}
+
 async fn do_fetch_text<RF, AF>(
     api: &str,
     query: Vec<(&str, &str)>,

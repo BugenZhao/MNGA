@@ -1,7 +1,7 @@
 use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
-    fetch::{RetryMode, fetch_mock, fetch_package_with_retry, fetch_web_html},
+    fetch::{self, RetryMode, fetch_mock, fetch_package_with_retry, fetch_web_html},
     fetch_package,
     forum::{extract_forum, make_fid, make_stid},
     history::{find_topic_history, insert_topic_history},
@@ -575,13 +575,21 @@ pub async fn get_topic_details(
             };
         }
 
-        match request.get_web_api_strategy() {
+        let (response, api_used) = match request.get_web_api_strategy() {
             DISABLED => (xml().await, "xml"),
             // When using web as secondary, don't retry with proxies to speed up.
             SECONDARY => or_else!(xmlfast, web, XmlParse),
             PRIMARY => or_else!(web, xml, MngaInternal),
             ONLY => (web().await, "web"),
-        }
+        };
+
+        let api_used = if fetch::was_proxied(&key) {
+            format!("{}-p", api_used)
+        } else {
+            api_used.to_owned()
+        };
+
+        (response, api_used)
     };
 
     if let Err(e @ ServiceError::Nga(_)) = package_result {
