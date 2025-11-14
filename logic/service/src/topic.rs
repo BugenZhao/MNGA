@@ -548,8 +548,13 @@ pub async fn get_topic_details(
             ]
         };
 
-        let xmlfast = || fetch_package_with_retry(api, query(), vec![], RetryMode::qp_only());
-        let xml = || fetch_package_with_retry(api, query(), vec![], RetryMode::full());
+        let key = format!(
+            "thread-{}-post-{}",
+            request.get_topic_id(),
+            request.get_post_id()
+        );
+        let xmlfast = || fetch_package_with_retry(api, query(), vec![], RetryMode::qp_only(&key));
+        let xml = || fetch_package_with_retry(api, query(), vec![], RetryMode::full(&key));
         let web = || async {
             fetch_web_html(api, query(), vec![])
                 .await

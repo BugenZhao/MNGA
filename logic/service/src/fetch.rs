@@ -1,6 +1,10 @@
 #![allow(clippy::declare_interior_mutable_const)]
 
-use std::{borrow::Cow, sync::Mutex, time::Duration};
+use std::{
+    borrow::Cow,
+    sync::{LazyLock, Mutex},
+    time::Duration,
+};
 
 use crate::{
     auth,
@@ -12,6 +16,7 @@ use crate::{
     request,
     utils::extract_error,
 };
+use dashmap::DashMap;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use protos::DataModel::Device;
@@ -109,7 +114,7 @@ pub async fn with_fetch_check<F: futures::Future>(
 }
 
 /// Determine the base URL of the request.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 enum FetchKind {
     Normal,
     Mock,
@@ -117,8 +122,9 @@ enum FetchKind {
 }
 
 /// Determine the retry behavior of the request.
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct RetryMode {
+    key: Option<String>,
     use_alternative_query_pairs: bool,
     use_proxy: bool,
 }
@@ -126,26 +132,29 @@ pub struct RetryMode {
 impl RetryMode {
     pub fn never() -> Self {
         Self {
+            key: None,
             use_alternative_query_pairs: false,
             use_proxy: false,
         }
     }
 
-    pub fn qp_only() -> Self {
+    pub fn qp_only(key: impl Into<String>) -> Self {
         Self {
+            key: Some(key.into()),
             use_alternative_query_pairs: true,
             use_proxy: false,
         }
     }
 
-    pub fn full() -> Self {
+    pub fn full(key: impl Into<String>) -> Self {
         Self {
+            key: Some(key.into()),
             use_alternative_query_pairs: true,
             use_proxy: true,
         }
     }
 
-    fn fetch_kinds(self) -> &'static [FetchKind] {
+    fn fetch_kinds(&self) -> &'static [FetchKind] {
         if self.use_proxy {
             &[FetchKind::Normal, FetchKind::Proxy][..]
         } else {
@@ -153,7 +162,7 @@ impl RetryMode {
         }
     }
 
-    fn query_pairs<RF: ResponseFormat>(self) -> &'static [(&'static str, &'static str)] {
+    fn query_pairs<RF: ResponseFormat>(&self) -> &'static [(&'static str, &'static str)] {
         if self.use_alternative_query_pairs {
             RF::query_pairs()
         } else {
@@ -231,6 +240,9 @@ trait ResponseFormat: Sized {
     fn parse_response(response: String) -> ServiceResult<Self>;
 }
 
+type Attempt = (FetchKind, (&'static str, &'static str));
+static RETRY_ATTEMPT_CACHE: LazyLock<DashMap<String, Attempt>> = LazyLock::new(DashMap::new);
+
 async fn do_fetch_text<RF, AF>(
     api: &str,
     query: Vec<(&str, &str)>,
@@ -241,15 +253,23 @@ where
     RF: ResponseFormat,
     AF: Fn(RequestBuilder) -> RequestBuilder,
 {
-    let attempts = (retry.fetch_kinds())
-        .iter()
-        .cartesian_product(retry.query_pairs::<RF>())
+    let mut attempts = (retry.fetch_kinds().iter().copied())
+        .cartesian_product(retry.query_pairs::<RF>().iter().copied())
         .collect_vec();
+
+    if let Some(key) = &retry.key
+        && let Some(last_attempt) = RETRY_ATTEMPT_CACHE.get(key)
+        && let Some(index) = attempts.iter().position(|a| *a == *last_attempt)
+    {
+        // Move the last attempt to the front.
+        attempts.swap(0, index);
+        log::info!("prefer last successful attempt: {:?}", last_attempt);
+    }
 
     let mut first_error = None;
 
     // Try different query pairs to mitigate blocking.
-    for (&kind, &query_pair) in attempts {
+    for (kind, query_pair) in attempts {
         let mut query = query.clone();
         query.push(query_pair);
 
@@ -275,11 +295,15 @@ where
             match result {
                 Ok(r) => {
                     if first_error.is_some() {
+                        // We've attempted multiple times.
                         log::info!(
                             "successfully parsed with `{}={}`",
                             query_pair.0,
                             query_pair.1
                         );
+                        if let Some(key) = retry.key {
+                            RETRY_ATTEMPT_CACHE.insert(key, (kind, query_pair));
+                        }
                     }
                     return Ok(r);
                 }
