@@ -663,8 +663,8 @@ struct TopicDetailsView: View {
     let (title, subtitle) = titles
 
     main
-      .if(title != nil, content: { $0.navigationTitle(title!) })
-      .if(subtitle != nil, content: { $0.navigationSubtitle(subtitle!) })
+      .navigationTitle(title ?? "")
+      .navigationSubtitle(subtitle ?? "")
       .navigationBarTitleDisplayMode(.inline)
       .toolbar { toolbar }
       .refreshable(dataSource: dataSource)

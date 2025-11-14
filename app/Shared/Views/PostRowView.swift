@@ -219,7 +219,7 @@ struct PostRowView: View {
 
       Group {
         if pref.postRowSwipeVoteFirst {
-          vote.if(self.vote.state != .up) { $0.tint(.accentColor) }
+          vote.tint(self.vote.state != .up ? .accentColor : nil)
           quote
         } else {
           quote.tint(.accentColor)
