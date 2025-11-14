@@ -204,9 +204,6 @@ struct UserProfileView: View {
     .withTopicDetailsAction() // for signature only
     .mayGroupedListStyle()
     .navigationTitleInline(string: title)
-    // This will trigger redraw for user view, which is not good.
-    // .if(shouldShowList && tab == .topics) { $0.refreshable(dataSource: topicDataSource) }
-    // .if(shouldShowList && tab == .posts) { $0.refreshable(dataSource: postDataSource) }
   }
 
   func newShortMessage() {

@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 public extension View {
+  /// CAVEATS: avoid using `if` on a dynamic property, otherwise the view will be rebuilt
+  /// and no state will be preserved once the condition changes.
   func `if`(_ cond: @autoclosure () -> Bool, content: (Self) -> some View) -> some View {
     Group {
       if cond() {
