@@ -10,7 +10,7 @@ use quick_xml::events::{BytesEnd, BytesStart, BytesText, Event};
 use regex::Regex;
 use scraper::{ElementRef, Html, Selector};
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use sxd_document::{Package, parser};
 
 const POST_PROC_MARKER: &str = "commonui.postArg.proc(";
@@ -33,6 +33,8 @@ struct CurrentVars {
     fid: String,
     /// Topic id extracted from the inline JS block.
     tid: String,
+    /// Page number extracted from the inline JS block.
+    page: String,
 }
 
 /// Metadata emitted by `commonui.postArg.proc` for each floor.
@@ -72,6 +74,19 @@ struct PostEntry {
     alter_info: String,
     comments: Vec<PostEntry>,
     hot_replies: Vec<PostEntry>,
+    attachments: Vec<AttachmentEntry>,
+}
+
+#[derive(Clone, Debug, Default)]
+struct AttachmentEntry {
+    url: String,
+    size: u32,
+    kind: String,
+    thumb: String,
+    description: String,
+    original_name_encoded: String,
+    name: String,
+    sub_id: u32,
 }
 
 /// Collapsed topic summary that populates `__T` in the synthetic XML.
@@ -127,7 +142,7 @@ fn map_xml_err(err: impl std::error::Error) -> ServiceError {
 
 /// Entry point that turns `read.php` HTML into the XML package consumed by the
 /// rest of the topic pipeline.
-pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
+pub fn build_topic_package(raw_html: &str, req_page: u32) -> ServiceResult<Package> {
     if let Some(err) = detect_nga_error(raw_html) {
         return Err(err);
     }
@@ -148,12 +163,9 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
         names,
     } = parse_user_info(raw_html)?;
     let root_post_args = post_args.get("0").cloned();
-    let posts = extract_posts(&document, &vars, &post_args, &alerts, &pid_floor_map)?;
-    if posts.is_empty() {
-        return Err(ServiceError::MngaInternal(
-            "No posts were extracted from the read.php document".to_owned(),
-        ));
-    }
+    let (mut posts, comment_pids) =
+        extract_posts(&document, &vars, &post_args, &alerts, &pid_floor_map)?;
+    posts.retain(|post| !comment_pids.contains(&post.pid));
     let page_meta = parse_page_meta(raw_html);
     let rows_per_page = if topic_defaults.rows_per_page != 0 {
         topic_defaults.rows_per_page
@@ -162,6 +174,12 @@ pub fn build_topic_package(raw_html: &str) -> ServiceResult<Package> {
     };
     let subject = extract_topic_subject(&document, &posts);
     let forum_name = extract_forum_name(&document);
+    if let Ok(res_page) = vars.page.parse::<u32>()
+        && res_page < req_page
+    {
+        // We've overflown the page, return an empty page.
+        posts.clear();
+    }
     let topic_meta = build_topic_meta(
         &vars,
         &subject,
@@ -259,8 +277,10 @@ fn parse_current_vars(source: &str) -> ServiceResult<CurrentVars> {
         .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_FID".to_owned()))?;
     let tid = capture_assignment(source, "__CURRENT_TID")
         .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_TID".to_owned()))?;
+    let page = capture_assignment(source, "__CURRENT_PAGE")
+        .ok_or_else(|| ServiceError::MngaInternal("Missing __CURRENT_PAGE".to_owned()))?;
 
-    Ok(CurrentVars { fid, tid })
+    Ok(CurrentVars { fid, tid, page })
 }
 
 /// Extracts a JS assignment value (`foo = parseInt('123')` or `foo = 456`).
@@ -492,10 +512,11 @@ fn extract_posts(
     post_args: &HashMap<String, PostArgs>,
     alerts: &HashMap<u32, String>,
     pid_floor_map: &HashMap<String, u32>,
-) -> ServiceResult<Vec<PostEntry>> {
+) -> ServiceResult<(Vec<PostEntry>, HashSet<String>)> {
     let row_selector = Selector::parse("tr.postrow").unwrap();
     let floor_selector = Selector::parse("a[name^=\"l\"]").unwrap();
     let mut posts = Vec::new();
+    let mut comment_pids = HashSet::new();
     for row in document.select(&row_selector) {
         let floor = row
             .select(&floor_selector)
@@ -537,32 +558,35 @@ fn extract_posts(
             alter_info,
             comments: Vec::new(),
             hot_replies: Vec::new(),
+            attachments: Vec::new(),
         };
 
-        let highlight_selector = format!("#hightlight_for_{floor}");
         post.hot_replies = extract_inline_posts(
             &row,
-            &highlight_selector,
+            floor,
             post_args,
             pid_floor_map,
             vars,
             InlineKind::HotReply,
+            None,
         )?;
 
-        let comment_selector = format!("#comment_for_{floor}");
         post.comments = extract_inline_posts(
             &row,
-            &comment_selector,
+            floor,
             post_args,
             pid_floor_map,
             vars,
             InlineKind::Comment,
+            Some(&mut comment_pids),
         )?;
+
+        post.attachments = extract_attachments(&row, floor);
 
         posts.push(post);
     }
     posts.sort_by_key(|p| p.floor);
-    Ok(posts)
+    Ok((posts, comment_pids))
 }
 
 enum InlineKind {
@@ -572,17 +596,36 @@ enum InlineKind {
 
 fn extract_inline_posts(
     row: &ElementRef<'_>,
-    selector_str: &str,
+    floor: u32,
     post_args: &HashMap<String, PostArgs>,
     pid_floor_map: &HashMap<String, u32>,
     vars: &CurrentVars,
     kind: InlineKind,
+    mut comment_pids: Option<&mut HashSet<String>>,
 ) -> ServiceResult<Vec<PostEntry>> {
-    let selector = match Selector::parse(selector_str) {
-        Ok(sel) => sel,
-        Err(_) => return Ok(vec![]),
-    };
-    let Some(container) = row.select(&selector).next() else {
+    let mut selector_candidates = Vec::new();
+    match kind {
+        InlineKind::HotReply => selector_candidates.push(format!("#hightlight_for_{floor}")),
+        InlineKind::Comment => selector_candidates.push(format!("#comment_for_{floor}")),
+    }
+
+    if matches!(kind, InlineKind::Comment)
+        && let Some(args) = post_args.get(&floor.to_string())
+    {
+        selector_candidates.push(format!("#comment_for_{}", args.pid));
+    }
+
+    let mut container = None;
+    for candidate in selector_candidates {
+        if let Ok(sel) = Selector::parse(&candidate)
+            && let Some(node) = row.select(&sel).next()
+        {
+            container = Some(node);
+            break;
+        }
+    }
+
+    let Some(container) = container else {
         return Ok(vec![]);
     };
 
@@ -598,13 +641,19 @@ fn extract_inline_posts(
         let subject = find_descendant_text(entry, &format!("postcommentsubject{}", suffix));
         let content = find_descendant_html(entry, &format!("postcomment{}", suffix));
         let post_date_display = find_descendant_text(entry, &format!("commentInfo{}", suffix));
-        let floor = match kind {
+        let derived_floor = match kind {
             InlineKind::HotReply => pid_floor_map.get(&args.pid).copied().unwrap_or(0),
-            InlineKind::Comment => 0,
+            InlineKind::Comment => pid_floor_map.get(&args.pid).copied().unwrap_or(0),
         };
 
+        if matches!(kind, InlineKind::Comment)
+            && let Some(set) = comment_pids.as_deref_mut()
+        {
+            set.insert(args.pid.clone());
+        }
+
         entries.push(PostEntry {
-            floor,
+            floor: derived_floor,
             pid: args.pid.clone(),
             tid: vars.tid.clone(),
             fid: vars.fid.clone(),
@@ -623,6 +672,7 @@ fn extract_inline_posts(
             alter_info: String::new(),
             comments: Vec::new(),
             hot_replies: Vec::new(),
+            attachments: Vec::new(),
         });
     }
     Ok(entries)
@@ -636,6 +686,110 @@ fn find_postcomment_suffix(entry: ElementRef<'_>) -> Option<String> {
                 .and_then(|suffix| suffix.starts_with('_').then(|| suffix.to_string()))
         })
     })
+}
+
+fn extract_attachments(row: &ElementRef<'_>, floor: u32) -> Vec<AttachmentEntry> {
+    let script_selector = match Selector::parse("script") {
+        Ok(sel) => sel,
+        Err(_) => return vec![],
+    };
+    let marker = format!("postattach{floor}");
+    for script in row.select(&script_selector) {
+        let script_text = script.text().collect::<String>();
+        if !script_text.contains("ubbcode.attach.load") || !script_text.contains(&marker) {
+            continue;
+        }
+        if let Some(entries) = parse_attachment_block(&script_text) {
+            return entries;
+        }
+    }
+    vec![]
+}
+
+fn parse_attachment_block(script: &str) -> Option<Vec<AttachmentEntry>> {
+    let start = script.find('[')?;
+    let mut depth = 0usize;
+    let mut end = None;
+    for (offset, ch) in script[start..].char_indices() {
+        match ch {
+            '[' => depth += 1,
+            ']' => {
+                if depth == 0 {
+                    break;
+                }
+                depth -= 1;
+                if depth == 0 {
+                    end = Some(start + offset);
+                    break;
+                }
+            }
+            _ => {}
+        }
+    }
+    let end = end?;
+    let body = &script[start + 1..end];
+    Some(parse_attachment_objects(body))
+}
+
+fn parse_attachment_objects(body: &str) -> Vec<AttachmentEntry> {
+    let mut entries = Vec::new();
+    let mut current = String::new();
+    let mut depth = 0;
+    for ch in body.chars() {
+        match ch {
+            '{' => {
+                depth += 1;
+                current.push(ch);
+            }
+            '}' => {
+                if depth > 0 {
+                    depth -= 1;
+                }
+                current.push(ch);
+                if depth == 0 {
+                    if let Some(entry) = parse_attachment_object(&current, entries.len() as u32) {
+                        entries.push(entry);
+                    }
+                    current.clear();
+                }
+            }
+            _ => current.push(ch),
+        }
+    }
+    entries
+}
+
+fn parse_attachment_object(raw: &str, sub_id: u32) -> Option<AttachmentEntry> {
+    let inner = raw.trim().trim_start_matches('{').trim_end_matches('}');
+    if inner.is_empty() {
+        return None;
+    }
+    let mut attachment = AttachmentEntry {
+        sub_id,
+        ..Default::default()
+    };
+    for part in inner.split(',') {
+        let (key, value) = match part.split_once(':') {
+            Some(pair) => pair,
+            None => continue,
+        };
+        let key = key.trim();
+        let value = normalize_literal(value.trim());
+        match key {
+            "url" => attachment.url = value,
+            "size" => attachment.size = value.parse().unwrap_or(0),
+            "type" => attachment.kind = value,
+            "thumb" => attachment.thumb = value,
+            "dscp" => attachment.description = value,
+            "url_utf8_org_name" => attachment.original_name_encoded = value,
+            "name" => attachment.name = value,
+            _ => {}
+        }
+    }
+    if attachment.url.is_empty() {
+        return None;
+    }
+    Some(attachment)
 }
 
 /// Pulls plain text from the element identified by `id`.
@@ -700,9 +854,9 @@ fn build_topic_meta(
         .get(&author_id)
         .cloned()
         .unwrap_or_else(|| author_id.clone());
-    let post_timestamp = root_post_args
-        .map(|args| args.timestamp)
+    let post_timestamp = (root_post_args.map(|args| args.timestamp))
         .or_else(|| posts.iter().find(|p| p.floor == 0).map(|p| p.timestamp))
+        .or_else(|| posts.first().map(|p| p.timestamp))
         .unwrap_or(0);
     let last_post_timestamp = defaults
         .last_post_timestamp
@@ -846,6 +1000,59 @@ fn write_post(writer: &mut Writer<Vec<u8>>, post: &PostEntry) -> Result<(), Serv
     write_text_element(writer, "content_length", &post.content_length.to_string())?;
     write_text_element(writer, "from_client", &post.from_client)?;
     write_text_element(writer, "postdatetimestamp", &post.timestamp.to_string())?;
+
+    if !post.attachments.is_empty() {
+        writer
+            .write_event(Event::Start(BytesStart::new("attachs")))
+            .map_err(map_xml_err)?;
+        for attachment in &post.attachments {
+            writer
+                .write_event(Event::Start(BytesStart::new("item")))
+                .map_err(map_xml_err)?;
+            write_text_element(writer, "attachurl", &attachment.url)?;
+            write_text_element(writer, "size", &attachment.size.to_string())?;
+            write_text_element(writer, "type", &attachment.kind)?;
+            write_text_element(writer, "subid", &attachment.sub_id.to_string())?;
+            if !attachment.original_name_encoded.is_empty() {
+                write_text_element(
+                    writer,
+                    "url_utf8_org_name",
+                    &attachment.original_name_encoded,
+                )?;
+            }
+            if !attachment.description.is_empty() {
+                write_text_element(writer, "dscp", &attachment.description)?;
+            }
+            let path = attachment
+                .url
+                .rsplit_once('/')
+                .map(|(path, _)| path.to_string())
+                .unwrap_or_default();
+            if !path.is_empty() {
+                write_text_element(writer, "path", &path)?;
+            }
+            if !attachment.name.is_empty() {
+                write_text_element(writer, "name", &attachment.name)?;
+                let ext = attachment
+                    .name
+                    .rsplit_once('.')
+                    .map(|(_, ext)| ext.to_string())
+                    .unwrap_or_default();
+                if !ext.is_empty() {
+                    write_text_element(writer, "ext", &ext)?;
+                }
+            }
+            if !attachment.thumb.is_empty() {
+                write_text_element(writer, "thumb", &attachment.thumb)?;
+            }
+            writer
+                .write_event(Event::End(BytesEnd::new("item")))
+                .map_err(map_xml_err)?;
+        }
+        writer
+            .write_event(Event::End(BytesEnd::new("attachs")))
+            .map_err(map_xml_err)?;
+    }
 
     if !post.hot_replies.is_empty() {
         writer

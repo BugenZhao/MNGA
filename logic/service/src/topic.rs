@@ -528,11 +528,12 @@ pub async fn get_topic_details(
         use TopicDetailsRequest_WebApiStrategy::*;
 
         let api = "read.php";
-        let page = &request.get_page().to_string();
+        let page = request.get_page();
+        let page_str = &page.to_string();
         let query = || {
             vec![
                 ("tid", request.get_topic_id()),
-                ("page", page),
+                ("page", page_str),
                 ("fav", request.get_fav()),
                 ("pid", request.get_post_id()),
                 ("authorid", request.get_author_id()),
@@ -552,7 +553,7 @@ pub async fn get_topic_details(
         let web = || async {
             fetch_web_html(api, query(), vec![])
                 .await
-                .and_then(|html| web_to_xml::build_topic_package(&html))
+                .and_then(|html| web_to_xml::build_topic_package(&html, page))
         };
 
         macro_rules! or_else {

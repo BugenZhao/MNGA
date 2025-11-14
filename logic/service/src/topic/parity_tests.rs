@@ -1,5 +1,7 @@
+use std::hash::{DefaultHasher, Hash as _, Hasher as _};
+
 use protos::{
-    DataModel::Post,
+    DataModel::{Post, PostContent},
     Service::{TopicDetailsRequest, TopicDetailsRequest_WebApiStrategy},
 };
 
@@ -46,6 +48,18 @@ async fn do_test(request: TopicDetailsRequest) {
 
         fn normalize_post(post: &mut Post) {
             normalize_anonymous_author_id(post.mut_author_id());
+
+            // Simplify the content in output by hashing the raw content.
+            post.set_content({
+                let mut hasher = DefaultHasher::new();
+                post.get_content().get_raw().hash(&mut hasher);
+                let hash = hasher.finish().to_string();
+                PostContent {
+                    raw: hash,
+                    ..Default::default()
+                }
+            });
+
             post.alter_info = "".to_owned(); // FIXME
             post.device = Default::default(); // FIXME
 
@@ -93,7 +107,7 @@ async fn test_specific_post() {
     .await;
 }
 
-// FIXME: incorrect: pages; missing: attachments
+// FIXME: incorrect: pages
 #[tokio::test]
 async fn test_author_only() {
     do_test(TopicDetailsRequest {
@@ -104,7 +118,7 @@ async fn test_author_only() {
     .await;
 }
 
-// FIXME: missing: comments; extra: post?
+// PASSED
 #[tokio::test]
 async fn test_anonymous() {
     do_test(TopicDetailsRequest {

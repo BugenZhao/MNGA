@@ -261,8 +261,14 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
         self.upsertItems(newItems, page: page)
         self.isLoading = false
       }
-      self.totalPages = newTotalPages ?? self.totalPages
-      self.loadedPage += 1
+
+      if newItems.isEmpty {
+        // Finish if we get an empty page, as if we didn't load this page.
+        self.totalPages = self.loadedPage
+      } else {
+        self.totalPages = newTotalPages ?? self.totalPages
+        self.loadedPage += 1
+      }
     } onError: { e in
       withAnimation(when: self.items.isEmpty) {
         self.isLoading = false
