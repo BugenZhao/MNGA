@@ -112,7 +112,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   func loadMoreIfNeeded(currentItem: Item) {
     if let index = itemToIndexAndPage[currentItem[keyPath: id]]?.index {
-      let threshold = items.index(items.endIndex, offsetBy: -2)
+      let threshold = items.index(items.endIndex, offsetBy: -3)
       if index >= threshold { loadMore(background: true) }
     }
   }
