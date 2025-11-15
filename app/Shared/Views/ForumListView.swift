@@ -178,7 +178,7 @@ struct ForumListView: View {
       .if(paywall.status.shouldUseProminent) { $0.buttonStyle(.borderedProminent) }
     } else {
       Button(action: { paywall.isShowingModal = true }) {
-        Image(systemName: "sparkles.2")
+        Image(systemName: "sparkles")
           .foregroundColor(.accentColor)
       }
     }

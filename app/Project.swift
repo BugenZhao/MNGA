@@ -14,7 +14,7 @@ let project = Project(
         .remote(url: "https://github.com/chackle/Colorful", requirement: .exact("1.0.0")),
         .remote(url: "https://github.com/CombineCommunity/CombineExt", requirement: .exact("1.8.1")),
     //  .local(path: "../../AlertToast"),
-        .remote(url: "https://github.com/BugenZhao/AlertToast", requirement: .revision("39e47f0c5607c7544a00d06230eb8fa982ffda28")),
+        .remote(url: "https://github.com/BugenZhao/AlertToast", requirement: .revision("57a6e66fa04899f38a1a99a6dbab0c84f37b22b6")),
         .remote(url: "https://github.com/giginet/Crossroad", requirement: .exact("3.2.0")),
         .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("26.0.0-rc.1")),
         .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .exact("1.5.2")),

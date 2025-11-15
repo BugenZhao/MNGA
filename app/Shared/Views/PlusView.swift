@@ -34,7 +34,7 @@ struct PlusFeaturesView: View {
     }
 
     features.append(.init(
-      image: .init(systemName: "sparkles.2"),
+      image: .init(systemName: "sparkles"),
       title: "More Features in the Future".localizedWNText,
       subtitle: "Plus More Feature".localizedWNText
     ))
