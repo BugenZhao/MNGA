@@ -197,7 +197,7 @@ struct TopicListView: View {
         #endif
       }
     } label: {
-      Label("More", systemImage: "ellipsis")
+      Label("More", systemImage: "ellipsis".maybeCircledSymbol)
     }
   }
 
@@ -261,7 +261,7 @@ struct TopicListView: View {
       ToolbarItem(placement: .bottomBar) { subforumButton }
         .maybeMatchedTransitionSource(id: "subforums", in: transition)
       MaybeToolbarSpacer(.fixed, placement: .bottomBar)
-      MaybeBottomBarSearchToolbarItem()
+      MaybeBottomBarSearchToolbarItem(compatAsSpacer: true)
       if prefs.topicListShowRefreshButton {
         MaybeToolbarSpacer(.fixed, placement: .bottomBar)
         ToolbarItem(placement: .bottomBar) { refreshButton }

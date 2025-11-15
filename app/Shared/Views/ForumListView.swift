@@ -97,9 +97,15 @@ struct ForumListView: View {
     case .favoritesOnly:
       Image(systemName: "line.horizontal.3.decrease.circle.fill")
         .foregroundColor(.accentColor)
-        .scaleEffect(1.6)
+        .apply {
+          if #available(iOS 26.0, *) {
+            $0.scaleEffect(1.6)
+          } else {
+            $0
+          }
+        }
     case .all:
-      Image(systemName: "line.horizontal.3.decrease")
+      Image(systemName: "line.horizontal.3.decrease".maybeCircledSymbol)
     }
   }
 

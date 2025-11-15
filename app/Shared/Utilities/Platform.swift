@@ -235,11 +235,19 @@ extension View {
 }
 
 struct MaybeBottomBarSearchToolbarItem: ToolbarContent {
+  let compatAsSpacer: Bool
+
+  init(compatAsSpacer: Bool = false) {
+    self.compatAsSpacer = compatAsSpacer
+  }
+
   var body: some ToolbarContent {
     if #available(iOS 26.0, *) {
       DefaultToolbarItem(kind: .search, placement: .bottomBar)
     } else {
-      MaybeToolbarSpacer(.flexible, placement: .bottomBar)
+      if compatAsSpacer {
+        MaybeToolbarSpacer(.flexible, placement: .bottomBar)
+      }
     }
   }
 }
@@ -251,6 +259,16 @@ extension View {
       glassEffect(in: shape)
     } else {
       self
+    }
+  }
+}
+
+extension String {
+  var maybeCircledSymbol: String {
+    if #available(iOS 26.0, *) {
+      self
+    } else {
+      "\(self).circle"
     }
   }
 }
