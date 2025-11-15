@@ -208,7 +208,7 @@ extension View {
   }
 
   @ViewBuilder
-  func maybeNavigationSubtitle<S>(_ subtitle: S) -> some View where S: StringProtocol {
+  func maybeNavigationSubtitle(_ subtitle: some StringProtocol) -> some View {
     if #available(iOS 26.0, *) {
       navigationSubtitle(subtitle)
     } else {
