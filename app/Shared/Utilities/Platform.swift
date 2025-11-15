@@ -216,7 +216,7 @@ extension View {
 
 extension View {
   @ViewBuilder
-  func maybeNavigationSubtitle(_ subtitleKey: LocalizedStringKey) -> some View {
+  func maybeNavigationSubtitle(localized subtitleKey: LocalizedStringKey) -> some View {
     if #available(iOS 26.0, *) {
       navigationSubtitle(subtitleKey)
     } else {

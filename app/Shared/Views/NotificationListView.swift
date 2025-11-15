@@ -86,7 +86,7 @@ struct NotificationListView: View {
       }
     }
     .navigationTitle("Notifications")
-    .maybeNavigationSubtitle(notis.unreadCount > 0 ? "\(notis.unreadCount) Unread" : "All Read")
+    .maybeNavigationSubtitle(localized: notis.unreadCount > 0 ? "\(notis.unreadCount) Unread" : "All Read")
     .mayGroupedListStyle()
     .refreshable(dataSource: notis)
     .toolbar { ToolbarItem(placement: .primaryAction) { markAllAsReadButton } }
