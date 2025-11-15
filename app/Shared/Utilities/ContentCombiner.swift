@@ -31,6 +31,12 @@ class ContentCombiner {
     static let strikethrough = Self(rawValue: 1 << 1)
   }
 
+  static let whiteColor: Color = if #available(iOS 26.0, *) {
+    .white.exposureAdjust(1)
+  } else {
+    .white
+  }
+
   static let palette: OrderedDictionary<String, Color> = [
     "skyblue": .skyBlue,
     "royalblue": .royalBlue,
@@ -56,7 +62,7 @@ class ContentCombiner {
     "chocolate": .chocolate,
     "sienna": .sienna,
     "silver": .init(hex: 0x888888),
-    "white": .white.exposureAdjust(1),
+    "white": whiteColor,
   ]
 
   // Tags in this list will be ignored and the spans will be visited directly.
@@ -642,7 +648,13 @@ class ContentCombiner {
 
   private func visit(sized: Span.Tagged) {
     let scale = Double(sized.attributes.first?.trimmingCharacters(in: ["%"]) ?? "100") ?? 100.0
-    let combiner = ContentCombiner(parent: self, font: { $0?.scaled(by: scale / 100) })
+    let combiner = ContentCombiner(parent: self, font: {
+      if #available(iOS 26.0, *) {
+        $0?.scaled(by: scale / 100)
+      } else {
+        $0
+      }
+    })
     combiner.visit(spans: sized.spans)
     append(combiner.build())
   }

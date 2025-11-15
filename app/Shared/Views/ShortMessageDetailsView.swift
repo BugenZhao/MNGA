@@ -49,7 +49,7 @@ struct ShortMessageDetailsView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    ToolbarSpacer(placement: .bottomBar)
+    MaybeToolbarSpacer(placement: .bottomBar)
     ToolbarItem(placement: .bottomBar) { replyButton }
   }
 
@@ -79,7 +79,7 @@ struct ShortMessageDetailsView: View {
         }
       }
     }.navigationTitleInline(key: "Short Message Details")
-      .navigationSubtitle(debugID)
+      .maybeNavigationSubtitle(debugID)
       .mayGroupedListStyle()
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()

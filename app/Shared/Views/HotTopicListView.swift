@@ -86,7 +86,7 @@ struct HotTopicListView: View {
     HotTopicListInnerView.build(forum: forum, range: range)
       .id(range)
       .navigationTitle("Hot Topics")
-      .navigationSubtitle(forum.name)
+      .maybeNavigationSubtitle(forum.name)
       .toolbar { ToolbarItem(placement: .mayNavigationBarTrailing) { rangeMenu } }
   }
 }

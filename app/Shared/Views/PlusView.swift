@@ -34,7 +34,7 @@ struct PlusFeaturesView: View {
     }
 
     features.append(.init(
-      image: .init(systemName: "sparkles.2"),
+      image: .init(systemName: "sparkles"),
       title: "More Features in the Future".localizedWNText,
       subtitle: "Plus More Feature".localizedWNText
     ))
@@ -204,8 +204,8 @@ struct PlusView: View {
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
         } else {
-          ForEach(displayProducts.enumerated(), id: \.element.id) { i, product in
-            productCard(for: product, isPreferred: i == 0)
+          ForEach(displayProducts, id: \.id) { product in
+            productCard(for: product, isPreferred: product.id == displayProducts.first?.id)
           }
         }
 
@@ -348,7 +348,7 @@ struct PlusView: View {
   private var toolbar: some ToolbarContent {
     if isInProgress {
       ToolbarItem(placement: .navigationBarTrailing) { ProgressView() }
-      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+      MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     }
 
     ToolbarItem(placement: .navigationBarTrailing) {

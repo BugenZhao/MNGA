@@ -40,7 +40,7 @@ struct ShortMessageListView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    ToolbarSpacer(placement: .bottomBar)
+    MaybeToolbarSpacer(placement: .bottomBar)
     ToolbarItem(placement: .bottomBar) { newShortMessageButton }
   }
 

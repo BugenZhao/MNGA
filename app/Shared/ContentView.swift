@@ -78,7 +78,13 @@ struct ContentView: View {
       .onChange(of: scenePhase) { paywall.objectWillChange.send() } // trigger trial validity check
       .modifier(MainToastModifier.main())
       .preferredColorScheme(prefs.colorScheme.scheme)
-      .symbolColorRenderingMode(.gradient) // modern look
+      .apply {
+        if #available(iOS 26.0, *) {
+          $0.symbolColorRenderingMode(.gradient) // modern look
+        } else {
+          $0
+        }
+      }
       // Sheets
       .whatsNewSheet()
       .safariView(item: $openURL.inAppURL) { url in SafariView(url: url).preferredControlAccentColor(.accentColor) } // this is global-wide, no need to attribute again in sheets

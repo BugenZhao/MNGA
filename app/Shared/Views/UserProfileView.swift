@@ -169,7 +169,7 @@ struct UserProfileView: View {
           }
         }
       } label: {
-        Label("More", systemImage: "ellipsis")
+        Label("More", systemImage: "ellipsis".maybeCircledSymbol)
       }
     }
   }

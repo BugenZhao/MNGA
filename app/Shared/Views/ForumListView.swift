@@ -97,9 +97,15 @@ struct ForumListView: View {
     case .favoritesOnly:
       Image(systemName: "line.horizontal.3.decrease.circle.fill")
         .foregroundColor(.accentColor)
-        .scaleEffect(1.6)
+        .apply {
+          if #available(iOS 26.0, *) {
+            $0.scaleEffect(1.6)
+          } else {
+            $0
+          }
+        }
     case .all:
-      Image(systemName: "line.horizontal.3.decrease")
+      Image(systemName: "line.horizontal.3.decrease".maybeCircledSymbol)
     }
   }
 
@@ -172,7 +178,7 @@ struct ForumListView: View {
       .if(paywall.status.shouldUseProminent) { $0.buttonStyle(.borderedProminent) }
     } else {
       Button(action: { paywall.isShowingModal = true }) {
-        Image(systemName: "sparkles.2")
+        Image(systemName: "sparkles")
           .foregroundColor(.accentColor)
       }
     }
@@ -185,15 +191,15 @@ struct ForumListView: View {
 
     if !paywall.status.isPaid {
       ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
-      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+      MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     }
     ToolbarItem(placement: .navigationBarTrailing) { filter }
 
     if UserInterfaceIdiom.current == .phone {
-      DefaultToolbarItem(kind: .search, placement: .bottomBar)
+      MaybeBottomBarSearchToolbarItem()
     }
     if schemes.canTryNavigateToPasteboardURL {
-      ToolbarSpacer(placement: .bottomBar)
+      MaybeToolbarSpacer(placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) {
         Button(action: schemes.navigateToPasteboardURL) {
           HStack {

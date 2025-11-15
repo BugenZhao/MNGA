@@ -58,8 +58,7 @@ struct TopicJumpSelectorView: View {
 
   @ViewBuilder
   var jumpButton: some View {
-    Button(role: .confirm, action: { commit() }) { Image(systemName: "arrowshape.bounce.right") }
-      .buttonStyle(.borderedProminent)
+    Button(role: .maybeConfirm, action: { commit() }) { Image(systemName: "arrowshape.bounce.right") }
   }
 
   @ViewBuilder
@@ -184,7 +183,6 @@ struct TopicJumpSelectorView: View {
       main
         .mayInsetGroupedListStyle()
         .toolbar { ToolbarItem(placement: .primaryAction) { jumpButton } }
-        .scrollContentBackground(.hidden)
     }
   }
 }

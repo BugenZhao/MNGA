@@ -20,6 +20,10 @@ public extension View {
       }
     }
   }
+
+  func apply<V: View>(@ViewBuilder _ content: (Self) -> V) -> V {
+    content(self)
+  }
 }
 
 public extension View {

@@ -197,7 +197,7 @@ struct TopicListView: View {
         #endif
       }
     } label: {
-      Label("More", systemImage: "ellipsis")
+      Label("More", systemImage: "ellipsis".maybeCircledSymbol)
     }
   }
 
@@ -222,7 +222,7 @@ struct TopicListView: View {
       }.navigationTitle("Subforums of \(forum.name)")
         .navigationBarTitleDisplayMode(.inline)
     }
-    .navigationTransition(.zoom(sourceID: "subforums", in: transition))
+    .maybeNavigationTransition(.zoom(sourceID: "subforums", in: transition))
     .presentationDetents([.medium, .large], selection: $subforumsModalDetent)
   }
 
@@ -259,14 +259,14 @@ struct TopicListView: View {
 
       // -- Bottom Bar
       ToolbarItem(placement: .bottomBar) { subforumButton }
-        .matchedTransitionSource(id: "subforums", in: transition)
-      ToolbarSpacer(.fixed, placement: .bottomBar)
-      DefaultToolbarItem(kind: .search, placement: .bottomBar)
+        .maybeMatchedTransitionSource(id: "subforums", in: transition)
+      MaybeToolbarSpacer(.fixed, placement: .bottomBar)
+      MaybeBottomBarSearchToolbarItem(compatAsSpacer: true)
       if prefs.topicListShowRefreshButton {
-        ToolbarSpacer(.fixed, placement: .bottomBar)
+        MaybeToolbarSpacer(.fixed, placement: .bottomBar)
         ToolbarItem(placement: .bottomBar) { refreshButton }
       }
-      ToolbarSpacer(.fixed, placement: .bottomBar)
+      MaybeToolbarSpacer(.fixed, placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) { newTopicButton }
     #elseif os(macOS)
       ToolbarItemGroup {
