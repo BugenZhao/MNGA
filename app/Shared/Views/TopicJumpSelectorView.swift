@@ -58,7 +58,7 @@ struct TopicJumpSelectorView: View {
 
   @ViewBuilder
   var jumpButton: some View {
-    Button(role: .confirm, action: { commit() }) { Image(systemName: "arrowshape.bounce.right") }
+    Button(role: .maybeConfirm, action: { commit() }) { Image(systemName: "arrowshape.bounce.right") }
       .buttonStyle(.borderedProminent)
   }
 

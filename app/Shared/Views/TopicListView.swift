@@ -259,14 +259,14 @@ struct TopicListView: View {
 
       // -- Bottom Bar
       ToolbarItem(placement: .bottomBar) { subforumButton }
-        .matchedTransitionSource(id: "subforums", in: transition)
-      ToolbarSpacer(.fixed, placement: .bottomBar)
-      DefaultToolbarItem(kind: .search, placement: .bottomBar)
+        .maybeMatchedTransitionSource(id: "subforums", in: transition)
+      MaybeToolbarSpacer(.fixed, placement: .bottomBar)
+      MaybeBottomBarSearchToolbarItem()
       if prefs.topicListShowRefreshButton {
-        ToolbarSpacer(.fixed, placement: .bottomBar)
+        MaybeToolbarSpacer(.fixed, placement: .bottomBar)
         ToolbarItem(placement: .bottomBar) { refreshButton }
       }
-      ToolbarSpacer(.fixed, placement: .bottomBar)
+      MaybeToolbarSpacer(.fixed, placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) { newTopicButton }
     #elseif os(macOS)
       ToolbarItemGroup {

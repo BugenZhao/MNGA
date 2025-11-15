@@ -171,7 +171,7 @@ struct LoginView: View {
         webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
       }
       .navigationTitleInline(key: "Sign in to NGA")
-      .navigationSubtitle(webViewStore.webView.url?.absoluteString ?? "")
+      .maybeNavigationSubtitle(webViewStore.webView.url?.absoluteString ?? "")
       .ignoresSafeArea() // modern view
   }
 

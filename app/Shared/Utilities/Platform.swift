@@ -150,3 +150,88 @@ extension ToolbarItemPlacement {
     }
   }
 #endif
+
+struct MaybeToolbarSpacer: ToolbarContent {
+  enum MySpacerSizing {
+    case flexible
+    case fixed
+  }
+
+  let sizing: MySpacerSizing
+  let placement: ToolbarItemPlacement
+
+  init(_ sizing: MySpacerSizing = .flexible, placement: ToolbarItemPlacement = .automatic) {
+    self.sizing = sizing
+    self.placement = placement
+  }
+
+  var body: some ToolbarContent {
+    if #available(iOS 26.0, *) {
+      let sizing: SpacerSizing = switch sizing {
+      case .flexible: .flexible
+      case .fixed: .fixed
+      }
+      ToolbarSpacer(sizing, placement: placement)
+    }
+  }
+}
+
+extension ButtonRole {
+  static var maybeConfirm: Self? {
+    if #available(iOS 26.0, *) {
+      .confirm
+    } else {
+      nil
+    }
+  }
+}
+
+extension ToolbarContent {
+  @ToolbarContentBuilder
+  func maybeMatchedTransitionSource(id: some Hashable, in namespace: Namespace.ID) -> some ToolbarContent {
+    if #available(iOS 26.0, *) {
+      matchedTransitionSource(id: id, in: namespace)
+    } else {
+      self
+    }
+  }
+}
+
+extension View {
+  @ViewBuilder
+  func maybeNavigationSubtitle(_ subtitleKey: LocalizedStringKey) -> some View {
+    if #available(iOS 26.0, *) {
+      navigationSubtitle(subtitleKey)
+    } else {
+      self
+    }
+  }
+
+  @ViewBuilder
+  func maybeNavigationSubtitle<S>(_ subtitle: S) -> some View where S: StringProtocol {
+    if #available(iOS 26.0, *) {
+      navigationSubtitle(subtitle)
+    } else {
+      self
+    }
+  }
+}
+
+struct MaybeBottomBarSearchToolbarItem: ToolbarContent {
+  var body: some ToolbarContent {
+    if #available(iOS 26.0, *) {
+      DefaultToolbarItem(kind: .search, placement: .bottomBar)
+    }
+  }
+}
+
+extension View {
+  @ViewBuilder
+  func maybeGlassEffect(in shape: some Shape) -> some View {
+    if #available(iOS 26.0, *) {
+      glassEffect(in: shape)
+    } else {
+      self
+    }
+  }
+}

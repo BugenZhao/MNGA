@@ -581,14 +581,14 @@ struct TopicDetailsView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarTrailing) { progress }
-    ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+    MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     NotificationToolbarItem(placement: .navigationBarTrailing)
     ToolbarItem(placement: .navigationBarTrailing) { menu }
 
     ToolbarItem(placement: .bottomBar) { jumpButton }
-      .matchedTransitionSource(id: "jump", in: transition)
+      .maybeMatchedTransitionSource(id: "jump", in: transition)
     ToolbarItem(placement: .bottomBar) { loadFirstPageButton }
-    ToolbarSpacer(placement: .bottomBar)
+    MaybeToolbarSpacer(placement: .bottomBar)
     ToolbarItemGroup(placement: .bottomBar) {
       // They won't show simultaneously.
       replyButton
@@ -662,7 +662,7 @@ struct TopicDetailsView: View {
       // Favorite to new folder
       .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
         TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
-        Button("Done", role: .confirm) {}
+        Button("Done", role: .maybeConfirm) {}
         Button("Cancel", role: .cancel) { newFolderName = nil }
       }
   }
@@ -672,7 +672,7 @@ struct TopicDetailsView: View {
 
     main
       .navigationTitle(title ?? "")
-      .navigationSubtitle(subtitle ?? "")
+      .maybeNavigationSubtitle(subtitle ?? "")
       .navigationBarTitleDisplayMode(.inline)
       .toolbar { toolbar }
       .refreshable(dataSource: dataSource)

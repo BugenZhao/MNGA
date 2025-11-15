@@ -348,7 +348,7 @@ struct PlusView: View {
   private var toolbar: some ToolbarContent {
     if isInProgress {
       ToolbarItem(placement: .navigationBarTrailing) { ProgressView() }
-      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+      MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     }
 
     ToolbarItem(placement: .navigationBarTrailing) {

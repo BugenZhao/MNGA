@@ -122,7 +122,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
   @ViewBuilder
   var sendButton: some View {
-    Button(role: .confirm, action: { doSend() }) {
+    Button(role: .maybeConfirm, action: { doSend() }) {
       if postReply.isSending {
         ProgressView()
       } else {

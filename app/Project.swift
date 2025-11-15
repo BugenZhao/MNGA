@@ -14,7 +14,7 @@ let project = Project(
         .remote(url: "https://github.com/chackle/Colorful", requirement: .exact("1.0.0")),
         .remote(url: "https://github.com/CombineCommunity/CombineExt", requirement: .exact("1.8.1")),
     //  .local(path: "../../AlertToast"),
-        .remote(url: "https://github.com/BugenZhao/AlertToast", requirement: .revision("668a60ea241735d78f4f26a63d9fb714f20564ce")),
+        .remote(url: "https://github.com/BugenZhao/AlertToast", requirement: .revision("39e47f0c5607c7544a00d06230eb8fa982ffda28")),
         .remote(url: "https://github.com/giginet/Crossroad", requirement: .exact("3.2.0")),
         .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("26.0.0-rc.1")),
         .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .exact("1.5.2")),
@@ -30,7 +30,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.bugenzhao.MNGA",
-            deploymentTargets: .iOS("26.0"),
+            deploymentTargets: .iOS("18.6"),
             infoPlist: .file(path: "iOS/Info.plist"),
             sources: [
                 "Shared/**",

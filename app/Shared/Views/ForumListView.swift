@@ -185,15 +185,15 @@ struct ForumListView: View {
 
     if !paywall.status.isPaid {
       ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
-      ToolbarSpacer(.fixed, placement: .navigationBarTrailing)
+      MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     }
     ToolbarItem(placement: .navigationBarTrailing) { filter }
 
     if UserInterfaceIdiom.current == .phone {
-      DefaultToolbarItem(kind: .search, placement: .bottomBar)
+      MaybeBottomBarSearchToolbarItem()
     }
     if schemes.canTryNavigateToPasteboardURL {
-      ToolbarSpacer(placement: .bottomBar)
+      MaybeToolbarSpacer(placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) {
         Button(action: schemes.navigateToPasteboardURL) {
           HStack {

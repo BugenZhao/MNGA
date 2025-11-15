@@ -208,7 +208,7 @@ struct FavoriteTopicListView: View {
 
       .alert("Rename Folder", isPresented: $showingRenameAlert) {
         TextField("Folder Name", text: $newName)
-        Button("Done", role: .confirm) {
+        Button("Done", role: .maybeConfirm) {
           modifyCurrentFolder(.with { $0.rename = newName })
         }
         Button("Cancel", role: .cancel) { showingRenameAlert = false }
@@ -238,7 +238,7 @@ struct FavoriteTopicListView: View {
       }
     }
     .navigationTitle("Favorite Topics")
-    .navigationSubtitle(currentFolder?.name ?? "Default Folder".localized)
+    .maybeNavigationSubtitle(currentFolder?.name ?? "Default Folder".localized)
     .toolbar { ToolbarItem(placement: .navigationBarTrailing) { folderMenu } }
   }
 }
