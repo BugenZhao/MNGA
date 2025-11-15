@@ -24,39 +24,58 @@ private struct PostRowAppearanceView: View {
       .tint(nil) // remove accent color for swipe actions
 
       Section {
-        Picker(selection: $pref.postRowSwipeActionLeading, label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")) {
+        Picker(
+          selection: $pref.postRowSwipeActionLeadingInner,
+          label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")
+        ) {
           Text("Leading").tag(true)
           Text("Trailing").tag(false)
         }
-        Picker(selection: $pref.postRowSwipeVoteFirst, label: Label("Primary Swipe Action", systemImage: "smallcircle.filled.circle")) {
+        Picker(
+          selection: $pref.postRowSwipeVoteFirstInner,
+          label: Label("Primary Swipe Action", systemImage: "smallcircle.filled.circle")
+        ) {
           Text("Vote Up").tag(true)
           Text("Quote").tag(false)
         }
       }.disableWithPlusCheck(.customAppearance)
 
       Section {
-        Picker(selection: $pref.postRowDateTimeStrategy.animation(), label: Label("Date Display", systemImage: "calendar")) {
+        Picker(
+          selection: $pref.postRowDateTimeStrategyInner.animation(),
+          label: Label("Date Display", systemImage: "calendar")
+        ) {
           ForEach(DateTimeTextView.Strategy.allCases, id: \.self) { s in
             Text(s.description).tag(s)
           }
         }
 
-        Toggle(isOn: $pref.showSignature.animation()) {
+        Toggle(
+          isOn: $pref.showSignatureInner.animation()
+        ) {
           Label("Show Signature", systemImage: "signature")
         }
 
-        Toggle(isOn: $pref.showAvatar.animation()) {
+        Toggle(
+          isOn: $pref.showAvatarInner.animation()
+        ) {
           Label("Show Avatar", systemImage: "person.crop.circle")
         }
 
-        Toggle(isOn: $pref.postRowShowAuthorIndicator.animation()) {
+        Toggle(
+          isOn: $pref.postRowShowAuthorIndicatorInner.animation()
+        ) {
           Label("Show Author Indicator", systemImage: "person.fill")
         }
-        Toggle(isOn: $pref.postRowShowUserDetails.animation()) {
+        Toggle(
+          isOn: $pref.postRowShowUserDetailsInner.animation()
+        ) {
           Label("Show User Details", systemImage: "info.circle")
         }
-        if pref.postRowShowUserDetails {
-          Toggle(isOn: $pref.postRowShowUserRegDate.animation()) {
+        if pref.postRowShowUserDetailsInner {
+          Toggle(
+            isOn: $pref.postRowShowUserRegDateInner.animation()
+          ) {
             Label("Show User Register Date", systemImage: "calendar")
           }
         }
@@ -74,7 +93,7 @@ private struct PostRowAppearanceView: View {
             Text(s.description).tag(s)
           }
         }
-        Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
+        Toggle(isOn: $pref.postRowDimImagesInDarkModeInner) {
           Label("Dim Images in Dark Mode", systemImage: "moon.fill")
         }
         .disableWithPlusCheck(.customAppearance)
@@ -127,7 +146,7 @@ struct PreferencesInnerView: View {
         NavigationLink(destination: PlusView()) {
           Label("Plus Unlocked", systemImage: "hands.and.sparkles")
         }
-        Toggle(isOn: $pref.showPlusInTitle) {
+        Toggle(isOn: $pref.showPlusInTitleInner) {
           Label("Show Plus in Title", systemImage: "sparkle")
         }
       } else {
@@ -170,7 +189,7 @@ struct PreferencesInnerView: View {
       }
     }
 
-    Picker(selection: $pref.themeColor, label: Label("Theme Color", systemImage: "circle")) {
+    Picker(selection: $pref.themeColorInner, label: Label("Theme Color", systemImage: "circle")) {
       ForEach(ThemeColor.allCases, id: \.self) { color in
         Label(color.description, systemImage: "circle.fill")
           .tint(color.color)
@@ -178,7 +197,7 @@ struct PreferencesInnerView: View {
       }
     }.disableWithPlusCheck(.customAppearance)
 
-    Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
+    Picker(selection: $pref.useInsetGroupedModernInner, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
     }.disableWithPlusCheck(.customAppearance)
@@ -196,7 +215,7 @@ struct PreferencesInnerView: View {
       Label("Topic Details Style", systemImage: "list.bullet.below.rectangle")
     }
 
-    Picker(selection: $pref.resumeTopicFrom) {
+    Picker(selection: $pref.resumeTopicFromInner) {
       Text("Disabled").tag(TopicResumeFrom.none)
       Text("Last Read Floor").tag(TopicResumeFrom.last)
       Text("Highest Read Floor").tag(TopicResumeFrom.highest)
