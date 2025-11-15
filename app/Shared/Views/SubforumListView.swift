@@ -81,8 +81,6 @@ struct SubforumListView: View {
       }
     }
     .listStyle(.insetGrouped)
-    // TODO: doesn't seem necessary since 26.1
-    .scrollContentBackground(detent == .medium ? .hidden : .automatic)
   }
 }
 
