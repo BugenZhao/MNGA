@@ -132,7 +132,7 @@ struct PreferencesInnerView: View {
         }
       } else {
         NavigationLink(destination: PlusView()) {
-          Label(status.tryOrUnlock, systemImage: "sparkles.2")
+          Label(status.tryOrUnlock, systemImage: "sparkles")
         }
       }
 

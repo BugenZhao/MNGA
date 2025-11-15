@@ -204,8 +204,8 @@ struct PlusView: View {
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
         } else {
-          ForEach(displayProducts.enumerated(), id: \.element.id) { i, product in
-            productCard(for: product, isPreferred: i == 0)
+          ForEach(displayProducts, id: \.id) { product in
+            productCard(for: product, isPreferred: product.id == displayProducts.first?.id)
           }
         }
 

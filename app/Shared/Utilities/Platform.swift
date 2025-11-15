@@ -172,6 +172,10 @@ struct MaybeToolbarSpacer: ToolbarContent {
       case .fixed: .fixed
       }
       ToolbarSpacer(sizing, placement: placement)
+    } else {
+      if case .flexible = sizing {
+        ToolbarItem(placement: placement) { Spacer() }
+      }
     }
   }
 }
@@ -192,6 +196,19 @@ extension ToolbarContent {
     if #available(iOS 26.0, *) {
       matchedTransitionSource(id: id, in: namespace)
     } else {
+      self
+    }
+  }
+}
+
+extension View {
+  @ViewBuilder
+  func maybeNavigationTransition(_ style: some NavigationTransition) -> some View {
+    if #available(iOS 26.0, *) {
+      navigationTransition(style)
+    } else {
+      // Although it's also available on iOS 18, we always pair it with `matchedTransitionSource`
+      // on toolbar items which is only available on iOS 26.
       self
     }
   }
@@ -221,6 +238,8 @@ struct MaybeBottomBarSearchToolbarItem: ToolbarContent {
   var body: some ToolbarContent {
     if #available(iOS 26.0, *) {
       DefaultToolbarItem(kind: .search, placement: .bottomBar)
+    } else {
+      MaybeToolbarSpacer(.flexible, placement: .bottomBar)
     }
   }
 }

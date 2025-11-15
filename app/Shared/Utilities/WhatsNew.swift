@@ -67,7 +67,7 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
           subtitle: "50 余项 Bug 修复与体验改进，采用 iOS 26 最新 API，使用体验更加稳定丝滑。"
         ),
         .init(
-          image: .init(systemName: "sparkles.2"),
+          image: .init(systemName: "sparkles"),
           title: "Plus 计划全新上线",
           subtitle: "MNGA Plus 不仅为您解锁更完整的体验，更是我们持续改进和长期维护 MNGA 的唯一动力。"
         ),

@@ -222,7 +222,7 @@ struct TopicListView: View {
       }.navigationTitle("Subforums of \(forum.name)")
         .navigationBarTitleDisplayMode(.inline)
     }
-    .navigationTransition(.zoom(sourceID: "subforums", in: transition))
+    .maybeNavigationTransition(.zoom(sourceID: "subforums", in: transition))
     .presentationDetents([.medium, .large], selection: $subforumsModalDetent)
   }
 
