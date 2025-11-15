@@ -30,7 +30,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.bugenzhao.MNGA",
-            deploymentTargets: .iOS("18.5"),
+            deploymentTargets: .iOS("18.4"),
             infoPlist: .file(path: "iOS/Info.plist"),
             sources: [
                 "Shared/**",
