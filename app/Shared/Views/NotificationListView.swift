@@ -141,12 +141,10 @@ struct NotificationToolbarItem: ToolbarContent {
 
   let placement: ToolbarItemPlacement
   let show: Show
-  @State var unreadCount = 0 // duplicate `notis.unreadCount` to trigger animation
 
   init(placement: ToolbarItemPlacement, show: Show = .sheet) {
     self.placement = placement
     self.show = show
-    unreadCount = notis.unreadCount
   }
 
   @StateObject var notis = NotificationModel.shared
@@ -159,6 +157,10 @@ struct NotificationToolbarItem: ToolbarContent {
     case .fromUserMenu:
       notis.showingFromUserMenu = true
     }
+  }
+
+  var unreadCount: Int {
+    notis.unreadCountAnimated
   }
 
   @ViewBuilder
@@ -178,13 +180,6 @@ struct NotificationToolbarItem: ToolbarContent {
   var body: some ToolbarContent {
     ToolbarItem(placement: placement) {
       bodyView
-        .animation(.default, value: unreadCount)
-        .onChange(of: notis.unreadCount) { _, new in
-          // Only in next tick can we trigger animation.
-          DispatchQueue.main.async {
-            withAnimation { unreadCount = new }
-          }
-        }
     }
   }
 }
