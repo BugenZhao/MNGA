@@ -44,7 +44,6 @@ struct TopicListView: View {
 
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
-  @State var subforumsModalDetent: PresentationDetent = .medium
   @State var order: TopicListRequest.Order? = nil
   @State var showPrincipal = false
   @State var triggerRefresh = false
@@ -152,7 +151,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var subforumButton: some View {
-    Button(action: { showingSubforumsModal = true; subforumsModalDetent = .medium }) {
+    Button(action: { showingSubforumsModal = true }) {
       Label("Subforums", systemImage: "list.triangle")
     }
   }
@@ -225,8 +224,7 @@ struct TopicListView: View {
             onNavigateToForum: {
               showingSubforumsModal = false
               currentShowingSubforum = $0
-            },
-            detent: $subforumsModalDetent
+            }
           )
         } else {
           ProgressView()
@@ -235,7 +233,7 @@ struct TopicListView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     .maybeNavigationTransition(.zoom(sourceID: "subforums", in: transition))
-    .presentationDetents([.medium, .large], selection: $subforumsModalDetent)
+    .presentationDetents([.medium, .large])
   }
 
   @ViewBuilder
@@ -323,7 +321,7 @@ struct TopicListView: View {
               .onDisappear { showPrincipal = true }
           ) {
             EmptyView().id("top-placeholder") // for auto refresh
-            ForEach(itemBindings, id: \.id) { topicBinding in
+            SafeForEach(itemBindings, id: \.id) { topicBinding in
               topicLink($topic: topicBinding)
                 .onAppear { dataSource.loadMoreIfNeeded(currentItem: topicBinding.w) }
             }

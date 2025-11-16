@@ -44,7 +44,7 @@ struct TopicSearchItemsView: View {
       LoadingRowView()
         .onAppear { dataSource.initialLoad() }
     } else {
-      ForEachOrEmpty($dataSource.items, id: \.wrappedValue.id) { topic in
+      SafeForEach($dataSource.items, id: \.id) { topic in
         CrossStackNavigationLinkHack(id: topic.w.id, destination: {
           TopicDetailsView.build(topicBinding: topic)
         }) {

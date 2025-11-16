@@ -37,6 +37,7 @@ struct TopicHistoryListView: View {
       } else {
         List {
           let items = $dataSource.items.filter { search.commitedText == nil || $0.w.topicSnapshot.subject.full.contains(search.commitedText!) }
+          // FIXME: use `SafeForEach`
           ForEach(items, id: \.w.topicSnapshot.id) { snapshotBinding in
             let snapshot = snapshotBinding.w
             // Set the post date to the snapshot timestamp for display.

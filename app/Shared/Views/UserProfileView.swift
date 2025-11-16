@@ -91,7 +91,7 @@ struct UserProfileView: View {
           if topicDataSource.items.isEmpty {
             EmptyRowView()
           } else {
-            ForEach($topicDataSource.items, id: \.id) { topic in
+            SafeForEach($topicDataSource.items, id: \.id) { topic in
               // My profile may show on the 2nd stack, requiring cross-stack.
               CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: topic), id: topic.w.id) {
                 TopicRowView(topic: topic.w)
@@ -109,7 +109,7 @@ struct UserProfileView: View {
           if postDataSource.items.isEmpty {
             EmptyRowView()
           } else {
-            ForEach($postDataSource.items, id: \.post.id) { tpBinding in
+            SafeForEach($postDataSource.items, id: \.post.id) { tpBinding in
               let tp = tpBinding.w
               // My profile may show on the 2nd stack, requiring cross-stack.
               // FIXME: we cannot know the page where the post is located at the original topic.
