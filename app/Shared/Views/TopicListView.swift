@@ -277,6 +277,19 @@ struct TopicListView: View {
   }
 
   @ViewBuilder
+  func topicLink(@Binding topic: Topic) -> some View {
+    if topic.hasShortcutForum {
+      ForumRowLinkView(forum: topic.shortcutForum, asTopicShortcut: topic)
+    } else {
+      CrossStackNavigationLinkHack(id: topic.id, destination: {
+        TopicDetailsView.build(topicBinding: $topic)
+      }) {
+        TopicRowView(topic: topic, useTopicPostDate: orderOrDefault == .postDate)
+      }
+    }
+  }
+
+  @ViewBuilder
   var list: some View {
     Group {
       if dataSource.notLoaded {
@@ -294,12 +307,9 @@ struct TopicListView: View {
               .onDisappear { showPrincipal = true }
           ) {
             EmptyView().id("top-placeholder") // for auto refresh
-            ForEach(itemBindings, id: \.id) { topic in
-              CrossStackNavigationLinkHack(id: topic.w.id, destination: {
-                TopicDetailsView.build(topicBinding: topic)
-              }) {
-                TopicRowView(topic: topic.w, useTopicPostDate: orderOrDefault == .postDate)
-              }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            ForEach(itemBindings, id: \.id) { topicBinding in
+              topicLink($topic: topicBinding)
+                .onAppear { dataSource.loadMoreIfNeeded(currentItem: topicBinding.w) }
             }
             .id(order)
           }

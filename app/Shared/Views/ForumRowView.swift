@@ -12,6 +12,13 @@ import SwiftUI
 struct ForumRowLinkView: View {
   let forum: Forum
   let showFavorite: Bool
+  let asTopicShortcut: Topic?
+
+  init(forum: Forum, showFavorite: Bool = true, asTopicShortcut: Topic? = nil) {
+    self.forum = forum
+    self.showFavorite = showFavorite
+    self.asTopicShortcut = asTopicShortcut
+  }
 
   // With this counter hack, the topic list will be refreshed every time we navigate into.
   // Once the `TopicListView` is pushed into the stack, the value of `hack` will be changed,
@@ -25,14 +32,25 @@ struct ForumRowLinkView: View {
     favorites.isFavorite(id: forum.id)
   }
 
+  var navigationDestination: some View {
+    TopicListView.build(forum: forum)
+      .onAppearOnce { hack += 1 }
+  }
+
+  @ViewBuilder
+  var label: some View {
+    EmptyView().id(hack)
+    ForumRowView(forum: forum, isFavorite: showFavorite && isFavorite, asTopicShortcut: asTopicShortcut)
+  }
+
   @ViewBuilder
   var link: some View {
-    CrossStackNavigationLinkHack(id: forum.id, destination: {
-      TopicListView.build(forum: forum)
-        .onAppearOnce { hack += 1 }
-    }) {
-      EmptyView().id(hack)
-      ForumRowView(forum: forum, isFavorite: showFavorite && isFavorite)
+    if asTopicShortcut != nil {
+      // If it's a shortcut, navigate within the same stack.
+      NavigationLink(destination: navigationDestination) { label }
+        .isDetailLink(false)
+    } else {
+      CrossStackNavigationLinkHack(id: forum.id, destination: { navigationDestination }) { label }
     }
   }
 
@@ -49,30 +67,61 @@ struct ForumRowLinkView: View {
 struct ForumRowView: View {
   let forum: Forum
   let isFavorite: Bool
+  let asTopicShortcut: Topic?
+
+  init(forum: Forum, isFavorite: Bool = false, asTopicShortcut: Topic? = nil) {
+    self.forum = forum
+    self.isFavorite = isFavorite
+    self.asTopicShortcut = asTopicShortcut
+  }
+
+  var icon: some View {
+    ForumIconView(iconURL: forum.iconURL)
+  }
+
+  @ViewBuilder
+  var name: some View {
+    Text(forum.name.localized)
+      .foregroundColor(.primary)
+  }
+
+  @ViewBuilder
+  var stIndicator: some View {
+    if case .stid = forum.id.id {
+      Image(systemName: "square.stack.3d.up")
+        .font(.footnote)
+        .foregroundColor(.secondary)
+    }
+  }
+
+  @ViewBuilder
+  var infoAndFavorite: some View {
+    HStack {
+      Text(forum.info.localized)
+        .multilineTextAlignment(.trailing)
+        .font(.footnote)
+      if isFavorite {
+        Text(Image(systemName: "star.fill"))
+          .font(.caption2)
+      }
+    }.foregroundColor(.secondary)
+  }
 
   var body: some View {
-    HStack {
-      ForumIconView(iconURL: forum.iconURL)
-
+    if let topic = asTopicShortcut {
       HStack {
-        Text(forum.name.localized)
-          .foregroundColor(.primary)
-        if case .stid = forum.id.id {
-          Image(systemName: "arrow.uturn.right")
-            .font(.footnote)
-            .foregroundColor(.secondary)
-        }
+        TopicSubjectView(topic: topic)
         Spacer()
-
-        HStack {
-          Text(forum.info.localized)
-            .multilineTextAlignment(.trailing)
-            .font(.footnote)
-          if isFavorite {
-            Text(Image(systemName: "star.fill"))
-              .font(.caption2)
-          }
-        }.foregroundColor(.secondary)
+        stIndicator
+        icon
+      }
+    } else {
+      HStack {
+        icon
+        name
+        stIndicator
+        Spacer()
+        infoAndFavorite
       }
     }
   }
