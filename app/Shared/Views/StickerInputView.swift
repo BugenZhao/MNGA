@@ -8,32 +8,89 @@
 import Foundation
 import SwiftUI
 
+enum StickerCategory: Hashable {
+  case recent
+  case prefix(String)
+}
+
 struct StickerInputView: View {
   @ObservedObject var model: ContentEditorModel
 
-  var body: some View {
+  @State var category: StickerCategory = .recent
+  @AppStorage("recentStickers") var recentStickers = JSONRepr(inner: [String]())
+
+  var currentStickers: [String] {
+    switch category {
+    case .recent: recentStickers.inner
+    case let .prefix(prefix): stickerImageNames.filter { $0.starts(with: prefix) }
+    }
+  }
+
+  @ViewBuilder
+  var categoryPicker: some View {
+    Picker("Category", selection: $category) {
+      Image(systemName: "clock").tag(StickerCategory.recent)
+
+      ForEach(stickerImageNamePrefixes, id: \.self) { p in
+        Text(p.uppercased()).tag(StickerCategory.prefix(p))
+      }
+    }.pickerStyle(.segmented)
+      .padding(.horizontal)
+  }
+
+  @ViewBuilder
+  var stickerSelector: some View {
     let rows = [GridItem](repeating: .init(.fixed(50)), count: 4)
 
-    ScrollView(.horizontal) {
-      LazyHGrid(rows: rows, spacing: 10) {
-        ForEach(stickerImageNames, id: \.self) { name in
-          Button(action: { insert(name: name) }) {
-            Image(name)
-              .renderingMode(name.starts(with: "a") ? .template : .original)
-              .resizable()
-              .scaledToFit()
-              .background(name.starts(with: "dt") ? .white : .black.opacity(0.0))
-              .frame(height: 50)
-          }
-        }
-      }.padding(.horizontal)
-    }.foregroundColor(.primary)
-      .frame(height: 240)
+    Group {
+      if currentStickers.isEmpty {
+        Text("Empty")
+          .foregroundColor(.secondary)
+      } else {
+        ScrollView(.horizontal) {
+          LazyHGrid(rows: rows, spacing: 10) {
+            ForEach(currentStickers, id: \.self) { name in
+              Button(action: { insert(name: name) }) {
+                Image(name)
+                  .renderingMode(name.starts(with: "a") ? .template : .original)
+                  .resizable()
+                  .scaledToFit()
+                  .background(name.starts(with: "dt") ? .white : .black.opacity(0.0))
+                  .frame(height: 50)
+              }
+            }
+          }.padding(.horizontal)
+        }.foregroundColor(.primary)
+      }
+    }
+    .frame(height: 240) // 4 rows
+    .onAppear {
+      // Switch to first category if recent is empty.
+      if recentStickers.inner.isEmpty, let first = stickerImageNamePrefixes.first {
+        category = .prefix(first)
+      }
+    }
+  }
+
+  var body: some View {
+    VStack(alignment: .center) {
+      categoryPicker
+      stickerSelector
+    }
   }
 
   func insert(name: String) {
     let code = stickerImageNameToCode(name)
     model.insert(code)
+
+    // Record recent stickers, up to 40.
+    var newRecent = recentStickers.inner
+    newRecent.removeAll { $0 == name }
+    newRecent.insert(name, at: 0)
+    newRecent.removeLast(max(0, newRecent.count - 40))
+    withAnimation {
+      recentStickers.inner = newRecent
+    }
   }
 }
 

@@ -252,6 +252,15 @@ let stickerImageNames = [
   "ng|问号大",
 ]
 
+let stickerImageNamePrefixes = [
+  "ac",
+  "a2",
+  "ng",
+  "pst",
+  "dt",
+  "pg",
+]
+
 func stickerImageNameToCode(_ name: String) -> String {
   "[s:\(name.replacingOccurrences(of: "|", with: ":"))]"
 }

@@ -74,8 +74,7 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   @ViewBuilder
   var stickerPanel: some View {
     StickerInputView(model: model)
-      .background(.secondarySystemGroupedBackground)
-      .frame(maxHeight: 240)
+      .background(.systemBackground)
   }
 
   func setFocusOnAppear() {
