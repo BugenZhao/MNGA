@@ -98,12 +98,13 @@ struct FavoriteTopicListInnerView: View {
           .onAppear { dataSource.initialLoad() }
       } else {
         List {
-          ForEach($dataSource.items, id: \.id) { topic in
+          SafeForEach($dataSource.items, id: \.id) { topic in
             CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: topic), id: topic.w.id) {
               TopicRowView(topic: topic.w, dimmedSubject: false, showIndicators: false)
                 .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
             }
-          }.onDelete { indexSet in deleteFavorites(at: indexSet) }
+          }
+          .onDelete { indexSet in deleteFavorites(at: indexSet) }
         }
       }
     }
