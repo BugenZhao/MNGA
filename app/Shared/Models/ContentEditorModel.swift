@@ -45,10 +45,13 @@ class ContentEditorModel: ObservableObject {
     text.replaceSubrange(range, with: string)
 
     let insertionPoint = text.index(text.startIndex, offsetBy: prefixLength + string.count)
+    let textHash = text.hashValue
 
     // Sometimes it just doesn't work if we set string and selection at the same time...
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-      if let ip = insertionPoint.samePosition(in: self.text) {
+      if self.text.hashValue == textHash, // text is not changed by other means
+         let ip = insertionPoint.samePosition(in: self.text)
+      {
         self.selection = TextSelection(insertionPoint: ip)
       }
     }
@@ -75,10 +78,13 @@ class ContentEditorModel: ObservableObject {
 
     // Note: never reuse index after mutation! if there's re-allocation, the index is invalid!
     let insertionPoint = text.index(text.startIndex, offsetBy: prefixLength + open.count + distance)
+    let textHash = text.hashValue
 
     // Sometimes it just doesn't work if we set string and selection at the same time...
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-      if let ip = insertionPoint.samePosition(in: self.text) {
+      if self.text.hashValue == textHash, // text is not changed by other means
+         let ip = insertionPoint.samePosition(in: self.text)
+      {
         self.selection = TextSelection(insertionPoint: ip)
       }
     }

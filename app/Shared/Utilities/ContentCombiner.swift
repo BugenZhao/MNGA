@@ -350,6 +350,7 @@ class ContentCombiner {
       view = Text(
         Image(uiImage: image)
           .renderingMode(renderingMode)
+          .antialiased(true)
       )
     } else {
       view = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
