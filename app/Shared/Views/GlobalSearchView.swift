@@ -75,7 +75,7 @@ struct ForumSearchView: View {
 
   @ViewBuilder
   func buildLink(_ forum: Forum) -> some View {
-    ForumRowLinkView(forum: forum, showFavorite: true)
+    ForumRowLinkView(forum: forum)
   }
 
   var body: some View {

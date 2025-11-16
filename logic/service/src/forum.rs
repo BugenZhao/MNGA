@@ -48,7 +48,7 @@ pub fn extract_forum(node: Node) -> Option<Forum> {
     let icon_id = get!(map, "id")
         .or_else(|| get!(map, "fid"))
         .unwrap_or_default();
-    let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, icon_id);
+    let icon_url = format!("{}{}.png", FORUM_ICON_PATH, icon_id);
 
     let fid = get!(map, "fid").map(make_fid).flatten();
     let stid = get!(map, "stid").map(make_stid).flatten();
@@ -63,6 +63,24 @@ pub fn extract_forum(node: Node) -> Option<Forum> {
     };
 
     Some(forum)
+}
+
+pub fn make_minimal_forum(id: ForumId, name: String) -> Forum {
+    let icon_id = if id.has_fid() {
+        id.get_fid()
+    } else if id.has_stid() {
+        id.get_stid()
+    } else {
+        "0"
+    };
+    let icon_url = format!("{}{}.png", FORUM_ICON_PATH, icon_id);
+
+    Forum {
+        id: Some(id).into(),
+        name,
+        icon_url,
+        ..Default::default()
+    }
 }
 
 fn extract_category(node: Node) -> Option<Category> {
