@@ -344,12 +344,15 @@ class ContentCombiner {
     let name = sticker.name.replacingOccurrences(of: ":", with: "|")
 
     let view: Text?
-    if let image = UIImage(named: name) {
+    if let image = UIImage(named: name)?
+      .sd_resizedImage(with: CGSize(width: 50, height: 50), scaleMode: .aspectFit)
+    {
       let renderingMode: Image.TemplateRenderingMode =
         name.starts(with: "ac") || name.starts(with: "a2") ? .template : .original
       view = Text(
         Image(uiImage: image)
           .renderingMode(renderingMode)
+          .antialiased(true)
       )
     } else {
       view = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
