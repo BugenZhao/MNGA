@@ -91,19 +91,28 @@ private struct TopicListAppearanceView: View {
 
   var body: some View {
     Form {
-      Picker(selection: $pref.defaultTopicListOrder, label: Label("Default Order", systemImage: "arrow.up.arrow.down")) {
-        ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
-          Label(order.description, systemImage: order.icon).tag(order)
+      Section {
+        Picker(selection: $pref.defaultTopicListOrder, label: Label("Default Order", systemImage: "arrow.up.arrow.down")) {
+          ForEach(TopicListRequest.Order.allCases, id: \.self) { order in
+            Label(order.description, systemImage: order.icon).tag(order)
+          }
+        }
+        Toggle(isOn: $pref.topicListShowRefreshButton) {
+          Label("Refresh Button", systemImage: "arrow.clockwise")
         }
       }
-      Toggle(isOn: $pref.topicListShowRefreshButton) {
-        Label("Refresh Button", systemImage: "arrow.clockwise")
-      }
-      Picker(selection: $pref.topicListHideBlocked) {
-        Label("Redact Subject", systemImage: "text.redaction").tag(false)
-        Label("Hide Topic", systemImage: "eye.slash").tag(true)
-      } label: {
-        Label("Blocked Topics Style", systemImage: "hand.raised")
+
+      Section {
+        Picker(selection: $pref.topicListHideBlocked) {
+          Label("Redact Subject", systemImage: "text.redaction").tag(false)
+          Label("Hide Topic", systemImage: "eye.slash").tag(true)
+        } label: {
+          Label("Blocked Topics Style", systemImage: "hand.raised")
+        }
+
+        Toggle(isOn: $pref.topicListHideForumShortcut) {
+          Label("Hide Forum Shortcuts", systemImage: "arrow.uturn.right")
+        }
       }
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)

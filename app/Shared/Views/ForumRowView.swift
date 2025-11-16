@@ -87,11 +87,16 @@ struct ForumRowView: View {
 
   @ViewBuilder
   var stIndicator: some View {
-    if case .stid = forum.id.id {
-      Image(systemName: "square.stack.3d.up")
-        .font(.footnote)
-        .foregroundColor(.secondary)
+    Group {
+      if case .stid = forum.id.id {
+        Image(systemName: "square.stack.3d.up")
+      } else if asTopicShortcut != nil {
+        // Always show an indicator for shortcuts.
+        Image(systemName: "arrow.uturn.right")
+      }
     }
+    .font(.footnote)
+    .foregroundColor(.secondary)
   }
 
   @ViewBuilder
