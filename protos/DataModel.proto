@@ -34,6 +34,7 @@ message Topic {
   optional uint32 last_viewing_floor = 18; // Last floor visited locally.
   string fid = 14; // The id of the topic's parent forum, mainly used for
                    // uploading attachments.
+  ForumId shortcut_forum_id = 19; // If set, then this topic is a shortcut to another forum.
 }
 
 message User {

@@ -9,7 +9,7 @@ use crate::{
     user::{extract_local_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
-        extract_string, get_unique_id, server_now,
+        extract_string, extract_string_rel, get_unique_id, server_now,
     },
 };
 use cache::{CACHE, CacheResult};
@@ -121,6 +121,18 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
 
     let fid = get!(map, "fid")?;
 
+    let typ: u64 = get!(map, "type", u64).unwrap_or(0);
+    let shortcut_forum_id = if typ & 0x8000 != 0 {
+        make_stid(id.clone())
+    } else if typ & 0x200000 != 0 {
+        // Access the first <item> of <topic_misc_var>
+        extract_string_rel(node, "./topic_misc_var/item")
+            .ok()
+            .and_then(make_fid)
+    } else {
+        None
+    };
+
     let topic = Topic {
         id,
         subject: Some(subject).into(),
@@ -137,6 +149,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         _last_viewing_floor: last_viewing_floor,
         fid,
         favor_folder_ids,
+        shortcut_forum_id: shortcut_forum_id.into(),
         ..Default::default()
     };
 
@@ -705,6 +718,25 @@ mod test {
 
         assert!(!response.get_topics().is_empty());
         assert_eq!(response.get_forum().get_name(), "原神");
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_topic_list_with_shortcuts() -> ServiceResult<()> {
+        let id = make_fid("-447601".to_owned());
+        let response = get_topic_list(TopicListRequest {
+            id: id.into(),
+            page: 1,
+            ..Default::default()
+        })
+        .await?;
+
+        for t in response.get_topics() {
+            if t.has_shortcut_forum_id() {
+                println!("shortcut: {:#?}", t);
+            }
+        }
 
         Ok(())
     }

@@ -91,6 +91,16 @@ pub fn extract_string(package: &Package, xpath: &str) -> ServiceResult<String> {
     Ok(item.into_string())
 }
 
+pub fn extract_string_rel(node: Node, xpath: &str) -> ServiceResult<String> {
+    let xpath = to_xpath(xpath)?;
+    let context = Context::new();
+
+    let item = xpath
+        .evaluate(&context, node)
+        .map_err(sxd_xpath::Error::Executing)?;
+    Ok(item.into_string())
+}
+
 pub fn extract_pages(
     package: &Package,
     rows_xpath: &str,
