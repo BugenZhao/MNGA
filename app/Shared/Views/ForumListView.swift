@@ -52,6 +52,7 @@ struct ForumListView: View {
               .font(.callout)
             Spacer().height(2)
             Text("Swipe a forum to mark it as favorite")
+              .multilineTextAlignment(.center)
               .font(.footnote)
           }.foregroundColor(.secondary)
           Spacer()
@@ -197,6 +198,8 @@ struct ForumListView: View {
 
     if UserInterfaceIdiom.current == .phone {
       MaybeBottomBarSearchToolbarItem()
+    } else {
+      MaybeToolbarSpacer(.flexible, placement: .bottomBar)
     }
     if schemes.canTryNavigateToPasteboardURL {
       MaybeToolbarSpacer(placement: .bottomBar)

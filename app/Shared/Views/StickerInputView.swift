@@ -28,7 +28,7 @@ struct StickerInputView: View {
 
   @ViewBuilder
   var categoryPicker: some View {
-    Picker("Category", selection: $category) {
+    Picker("Category", selection: $category.animation()) {
       Image(systemName: "clock").tag(StickerCategory.recent)
 
       ForEach(stickerImageNamePrefixes, id: \.self) { p in
@@ -36,6 +36,7 @@ struct StickerInputView: View {
       }
     }.pickerStyle(.segmented)
       .padding(.horizontal)
+      .padding(.top, .small)
   }
 
   @ViewBuilder
@@ -61,6 +62,7 @@ struct StickerInputView: View {
             }
           }.padding(.horizontal)
         }.foregroundColor(.primary)
+          .id("sticker-selector-\(category)") // reset scroll position
       }
     }
     .frame(height: 240) // 4 rows

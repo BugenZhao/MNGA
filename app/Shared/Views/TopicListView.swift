@@ -8,6 +8,7 @@
 import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
+import SwiftUIX
 
 private extension [Topic] {
   func mayFilterBlocked() -> [Topic] {
@@ -272,7 +273,11 @@ struct TopicListView: View {
       ToolbarItem(placement: .bottomBar) { subforumButton }
         .maybeMatchedTransitionSource(id: "subforums", in: transition)
       MaybeToolbarSpacer(.fixed, placement: .bottomBar)
-      MaybeBottomBarSearchToolbarItem(compatAsSpacer: true)
+      if UserInterfaceIdiom.current == .phone {
+        MaybeBottomBarSearchToolbarItem(compatAsSpacer: true)
+      } else {
+        MaybeToolbarSpacer(.flexible, placement: .bottomBar)
+      }
       if prefs.topicListShowRefreshButton {
         MaybeToolbarSpacer(.fixed, placement: .bottomBar)
         ToolbarItem(placement: .bottomBar) { refreshButton }
