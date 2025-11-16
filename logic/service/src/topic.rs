@@ -3,7 +3,7 @@ use crate::{
     error::{ServiceError, ServiceResult},
     fetch::{self, RetryMode, fetch_mock, fetch_package_with_retry, fetch_web_html},
     fetch_package,
-    forum::{extract_forum, make_fid, make_stid},
+    forum::{extract_forum, make_fid, make_minimal_forum, make_stid},
     history::{find_topic_history, insert_topic_history},
     post::extract_post,
     user::{extract_local_user_and_cache, extract_user_name},
@@ -132,6 +132,10 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
     } else {
         None
     };
+    let shortcut_forum = shortcut_forum_id.map(|id| {
+        let name = subject.content.clone();
+        make_minimal_forum(id, name)
+    });
 
     let topic = Topic {
         id,
@@ -149,7 +153,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         _last_viewing_floor: last_viewing_floor,
         fid,
         favor_folder_ids,
-        shortcut_forum_id: shortcut_forum_id.into(),
+        shortcut_forum: shortcut_forum.into(),
         ..Default::default()
     };
 
@@ -161,7 +165,7 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     let pairs = extract_kv_pairs(node);
 
     let id = pget!(pairs, 0)?;
-    let icon_url = format!("{}/{}.png", FORUM_ICON_PATH, id);
+    let icon_url = format!("{}{}.png", FORUM_ICON_PATH, id);
 
     let id = if use_fid { make_fid(id) } else { make_stid(id) };
 
@@ -733,7 +737,7 @@ mod test {
         .await?;
 
         for t in response.get_topics() {
-            if t.has_shortcut_forum_id() {
+            if t.has_shortcut_forum() {
                 println!("shortcut: {:#?}", t);
             }
         }
