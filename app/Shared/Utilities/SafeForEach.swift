@@ -59,19 +59,30 @@ struct SafeForEach<Item, ID: Hashable, Content: View>: View {
   let items: Binding<[Item]>
   let idPath: KeyPath<Item, ID>
   let build: (Binding<Item>) -> Content
+  let predicate: ((Item) -> Bool)?
 
   init(
     _ items: Binding<[Item]>,
     id: KeyPath<Item, ID>,
-    @ViewBuilder build: @escaping (Binding<Item>) -> Content
+    where predicate: ((Item) -> Bool)? = nil,
+    @ViewBuilder build: @escaping (Binding<Item>) -> Content,
   ) {
     self.items = items
     idPath = id
     self.build = build
+    self.predicate = predicate
+  }
+
+  var visibleItems: [Item] {
+    if let predicate = predicate {
+      items.wrappedValue.filter(predicate)
+    } else {
+      items.wrappedValue
+    }
   }
 
   var body: some View {
-    ForEach(items.wrappedValue, id: idPath) { item in
+    ForEach(visibleItems, id: idPath) { item in
       SafeBindingView(items: items, item: item, id: idPath, build: build)
     }
   }
