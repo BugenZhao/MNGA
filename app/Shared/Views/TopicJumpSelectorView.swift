@@ -38,7 +38,7 @@ struct TopicJumpSelectorView: View {
     self.maxFloor = maxFloor
     self.floorToJump = floorToJump
     self.pageToJump = pageToJump
-    _selectedFloor = .init(initialValue: initialFloor)
+    _selectedFloor = .init(initialValue: min(initialFloor, maxFloor))
   }
 
   var maxPage: Int { (maxFloor + Constants.postPerPage) / Constants.postPerPage }

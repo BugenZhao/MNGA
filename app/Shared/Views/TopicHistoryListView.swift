@@ -29,6 +29,18 @@ struct TopicHistoryListView: View {
     return Self(dataSource: dataSource)
   }
 
+  func topicLink(@Binding snapshot: TopicSnapshot) -> some View {
+    // Set the post date to the snapshot timestamp for display.
+    var displayTopic = snapshot.topicSnapshot
+    let snapshotDate = snapshot.timestamp / 1000 // snapshot timestamp is in milliseconds
+    displayTopic.postDate = snapshotDate
+    displayTopic.lastPostDate = snapshotDate
+
+    return CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: $snapshot.topicSnapshot), id: displayTopic.id) {
+      TopicRowView(topic: displayTopic, dimmedSubject: false)
+    }
+  }
+
   var body: some View {
     Group {
       if dataSource.notLoaded {
@@ -36,18 +48,12 @@ struct TopicHistoryListView: View {
           .onAppear { dataSource.initialLoad() }
       } else {
         List {
-          let items = $dataSource.items.filter { search.commitedText == nil || $0.w.topicSnapshot.subject.full.contains(search.commitedText!) }
-          ForEach(items, id: \.w.topicSnapshot.id) { snapshotBinding in
-            let snapshot = snapshotBinding.w
-            // Set the post date to the snapshot timestamp for display.
-            var displayTopic = snapshot.topicSnapshot
-            let snapshotDate = snapshot.timestamp / 1000 // snapshot timestamp is in milliseconds
-            displayTopic.postDate = snapshotDate
-            displayTopic.lastPostDate = snapshotDate
-
-            return CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: snapshotBinding.topicSnapshot), id: displayTopic.id) {
-              TopicRowView(topic: displayTopic, dimmedSubject: false)
-            }
+          SafeForEach(
+            $dataSource.items,
+            id: \.topicSnapshot.id,
+            where: { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) }
+          ) { snapshotBinding in
+            topicLink($snapshot: snapshotBinding)
           }
         }
       }

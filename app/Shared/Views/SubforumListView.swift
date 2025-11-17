@@ -39,7 +39,6 @@ struct SubforumListView: View {
   @State var subforums: [Subforum]
   let refresh: () -> Void
   let onNavigateToForum: (Forum) -> Void
-  @Binding var detent: PresentationDetent
 
   func setSubforumFilter(show: Bool, subforum: Subforum) {
     logicCallAsync(.subforumFilter(.with {
