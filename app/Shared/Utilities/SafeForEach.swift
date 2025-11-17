@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+/// A `View` that builds a view from an id-based `Binding` from a list.
+///
+/// This ensures safety even when the list is modified.
+/// - if the item still exists in the list, we can still locate it with the id
+/// - if the item is removed from the list, we will delegate to a cached copy
+///   to ensure we are not accessing an invalid location
 struct SafeBindingView<Item, ID: Hashable, Content: View>: View {
   let items: Binding<[Item]>
   let idPath: KeyPath<Item, ID>
@@ -15,7 +21,7 @@ struct SafeBindingView<Item, ID: Hashable, Content: View>: View {
 
   @State var cachedItem: Item
 
-  init?(
+  init(
     items: Binding<[Item]>,
     item: Item,
     id: KeyPath<Item, ID>,
@@ -55,6 +61,7 @@ struct SafeBindingView<Item, ID: Hashable, Content: View>: View {
   }
 }
 
+/// A `ForEach` that uses id-based `SafeBinding` instead of index-based binding.
 struct SafeForEach<Item, ID: Hashable, Content: View>: View {
   let items: Binding<[Item]>
   let idPath: KeyPath<Item, ID>
@@ -88,10 +95,11 @@ struct SafeForEach<Item, ID: Hashable, Content: View>: View {
   }
 }
 
+// Make it compatible with modifiers like `onDelete`.
 extension SafeForEach: DynamicViewContent {
   typealias Data = [Item]
 
   var data: [Item] {
-    items.wrappedValue
+    visibleItems
   }
 }
