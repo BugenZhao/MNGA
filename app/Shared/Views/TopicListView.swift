@@ -33,6 +33,7 @@ struct TopicListView: View {
   typealias DataSource = PagingDataSource<TopicListResponse, Topic>
 
   @State var forum: Forum
+  @State var parentForumName: String?
 
   @EnvironmentObject var postReply: PostReplyModel
 
@@ -240,10 +241,18 @@ struct TopicListView: View {
   var principal: some View {
     HStack(alignment: .center, spacing: 6) {
       ForumIconView(iconURL: forum.iconURL)
-      Text(forum.name.localized)
-        .fontWeight(.semibold)
+      VStack(alignment: .leading, spacing: 0) {
+        Text(forum.name.localized)
+          .fontWeight(.semibold)
+        if let parentForumName {
+          Text(parentForumName)
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
+      }
     }
     // .padding(.small).glassEffect()
+    .lineLimit(1)
     .opacity(showPrincipal ? 1 : 0)
   }
 
@@ -343,7 +352,7 @@ struct TopicListView: View {
       }
     }
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
-    .navigationTitleLarge(string: forum.name.localized)
+    .navigationTitleLarge(string: forum.name)
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
@@ -364,8 +373,15 @@ struct TopicListView: View {
     // Enrich the forum meta if possible.
     // - if constructed with `build(id:)`, we only have id
     // - if navigated from `ForumListView`, we still lack icon and info
-    if forum != r.forum {
-      forum = r.forum
+    if forum.id == r.forum.id {
+      if forum != r.forum { // only update if not equal to avoid animation
+        forum = r.forum
+      }
+    } else if forum.name != r.forum.name, r.forum.name != "" {
+      // The forum in the response might be a parent forum.
+      // Could happen if we're accessing an ST.
+      // Only set it if their names are different to avoid duplicated display.
+      parentForumName = r.forum.name
     }
   }
 }
