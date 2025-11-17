@@ -74,7 +74,7 @@ struct SafeForEach<Item, ID: Hashable, Content: View>: View {
   }
 
   var visibleItems: [Item] {
-    if let predicate = predicate {
+    if let predicate {
       items.wrappedValue.filter(predicate)
     } else {
       items.wrappedValue
