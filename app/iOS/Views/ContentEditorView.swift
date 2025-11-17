@@ -74,7 +74,9 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   @ViewBuilder
   var stickerPanel: some View {
     StickerInputView(model: model)
-      .background(.systemBackground)
+      .clipShape(.rect(cornerRadius: 24))
+      .maybeGlassEffect(in: .rect(cornerRadius: 24), interactive: true)
+      .padding(.horizontal, .extraSmall)
   }
 
   func setFocusOnAppear() {
@@ -121,11 +123,12 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
           }
         }
       }
-
-      if !keyboard.isShowing {
-        switch model.showing {
-        case .sticker: stickerPanel
-        case .none: EmptyView()
+      .safeAreaInset(edge: .bottom) {
+        if focused == .content {
+          // HACK: This can avoid keyboard toolbar covering the cursor.
+          Color.clear.frame(height: 30)
+        } else if case .sticker = model.showing {
+          stickerPanel
         }
       }
     }

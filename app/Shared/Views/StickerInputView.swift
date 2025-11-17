@@ -35,8 +35,7 @@ struct StickerInputView: View {
         Text(p.uppercased()).tag(StickerCategory.prefix(p))
       }
     }.pickerStyle(.segmented)
-      .padding(.horizontal)
-      .padding(.top, .small)
+      .padding([.horizontal, .top], .small)
   }
 
   @ViewBuilder
@@ -60,7 +59,7 @@ struct StickerInputView: View {
                   .frame(height: 50)
               }
             }
-          }.padding(.horizontal)
+          }.padding(.horizontal, .small)
         }.foregroundColor(.primary)
           .id("sticker-selector-\(category)") // reset scroll position
       }

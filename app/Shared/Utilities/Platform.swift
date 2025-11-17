@@ -254,9 +254,9 @@ struct MaybeBottomBarSearchToolbarItem: ToolbarContent {
 
 extension View {
   @ViewBuilder
-  func maybeGlassEffect(in shape: some Shape) -> some View {
+  func maybeGlassEffect(in shape: some Shape, interactive: Bool = false) -> some View {
     if #available(iOS 26.0, *) {
-      glassEffect(in: shape)
+      glassEffect(.regular.interactive(interactive), in: shape)
     } else {
       self
     }

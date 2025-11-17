@@ -22,7 +22,7 @@ struct RowMenuButtonView<MenuContent: View>: View {
         .resizable()
         .scaledToFit()
         .frame(width: size, height: size)
-        .maybeGlassEffect(in: .circle)
+        .maybeGlassEffect(in: .circle) // TODO: interactive is glitchy
     }
   }
 }
