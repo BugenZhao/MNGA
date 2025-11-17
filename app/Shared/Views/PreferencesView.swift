@@ -12,16 +12,22 @@ import TipKit
 private struct PostRowAppearanceView: View {
   @ObservedObject var pref: PreferencesStorage
 
+  var preview: some View {
+    PostRowView.build(post: .dummy, isAuthor: true, vote: .constant((state: .up, delta: 0)))
+      // PostContentView doesn't seem to correctly refresh when larger font setting changes,
+      // as it creates a new state object from the global shared one. This won't be a problem
+      // in actual browsing. So here we simply use a trick to force refresh.
+      .id("dummy-post-larger-font-\(pref.postRowLargerFont)")
+      .tint(nil) // remove accent color for swipe actions
+  }
+
   var body: some View {
     Form {
-      Section(header: Text("Preview")) {
-        PostRowView.build(post: .dummy, isAuthor: true, vote: .constant((state: .up, delta: 0)))
-          // PostContentView doesn't seem to correctly refresh when larger font setting changes,
-          // as it creates a new state object from the global shared one. This won't be a problem
-          // in actual browsing. So here we simply use a trick to force refresh.
-          .id("dummy-post-larger-font-\(pref.postRowLargerFont)")
+      if #unavailable(iOS 26.0) {
+        Section("Preview") {
+          preview
+        }
       }
-      .tint(nil) // remove accent color for swipe actions
 
       Section {
         Picker(selection: $pref.postRowSwipeActionLeading, label: Label("Swipe Trigger Edge", systemImage: "rectangle.portrait.arrowtriangle.2.outward")) {
@@ -82,7 +88,19 @@ private struct PostRowAppearanceView: View {
 
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)
-      .navigationTitleInline(string: "")
+      .apply {
+        if #available(iOS 26.0, *) {
+          $0
+            .safeAreaBar(edge: .top) {
+              preview.padding()
+                .clipShape(.rect(cornerRadius: 28))
+                .maybeGlassEffect(in: .rect(cornerRadius: 28), interactive: true, tint: .secondarySystemGroupedBackground.opacity(0.5))
+                .padding(.horizontal)
+            }
+        } else {
+          $0
+        }
+      }
   }
 }
 
@@ -116,7 +134,6 @@ private struct TopicListAppearanceView: View {
       }
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)
-      .navigationTitleInline(string: "")
   }
 }
 
