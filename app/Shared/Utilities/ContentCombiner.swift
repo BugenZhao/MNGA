@@ -365,6 +365,8 @@ class ContentCombiner {
       visit(divider: tagged)
     case "img":
       visit(image: tagged)
+    case "album":
+      visit(album: tagged)
     case "noimg":
       visit(noimg: tagged)
     case "quote":
@@ -429,6 +431,20 @@ class ContentCombiner {
     let onlyThumbs = inQuote && replyTo != nil
     let image = ContentImageView(url: url, onlyThumbs: onlyThumbs)
     append(image)
+  }
+
+  private func visit(album: Span.Tagged) {
+    let urls = album.spans.filter { if case .plain = $0.value { true } else { false } }
+    let name = "\(album.attributes.first ?? "Album".localized) (\(urls.count))"
+
+    visit(divider: .with {
+      $0.spans = [.plainText(name)]
+    })
+    for url in urls {
+      visit(image: .with {
+        $0.spans = [url]
+      })
+    }
   }
 
   private func visit(noimg: Span.Tagged) {
