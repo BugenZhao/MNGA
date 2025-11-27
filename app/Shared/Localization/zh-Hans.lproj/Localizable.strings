@@ -318,7 +318,10 @@
 "Only Web API" = "仅使用 Web API";
 "Web API Explained" = "使用实验性的 Web API 加载话题内容。这可以彻底避免 XML 解析错误，但返回的内容可能不完全准确。在大多数情况下，请选择“禁用”或“备选”。";
 "Always Share Image as File" = "始终以文件共享原图";
-"Hide Forum Shortcuts" = "隐藏版块镜像";
+"Show Forum Shortcuts" = "显示版块镜像";
+"Search Bar Position" = "搜索栏位置";
+"Top" = "顶部";
+"Bottom" = "底部";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";

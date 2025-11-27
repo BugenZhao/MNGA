@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 import TipKit
 
 private struct PostRowAppearanceView: View {
@@ -97,6 +98,12 @@ private struct TopicListAppearanceView: View {
             Label(order.description, systemImage: order.icon).tag(order)
           }
         }
+        if #available(iOS 26.0, *), UserInterfaceIdiom.current == .phone {
+          Picker(selection: $pref.topicListShowSearchInBottombar, label: Label("Search Bar Position", systemImage: "magnifyingglass")) {
+            Text("Top").tag(false)
+            Text("Bottom").tag(true)
+          }
+        }
         Toggle(isOn: $pref.topicListShowRefreshButton) {
           Label("Refresh Button", systemImage: "arrow.clockwise")
         }
@@ -109,9 +116,8 @@ private struct TopicListAppearanceView: View {
         } label: {
           Label("Blocked Topics Style", systemImage: "hand.raised")
         }
-
-        Toggle(isOn: $pref.topicListHideForumShortcut) {
-          Label("Hide Forum Shortcuts", systemImage: "arrow.uturn.right")
+        Toggle(isOn: $pref.topicListShowForumShortcut) {
+          Label("Show Forum Shortcuts", systemImage: "arrow.uturn.right")
         }
       }
     }.pickerStyle(.menu)

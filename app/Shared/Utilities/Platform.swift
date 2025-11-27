@@ -235,19 +235,19 @@ extension View {
 }
 
 struct MaybeBottomBarSearchToolbarItem: ToolbarContent {
-  let compatAsSpacer: Bool
+  let asSpacer: Bool
+  let condition: Bool
 
-  init(compatAsSpacer: Bool = false) {
-    self.compatAsSpacer = compatAsSpacer
+  init(asSpacer: Bool, if condition: Bool = true) {
+    self.asSpacer = asSpacer
+    self.condition = condition
   }
 
   var body: some ToolbarContent {
-    if #available(iOS 26.0, *) {
+    if #available(iOS 26.0, *), UserInterfaceIdiom.current == .phone, condition {
       DefaultToolbarItem(kind: .search, placement: .bottomBar)
-    } else {
-      if compatAsSpacer {
-        MaybeToolbarSpacer(.flexible, placement: .bottomBar)
-      }
+    } else if asSpacer {
+      MaybeToolbarSpacer(.flexible, placement: .bottomBar)
     }
   }
 }

@@ -196,11 +196,8 @@ struct ForumListView: View {
     }
     ToolbarItem(placement: .navigationBarTrailing) { filter }
 
-    if UserInterfaceIdiom.current == .phone {
-      MaybeBottomBarSearchToolbarItem()
-    } else {
-      MaybeToolbarSpacer(.flexible, placement: .bottomBar)
-    }
+    MaybeBottomBarSearchToolbarItem(asSpacer: false)
+
     if schemes.canTryNavigateToPasteboardURL {
       MaybeToolbarSpacer(placement: .bottomBar)
       ToolbarItem(placement: .bottomBar) {

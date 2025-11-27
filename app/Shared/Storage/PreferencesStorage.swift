@@ -22,7 +22,8 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("defaultTopicListOrder") var defaultTopicListOrder = TopicListRequest.Order.lastPost
   @AppStorage("topicListHideBlocked") var topicListHideBlocked = false
   @AppStorage("topicListShowRefreshButton") var topicListShowRefreshButton = true
-  @AppStorage("topicListHideForumShortcut") var topicListHideForumShortcut = false
+  @AppStorage("topicListShowForumShortcut") var topicListShowForumShortcut = true
+  @AppStorage("topicListShowSearchInBottomBar") var topicListShowSearchInBottombar = true
   @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true
