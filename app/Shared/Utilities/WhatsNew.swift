@@ -73,7 +73,7 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
         ),
       ],
       primaryAction: .continue,
-      secondaryAction: .checkOutPlus,
+      secondaryAction: .checkOutPlus
     )
 
     WhatsNew(
@@ -102,7 +102,7 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
         ),
       ],
       primaryAction: .continue,
-      secondaryAction: .checkOutPlus,
+      secondaryAction: .checkOutPlus
     )
   }
 

@@ -140,7 +140,7 @@ extension PostContentView where S == [Span] {
       content: post.content,
       id: post.id,
       postDate: post.postDate,
-      authorId: post.authorID,
+      authorId: post.authorID
     )
   }
 
