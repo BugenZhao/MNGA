@@ -42,7 +42,7 @@ struct PlusFeaturesView: View {
     return WhatsNew(
       title: "All Plus Features".localizedWNTitle,
       features: features,
-      primaryAction: .done,
+      primaryAction: .done
     )
   }
 

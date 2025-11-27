@@ -72,7 +72,7 @@ struct SafeForEach<Item, ID: Hashable, Content: View>: View {
     _ items: Binding<[Item]>,
     id: KeyPath<Item, ID>,
     where predicate: ((Item) -> Bool)? = nil,
-    @ViewBuilder build: @escaping (Binding<Item>) -> Content,
+    @ViewBuilder build: @escaping (Binding<Item>) -> Content
   ) {
     self.items = items
     idPath = id

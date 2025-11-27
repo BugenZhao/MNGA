@@ -18,8 +18,11 @@ private extension [Topic] {
   }
 
   func mayFilterForumShortcut() -> [Topic] {
-    guard PreferencesStorage.shared.topicListHideForumShortcut else { return self }
-    return filter { !$0.hasShortcutForum }
+    if PreferencesStorage.shared.topicListShowForumShortcut {
+      self
+    } else {
+      filter { !$0.hasShortcutForum }
+    }
   }
 
   func maybeFiltered() -> [Topic] {
@@ -280,11 +283,7 @@ struct TopicListView: View {
       ToolbarItem(placement: .bottomBar) { subforumButton }
         .maybeMatchedTransitionSource(id: "subforums", in: transition)
       MaybeToolbarSpacer(.fixed, placement: .bottomBar)
-      if UserInterfaceIdiom.current == .phone {
-        MaybeBottomBarSearchToolbarItem(compatAsSpacer: true)
-      } else {
-        MaybeToolbarSpacer(.flexible, placement: .bottomBar)
-      }
+      MaybeBottomBarSearchToolbarItem(asSpacer: true, if: prefs.topicListShowSearchInBottombar)
       if prefs.topicListShowRefreshButton {
         MaybeToolbarSpacer(.fixed, placement: .bottomBar)
         ToolbarItem(placement: .bottomBar) { refreshButton }
@@ -318,8 +317,14 @@ struct TopicListView: View {
       if dataSource.notLoaded {
         ProgressView()
           .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { // hack for search bar animation
+            if prefs.topicListShowSearchInBottombar {
               dataSource.initialLoad()
+            } else {
+              // hack for search bar animation
+              // https://stackoverflow.com/questions/74540053/swiftui-searchable-weird-push-animation
+              DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                dataSource.initialLoad()
+              }
             }
           }
       } else {
