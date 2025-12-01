@@ -36,6 +36,7 @@ class BlockWordsStorage: ObservableObject {
   }
 
   func toggle(user: UserName) {
+    guard checkPlus(.blockContents) else { return }
     let word = BlockWord.fromUser(user)
 
     if blocked(user: user) {

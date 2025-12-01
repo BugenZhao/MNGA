@@ -262,6 +262,7 @@ struct PlusView: View {
         RoundedRectangle(cornerRadius: 20)
           .stroke(isPreferred ? Color.accentColor : Color.clear, lineWidth: 1.5)
       }
+      .maybeGlassEffect(in: .rect(cornerRadius: 20), interactive: true)
     }
     .buttonStyle(.plain)
     .disabled(isPurchasing)
