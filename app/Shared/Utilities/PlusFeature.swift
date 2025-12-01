@@ -16,15 +16,12 @@ enum PlusFeature: CaseIterable {
   case resumeProgress
   case anonymous
   case blockContents
-  case comment
   case newTopic
   case hotTopic
   case shortMessage
 
   var name: String {
     switch self {
-    case .comment:
-      "Comment"
     case .anonymous:
       "Anonymous"
     case .newTopic:
@@ -54,8 +51,6 @@ enum PlusFeature: CaseIterable {
 
   var description: String {
     switch self {
-    case .comment:
-      "Comment on posts in all topics."
     case .anonymous:
       "Post, quote, reply, comment, and create new topics anonymously."
     case .newTopic:
@@ -85,8 +80,6 @@ enum PlusFeature: CaseIterable {
 
   var icon: String {
     switch self {
-    case .comment:
-      "tag"
     case .anonymous:
       "theatermasks"
     case .newTopic:
