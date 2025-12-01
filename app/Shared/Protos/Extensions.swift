@@ -427,7 +427,7 @@ extension TopicDetailsRequest.WebApiStrategy {
 
   var icon: String {
     switch self {
-    case .secondary, .primary:
+    case .primary:
       "flask"
     case .only:
       "exclamationmark.triangle"
