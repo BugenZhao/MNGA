@@ -27,7 +27,8 @@ peg::parser! {
         rule ws() = [' ' | '\t' | '\r' | '\n']
         rule _() = ws()*
         rule br_tag() = "<br/>" / "[stripbr]"
-        rule divider_tag() = "==="
+        rule divider_tag() = "=" * <3,>
+        rule simple_divider() = "=" * <6,>
         rule at() = "@"
 
         rule token() -> &'input str
@@ -87,6 +88,12 @@ peg::parser! {
                 span_of!(tagged(Span_Tagged {
                     tag: "_divider".to_owned(),
                     spans: s.into(),
+                    ..Default::default()
+                }))
+            }
+            / simple_divider() {
+                span_of!(tagged(Span_Tagged {
+                    tag: "_divider".to_owned(),
                     ..Default::default()
                 }))
             }
@@ -377,5 +384,19 @@ size=百分比]
         let text = r#"[@  BugenZhao ]<br/>[@ 41417929 ]"#;
         let r = do_parse_content(text).unwrap();
         println!("{:#?}", r);
+    }
+
+    #[test]
+    fn test_arbitrary_divider() {
+        for text in [
+            "======",
+            "========",
+            "===233===",
+            "====233========",
+            "==============233===",
+        ] {
+            let r = do_parse_content(text).unwrap();
+            println!("{:#?}", r);
+        }
     }
 }
