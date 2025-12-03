@@ -28,6 +28,7 @@ struct ContentButtonView<T: View>: View {
           RoundedRectangle(cornerRadius: 12)
             .fill(inQuote ? Color.secondarySystemGroupedBackground : Color.systemGroupedBackground)
         )
+        .maybeGlassEffect(in: .rect(cornerRadius: 12), interactive: true)
     }.buttonStyle(PlainButtonStyle())
   }
 }

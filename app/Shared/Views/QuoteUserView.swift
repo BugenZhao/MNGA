@@ -18,6 +18,7 @@ struct QuoteUserView: View {
   var body: some View {
     HStack {
       UserView(id: uid, nameHint: nameHint, style: .compact)
+        .layoutPriority(1)
       if let action, enableShowReplyChain {
         Button(action: action) {
           HStack {

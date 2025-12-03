@@ -22,6 +22,7 @@ let project = Project(
         .remote(url: "https://github.com/tevelee/SwiftUI-Flow", requirement: .exact("3.1.0")),
         .remote(url: "https://github.com/SvenTiigi/WhatsNewKit.git", requirement: .exact("2.2.1")),
         .remote(url: "https://github.com/apple/swift-collections", requirement: .exact("1.3.0")),
+        .remote(url: "https://github.com/Chronos2500/CustomNavigationTitle", requirement: .revision("37269a4478a9f7596ea8382ce3bf006530b1ad12")),
     ],
     targets: [
         // iOS App Target
@@ -60,6 +61,7 @@ let project = Project(
                 .package(product: "Flow"),
                 .package(product: "WhatsNewKit"),
                 .package(product: "Collections"),
+                .package(product: "CustomNavigationTitle"),
                 .xcframework(path: "../out/logic-ios.xcframework"),
             ],
             settings: .settings(

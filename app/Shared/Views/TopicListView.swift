@@ -5,6 +5,7 @@
 //  Created by Bugen Zhao on 6/28/21.
 //
 
+import CustomNavigationTitle
 import Foundation
 import SDWebImageSwiftUI
 import SwiftUI
@@ -49,7 +50,6 @@ struct TopicListView: View {
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
   @State var order: TopicListRequest.Order? = nil
-  @State var showPrincipal = false
   @State var triggerRefresh = false
 
   var orderOrDefault: TopicListRequest.Order {
@@ -254,9 +254,7 @@ struct TopicListView: View {
         }
       }
     }
-    // .padding(.small).glassEffect()
     .lineLimit(1)
-    .opacity(showPrincipal ? 1 : 0)
   }
 
   @ViewBuilder
@@ -275,7 +273,6 @@ struct TopicListView: View {
   var toolbar: some ToolbarContent {
     #if os(iOS)
       // -- Navigation Bar
-      ToolbarItem(placement: .principal) { principal }
       NotificationToolbarItem(placement: .navigationBarTrailing)
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
 
@@ -331,8 +328,7 @@ struct TopicListView: View {
         List {
           Section(header:
             Text(orderOrDefault.description)
-              .onAppear { showPrincipal = false }
-              .onDisappear { showPrincipal = true }
+              .titleVisibilityAnchor()
           ) {
             EmptyView().id("top-placeholder") // for auto refresh
             SafeForEach(itemBindings, id: \.id) { topicBinding in
@@ -358,6 +354,7 @@ struct TopicListView: View {
     }
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
     .navigationTitleLarge(string: forum.name)
+    .scrollAwareTitle { principal }
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
@@ -365,7 +362,6 @@ struct TopicListView: View {
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
     .onChange(of: dataSource.latestResponse) { updateForumMeta($1) }
-    .animation(.easeInOut, value: showPrincipal)
   }
 
   var navID: NavigationIdentifier {
