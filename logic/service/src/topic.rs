@@ -572,32 +572,34 @@ pub async fn get_topic_details(
         );
         let xmlfast = || fetch_package_with_retry(api, query(), vec![], RetryMode::qp_only(&key));
         let xml = || fetch_package_with_retry(api, query(), vec![], RetryMode::full(&key));
+        let xmlproxy =
+            || fetch_package_with_retry(api, query(), vec![], RetryMode::proxy_only(&key));
         let web = || async {
             fetch_web_html(api, query(), vec![])
                 .await
                 .and_then(|html| web_to_xml::build_topic_package(&html, page))
         };
 
-        macro_rules! or_else {
-            ($primary:ident, $secondary:ident, $Error:ident) => {
+        macro_rules! tri {
+            ($([$attempt:ident => $Error:ident]),* $(,)? $fallback:ident) => {
                 // Ugly writing just to workaround `Package` crossing await point.
                 async {
-                    match $primary().await {
-                        Err(ServiceError::$Error(_)) => {}
-                        result => return (result, stringify!($primary)),
-                    };
-                    ($secondary().await, stringify!($secondary))
-                }
-                .await
+                    $(
+                        match $attempt().await {
+                            Err(ServiceError::$Error(_)) => { /* try next */ }
+                            result => return (result, stringify!($attempt)),
+                        }
+                    )*
+                    ($fallback().await, stringify!($fallback))
+                }.await
             };
         }
 
         let (response, api_used) = match request.get_web_api_strategy() {
-            DISABLED => (xml().await, "xml"),
-            // When using web as secondary, don't retry with proxies to speed up.
-            SECONDARY => or_else!(xmlfast, web, XmlParse),
-            PRIMARY => or_else!(web, xml, MngaInternal),
-            ONLY => (web().await, "web"),
+            DISABLED => tri!(xml),
+            SECONDARY => tri!([xmlfast => XmlParse], [web => MngaInternal], xmlproxy),
+            PRIMARY => tri!([web => MngaInternal], xml),
+            ONLY => tri!(web),
         };
 
         let api_used = if fetch::was_proxied(&key) {
