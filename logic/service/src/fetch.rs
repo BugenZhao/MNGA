@@ -121,12 +121,19 @@ enum FetchKind {
     Proxy,
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+enum ProxyMode {
+    Never,
+    Use,
+    Only,
+}
+
 /// Determine the retry behavior of the request.
 #[derive(Clone, Debug)]
 pub struct RetryMode {
     key: Option<String>,
     use_alternative_query_pairs: bool,
-    use_proxy: bool,
+    use_proxy: ProxyMode,
 }
 
 impl RetryMode {
@@ -134,7 +141,7 @@ impl RetryMode {
         Self {
             key: None,
             use_alternative_query_pairs: false,
-            use_proxy: false,
+            use_proxy: ProxyMode::Never,
         }
     }
 
@@ -142,7 +149,7 @@ impl RetryMode {
         Self {
             key: Some(key.into()),
             use_alternative_query_pairs: true,
-            use_proxy: false,
+            use_proxy: ProxyMode::Never,
         }
     }
 
@@ -150,15 +157,23 @@ impl RetryMode {
         Self {
             key: Some(key.into()),
             use_alternative_query_pairs: true,
-            use_proxy: true,
+            use_proxy: ProxyMode::Use,
+        }
+    }
+
+    pub fn proxy_only(key: impl Into<String>) -> Self {
+        Self {
+            key: Some(key.into()),
+            use_alternative_query_pairs: true,
+            use_proxy: ProxyMode::Only,
         }
     }
 
     fn fetch_kinds(&self) -> &'static [FetchKind] {
-        if self.use_proxy {
-            &[FetchKind::Normal, FetchKind::Proxy][..]
-        } else {
-            &[FetchKind::Normal][..]
+        match self.use_proxy {
+            ProxyMode::Never => &[FetchKind::Normal][..],
+            ProxyMode::Use => &[FetchKind::Normal, FetchKind::Proxy][..],
+            ProxyMode::Only => &[FetchKind::Proxy][..],
         }
     }
 
