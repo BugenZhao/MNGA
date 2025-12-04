@@ -305,9 +305,11 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var progress: some View {
-    if dataSource.isLoading {
-      ProgressView()
-    }
+    Group {
+      if dataSource.isLoading {
+        ProgressView()
+      }
+    }.animation(.easeInOut, value: dataSource.isLoading)
   }
 
   @ViewBuilder
@@ -581,6 +583,7 @@ struct TopicDetailsView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarTrailing) { progress }
+      .maybeSharedBackgroundVisibility(.hidden)
     MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
     NotificationToolbarItem(placement: .navigationBarTrailing)
     ToolbarItem(placement: .navigationBarTrailing) { menu }

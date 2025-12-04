@@ -199,6 +199,15 @@ extension ToolbarContent {
       self
     }
   }
+
+  @ToolbarContentBuilder
+  func maybeSharedBackgroundVisibility(_ visibility: Visibility) -> some ToolbarContent {
+    if #available(iOS 26.0, *) {
+      sharedBackgroundVisibility(visibility)
+    } else {
+      self
+    }
+  }
 }
 
 extension View {
