@@ -3,8 +3,21 @@ option java_package = "com.bugenzhao.mnga.protos.datamodel";
 
 // Subject of a topic.
 message Subject {
+  enum FontModifier {
+    NONE = 0;
+    RED = 1;
+    BLUE = 2;
+    GREEN = 3;
+    ORANGE = 4;
+    SILVER = 5;
+    BOLD = 6;
+    ITALIC = 7;
+    UNDERLINE = 8;
+  }
+
   repeated string tags = 1; // Leading tags of the topic.
   string content = 2;       // Main content.
+  repeated FontModifier font_modifiers = 3;
 }
 
 message UserName {

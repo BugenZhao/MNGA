@@ -77,7 +77,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
     let map = extract_kv(node);
 
     let subject_full = get!(map, "subject").map(|s| text::unescape(&s))?;
-    let subject = text::parse_subject(&subject_full);
+    let mut subject = text::parse_subject(&subject_full);
 
     let parent_forum = extract_node_rel(node, "./parent", extract_topic_parent_forum)
         .ok()
@@ -136,6 +136,30 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         let name = subject.content.clone();
         make_minimal_forum(id, name)
     });
+
+    let font_modifiers = 0xdeadbeef;
+    // if shortcut_forum.is_none()
+    //     && let Some(m) = extract_string_rel(node, "./topic_misc_var/item").ok()
+    //     && let Some(font_modifiers) = m.parse::<u32>().ok()
+    //     && font_modifiers <= 0x100
+    {
+        const ALL_FONT_MODIFIERS: [(Subject_FontModifier, u32); 8] = [
+            (Subject_FontModifier::RED, 0x1),
+            (Subject_FontModifier::BLUE, 0x2),
+            (Subject_FontModifier::GREEN, 0x4),
+            (Subject_FontModifier::ORANGE, 0x8),
+            (Subject_FontModifier::SILVER, 0x10),
+            (Subject_FontModifier::BOLD, 0x20),
+            (Subject_FontModifier::ITALIC, 0x40),
+            (Subject_FontModifier::UNDERLINE, 0x80),
+        ];
+
+        subject.font_modifiers = ALL_FONT_MODIFIERS
+            .into_iter()
+            .filter(|(_, mask)| font_modifiers & mask != 0)
+            .map(|(m, _)| m)
+            .collect();
+    }
 
     let topic = Topic {
         id,
@@ -730,7 +754,7 @@ mod test {
 
     #[tokio::test]
     async fn test_topic_list_with_shortcuts() -> ServiceResult<()> {
-        let id = make_fid("-447601".to_owned());
+        let id = make_fid("510416".to_owned());
         let response = get_topic_list(TopicListRequest {
             id: id.into(),
             page: 1,
@@ -740,7 +764,10 @@ mod test {
 
         for t in response.get_topics() {
             if t.has_shortcut_forum() {
-                println!("shortcut: {:#?}", t);
+                // println!("shortcut: {:#?}", t);
+            }
+            if !t.get_subject().get_font_modifiers().is_empty() {
+                println!("subject font: {:#?}", t);
             }
         }
 
