@@ -6,6 +6,7 @@ edition = "2024"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base64 = "0.22"
 cache = { path = "../cache" }
 chrono = "0.4"
 config = { path = "../config" }
