@@ -81,7 +81,15 @@ fn parse_topic_misc_font_modifier_bits(raw: &str) -> Option<u32> {
         return None;
     }
 
-    let bytes = general_purpose::STANDARD.decode(raw).unwrap();
+    let bytes = general_purpose::STANDARD_NO_PAD
+        .decode(raw)
+        .inspect_err(|err| {
+            if cfg!(test) {
+                panic!("failed to decode topic_misc base64: {}", err);
+            }
+        })
+        .ok()?;
+
     let mut cursor = 0usize;
     while cursor < bytes.len() {
         let data_type = bytes[cursor];
