@@ -24,6 +24,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("topicListShowRefreshButton") var topicListShowRefreshButton = true
   @AppStorage("topicListShowForumShortcut") var topicListShowForumShortcut = true
   @AppStorage("topicListShowSearchInBottomBar") var topicListShowSearchInBottombar = true
+  @AppStorage("topicListSubjectMulticolor") var topicListSubjectMulticolor = true
   @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true

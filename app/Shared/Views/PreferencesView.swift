@@ -120,6 +120,12 @@ private struct TopicListAppearanceView: View {
           Label("Show Forum Shortcuts", systemImage: "arrow.uturn.right")
         }
       }
+
+      Section {
+        Toggle(isOn: $pref.topicListSubjectMulticolor) {
+          Label("Multicolor Subject", systemImage: "paintpalette")
+        }
+      }
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)
       .navigationTitleInline(string: "")

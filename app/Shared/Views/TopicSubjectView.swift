@@ -10,6 +10,8 @@ import Foundation
 import SwiftUI
 
 struct TopicSubjectContentInnerView: View {
+  @StateObject var prefs = PreferencesStorage.shared
+
   let content: String
   let lineLimit: Int?
   let modifiers: [Subject.FontModifier]
@@ -59,7 +61,7 @@ struct TopicSubjectContentInnerView: View {
       } else {
         Text(content)
           .font(.headline.weight(.medium)) // headline is semibold by default
-          .apply(applyFontModifiers)
+          .if(prefs.topicListSubjectMulticolor) { applyFontModifiers($0) }
       }
     }
     .lineLimit(lineLimit)
