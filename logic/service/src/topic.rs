@@ -187,6 +187,11 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         make_minimal_forum(id, name)
     });
 
+    if shortcut_forum.is_some() {
+        // By default, make the subject semi-bold if it's a shortcut.
+        // If there's an explicit bold, this will be overridden.
+        subject.font_modifiers.push(Subject_FontModifier::SEMIBOLD);
+    }
     if let Some(font_modifier_bits) =
         get!(map, "topic_misc").and_then(|raw| parse_topic_misc_font_modifier_bits(&raw))
     {

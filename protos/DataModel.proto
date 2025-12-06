@@ -13,6 +13,7 @@ message Subject {
     BOLD = 6;
     ITALIC = 7;
     UNDERLINE = 8;
+    SEMIBOLD = 128;
   }
 
   repeated string tags = 1; // Leading tags of the topic.
