@@ -195,11 +195,12 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
     if let Some(font_modifier_bits) =
         get!(map, "topic_misc").and_then(|raw| parse_topic_misc_font_modifier_bits(&raw))
     {
-        subject.font_modifiers = FONT_MODIFIER_BITMASKS
-            .into_iter()
-            .filter(|(_, mask)| font_modifier_bits & mask != 0)
-            .map(|(modifier, _)| modifier)
-            .collect();
+        subject.font_modifiers.extend(
+            FONT_MODIFIER_BITMASKS
+                .into_iter()
+                .filter(|(_, mask)| font_modifier_bits & mask != 0)
+                .map(|(modifier, _)| modifier)
+        );
     }
 
     let topic = Topic {
