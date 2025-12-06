@@ -13,7 +13,7 @@ struct ShortMessageRowView: View {
 
   @ViewBuilder
   var subjectView: some View {
-    TopicSubjectContentInnerView(content: message.subject, lineLimit: nil)
+    TopicSubjectContentInnerView(content: message.subject)
   }
 
   var body: some View {

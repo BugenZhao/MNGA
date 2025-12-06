@@ -62,6 +62,56 @@ fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     Some(forum)
 }
 
+const FONT_MODIFIER_BITMASKS: [(Subject_FontModifier, u32); 8] = [
+    (Subject_FontModifier::RED, 0x1),
+    (Subject_FontModifier::BLUE, 0x2),
+    (Subject_FontModifier::GREEN, 0x4),
+    (Subject_FontModifier::ORANGE, 0x8),
+    (Subject_FontModifier::SILVER, 0x10),
+    (Subject_FontModifier::BOLD, 0x20),
+    (Subject_FontModifier::ITALIC, 0x40),
+    (Subject_FontModifier::UNDERLINE, 0x80),
+];
+
+fn parse_topic_misc_font_modifier_bits(raw: &str) -> Option<u32> {
+    use base64::{Engine as _, engine::general_purpose};
+
+    let raw = raw.trim();
+    if raw.is_empty() {
+        return None;
+    }
+
+    let bytes = general_purpose::STANDARD_NO_PAD
+        .decode(raw)
+        .inspect_err(|err| {
+            if cfg!(test) {
+                panic!("failed to decode topic_misc base64: {}", err);
+            }
+        })
+        .ok()?;
+
+    let mut cursor = 0usize;
+    while cursor < bytes.len() {
+        let data_type = bytes[cursor];
+        cursor += 1;
+        if cursor + 4 > bytes.len() {
+            break;
+        }
+        let chunk = &bytes[cursor..cursor + 4];
+        cursor += 4;
+        match data_type {
+            1 => {
+                let value = u32::from_be_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]);
+                return Some(value);
+            }
+            2 => continue,
+            _ => break,
+        }
+    }
+
+    None
+}
+
 pub fn extract_topic(node: Node) -> Option<Topic> {
     fn extract_fav(url: &str) -> Option<&str> {
         use lazy_static::lazy_static;
@@ -77,7 +127,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
     let map = extract_kv(node);
 
     let subject_full = get!(map, "subject").map(|s| text::unescape(&s))?;
-    let subject = text::parse_subject(&subject_full);
+    let mut subject = text::parse_subject(&subject_full);
 
     let parent_forum = extract_node_rel(node, "./parent", extract_topic_parent_forum)
         .ok()
@@ -136,6 +186,22 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
         let name = subject.content.clone();
         make_minimal_forum(id, name)
     });
+
+    if shortcut_forum.is_some() {
+        // By default, make the subject semi-bold if it's a shortcut.
+        // If there's an explicit bold, this will be overridden.
+        subject.font_modifiers.push(Subject_FontModifier::SEMIBOLD);
+    }
+    if let Some(font_modifier_bits) =
+        get!(map, "topic_misc").and_then(|raw| parse_topic_misc_font_modifier_bits(&raw))
+    {
+        subject.font_modifiers.extend(
+            FONT_MODIFIER_BITMASKS
+                .into_iter()
+                .filter(|(_, mask)| font_modifier_bits & mask != 0)
+                .map(|(modifier, _)| modifier)
+        );
+    }
 
     let topic = Topic {
         id,
@@ -741,6 +807,9 @@ mod test {
         for t in response.get_topics() {
             if t.has_shortcut_forum() {
                 println!("shortcut: {:#?}", t);
+            }
+            if !t.get_subject().get_font_modifiers().is_empty() {
+                println!("subject font: {:#?}", t);
             }
         }
 
