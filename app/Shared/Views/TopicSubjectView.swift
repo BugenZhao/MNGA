@@ -9,8 +9,26 @@ import Flow
 import Foundation
 import SwiftUI
 
+private struct TopicSubjectDimmedKey: EnvironmentKey {
+  static let defaultValue: Bool = false
+}
+
+extension EnvironmentValues {
+  var topicSubjectDimmed: Bool {
+    get { self[TopicSubjectDimmedKey.self] }
+    set { self[TopicSubjectDimmedKey.self] = newValue }
+  }
+}
+
+extension View {
+  func topicSubjectDimmed(_ dimmed: Bool) -> some View {
+    environment(\.topicSubjectDimmed, dimmed)
+  }
+}
+
 struct TopicSubjectContentInnerView: View {
   @StateObject var prefs = PreferencesStorage.shared
+  @Environment(\.topicSubjectDimmed) private var topicSubjectDimmed
 
   let content: String
   let lineLimit: Int?
@@ -22,20 +40,21 @@ struct TopicSubjectContentInnerView: View {
     self.modifiers = modifiers
   }
 
-  func applyFontModifiers(_ text: Text) -> Text {
+  func applyFontModifiers(_ text: Text, dimmed: Bool) -> Text {
+    let opacity = dimmed ? 0.6 : 1
     var text = text
     for modifier in modifiers {
       switch modifier {
       case .red:
-        text = text.foregroundColor(ContentCombiner.palette["red"])
+        text = text.foregroundColor(ContentCombiner.palette["red"]?.opacity(opacity))
       case .blue:
-        text = text.foregroundColor(ContentCombiner.palette["blue"])
+        text = text.foregroundColor(ContentCombiner.palette["blue"]?.opacity(opacity))
       case .green:
-        text = text.foregroundColor(ContentCombiner.palette["green"])
+        text = text.foregroundColor(ContentCombiner.palette["green"]?.opacity(opacity))
       case .orange:
-        text = text.foregroundColor(ContentCombiner.palette["orange"])
+        text = text.foregroundColor(ContentCombiner.palette["orange"]?.opacity(opacity))
       case .silver:
-        text = text.foregroundColor(ContentCombiner.palette["silver"])
+        text = text.foregroundColor(ContentCombiner.palette["silver"]?.opacity(opacity))
       case .semibold:
         text = text.fontWeight(.semibold)
       case .bold:
@@ -61,7 +80,8 @@ struct TopicSubjectContentInnerView: View {
       } else {
         Text(content)
           .font(.headline.weight(.medium)) // headline is semibold by default
-          .if(prefs.topicListSubjectMulticolor) { applyFontModifiers($0) }
+          .if(prefs.topicListSubjectMulticolor) { applyFontModifiers($0, dimmed: topicSubjectDimmed) }
+          .foregroundColor(topicSubjectDimmed ? .secondary : .primary) // applicable for subjects without color modifiers
       }
     }
     .lineLimit(lineLimit)

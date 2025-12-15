@@ -75,7 +75,7 @@
 "Discard" = "舍弃";
 "Discard the draft?" = "舍弃草稿？";
 "Save the draft by swiping down to dismiss the editor." = "你可以通过下滑关闭编辑器来保存草稿。";
-"Subject" = "主题";
+"Subject" = "标题";
 "Content" = "内容";
 "Comment" = "贴条";
 "Block Contents" = "屏蔽内容";
@@ -104,7 +104,7 @@
 "View Video" = "查看视频";
 "Always Use In-App Safari" = "始终使用内置 Safari";
 "Audio" = "音频";
-"Show Topic Subject" = "显示话题主题";
+"Show Topic Subject" = "显示话题标题";
 "Append" = "追加编辑";
 "New Topic" = "发表话题";
 "View" = "查看";
@@ -304,7 +304,7 @@
 "Resume Reading Progress" = "恢复阅读进度";
 "Refresh Button" = "刷新按钮";
 "Blocked Topics Style" = "屏蔽话题样式";
-"Redact Subject" = "遮盖主题";
+"Redact Subject" = "遮盖标题";
 "Hide Topic" = "隐藏话题";
 "Disabled" = "禁用";
 "Last Read Floor" = "上次阅读楼层";
@@ -323,7 +323,7 @@
 "Top" = "顶部";
 "Bottom" = "底部";
 "Album" = "相册";
-"Multicolor Subject" = "彩色主题";
+"Multicolor Subject" = "彩色标题";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";

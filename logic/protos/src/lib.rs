@@ -1,6 +1,7 @@
 #[allow(clippy::all)]
 #[allow(mismatched_lifetime_syntaxes)]
 #[allow(renamed_and_removed_lints)]
+#[allow(unused_parens)]
 mod generated;
 mod mock;
 mod to_value;
