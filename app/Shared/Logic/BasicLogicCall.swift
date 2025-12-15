@@ -49,6 +49,12 @@ private func extractByteBuffer(_ bb: ByteBuffer) -> (Data?, LogicError?) {
   return (resData, resError)
 }
 
+var binaryDecodingOptions: SwiftProtobuf.BinaryDecodingOptions {
+  var options = SwiftProtobuf.BinaryDecodingOptions()
+  options.messageDepthLimit = 200
+  return options
+}
+
 func initializeLogic() {
   rust_init()
 }
@@ -67,7 +73,7 @@ func logicCall<Response: SwiftProtobuf.Message>(_ requestValue: SyncRequest.OneO
   defer { rust_free(resByteBuffer) }
 
   if let resData {
-    let res = try Response(serializedBytes: resData)
+    let res = try Response(serializedBytes: resData, options: binaryDecodingOptions)
     return res
   } else {
     throw resError!
@@ -129,7 +135,7 @@ func basicLogicCallAsync<Response: SwiftProtobuf.Message>(
     let dataCallback = WrappedDataCallback(
       callback: { (resData: Data) in
         do {
-          let res = try Response(serializedBytes: resData)
+          let res = try Response(serializedBytes: resData, options: binaryDecodingOptions)
           onSuccess(res)
         } catch {
           let e = LogicError(error: "\(type(of: error)): \(error)")
