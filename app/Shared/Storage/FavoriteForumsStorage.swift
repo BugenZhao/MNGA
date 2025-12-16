@@ -16,10 +16,11 @@ protocol FavoriteForumsStorageProtocol {
   mutating func sync() async
   mutating func remove(id: ForumId) async
   mutating func add(forum: Forum) async
+  mutating func move(fromOffsets source: IndexSet, toOffset destination: Int)
 }
 
 struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
-  func sync() async {
+  func sync() {
     if !oldFavoriteForums.isEmpty, favoriteForums.isEmpty {
       favoriteForums = oldFavoriteForums
       oldFavoriteForums.removeAll()
@@ -31,14 +32,18 @@ struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   @AppStorage("favoriteForums") private var oldFavoriteForums = [Forum]()
   @AppStorage(Constants.Key.favoriteForums, store: groupStore) var favoriteForums = [Forum]()
 
-  func remove(id: ForumId) async {
+  func remove(id: ForumId) {
     favoriteForums.removeAll(where: { $0.id == id })
   }
 
-  func add(forum: Forum) async {
+  func add(forum: Forum) {
     if !favoriteForums.contains(where: { $0.id == forum.id }) {
       favoriteForums.append(forum)
     }
+  }
+
+  func move(fromOffsets source: IndexSet, toOffset destination: Int) {
+    favoriteForums.move(fromOffsets: source, toOffset: destination)
   }
 }
 
@@ -48,7 +53,15 @@ struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   mutating func sync() async {
     let response: Result<FavoriteForumListResponse, LogicError> = await logicCallAsync(.favoriteForumList(.init()))
     if case let .success(r) = response {
-      favoriteForums = r.forums
+      // We don't simply overwrite but merge the changes to preserve the local ordering.
+      // 1. Remove forums that are no longer favorite
+      favoriteForums.removeAll { !r.forums.contains($0) }
+      // 2. Add new forums
+      for forum in r.forums {
+        if !favoriteForums.contains(where: { $0.id == forum.id }) {
+          favoriteForums.append(forum)
+        }
+      }
     }
   }
 
@@ -76,6 +89,11 @@ struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
     }
     let _: Result<FavoriteForumModifyResponse, LogicError> = await logicCallAsync(.favoriteForumModify(request))
     await sync()
+  }
+
+  mutating func move(fromOffsets source: IndexSet, toOffset destination: Int) {
+    // Only local move
+    favoriteForums.move(fromOffsets: source, toOffset: destination)
   }
 }
 
@@ -149,5 +167,10 @@ class FavoriteForumsStorage: ObservableObject {
         await inner.remove(id: id)
       }
     }
+  }
+
+  @MainActor
+  func move(fromOffsets source: IndexSet, toOffset destination: Int) {
+    inner.move(fromOffsets: source, toOffset: destination)
   }
 }

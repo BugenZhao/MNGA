@@ -64,9 +64,9 @@ struct ForumListView: View {
         }.onDelete { offsets in
           favorites.remove(atOffsets: offsets)
         }
-        // .onMove { from, to in
-        //   favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
-        // }
+        .onMove { from, to in
+          favorites.move(fromOffsets: from, toOffset: to)
+        }
         // Hack for disordering after `onMove`
         .id(favorites.favoriteForums.hashValue)
       }
