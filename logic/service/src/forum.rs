@@ -9,8 +9,10 @@ use crate::{
 use protos::{
     DataModel::{Category, Forum, ForumId, ForumId_oneof_id},
     Service::{
-        ForumListRequest, ForumListResponse, ForumSearchRequest, ForumSearchResponse,
-        SubforumFilterRequest, SubforumFilterRequest_Operation, SubforumFilterResponse,
+        FavoriteForumListRequest, FavoriteForumListResponse, FavoriteForumModifyRequest,
+        FavoriteForumModifyRequest_Operation, FavoriteForumModifyResponse, ForumListRequest,
+        ForumListResponse, ForumSearchRequest, ForumSearchResponse, SubforumFilterRequest,
+        SubforumFilterRequest_Operation, SubforumFilterResponse,
     },
 };
 use sxd_xpath::nodeset::Node;
@@ -172,6 +174,58 @@ pub async fn search_forum(request: ForumSearchRequest) -> ServiceResult<ForumSea
 
     Ok(ForumSearchResponse {
         forums: forums.into(),
+        ..Default::default()
+    })
+}
+
+pub async fn get_favorite_forum_list(
+    _request: FavoriteForumListRequest,
+) -> ServiceResult<FavoriteForumListResponse> {
+    let package = fetch_package(
+        "nuke.php",
+        vec![("__lib", "forum_favor2"), ("__act", "forum_favor")],
+        vec![("action", "get")],
+    )
+    .await?;
+
+    let forums = extract_nodes(&package, "/root/data/item/item", |ns| {
+        ns.into_iter().filter_map(extract_forum).collect()
+    })?;
+
+    Ok(FavoriteForumListResponse {
+        forums: forums.into(),
+        ..Default::default()
+    })
+}
+
+pub async fn modify_favorite_forum(
+    request: FavoriteForumModifyRequest,
+) -> ServiceResult<FavoriteForumModifyResponse> {
+    use crate::error::ServiceError;
+
+    let action = match request.get_operation() {
+        FavoriteForumModifyRequest_Operation::ADD => "add",
+        FavoriteForumModifyRequest_Operation::DEL => "del",
+    };
+
+    let id = if request.get_id().has_fid() {
+        request.get_id().get_fid().to_owned()
+    } else if request.get_id().has_stid() {
+        request.get_id().get_stid().to_owned()
+    } else {
+        return Err(ServiceError::MissingField(
+            "FavoriteForumModifyRequest.id".to_owned(),
+        ));
+    };
+
+    let _package = fetch_package(
+        "nuke.php",
+        vec![("__lib", "forum_favor2"), ("__act", "forum_favor")],
+        vec![("action", action), ("fid", &id)],
+    )
+    .await?;
+
+    Ok(FavoriteForumModifyResponse {
         ..Default::default()
     })
 }

@@ -31,6 +31,8 @@ mod dispatch_async {
             topic_history(r) => r!(handle_topic_history(r)),
             hot_topic_list(r) => r!(handle_hot_topic_list(r)),
             forum_search(r) => r!(handle_forum_search(r)),
+            favorite_forum_list(r) => r!(handle_favorite_forum_list(r)),
+            favorite_forum_modify(r) => r!(handle_favorite_forum_modify(r)),
             favorite_topic_list(r) => r!(handle_favorite_topic_list(r)),
             favorite_folder_list(r) => r!(handle_favorite_folder_list(r)),
             favorite_folder_create(r) => r!(handle_favorite_folder_create(r)),
