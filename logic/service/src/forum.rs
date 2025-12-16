@@ -298,4 +298,39 @@ mod test {
 
         Ok(())
     }
+
+    #[tokio::test]
+    async fn test_favorite_forum() -> ServiceResult<()> {
+        let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;
+        let favor1 = response.get_forums();
+
+        for id in [make_fid("708".to_owned()), make_stid("16667422".to_owned())] {
+            let _response = modify_favorite_forum(FavoriteForumModifyRequest {
+                id: id.clone().into(),
+                operation: FavoriteForumModifyRequest_Operation::ADD,
+                ..Default::default()
+            })
+            .await?;
+
+            let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;
+            let favor2 = response.get_forums();
+
+            assert_eq!(favor1.len() + 1, favor2.len());
+            assert!(favor2.iter().any(|f| f.id == id.clone().into()));
+
+            let _response = modify_favorite_forum(FavoriteForumModifyRequest {
+                id: id.into(),
+                operation: FavoriteForumModifyRequest_Operation::DEL,
+                ..Default::default()
+            })
+            .await?;
+
+            let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;
+            let favor3 = response.get_forums();
+
+            assert_eq!(favor1, favor3);
+        }
+
+        Ok(())
+    }
 }
