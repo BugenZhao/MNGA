@@ -80,14 +80,20 @@ struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
 }
 
 class FavoriteForumsStorage: ObservableObject {
-  @Published private var inner: any FavoriteForumsStorageProtocol
-  private var synced = false
+  @AppStorage("useRemoteFavoriteForums") var useRemoteFavoriteForums = false
 
-  init() {
-    inner = RemoteFavoriteForumsStorage()
+  @Published private var local: LocalFavoriteForumsStorage = .init()
+  @Published private var remote: RemoteFavoriteForumsStorage = .init()
+
+  private var inner: any FavoriteForumsStorageProtocol {
+    get { useRemoteFavoriteForums ? remote : local }
+    set { useRemoteFavoriteForums ? (remote = newValue as! RemoteFavoriteForumsStorage) : (local = newValue as! LocalFavoriteForumsStorage) }
   }
 
+  private var synced = false
+
   func sync() async {
+    logger.info("syncing favorite forums")
     await inner.sync()
     synced = true
   }

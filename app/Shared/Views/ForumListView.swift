@@ -16,6 +16,7 @@ struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = GlobalSearchModel()
   @StateObject var prefs = PreferencesStorage.shared
+  @StateObject var authStorage = AuthStorage.shared
 
   @State var categories = [Category]()
 
@@ -71,6 +72,8 @@ struct ForumListView: View {
       }
     }
     .task { await favorites.initialSync() }
+    .onChange(of: authStorage.authInfo) { Task { await favorites.sync() } }
+    .onChange(of: favorites.useRemoteFavoriteForums) { Task { await favorites.sync() } }
     .animation(.default, value: favorites.favoriteForums)
   }
 
@@ -116,21 +119,24 @@ struct ForumListView: View {
   @ViewBuilder
   var filterMenu: some View {
     Menu {
-      Section {
-        Button(action: { editMode = .active }) {
-          Label("Edit Favorites", systemImage: "list.star")
-        }
+      Button(action: { editMode = .active }) {
+        Label("Edit Favorites", systemImage: "list.star")
       }
 
-      Section {
-        Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
-          ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-            Label(mode.rawValue.localized, systemImage: mode.icon)
-              .tag(mode)
-          }
-        }
-        .menuActionDismissBehavior(.disabled)
+      Picker(selection: $favorites.useRemoteFavoriteForums.animation()) {
+        Label("Local Favorites", systemImage: "icloud.dashed")
+          .tag(false)
+        Label("Remote Favorites", systemImage: "icloud.fill")
+          .tag(true)
       }
+
+      Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
+        ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
+          Label(mode.rawValue.localized, systemImage: mode.icon)
+            .tag(mode)
+        }
+      }
+      .menuActionDismissBehavior(.disabled)
 
       if favorites.filterMode == .all {
         Section {
