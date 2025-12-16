@@ -61,10 +61,11 @@ struct ForumListView: View {
         ForEach(favorites.favoriteForums, id: \.idDescription) { forum in
           buildFavoriteSectionLink(forum)
         }.onDelete { offsets in
-          favorites.favoriteForums.remove(atOffsets: offsets)
-        }.onMove { from, to in
-          favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
+          favorites.remove(atOffsets: offsets)
         }
+        // .onMove { from, to in
+        //   favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
+        // }
         // Hack for disordering after `onMove`
         .id(favorites.favoriteForums.hashValue)
       }

@@ -139,7 +139,7 @@ struct FavoriteModifier: ViewModifier {
 
   func toggle() {
     withAnimation {
-      favorites.toggleFavorite(forum: forum)
+      favorites.toggle(forum: forum)
     }
   }
 
