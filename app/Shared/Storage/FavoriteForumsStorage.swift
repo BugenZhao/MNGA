@@ -8,7 +8,9 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 protocol FavoriteForumsStorageProtocol {
+  nonisolated init()
   var favoriteForums: [Forum] { get }
 
   mutating func sync() async
@@ -17,14 +19,12 @@ protocol FavoriteForumsStorageProtocol {
 }
 
 struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
-  init() {
+  func sync() async {
     if !oldFavoriteForums.isEmpty, favoriteForums.isEmpty {
       favoriteForums = oldFavoriteForums
       oldFavoriteForums.removeAll()
     }
   }
-
-  func sync() {}
 
   private static let groupStore = UserDefaults(suiteName: Constants.Key.groupStore)!
 
@@ -81,7 +81,7 @@ struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
 
 class FavoriteForumsStorage: ObservableObject {
   @Published private var inner: any FavoriteForumsStorageProtocol
-  @Published var synced = false
+  private var synced = false
 
   init() {
     inner = RemoteFavoriteForumsStorage()
@@ -97,6 +97,7 @@ class FavoriteForumsStorage: ObservableObject {
     await sync()
   }
 
+  @MainActor
   var favoriteForums: [Forum] {
     inner.favoriteForums
   }
@@ -119,12 +120,13 @@ class FavoriteForumsStorage: ObservableObject {
 
   @AppStorage("showAll") var filterMode = FilterMode.all
 
+  @MainActor
   func isFavorite(id: ForumId) -> Bool {
     favoriteForums.contains { $0.id == id }
   }
 
   func toggle(forum: Forum) {
-    Task {
+    Task { @MainActor in
       if isFavorite(id: forum.id) {
         await inner.remove(id: forum.id)
       } else {
@@ -135,8 +137,8 @@ class FavoriteForumsStorage: ObservableObject {
   }
 
   func remove(atOffsets offsets: IndexSet) {
-    let ids = offsets.map { favoriteForums[$0].id }
-    Task {
+    Task { @MainActor in
+      let ids = offsets.map { favoriteForums[$0].id }
       for id in ids {
         await inner.remove(id: id)
       }
