@@ -70,6 +70,8 @@ struct ForumListView: View {
         .id(favorites.favoriteForums.hashValue)
       }
     }
+    .task { await favorites.initialSync() }
+    .animation(.default, value: favorites.favoriteForums)
   }
 
   var filteredCategories: [Category] {
@@ -232,7 +234,7 @@ struct ForumListView: View {
       }
     }
     .searchable(model: searchModel, prompt: "Search".localized)
-    .refreshable { await loadData() }
+    .refreshable { await loadData(); await favorites.sync() }
     .navigationTitle(title)
     .navigationBarTitleDisplayMode(.large)
     .listStyle(.sidebar) // collapsible

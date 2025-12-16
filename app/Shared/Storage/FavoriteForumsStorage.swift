@@ -10,7 +10,8 @@ import SwiftUI
 
 protocol FavoriteForumsStorageProtocol {
   var favoriteForums: [Forum] { get }
-  mutating func initialLoad() async
+
+  mutating func sync() async
   mutating func remove(id: ForumId) async
   mutating func add(forum: Forum) async
 }
@@ -23,7 +24,7 @@ struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
     }
   }
 
-  func initialLoad() async {}
+  func sync() {}
 
   private static let groupStore = UserDefaults(suiteName: Constants.Key.groupStore)!
 
@@ -31,9 +32,7 @@ struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   @AppStorage(Constants.Key.favoriteForums, store: groupStore) var favoriteForums = [Forum]()
 
   func remove(id: ForumId) async {
-    if let index = favoriteForums.firstIndex(where: { $0.id == id }) {
-      favoriteForums.remove(at: index)
-    }
+    favoriteForums.removeAll(where: { $0.id == id })
   }
 
   func add(forum: Forum) async {
@@ -43,11 +42,59 @@ struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   }
 }
 
+struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
+  @AppStorage("remoteFavoriteForums") var favoriteForums = [Forum]()
+
+  mutating func sync() async {
+    let response: Result<FavoriteForumListResponse, LogicError> = await logicCallAsync(.favoriteForumList(.init()))
+    if case let .success(r) = response {
+      favoriteForums = r.forums
+    }
+  }
+
+  mutating func remove(id: ForumId) async {
+    // Local remove first
+    favoriteForums.removeAll(where: { $0.id == id })
+
+    let request = FavoriteForumModifyRequest.with {
+      $0.operation = .del
+      $0.id = id
+    }
+    let _: Result<FavoriteForumModifyResponse, LogicError> = await logicCallAsync(.favoriteForumModify(request))
+    await sync()
+  }
+
+  mutating func add(forum: Forum) async {
+    // Local add first
+    if !favoriteForums.contains(where: { $0.id == forum.id }) {
+      favoriteForums.append(forum)
+    }
+
+    let request = FavoriteForumModifyRequest.with {
+      $0.operation = .add
+      $0.id = forum.id
+    }
+    let _: Result<FavoriteForumModifyResponse, LogicError> = await logicCallAsync(.favoriteForumModify(request))
+    await sync()
+  }
+}
+
 class FavoriteForumsStorage: ObservableObject {
-  @Published var inner: any FavoriteForumsStorageProtocol
+  @Published private var inner: any FavoriteForumsStorageProtocol
+  @Published var synced = false
 
   init() {
-    inner = LocalFavoriteForumsStorage()
+    inner = RemoteFavoriteForumsStorage()
+  }
+
+  func sync() async {
+    await inner.sync()
+    synced = true
+  }
+
+  func initialSync() async {
+    if synced { return }
+    await sync()
   }
 
   var favoriteForums: [Forum] {
