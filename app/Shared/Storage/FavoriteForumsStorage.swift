@@ -102,6 +102,7 @@ class FavoriteForumsStorage: ObservableObject {
 
   @Published private var local: LocalFavoriteForumsStorage = .init()
   @Published private var remote: RemoteFavoriteForumsStorage = .init()
+  @Published var synced = false
 
   private var inner: any FavoriteForumsStorageProtocol {
     get { useRemoteFavoriteForums ? remote : local }
@@ -118,14 +119,14 @@ class FavoriteForumsStorage: ObservableObject {
     }
   }
 
-  private var synced = false
-
+  @MainActor
   func sync() async {
     logger.info("syncing favorite forums")
     await inner.sync()
-    synced = true
+    withAnimation { synced = true }
   }
 
+  @MainActor
   func initialSync() async {
     if synced { return }
     await sync()

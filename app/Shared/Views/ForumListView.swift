@@ -44,7 +44,7 @@ struct ForumListView: View {
   }
 
   var favoritesSection: some View {
-    Section("Favorites", isExpanded: isCategoryExpanded("MNGA-Favorites")) {
+    Section(isExpanded: isCategoryExpanded("MNGA-Favorites")) {
       if favorites.favoriteForums.isEmpty {
         HStack {
           Spacer()
@@ -69,6 +69,15 @@ struct ForumListView: View {
         }
         // Hack for disordering after `onMove`
         .id(favorites.favoriteForums.hashValue)
+      }
+    } header: {
+      HStack(alignment: .center) {
+        Text("Favorites")
+        Spacer()
+        if favorites.useRemoteFavoriteForums {
+          Image(systemName: favorites.synced ? "checkmark.icloud.fill" : "icloud.dashed")
+            .font(.callout)
+        }
       }
     }
     .task { await favorites.initialSync() }
@@ -123,11 +132,8 @@ struct ForumListView: View {
         Label("Edit Favorites", systemImage: "list.star")
       }
 
-      Picker(selection: $favorites.useRemoteFavoriteForums.animation()) {
-        Label("Local Favorites", systemImage: "icloud.dashed")
-          .tag(false)
-        Label("Remote Favorites", systemImage: "icloud.fill")
-          .tag(true)
+      Toggle(isOn: $favorites.useRemoteFavoriteForums.animation()) {
+        Label("Sync Favorites", systemImage: favorites.useRemoteFavoriteForums ? "icloud" : "icloud.slash")
       }
 
       Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
