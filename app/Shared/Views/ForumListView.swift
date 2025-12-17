@@ -16,6 +16,7 @@ struct ForumListView: View {
   @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = GlobalSearchModel()
   @StateObject var prefs = PreferencesStorage.shared
+  @StateObject var authStorage = AuthStorage.shared
 
   @State var categories = [Category]()
 
@@ -43,7 +44,7 @@ struct ForumListView: View {
   }
 
   var favoritesSection: some View {
-    Section("Favorites", isExpanded: isCategoryExpanded("MNGA-Favorites")) {
+    Section(isExpanded: isCategoryExpanded("MNGA-Favorites")) {
       if favorites.favoriteForums.isEmpty {
         HStack {
           Spacer()
@@ -61,14 +62,27 @@ struct ForumListView: View {
         ForEach(favorites.favoriteForums, id: \.idDescription) { forum in
           buildFavoriteSectionLink(forum)
         }.onDelete { offsets in
-          favorites.favoriteForums.remove(atOffsets: offsets)
-        }.onMove { from, to in
-          favorites.favoriteForums.move(fromOffsets: from, toOffset: to)
+          favorites.remove(atOffsets: offsets)
+        }
+        .onMove { from, to in
+          favorites.move(fromOffsets: from, toOffset: to)
         }
         // Hack for disordering after `onMove`
         .id(favorites.favoriteForums.hashValue)
       }
+    } header: {
+      HStack(alignment: .center) {
+        Text("Favorites")
+        Spacer()
+        if favorites.useRemoteFavoriteForums {
+          Image(systemName: favorites.synced ? "checkmark.icloud.fill" : "icloud.dashed")
+            .font(.callout)
+        }
+      }
     }
+    .task { await favorites.initialSync() }
+    .onChange(of: authStorage.authInfo) { Task { await favorites.sync() } }
+    .animation(.default, value: favorites.favoriteForums)
   }
 
   var filteredCategories: [Category] {
@@ -113,21 +127,21 @@ struct ForumListView: View {
   @ViewBuilder
   var filterMenu: some View {
     Menu {
-      Section {
-        Button(action: { editMode = .active }) {
-          Label("Edit Favorites", systemImage: "list.star")
-        }
+      Button(action: { editMode = .active }) {
+        Label("Edit Favorites", systemImage: "list.star")
       }
 
-      Section {
-        Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
-          ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
-            Label(mode.rawValue.localized, systemImage: mode.icon)
-              .tag(mode)
-          }
-        }
-        .menuActionDismissBehavior(.disabled)
+      Toggle(isOn: $favorites.useRemoteFavoriteForums.animation()) {
+        Label("Sync Favorites", systemImage: favorites.useRemoteFavoriteForums ? "icloud" : "icloud.slash")
       }
+
+      Picker(selection: $favorites.filterMode.animation(), label: Text("Filters")) {
+        ForEach(FavoriteForumsStorage.FilterMode.allCases, id: \.rawValue) { mode in
+          Label(mode.rawValue.localized, systemImage: mode.icon)
+            .tag(mode)
+        }
+      }
+      .menuActionDismissBehavior(.disabled)
 
       if favorites.filterMode == .all {
         Section {
@@ -231,7 +245,7 @@ struct ForumListView: View {
       }
     }
     .searchable(model: searchModel, prompt: "Search".localized)
-    .refreshable { await loadData() }
+    .refreshable { await loadData(); await favorites.sync() }
     .navigationTitle(title)
     .navigationBarTitleDisplayMode(.large)
     .listStyle(.sidebar) // collapsible

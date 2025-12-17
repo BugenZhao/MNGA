@@ -122,6 +122,10 @@ message AsyncRequest {
     FavoriteFolderCreateRequest favorite_folder_create = 26;
     // Update the signature of the current user.
     UserSignatureUpdateRequest user_signature_update = 27;
+    // Get favorite forums (forum_favor2).
+    FavoriteForumListRequest favorite_forum_list = 28;
+    // Add or remove a favorite forum (forum_favor2).
+    FavoriteForumModifyRequest favorite_forum_modify = 29;
   }
 }
 
@@ -229,6 +233,19 @@ message HotTopicListResponse {
 
 message ForumSearchRequest { string key = 1; }
 message ForumSearchResponse { repeated Forum forums = 1; }
+
+message FavoriteForumListRequest {}
+message FavoriteForumListResponse { repeated Forum forums = 1; }
+
+message FavoriteForumModifyRequest {
+  enum Operation {
+    ADD = 0;
+    DEL = 1;
+  }
+  Operation operation = 1;
+  ForumId id = 2;
+}
+message FavoriteForumModifyResponse {}
 
 message FavoriteTopicListRequest {
   uint32 page = 1;

@@ -2,7 +2,10 @@ use crate::{
     cache::manipulate_cache,
     clock_in::clock_in,
     error::ServiceResult,
-    forum::{get_forum_list, search_forum, set_subforum_filter},
+    forum::{
+        get_favorite_forum_list, get_forum_list, modify_favorite_forum, search_forum,
+        set_subforum_filter,
+    },
     history::get_topic_history,
     msg::{get_short_msg_details, get_short_msg_list, post_short_msg},
     noti::fetch_notis,
@@ -38,6 +41,8 @@ handle!(post_vote, post_vote);
 handle!(topic_history, get_topic_history);
 handle!(hot_topic_list, get_hot_topic_list);
 handle!(forum_search, search_forum);
+handle!(favorite_forum_list, get_favorite_forum_list);
+handle!(favorite_forum_modify, modify_favorite_forum);
 handle!(favorite_topic_list, get_favorite_topic_list);
 handle!(favorite_folder_list, get_favorite_folder_list);
 handle!(favorite_folder_create, create_favorite_folder);

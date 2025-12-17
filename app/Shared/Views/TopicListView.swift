@@ -199,7 +199,7 @@ struct TopicListView: View {
       ShareLinksView(navigationID: navID, others: {})
 
       Section {
-        Button(action: { favoriteForums.toggleFavorite(forum: forum) }) {
+        Button(action: { favoriteForums.toggle(forum: forum) }) {
           Label(
             isFavorite ? "Remove from Favorites" : "Mark as Favorite",
             systemImage: isFavorite ? "star.slash.fill" : "star"

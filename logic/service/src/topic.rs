@@ -199,7 +199,7 @@ pub fn extract_topic(node: Node) -> Option<Topic> {
             FONT_MODIFIER_BITMASKS
                 .into_iter()
                 .filter(|(_, mask)| font_modifier_bits & mask != 0)
-                .map(|(modifier, _)| modifier)
+                .map(|(modifier, _)| modifier),
         );
     }
 

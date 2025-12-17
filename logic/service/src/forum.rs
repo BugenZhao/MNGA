@@ -9,8 +9,10 @@ use crate::{
 use protos::{
     DataModel::{Category, Forum, ForumId, ForumId_oneof_id},
     Service::{
-        ForumListRequest, ForumListResponse, ForumSearchRequest, ForumSearchResponse,
-        SubforumFilterRequest, SubforumFilterRequest_Operation, SubforumFilterResponse,
+        FavoriteForumListRequest, FavoriteForumListResponse, FavoriteForumModifyRequest,
+        FavoriteForumModifyRequest_Operation, FavoriteForumModifyResponse, ForumListRequest,
+        ForumListResponse, ForumSearchRequest, ForumSearchResponse, SubforumFilterRequest,
+        SubforumFilterRequest_Operation, SubforumFilterResponse,
     },
 };
 use sxd_xpath::nodeset::Node;
@@ -176,6 +178,58 @@ pub async fn search_forum(request: ForumSearchRequest) -> ServiceResult<ForumSea
     })
 }
 
+pub async fn get_favorite_forum_list(
+    _request: FavoriteForumListRequest,
+) -> ServiceResult<FavoriteForumListResponse> {
+    let package = fetch_package(
+        "nuke.php",
+        vec![("__lib", "forum_favor2"), ("__act", "forum_favor")],
+        vec![("action", "get")],
+    )
+    .await?;
+
+    let forums = extract_nodes(&package, "/root/data/item/item", |ns| {
+        ns.into_iter().filter_map(extract_forum).collect()
+    })?;
+
+    Ok(FavoriteForumListResponse {
+        forums: forums.into(),
+        ..Default::default()
+    })
+}
+
+pub async fn modify_favorite_forum(
+    request: FavoriteForumModifyRequest,
+) -> ServiceResult<FavoriteForumModifyResponse> {
+    use crate::error::ServiceError;
+
+    let action = match request.get_operation() {
+        FavoriteForumModifyRequest_Operation::ADD => "add",
+        FavoriteForumModifyRequest_Operation::DEL => "del",
+    };
+
+    let id = if request.get_id().has_fid() {
+        request.get_id().get_fid().to_owned()
+    } else if request.get_id().has_stid() {
+        request.get_id().get_stid().to_owned()
+    } else {
+        return Err(ServiceError::MissingField(
+            "FavoriteForumModifyRequest.id".to_owned(),
+        ));
+    };
+
+    let _package = fetch_package(
+        "nuke.php",
+        vec![("__lib", "forum_favor2"), ("__act", "forum_favor")],
+        vec![("action", action), ("fid", &id)],
+    )
+    .await?;
+
+    Ok(FavoriteForumModifyResponse {
+        ..Default::default()
+    })
+}
+
 #[cfg(test)]
 mod test {
     use crate::fetch::with_fetch_check;
@@ -241,6 +295,41 @@ mod test {
         println!("response: {:?}", response);
 
         assert!(response.get_forums().is_empty());
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_favorite_forum() -> ServiceResult<()> {
+        let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;
+        let favor1 = response.get_forums();
+
+        for id in [make_fid("708".to_owned()), make_stid("16667422".to_owned())] {
+            let _response = modify_favorite_forum(FavoriteForumModifyRequest {
+                id: id.clone().into(),
+                operation: FavoriteForumModifyRequest_Operation::ADD,
+                ..Default::default()
+            })
+            .await?;
+
+            let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;
+            let favor2 = response.get_forums();
+
+            assert_eq!(favor1.len() + 1, favor2.len());
+            assert!(favor2.iter().any(|f| f.id == id.clone().into()));
+
+            let _response = modify_favorite_forum(FavoriteForumModifyRequest {
+                id: id.into(),
+                operation: FavoriteForumModifyRequest_Operation::DEL,
+                ..Default::default()
+            })
+            .await?;
+
+            let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;
+            let favor3 = response.get_forums();
+
+            assert_eq!(favor1, favor3);
+        }
 
         Ok(())
     }
