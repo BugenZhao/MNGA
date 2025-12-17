@@ -82,7 +82,6 @@ struct ForumListView: View {
     }
     .task { await favorites.initialSync() }
     .onChange(of: authStorage.authInfo) { Task { await favorites.sync() } }
-    .onChange(of: favorites.useRemoteFavoriteForums) { Task { await favorites.sync() } }
     .animation(.default, value: favorites.favoriteForums)
   }
 

@@ -21,15 +21,15 @@ protocol FavoriteForumsStorageProtocol {
 
 final class LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   func sync() {
-    if !oldFavoriteForums.isEmpty, favoriteForums.isEmpty {
-      favoriteForums = oldFavoriteForums
-      oldFavoriteForums.removeAll()
-    }
+    // if !oldFavoriteForums.isEmpty, favoriteForums.isEmpty {
+    //   favoriteForums = oldFavoriteForums
+    //   oldFavoriteForums.removeAll()
+    // }
   }
 
   private static let groupStore = UserDefaults(suiteName: Constants.Key.groupStore)!
 
-  @AppStorage("favoriteForums") private var oldFavoriteForums = [Forum]()
+  // @AppStorage("favoriteForums") private var oldFavoriteForums = [Forum]()
   @AppStorage(Constants.Key.favoriteForums, store: groupStore) var favoriteForums = [Forum]()
 
   func remove(id: ForumId) {
@@ -98,7 +98,15 @@ final class RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
 }
 
 class FavoriteForumsStorage: ObservableObject {
-  @AppStorage("useRemoteFavoriteForums") var useRemoteFavoriteForums = false
+  @AppStorage("useRemoteFavoriteForums") var useRemoteFavoriteForums = false {
+    didSet {
+      synced = false
+      syncTaskAfterSwitch?.cancel()
+      syncTaskAfterSwitch = Task { await sync() }
+    }
+  }
+
+  private var syncTaskAfterSwitch: Task<Void, Never>?
 
   @Published private var local: LocalFavoriteForumsStorage = .init()
   @Published private var remote: RemoteFavoriteForumsStorage = .init()
@@ -121,6 +129,7 @@ class FavoriteForumsStorage: ObservableObject {
 
   @MainActor
   func sync() async {
+    withAnimation { synced = false }
     logger.info("syncing favorite forums")
     await inner.sync()
     withAnimation { synced = true }
