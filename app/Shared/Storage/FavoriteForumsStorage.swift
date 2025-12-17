@@ -19,7 +19,7 @@ protocol FavoriteForumsStorageProtocol {
   mutating func move(fromOffsets source: IndexSet, toOffset destination: Int)
 }
 
-struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
+final class LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   func sync() {
     if !oldFavoriteForums.isEmpty, favoriteForums.isEmpty {
       favoriteForums = oldFavoriteForums
@@ -47,10 +47,10 @@ struct LocalFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   }
 }
 
-struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
+final class RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   @AppStorage("remoteFavoriteForums") var favoriteForums = [Forum]()
 
-  mutating func sync() async {
+  func sync() async {
     let response: Result<FavoriteForumListResponse, LogicError> = await logicCallAsync(.favoriteForumList(.init()))
     if case let .success(r) = response {
       // We don't simply overwrite but merge the changes to preserve the local ordering.
@@ -65,7 +65,7 @@ struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
     }
   }
 
-  mutating func remove(id: ForumId) async {
+  func remove(id: ForumId) async {
     // Local remove first
     favoriteForums.removeAll(where: { $0.id == id })
 
@@ -77,7 +77,7 @@ struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
     await sync()
   }
 
-  mutating func add(forum: Forum) async {
+  func add(forum: Forum) async {
     // Local add first
     if !favoriteForums.contains(where: { $0.id == forum.id }) {
       favoriteForums.append(forum)
@@ -91,7 +91,7 @@ struct RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
     await sync()
   }
 
-  mutating func move(fromOffsets source: IndexSet, toOffset destination: Int) {
+  func move(fromOffsets source: IndexSet, toOffset destination: Int) {
     // Only local move
     favoriteForums.move(fromOffsets: source, toOffset: destination)
   }
@@ -105,7 +105,17 @@ class FavoriteForumsStorage: ObservableObject {
 
   private var inner: any FavoriteForumsStorageProtocol {
     get { useRemoteFavoriteForums ? remote : local }
-    set { useRemoteFavoriteForums ? (remote = newValue as! RemoteFavoriteForumsStorage) : (local = newValue as! LocalFavoriteForumsStorage) }
+    set {
+      if useRemoteFavoriteForums {
+        if let newRemote = newValue as? RemoteFavoriteForumsStorage {
+          remote = newRemote
+        }
+      } else {
+        if let newLocal = newValue as? LocalFavoriteForumsStorage {
+          local = newLocal
+        }
+      }
+    }
   }
 
   private var synced = false
