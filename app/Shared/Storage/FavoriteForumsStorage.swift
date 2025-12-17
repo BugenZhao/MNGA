@@ -55,7 +55,7 @@ final class RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
     if case let .success(r) = response {
       // We don't simply overwrite but merge the changes to preserve the local ordering.
       // 1. Remove forums that are no longer favorite
-      favoriteForums.removeAll { !r.forums.contains($0) }
+      favoriteForums.removeAll { !r.forums.map(\.id).contains($0.id) }
       // 2. Add new forums
       for forum in r.forums {
         if !favoriteForums.contains(where: { $0.id == forum.id }) {
@@ -92,7 +92,7 @@ final class RemoteFavoriteForumsStorage: FavoriteForumsStorageProtocol {
   }
 
   func move(fromOffsets source: IndexSet, toOffset destination: Int) {
-    // Only local move
+    // Only local move because remote doesn't support ordering
     favoriteForums.move(fromOffsets: source, toOffset: destination)
   }
 }
