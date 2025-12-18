@@ -40,17 +40,12 @@ struct TopicSearchItemsView: View {
   @ObservedObject var dataSource: TopicSearchModel.DataSource
 
   var body: some View {
-    if dataSource.notLoaded {
-      LoadingRowView()
-        .onAppear { dataSource.initialLoad() }
-    } else {
-      SafeForEach($dataSource.items, id: \.id) { topic in
-        CrossStackNavigationLinkHack(id: topic.w.id, destination: {
-          TopicDetailsView.build(topicBinding: topic)
-        }) {
-          TopicRowView(topic: topic.w)
-        }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
-      }
+    SafeForEach($dataSource.items, id: \.id) { topic in
+      CrossStackNavigationLinkHack(id: topic.w.id, destination: {
+        TopicDetailsView.build(topicBinding: topic)
+      }) {
+        TopicRowView(topic: topic.w)
+      }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
     }
   }
 }
@@ -62,6 +57,8 @@ struct TopicSearchView: View {
     if dataSource.notLoaded {
       ProgressView()
         .onAppear { dataSource.initialLoad() }
+    } else if dataSource.items.isEmpty {
+      ContentUnavailableView("No Results", systemImage: "magnifyingglass")
     } else {
       List {
         Section(header: Text("Search Results")) {

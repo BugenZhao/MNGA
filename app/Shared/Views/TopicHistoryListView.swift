@@ -46,6 +46,11 @@ struct TopicHistoryListView: View {
       if dataSource.notLoaded {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
+      } else if dataSource.items.isEmpty {
+        ContentUnavailableView("No History", systemImage: "clock")
+      } else if let text = search.commitedText,
+                !dataSource.items.contains(where: { $0.topicSnapshot.subject.full.contains(text) }) {
+        ContentUnavailableView("No Results", systemImage: "magnifyingglass")
       } else {
         List {
           SafeForEach(
