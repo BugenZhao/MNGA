@@ -141,6 +141,7 @@
 "Copy" = "拷贝";
 "Open in Browser" = "在浏览器中打开";
 "Short Messages" = "短消息";
+"No Short Messages" = "没有短消息";
 "Short Message" = "短消息";
 "%lld new unread notifications" = "%lld 个新的未读通知";
 "Replies Chain" = "回复链";

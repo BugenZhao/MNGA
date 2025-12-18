@@ -49,6 +49,8 @@ struct ShortMessageListView: View {
       if dataSource.notLoaded {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
+      } else if dataSource.items.isEmpty {
+        ContentUnavailableView("No Short Messages", systemImage: "envelope")
       } else {
         List {
           ForEach(dataSource.items, id: \.id) { message in
