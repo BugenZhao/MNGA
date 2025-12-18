@@ -19,7 +19,6 @@ struct UserMenuView: View {
   @EnvironmentObject var model: CurrentUserModel
 
   @State var showAboutViewAsModal: Bool = false
-  @State var showingFollowedActivity: Bool = false
 
   var user: User? {
     model.user
@@ -46,13 +45,6 @@ struct UserMenuView: View {
   var notificationButton: some View {
     Button(action: { notification.showingFromUserMenu = true }) {
       Label("Notifications", systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
-    }
-  }
-
-  @ViewBuilder
-  var followedActivityButton: some View {
-    Button(action: { showingFollowedActivity = true }) {
-      Label("Followed Activity", systemImage: "sparkles")
     }
   }
 
@@ -101,7 +93,6 @@ struct UserMenuView: View {
       if let _ = user {
         Section {
           notificationButton
-          followedActivityButton
           PlusCheckNavigationLink(destination: ShortMessageListView.build(), feature: .shortMessage) {
             Label("Short Messages", systemImage: "message")
           }
@@ -114,6 +105,9 @@ struct UserMenuView: View {
           }
           NavigationLink(destination: FavoriteTopicListView()) {
             Label("Favorite Topics", systemImage: "bookmark")
+          }
+          PlusCheckNavigationLink(destination: FollowedActivityListView.build(), feature: .followedActivity) {
+            Label("Followed Activity", systemImage: "sparkles")
           }
         }
         PlusCheckNavigationLink(destination: TopicHistoryListView.build(), feature: .topicHistory) {
@@ -148,7 +142,6 @@ struct UserMenuView: View {
       .sheet(isPresented: $showAboutViewAsModal) { AboutNavigationView() }
       .popoverTip(tip)
       .navigationDestination(isPresented: $notification.showingFromUserMenu) { NotificationListView() }
-      .navigationDestination(isPresented: $showingFollowedActivity) { FollowedActivityListView.build() }
   }
 
   func signOut() {

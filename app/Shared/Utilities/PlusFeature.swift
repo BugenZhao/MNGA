@@ -10,6 +10,7 @@ enum PlusFeature: CaseIterable {
   case customAppearance
   case multiAccount
   case topicHistory
+  case followedActivity
   case multiFavorite
   case authorOnly
   case jump
@@ -32,6 +33,8 @@ enum PlusFeature: CaseIterable {
       "Short Messages"
     case .topicHistory:
       "History"
+    case .followedActivity:
+      "Followed Activity"
     case .authorOnly:
       "Author Only"
     case .jump:
@@ -61,6 +64,8 @@ enum PlusFeature: CaseIterable {
       "Send and receive short messages with other users."
     case .topicHistory:
       "View your footprint of topics you have explored."
+    case .followedActivity:
+      "View activity from the users you follow."
     case .authorOnly:
       "Check posts and replies from a specific author in a topic."
     case .jump:
@@ -90,6 +95,8 @@ enum PlusFeature: CaseIterable {
       "message"
     case .topicHistory:
       "clock"
+    case .followedActivity:
+      "sparkles"
     case .authorOnly:
       "person.fill"
     case .jump:
