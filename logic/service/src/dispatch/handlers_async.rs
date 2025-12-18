@@ -1,4 +1,5 @@
 use crate::{
+    activity::get_activity_list,
     cache::manipulate_cache,
     clock_in::clock_in,
     error::ServiceResult,
@@ -61,3 +62,4 @@ handle!(topic_search, search_topic);
 handle!(clock_in, clock_in);
 handle!(cache, manipulate_cache);
 handle!(user_signature_update, update_signature);
+handle!(activity_list, get_activity_list);

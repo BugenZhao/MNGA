@@ -262,6 +262,23 @@ message Notification {
   bool read = 8;   // Whether this notification has been read.
 }
 
+message Activity {
+  enum Type {
+    UNKNOWN = 0;
+    POST_TOPIC = 1; // Followed user posted a topic.
+    POST_REPLY = 2; // Followed user posted a reply.
+    FAVOR = 3;      // Followed user favored a topic or reply.
+  }
+
+  string id = 1; // Activity id.
+  Type type = 2;
+  User actor = 3;
+  Topic topic = 4;
+  PostId post_id = 5; // pid=0 indicates topic.
+  uint64 timestamp = 7;
+  string summary = 8; // UBB-like summary from the server.
+}
+
 message BlockWord { string word = 1; }
 
 // Attachments that have been already uploaded, but not posted yet.
