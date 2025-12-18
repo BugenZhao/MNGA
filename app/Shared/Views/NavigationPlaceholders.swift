@@ -10,12 +10,12 @@ import SwiftUI
 
 struct TopicListPlaceholderView: View {
   var body: some View {
-    PlaceholderView(icon: "list.bullet.rectangle", title: "Select a Forum in Sidebar")
+    ContentUnavailableView("Select a Forum in Sidebar", systemImage: "list.bullet.rectangle")
   }
 }
 
 struct TopicDetailsPlaceholderView: View {
   var body: some View {
-    PlaceholderView(icon: "doc.richtext", title: "Select a Topic")
+    ContentUnavailableView("Select a Topic", systemImage: "doc.richtext")
   }
 }
