@@ -43,7 +43,7 @@ struct FollowedActivityListView: View {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
       } else if dataSource.items.isEmpty {
-        ContentUnavailableView("Empty", systemImage: "tray")
+        ContentUnavailableView("No Activity", systemImage: "dot.radiowaves.left.and.right")
       } else {
         List {
           ForEach(dataSource.items, id: \.id) { activity in

@@ -64,6 +64,7 @@
 "Notifications" = "通知";
 "Notifications (%lld)" = "通知 (%lld)";
 "Followed Activity" = "关注动态";
+"No Activity" = "没有动态";
 "View activity from the users you follow." = "查看你关注的用户的动态。";
 "%lld Unread" = "%lld个未读";
 "All Read" = "全部已读";

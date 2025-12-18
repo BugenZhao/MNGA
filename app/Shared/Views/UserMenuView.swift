@@ -107,7 +107,7 @@ struct UserMenuView: View {
             Label("Favorite Topics", systemImage: "bookmark")
           }
           PlusCheckNavigationLink(destination: FollowedActivityListView.build(), feature: .followedActivity) {
-            Label("Followed Activity", systemImage: "sparkles")
+            Label("Followed Activity", systemImage: "dot.radiowaves.left.and.right")
           }
         }
         PlusCheckNavigationLink(destination: TopicHistoryListView.build(), feature: .topicHistory) {
