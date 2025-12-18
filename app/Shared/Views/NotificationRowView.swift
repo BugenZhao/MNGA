@@ -21,7 +21,9 @@ struct NotificationRowView: View {
         default:
           TopicSubjectView(topic: noti.asTopic, showIndicators: false)
         }
-      }.foregroundColor(noti.read ? .secondary : .primary)
+      }
+      .topicSubjectDimmed(noti.read)
+      .foregroundColor(noti.read ? .secondary : .primary)
 
       HStack {
         HStack(alignment: .center) {
