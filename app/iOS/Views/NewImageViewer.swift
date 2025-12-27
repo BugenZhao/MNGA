@@ -68,6 +68,8 @@ struct NewImageViewer: View {
     if model.urls.count > 1 {
       HStack(alignment: .bottom, spacing: 4) {
         Text("\(model.currentIndex + 1)")
+          .contentTransition(.numericText(value: Double(model.currentIndex)))
+          .animation(.default, value: model.currentIndex)
         Text("/ \(model.urls.count)")
           .foregroundColor(.secondary)
           .font(.footnote)
