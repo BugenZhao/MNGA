@@ -24,7 +24,7 @@ class AttachmentsModel: ObservableObject {
 
   var allImageURLs: [URL] {
     items
-      .filter { $0.isImage }
+      .filter(\.isImage)
       .compactMap { URL(string: $0.url, relativeTo: URLs.attachmentBase) }
   }
 }

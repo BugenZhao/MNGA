@@ -18,7 +18,7 @@ struct ViewingImageView: View {
   var body: some View {
     WebImage(url: url).resizable()
       .onSuccess { image, _, _ in
-        let forceFile = self.prefs.alwaysShareImageAsFile
+        let forceFile = prefs.alwaysShareImageAsFile
         DispatchQueue.global(qos: .userInitiated).async {
           // In case the constructor is heavy, let's do it in a background thread.
           let transferable = TransferableImage(url: url, image: image, forceFile: forceFile)
