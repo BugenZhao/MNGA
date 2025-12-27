@@ -170,6 +170,34 @@ extension Notification.TypeEnum {
   }
 }
 
+extension Activity.TypeEnum {
+  var icon: String {
+    switch self {
+    case .postTopic:
+      "square.and.pencil"
+    case .postReply:
+      "arrowshape.turn.up.left"
+    case .favor:
+      "bookmark"
+    case .unknown, .UNRECOGNIZED:
+      ""
+    }
+  }
+
+  var description: LocalizedStringKey {
+    switch self {
+    case .postTopic:
+      "posted a topic"
+    case .postReply:
+      "posted a reply"
+    case .favor:
+      "favorited"
+    case .unknown, .UNRECOGNIZED:
+      ""
+    }
+  }
+}
+
 extension Post {
   var idWithAlterInfo: String {
     id.debugDescription + alterInfo
@@ -256,6 +284,10 @@ extension UserName {
 }
 
 extension Topic {
+  var read: Bool {
+    hasRepliesNumLastVisit
+  }
+
   var authorNameDisplay: String {
     let new = authorName.display
 
