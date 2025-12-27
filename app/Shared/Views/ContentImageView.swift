@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SDWebImage
 import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
@@ -59,6 +60,8 @@ struct ContentImageView: View {
   }
 
   @State var frameWidth: CGFloat? = nil
+  @State private var shouldRevealLoadedImage = false
+  @State private var revealTask: Task<Void, Never>?
 
   var body: some View {
     if isOpenSourceStickers {
@@ -76,12 +79,21 @@ struct ContentImageView: View {
               .scaledToFit()
               .frame(maxWidth: image.size.width * prefs.postRowImageScale.scale)
           } else {
-            WebImage(url: url).resizable()
-              .onSuccess { image, _, _ in frameWidth = image.size.width * prefs.postRowImageScale.scale }
-              .onFailure { logger.error("sdwebimage failed to load image: \(url), error: \($0)") }
-              .indicator(.activity)
-              .scaledToFit()
-              .frame(maxWidth: frameWidth)
+            WebImage(url: url) { phase in
+              if shouldRevealLoadedImage, let image = phase.image {
+                image.resizable()
+              } else {
+                ProgressView()
+              }
+            }
+            .onSuccess { image, _, cacheType in
+              frameWidth = image.size.width * prefs.postRowImageScale.scale
+              scheduleReveal(cacheType: cacheType)
+            }
+            .onFailure { logger.error("sdwebimage failed to load image: \(url), error: \($0)") }
+            .scaledToFit()
+            .frame(maxWidth: frameWidth)
+            .onDisappear { revealTask?.cancel() }
           }
         }
         // When switching to background, system will automatically trigger changes to colorScheme.
@@ -90,6 +102,21 @@ struct ContentImageView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onTapGesture(perform: showImage)
       }
+    }
+  }
+
+  private func scheduleReveal(cacheType: SDImageCacheType) {
+    revealTask?.cancel()
+
+    if cacheType == .memory {
+      shouldRevealLoadedImage = true
+      return
+    }
+
+    revealTask = Task { @MainActor in
+      try? await Task.sleep(for: .seconds(0.3))
+      if Task.isCancelled { return }
+      shouldRevealLoadedImage = true
     }
   }
 

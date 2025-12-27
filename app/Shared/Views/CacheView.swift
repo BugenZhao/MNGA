@@ -85,6 +85,7 @@ struct CacheView: View {
   }
 
   func clearImageCache() {
+    SDImageCache.shared.clearMemory()
     SDImageCache.shared.clearDisk {
       loadImageCacheSize()
       #if os(iOS)
