@@ -40,12 +40,6 @@ struct AttachmentsView: View {
     .navigationTitleInline(key: "Attachments")
   }
 
-  var allImageURLs: [URL] {
-    model.items
-      .filter { $0.isImage }
-      .compactMap { URL(string: $0.url, relativeTo: URLs.attachmentBase) }
-  }
-
   func show(_ attachment: Attachment) {
     let url = URL(string: attachment.url, relativeTo: URLs.attachmentBase)
     guard let url else { return }
@@ -53,7 +47,7 @@ struct AttachmentsView: View {
     if attachment.isImage {
       isPresented = false // dismiss sheet first, otherwise the background will be black
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // workaround image viewer background
-        image?.show(urls: allImageURLs, current: url)
+        image?.show(urls: model.allImageURLs, current: url)
       }
     } else {
       OpenURLModel.shared.open(url: url, inApp: true)
