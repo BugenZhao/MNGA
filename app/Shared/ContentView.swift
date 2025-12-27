@@ -23,6 +23,7 @@ struct ContentView: View {
   @StateObject var textSelection = TextSelectionModel()
   @StateObject var schemes = SchemesModel()
   @StateObject var paywall = PaywallModel.shared
+  @StateObject var columnVisibility = ColumnVisibility()
 
   @Environment(\.scenePhase) var scenePhase
 
@@ -49,7 +50,7 @@ struct ContentView: View {
     // - `.navigationDestination` will always push to the current column. Haven't
     //   found a way to override this behavior.
     if useColumnStyle {
-      NavigationSplitView {
+      NavigationSplitView(columnVisibility: $columnVisibility.value) {
         // Forum search may be pushed to this stack.
         NavigationStack {
           main
@@ -103,6 +104,7 @@ struct ContentView: View {
       .environmentObject(currentUser)
       .environmentObject(textSelection)
       .environmentObject(paywall)
+      .environmentObject(columnVisibility)
   }
 }
 
