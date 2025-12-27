@@ -135,9 +135,11 @@ struct PostRowView: View {
       }.buttonStyle(.plain)
 
       let font = Font.subheadline.monospacedDigit()
-      Text("\(max(Int32(post.score) + vote.delta, 0))")
+      let score = max(Int32(post.score) + vote.delta, 0)
+      Text("\(score)")
         .foregroundColor(vote.state == .up ? .accentColor : .secondary)
         .font(vote.state == .up ? font.bold() : font)
+        .contentTransition(.numericText(value: Double(score)))
 
       Button(action: { doVote(.downvote) }) {
         Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")

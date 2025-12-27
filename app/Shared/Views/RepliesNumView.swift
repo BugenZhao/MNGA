@@ -37,7 +37,9 @@ struct RepliesNumView: View {
     if let lastNum, num > lastNum {
       text = text + Text("(+\(num - lastNum))").font(.footnote)
     }
-    return text.foregroundColor(color)
+    return text
+      .foregroundColor(color)
+      .contentTransition(.numericText())
   }
 
   var body: some View {
