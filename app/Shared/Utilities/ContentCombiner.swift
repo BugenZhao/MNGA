@@ -266,6 +266,7 @@ class ContentCombiner {
         ForEach(results.indices, id: \.self) { index in
           results[index]
             .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
 
       switch tableContext {
