@@ -120,7 +120,6 @@ class ViewingImageModel: ObservableObject {
   private let prefs = PreferencesStorage.shared
 
   @Published var urls: [URL] = []
-  @Published var transferables: [TransferableImage?] = []
   @Published var currentIndex = 0
   @Published var showing = false
 
@@ -131,7 +130,6 @@ class ViewingImageModel: ObservableObject {
   func show(urls: [URL], current: URL) {
     if urls.isEmpty { return }
     self.urls = urls
-    transferables = urls.map { _ in nil }
     currentIndex = urls.firstIndex(of: current) ?? 0
     withAnimation { showing = true }
   }
