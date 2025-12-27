@@ -614,10 +614,13 @@ struct TopicDetailsView: View {
     }
   }
 
+  @State var jumpSelectorMode = TopicJumpSelectorView.Mode.floor
+
   @ViewBuilder
   var jumpSelector: some View {
     TopicJumpSelectorView(
       maxFloor: maxFloor,
+      mode: $jumpSelectorMode,
       initialFloor: currentViewingFloor.currentLowest ?? 0,
       floorToJump: $floorToJump,
       pageToJump: $dataSource.loadFromPage
