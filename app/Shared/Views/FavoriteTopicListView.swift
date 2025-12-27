@@ -96,6 +96,8 @@ struct FavoriteTopicListInnerView: View {
       if dataSource.notLoaded {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
+      } else if dataSource.items.isEmpty {
+        ContentUnavailableView("No Favorites", systemImage: "bookmark")
       } else {
         List {
           SafeForEach($dataSource.items, id: \.id) { topic in

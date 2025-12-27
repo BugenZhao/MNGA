@@ -155,8 +155,10 @@ struct TopicListView: View {
 
   @ViewBuilder
   var subforumButton: some View {
-    Button(action: { showingSubforumsModal = true }) {
-      Label("Subforums", systemImage: "list.triangle")
+    if let subforums: [Subforum] = dataSource.latestResponse?.subforums, !subforums.isEmpty {
+      Button(action: { showingSubforumsModal = true }) {
+        Label("Subforums", systemImage: "list.triangle")
+      }
     }
   }
 

@@ -20,6 +20,7 @@
 "Latest Topics" = "最新话题";
 "Favorites" = "收藏";
 "No Favorites" = "没有收藏";
+"No Results" = "没有结果";
 "Remove from Favorites" = "取消收藏";
 "Mark as Favorite" = "添加收藏";
 "Favorite in..." = "收藏到…";
@@ -38,6 +39,7 @@
 "Subforums of %@" = "“%@”的子版块";
 "Swipe a forum to mark it as favorite" = "滑动版块来收藏";
 "History" = "浏览历史";
+"No History" = "没有浏览历史";
 "Hot Topics" = "热门话题";
 "Last 24 hours" = "最近24小时";
 "Last week" = "最近一周";
@@ -139,6 +141,7 @@
 "Copy" = "拷贝";
 "Open in Browser" = "在浏览器中打开";
 "Short Messages" = "短消息";
+"No Short Messages" = "没有短消息";
 "Short Message" = "短消息";
 "%lld new unread notifications" = "%lld 个新的未读通知";
 "Replies Chain" = "回复链";

@@ -46,18 +46,18 @@ struct ForumListView: View {
   var favoritesSection: some View {
     Section(isExpanded: isCategoryExpanded("MNGA-Favorites")) {
       if favorites.favoriteForums.isEmpty {
-        HStack {
-          Spacer()
-          VStack(alignment: .center) {
+        VStack(alignment: .center, spacing: 4) {
+          HStack(alignment: .center, spacing: 4) {
+            Image(systemName: "star.slash")
             Text("No Favorites")
-              .font(.callout)
-            Spacer().height(2)
-            Text("Swipe a forum to mark it as favorite")
-              .multilineTextAlignment(.center)
-              .font(.footnote)
-          }.foregroundColor(.secondary)
-          Spacer()
+          }
+          .font(.callout)
+          Text("Swipe a forum to mark it as favorite")
+            .multilineTextAlignment(.center)
+            .font(.footnote)
         }
+        .foregroundColor(.secondary)
+        .frame(maxWidth: .infinity, alignment: .center)
       } else {
         ForEach(favorites.favoriteForums, id: \.idDescription) { forum in
           buildFavoriteSectionLink(forum)
