@@ -45,7 +45,7 @@ struct NewImageViewer: View {
   @ViewBuilder
   var main: some View {
     if !model.urls.isEmpty {
-      LazyPager(data: Array(model.urls.enumerated()), page: $model.currentIndex) { index, url in
+      LazyPager(data: Array(model.urls.enumerated()), page: $model.currentIndex.animation()) { index, url in
         ViewingImageView(url: url, transferable: $model.transferables[index])
       }
       // Add some spacing between pages so it looks like the system album
@@ -69,7 +69,6 @@ struct NewImageViewer: View {
       HStack(alignment: .bottom, spacing: 4) {
         Text("\(model.currentIndex + 1)")
           .contentTransition(.numericText(value: Double(model.currentIndex)))
-          .animation(.default, value: model.currentIndex)
         Text("/ \(model.urls.count)")
           .foregroundColor(.secondary)
           .font(.footnote)
