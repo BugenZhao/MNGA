@@ -1,5 +1,5 @@
 {
-  "originHash" : "d40b217fe75a3c4d6f119e04f1d39b19fb98c40db16fb46eead577a8945b0584",
+  "originHash" : "b249855f804deae42e940172e4709aa3266c4019f646e9063d8be08e0746ce8c",
   "pins" : [
     {
       "identity" : "alerttoast",
@@ -172,10 +172,9 @@
     {
       "identity" : "whatsnewkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SvenTiigi/WhatsNewKit.git",
+      "location" : "https://github.com/joshbirnholz/WhatsNewKit",
       "state" : {
-        "revision" : "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
-        "version" : "2.2.1"
+        "revision" : "f509ee14716567e2155eae2f0910184a19f08428"
       }
     }
   ],
