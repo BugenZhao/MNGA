@@ -25,34 +25,54 @@ private struct NumberField: View {
 }
 
 struct TopicJumpSelectorView: View {
+  @Environment(\.presentationMode) var presentation
+
   enum Mode: String, CaseIterable {
     case floor = "Floor"
     case page = "Page"
   }
 
   let maxFloor: Int
-  let floorToJump: Binding<Int?>?
-  let pageToJump: Binding<Int?>?
+  @Binding var mode: Mode
+  @Binding var floorToJump: Int?
+  @Binding var pageToJump: Int?
 
-  init(maxFloor: Int, initialFloor: Int = 0, floorToJump: Binding<Int?>? = nil, pageToJump: Binding<Int?>? = nil) {
+  @State var selectedFloor: Int // the only source of truth
+
+  init(maxFloor: Int, mode: Binding<Mode>, initialFloor: Int, floorToJump: Binding<Int?>, pageToJump: Binding<Int?>) {
     self.maxFloor = maxFloor
-    self.floorToJump = floorToJump
-    self.pageToJump = pageToJump
+    _mode = mode
+    _floorToJump = floorToJump
+    _pageToJump = pageToJump
     _selectedFloor = .init(initialValue: min(initialFloor, maxFloor))
   }
 
   var maxPage: Int { (maxFloor + Constants.postPerPage) / Constants.postPerPage }
 
-  @Environment(\.presentationMode) var presentation
-
-  @State var mode = Mode.floor
-  @State var selectedFloor: Int
-  @State var text = ""
+  var selectedFloorText: Binding<String> {
+    .init(
+      get: { String(selectedFloor) },
+      set: { newValue in
+        guard let number = Int(newValue) else { return }
+        selectedFloor = min(max(number, 0), maxFloor)
+      }
+    )
+  }
 
   var selectedPage: Binding<Int> {
     .init(
       get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage },
       set: { selectedFloor = ($0 - 1) * Constants.postPerPage }
+    )
+  }
+
+  var selectedPageText: Binding<String> {
+    .init(
+      get: { String(selectedPage.wrappedValue) },
+      set: { newValue in
+        guard let number = Int(newValue) else { return }
+        selectedPage.wrappedValue = min(max(number, 1), maxPage)
+      }
     )
   }
 
@@ -73,12 +93,12 @@ struct TopicJumpSelectorView: View {
 
   @ViewBuilder
   var floorInputField: some View {
-    NumberField(title: "Floor number", text: $text)
+    NumberField(title: "Floor number", text: selectedFloorText)
   }
 
   @ViewBuilder
   var pageInputField: some View {
-    NumberField(title: "Page number", text: $text)
+    NumberField(title: "Page number", text: selectedPageText)
   }
 
   @ViewBuilder
@@ -95,16 +115,29 @@ struct TopicJumpSelectorView: View {
       }
 
       Slider(
-        value: Binding(
-          get: { Double(selectedFloor) },
-          set: { value in
-            withAnimation {
-              selectedFloor = Int(value)
-              text = String(selectedFloor)
-            }
-          }
-        ),
+        value: .convert($selectedFloor),
         in: 0 ... Double(maxFloor),
+        step: 1
+      )
+    }
+  }
+
+  @ViewBuilder
+  var pageSlider: some View {
+    VStack(spacing: 8) {
+      HStack {
+        Text("1")
+          .font(.caption)
+          .foregroundColor(.secondary)
+        Spacer()
+        Text("\(maxPage)")
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+
+      Slider(
+        value: .convert(selectedPage),
+        in: 1 ... Double(maxPage),
         step: 1
       )
     }
@@ -133,49 +166,18 @@ struct TopicJumpSelectorView: View {
               Text("Page")
               pageInputField
             }
+            pageSlider
           }
         }
       }
       .listStyle(.insetGrouped)
     }
-    .onChange(of: text) { parseText() }
-    .onChange(of: mode) {
-      updateTextForMode()
-      parseText()
-    }
-    .onAppear {
-      updateTextForMode()
-    }
   }
 
   func commit() {
-    floorToJump?.wrappedValue = selectedFloor
-    pageToJump?.wrappedValue = selectedPage.wrappedValue
+    floorToJump = selectedFloor
+    pageToJump = selectedPage.wrappedValue
     presentation.dismiss()
-  }
-
-  func parseText() {
-    guard var number = Int(text) else { return }
-
-    withAnimation {
-      switch mode {
-      case .floor:
-        number = min(max(number, 0), maxFloor)
-        selectedFloor = number
-      case .page:
-        number = min(max(number, 1), maxPage)
-        selectedPage.wrappedValue = number
-      }
-    }
-  }
-
-  func updateTextForMode() {
-    switch mode {
-    case .floor:
-      text = String(selectedFloor)
-    case .page:
-      text = String(selectedPage.wrappedValue)
-    }
   }
 
   var body: some View {
@@ -184,12 +186,5 @@ struct TopicJumpSelectorView: View {
         .mayInsetGroupedListStyle()
         .toolbar { ToolbarItem(placement: .primaryAction) { jumpButton } }
     }
-  }
-}
-
-struct TopicJumpSelectorView_Previews: PreviewProvider {
-  static var previews: some View {
-    TopicJumpSelectorView(maxFloor: 799, floorToJump: .constant(nil))
-    TopicJumpSelectorView(maxFloor: 1000, floorToJump: .constant(nil))
   }
 }
