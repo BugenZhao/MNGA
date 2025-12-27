@@ -27,13 +27,13 @@ struct ViewingImageView: View {
           let transferable = TransferableImage(url: url, image: image, forceFile: forceFile)
           DispatchQueue.main.async {
             self.transferable = transferable
+            updateCurrentTransferable()
           }
         }
       }
       .indicator(.progress)
       .frame(minWidth: 50) // HACK: ensure progress view has width
       .scaledToFit()
-      .onChange(of: transferable == nil) { updateCurrentTransferable() }
       .onChange(of: isCurrent) { updateCurrentTransferable() }
   }
 
@@ -85,13 +85,13 @@ struct NewImageViewer: View {
       HStack(alignment: .bottom, spacing: 4) {
         Text("\(model.currentIndex + 1)")
           .contentTransition(.numericText(value: Double(model.currentIndex)))
+          .monospacedDigit()
         Text("/ \(model.urls.count)")
           .foregroundColor(.secondary)
           .font(.footnote)
       }
       .padding(.horizontal, 10)
       .fixedSize()
-      .monospacedDigit()
     }
   }
 
