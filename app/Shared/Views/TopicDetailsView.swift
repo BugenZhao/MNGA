@@ -582,6 +582,7 @@ struct TopicDetailsView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
+    FullScreenButtonToolbarItem()
     ToolbarItem(placement: .navigationBarTrailing) { progress }
       .maybeSharedBackgroundVisibility(.hidden)
     MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
