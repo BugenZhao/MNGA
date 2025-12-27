@@ -44,10 +44,10 @@ struct AttachmentsView: View {
     let url = URL(string: attachment.url, relativeTo: URLs.attachmentBase)
     guard let url else { return }
 
-    if attachment.type == "img" {
+    if attachment.isImage {
       isPresented = false // dismiss sheet first, otherwise the background will be black
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // workaround image viewer background
-        image?.show(url: url)
+        image?.show(urls: model.allImageURLs, current: url)
       }
     } else {
       OpenURLModel.shared.open(url: url, inApp: true)
