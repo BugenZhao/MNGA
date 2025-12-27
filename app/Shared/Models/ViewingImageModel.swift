@@ -119,11 +119,20 @@ struct TransferablePlainImage: Transferable {
 class ViewingImageModel: ObservableObject {
   private let prefs = PreferencesStorage.shared
 
-  @Published var url: URL? = nil
+  @Published var urls: [URL] = []
+  @Published var transferables: [TransferableImage?] = []
+  @Published var currentIndex = 0
   @Published var showing = false
 
   func show(url: URL) {
-    self.url = url
+    show(urls: [url], current: url)
+  }
+
+  func show(urls: [URL], current: URL) {
+    if urls.isEmpty { return }
+    self.urls = urls
+    transferables = urls.map { _ in nil }
+    currentIndex = urls.firstIndex(of: current) ?? 0
     withAnimation { showing = true }
   }
 }

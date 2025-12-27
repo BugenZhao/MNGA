@@ -43,7 +43,7 @@ struct ContentImageView: View {
   let onlyThumbs: Bool
   let isOpenSourceStickers: Bool
 
-  @Environment(\.inRealPost) var inRealPost
+  @Environment(\.inRealPost) var inRealPost // false when in editor preview
   @Environment(\.colorScheme) private var colorScheme
   @EnvironmentObject var viewingImage: ViewingImageModel
 

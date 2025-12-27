@@ -445,3 +445,9 @@ extension TopicDetailsRequest.WebApiStrategy {
     }
   }
 }
+
+extension Attachment {
+  var isImage: Bool {
+    type == "img"
+  }
+}
