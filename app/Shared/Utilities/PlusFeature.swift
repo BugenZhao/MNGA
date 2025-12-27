@@ -14,8 +14,9 @@ enum PlusFeature: CaseIterable {
   case authorOnly
   case jump
   case resumeProgress
-  case anonymous
   case blockContents
+  case syncForums
+  case anonymous
   case newTopic
   case hotTopic
   case shortMessage
@@ -46,6 +47,8 @@ enum PlusFeature: CaseIterable {
       "Multiple Favorite Folders"
     case .resumeProgress:
       "Resume Reading Progress"
+    case .syncForums:
+      "Sync Favorite Forums"
     }
   }
 
@@ -75,6 +78,8 @@ enum PlusFeature: CaseIterable {
       "Organize favorite topics into multiple folders."
     case .resumeProgress:
       "Resume reading progress from where you left off."
+    case .syncForums:
+      "Sync favorite forums across devices."
     }
   }
 
@@ -104,6 +109,8 @@ enum PlusFeature: CaseIterable {
       "bookmark"
     case .resumeProgress:
       "clock.arrow.circlepath"
+    case .syncForums:
+      "icloud"
     }
   }
 }

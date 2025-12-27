@@ -131,7 +131,7 @@ struct ForumListView: View {
         Label("Edit Favorites", systemImage: "list.star")
       }
 
-      Toggle(isOn: $favorites.useRemoteFavoriteForums.animation()) {
+      Toggle(isOn: $favorites.useRemoteFavoriteForums.animation().withPlusCheck(.syncForums)) {
         Label("Sync Favorites", systemImage: favorites.useRemoteFavoriteForums ? "icloud" : "icloud.slash")
       }
 

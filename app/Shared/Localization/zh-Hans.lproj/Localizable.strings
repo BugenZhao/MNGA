@@ -328,6 +328,8 @@
 "Album" = "相册";
 "Multicolor Subject" = "彩色标题";
 "Sync Favorites" = "同步收藏";
+"Back" = "返回";
+"Sync Favorite Forums" = "同步收藏版块";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";
@@ -344,6 +346,7 @@
 "Block contents from specific users, or with specific keywords." = "屏蔽来自特定用户或包含特定关键词的帖子。";
 "Organize favorite topics into multiple folders." = "使用多个收藏夹整理收藏的话题。";
 "Resume reading progress from where you left off." = "从之前停下来的地方继续阅读进度。";
+"Sync favorite forums across devices." = "跨设备云端同步收藏版块。";
 "More Features in the Future" = "解锁未来更多功能";
 "Plus More Feature" = "MNGA 得以持续开发和维护，离不开您的支持。更多功能正在开发中！";
 
