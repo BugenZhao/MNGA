@@ -227,9 +227,9 @@ struct TopicListView: View {
             forum: forum,
             subforums: subforums,
             refresh: { dataSource.refresh(animated: true) },
-            onNavigateToForum: {
+            onNavigateToForum: { subforum in
               showingSubforumsModal = false
-              currentShowingSubforum = $0
+              currentShowingSubforum = subforum
             }
           )
         } else {
@@ -238,7 +238,8 @@ struct TopicListView: View {
       }.navigationTitle("Subforums of \(forum.name)")
         .navigationBarTitleDisplayMode(.inline)
     }
-    .maybeNavigationTransition(.zoom(sourceID: "subforums", in: transition))
+    // FIXME: transition here may crash when navigating to subforum
+    // .maybeNavigationTransition(.zoom(sourceID: "subforums", in: transition))
     .presentationDetents([.medium, .large])
   }
 
@@ -280,7 +281,8 @@ struct TopicListView: View {
 
       // -- Bottom Bar
       ToolbarItem(placement: .bottomBar) { subforumButton }
-        .maybeMatchedTransitionSource(id: "subforums", in: transition)
+      // FIXME: transition here may crash when navigating to subforum
+      // .maybeMatchedTransitionSource(id: "subforums", in: transition)
       MaybeToolbarSpacer(.fixed, placement: .bottomBar)
       MaybeBottomBarSearchToolbarItem(asSpacer: true, if: prefs.topicListShowSearchInBottombar)
       if prefs.topicListShowRefreshButton {
