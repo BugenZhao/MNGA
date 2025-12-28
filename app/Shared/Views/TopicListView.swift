@@ -39,7 +39,8 @@ struct TopicListView: View {
   @State var forum: Forum
   @State var parentForumName: String?
 
-  @EnvironmentObject var postReply: PostReplyModel
+  // FIXME: it can be nil in some case but it's not clear when, use optional just in case
+  @EnvironmentObject.Optional var postReply: PostReplyModel?
 
   @StateObject var dataSourceLastPost: DataSource
   @StateObject var dataSourcePostDate: DataSource
@@ -129,7 +130,7 @@ struct TopicListView: View {
   func newTopic() {
     guard checkPlus(.newTopic) else { return }
 
-    postReply.show(action: .with {
+    postReply?.show(action: .with {
       $0.operation = .new
       $0.forumID = forum.id
     }, pageToReload: nil)
@@ -146,7 +147,7 @@ struct TopicListView: View {
 
   @ViewBuilder
   var newTopicButton: some View {
-    if !mock {
+    if !mock, postReply != nil {
       Button(action: { newTopic() }) {
         Label("New Topic", systemImage: "square.and.pencil")
       }
@@ -227,9 +228,9 @@ struct TopicListView: View {
             forum: forum,
             subforums: subforums,
             refresh: { dataSource.refresh(animated: true) },
-            onNavigateToForum: {
+            onNavigateToForum: { subforum in
               showingSubforumsModal = false
-              currentShowingSubforum = $0
+              currentShowingSubforum = subforum
             }
           )
         } else {
@@ -238,7 +239,8 @@ struct TopicListView: View {
       }.navigationTitle("Subforums of \(forum.name)")
         .navigationBarTitleDisplayMode(.inline)
     }
-    .maybeNavigationTransition(.zoom(sourceID: "subforums", in: transition))
+    // FIXME: transition here may crash when navigating to subforum
+    // .maybeNavigationTransition(.zoom(sourceID: "subforums", in: transition))
     .presentationDetents([.medium, .large])
   }
 
@@ -280,7 +282,8 @@ struct TopicListView: View {
 
       // -- Bottom Bar
       ToolbarItem(placement: .bottomBar) { subforumButton }
-        .maybeMatchedTransitionSource(id: "subforums", in: transition)
+      // FIXME: transition here may crash when navigating to subforum
+      // .maybeMatchedTransitionSource(id: "subforums", in: transition)
       MaybeToolbarSpacer(.fixed, placement: .bottomBar)
       MaybeBottomBarSearchToolbarItem(asSpacer: true, if: prefs.topicListShowSearchInBottombar)
       if prefs.topicListShowRefreshButton {
@@ -358,7 +361,7 @@ struct TopicListView: View {
     .navigationTitleLarge(string: forum.name)
     .scrollAwareTitle { principal }
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
-    .onChange(of: postReply.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
+    .onChange(of: postReply?.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
     .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
     .toolbar { toolbar }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }

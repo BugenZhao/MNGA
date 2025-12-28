@@ -103,43 +103,49 @@ struct TopicJumpSelectorView: View {
 
   @ViewBuilder
   var floorSlider: some View {
-    VStack(spacing: 8) {
-      HStack {
-        Text("0")
-          .font(.caption)
-          .foregroundColor(.secondary)
-        Spacer()
-        Text("\(maxFloor)")
-          .font(.caption)
-          .foregroundColor(.secondary)
-      }
+    // Slider doesn't allow max == min
+    if maxFloor > 0 {
+      VStack(spacing: 8) {
+        HStack {
+          Text("0")
+            .font(.caption)
+            .foregroundColor(.secondary)
+          Spacer()
+          Text("\(maxFloor)")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
 
-      Slider(
-        value: .convert($selectedFloor),
-        in: 0 ... Double(maxFloor),
-        step: 1
-      )
+        Slider(
+          value: .convert($selectedFloor),
+          in: 0 ... Double(maxFloor),
+          step: 1
+        )
+      }
     }
   }
 
   @ViewBuilder
   var pageSlider: some View {
-    VStack(spacing: 8) {
-      HStack {
-        Text("1")
-          .font(.caption)
-          .foregroundColor(.secondary)
-        Spacer()
-        Text("\(maxPage)")
-          .font(.caption)
-          .foregroundColor(.secondary)
-      }
+    // Slider doesn't allow max == min
+    if maxPage > 1 {
+      VStack(spacing: 8) {
+        HStack {
+          Text("1")
+            .font(.caption)
+            .foregroundColor(.secondary)
+          Spacer()
+          Text("\(maxPage)")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
 
-      Slider(
-        value: .convert(selectedPage),
-        in: 1 ... Double(maxPage),
-        step: 1
-      )
+        Slider(
+          value: .convert(selectedPage),
+          in: 1 ... Double(maxPage),
+          step: 1
+        )
+      }
     }
   }
 
