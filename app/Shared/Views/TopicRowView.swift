@@ -102,7 +102,7 @@ struct TopicRowLinkView: View {
         Label("Goto Topic", systemImage: "arrow.right")
       }
     } preview: {
-      TopicDetailsView.build(previewTopic: topic)
+      TopicDetailsView.build(topicBinding: $topic, previewMode: true)
     }
   }
 }

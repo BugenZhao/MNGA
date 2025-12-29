@@ -254,12 +254,6 @@ struct TopicDetailsView: View {
     }
   }
 
-  static func build(previewTopic: Topic) -> some View {
-    StaticTopicDetailsView(topic: previewTopic) { binding in
-      build(topicBinding: binding, previewMode: true)
-    }
-  }
-
   static func build(topic: Topic, only author: AuthorOnly) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
@@ -696,7 +690,6 @@ struct TopicDetailsView: View {
     .refreshable(dataSource: dataSource)
     .toolbarRole(.editor) // make title left aligned
     .onChange(of: postReply?.sent) { reloadPageAfter(sent: $1) }
-    .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
     .onChange(of: dataSource.latestError) { onError(e: $1) }
     .onDisappearOrInactive { syncTopicProgress() }
     .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
@@ -713,6 +706,7 @@ struct TopicDetailsView: View {
     }
     .mayGroupedListStyle()
     .onAppear { dataSource.initialLoad() }
+    .onChange(of: dataSource.latestResponse) { updateTopicOnNewResponse(response: $1) }
   }
 
   var maxFloor: Int {
@@ -778,7 +772,7 @@ struct TopicDetailsView: View {
     }
   }
 
-  func onNewResponse(response: TopicDetailsResponse?) {
+  func updateTopicOnNewResponse(response: TopicDetailsResponse?) {
     guard let response else { return }
     let newTopic = response.topic
 
