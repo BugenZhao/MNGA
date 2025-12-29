@@ -139,6 +139,7 @@ struct TopicDetailsView: View {
 
   let onlyPost: (id: PostId?, atPage: Int?)
   let forceLocalMode: Bool
+  let previewMode: Bool
 
   @State var showJumpSelector = false
   @State var floorToJump: Int?
@@ -177,8 +178,9 @@ struct TopicDetailsView: View {
   static func build(
     topicBinding: Binding<Topic>,
     localMode: Bool = false,
+    previewMode: Bool = false,
     onlyPost: (id: PostId?, atPage: Int?) = (nil, nil),
-    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil)
+    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil),
   ) -> some View {
     let topic = topicBinding.wrappedValue
 
@@ -234,6 +236,7 @@ struct TopicDetailsView: View {
       dataSource: dataSource,
       onlyPost: onlyPost,
       forceLocalMode: localMode,
+      previewMode: previewMode,
       floorToJump: initialFloor,
       postIdToJump: jumpToPost.id
     )
@@ -248,6 +251,12 @@ struct TopicDetailsView: View {
   ) -> some View {
     StaticTopicDetailsView(topic: topic) { binding in
       build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, jumpToPost: jumpToPost)
+    }
+  }
+
+  static func build(previewTopic: Topic) -> some View {
+    StaticTopicDetailsView(topic: previewTopic) { binding in
+      build(topicBinding: binding, previewMode: true)
     }
   }
 
@@ -277,7 +286,7 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false)
+      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false, previewMode: false)
         .environment(\.enableAuthorOnly, false)
     }
   }
@@ -442,6 +451,8 @@ struct TopicDetailsView: View {
 
     if let first, firstFloorExpanded {
       buildRow(post: first)
+    } else if previewMode, dataSource.isLoading {
+      LoadingRowView(high: true)
     }
   }
 
@@ -450,7 +461,7 @@ struct TopicDetailsView: View {
     Section {
       headerSectionInner
     } header: {
-      if first == nil {
+      if previewMode || first == nil {
         Text("Topic")
       } else {
         CollapsibleSectionHeader(title: "Topic", isExpanded: $firstFloorExpanded)
@@ -468,7 +479,11 @@ struct TopicDetailsView: View {
           buildRow(post: post, withId: false)
         }
       } header: {
-        CollapsibleSectionHeader(title: "Hot Replies", isExpanded: $hotRepliesExpanded)
+        if previewMode {
+          Text("Hot Replies")
+        } else {
+          CollapsibleSectionHeader(title: "Hot Replies", isExpanded: $hotRepliesExpanded)
+        }
       }
     }
   }
@@ -571,6 +586,9 @@ struct TopicDetailsView: View {
     return (titles.first, titles.dropFirst().first)
   }
 
+  var title: String? { titles.0 }
+  var subtitle: String? { titles.1 }
+
   @ViewBuilder
   var loadFirstPageButton: some View {
     if let page = dataSource.firstLoadedPage, page >= 2 {
@@ -650,47 +668,53 @@ struct TopicDetailsView: View {
         let item = dataSource.items.first { $0.id.pid == pid }
         withAnimation { proxy.scrollTo(item, anchor: .top) }
       }
-    }.mayGroupedListStyle()
-      // Action Navigation
-      .withTopicDetailsAction(action: action)
-      .navigationDestination(item: $action.showingReplyChain) {
-        PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
-          .environmentObject(postReply)
-      }
-      .navigationDestination(item: $action.navigateToAuthorOnly) {
-        TopicDetailsView.build(topic: topic, only: $0)
-      }
-      .navigationDestination(isPresented: $action.navigateToLocalMode) {
-        TopicDetailsView.build(topic: topic, localMode: true)
-      }
-      // Action Navigation End
-      .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
-      .sheet(isPresented: $showJumpSelector) { jumpSelector }
-      // Favorite to new folder
-      .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
-        TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
-        Button("Done", role: .maybeConfirm) {}
-        Button("Cancel", role: .cancel) { newFolderName = nil }
-      }
+    }
+    // Action Navigation
+    .withTopicDetailsAction(action: action)
+    .navigationDestination(item: $action.showingReplyChain) {
+      PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
+        .environmentObject(postReply)
+    }
+    .navigationDestination(item: $action.navigateToAuthorOnly) {
+      TopicDetailsView.build(topic: topic, only: $0)
+    }
+    .navigationDestination(isPresented: $action.navigateToLocalMode) {
+      TopicDetailsView.build(topic: topic, localMode: true)
+    }
+    // Action Navigation End
+    .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
+    .sheet(isPresented: $showJumpSelector) { jumpSelector }
+    // Favorite to new folder
+    .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
+      TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
+      Button("Done", role: .maybeConfirm) {}
+      Button("Cancel", role: .cancel) { newFolderName = nil }
+    }
+    .navigationTitle(title ?? "")
+    .maybeNavigationSubtitle(subtitle ?? "")
+    .navigationBarTitleDisplayMode(.inline)
+    .toolbar { toolbar }
+    .refreshable(dataSource: dataSource)
+    .toolbarRole(.editor) // make title left aligned
+    .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
+    .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
+    .onChange(of: dataSource.latestError) { onError(e: $1) }
+    .onDisappearOrInactive { syncTopicProgress() }
+    .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
   }
 
   var body: some View {
-    let (title, subtitle) = titles
-
-    main
-      .navigationTitle(title ?? "")
-      .maybeNavigationSubtitle(subtitle ?? "")
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar { toolbar }
-      .refreshable(dataSource: dataSource)
-      .toolbarRole(.editor) // make title left aligned
-      .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
-      .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
-      .onChange(of: dataSource.latestError) { onError(e: $1) }
-      .environmentObject(postReply)
-      .onAppear { dataSource.initialLoad() }
-      .onDisappearOrInactive { syncTopicProgress() }
-      .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
+    Group {
+      if previewMode {
+        // We don't want side effects when previewing, thus use `listMain` instead of `main`.
+        listMain
+      } else {
+        main
+      }
+    }
+    .mayGroupedListStyle()
+    .onAppear { dataSource.initialLoad() }
+    .environmentObject(postReply)
   }
 
   var maxFloor: Int {
@@ -816,8 +840,6 @@ struct TopicDetailsView: View {
     .fixedSize(horizontal: false, vertical: true)
     .frame(width: Screen.main.bounds.size.width)
     .background(.secondarySystemGroupedBackground)
-    .withTopicDetailsAction(action: action)
-    .environmentObject(postReply)
   }
 
   func openInBrowser() {
