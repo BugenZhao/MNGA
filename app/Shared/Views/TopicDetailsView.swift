@@ -374,7 +374,7 @@ struct TopicDetailsView: View {
         }
       }
 
-      ShareLinksView(navigationID: navID, others: {})
+      ShareLinksView(navigationID: topic.navID, others: {})
 
       Section {
         favoriteMenu
@@ -692,7 +692,7 @@ struct TopicDetailsView: View {
     .onChange(of: postReply?.sent) { reloadPageAfter(sent: $1) }
     .onChange(of: dataSource.latestError) { onError(e: $1) }
     .onDisappearOrInactive { syncTopicProgress() }
-    .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
+    .userActivity(Constants.Activity.openTopic) { $0.webpageURL = topic.navID.webpageURL }
   }
 
   var body: some View {
@@ -740,10 +740,6 @@ struct TopicDetailsView: View {
     }))
     topic.highestViewedFloor = highest
     topic.lastViewingFloor = current
-  }
-
-  var navID: NavigationIdentifier {
-    .topicID(tid: topic.id, fav: topic.fav != "" ? topic.fav : nil)
   }
 
   func doReplyTopic() {
@@ -835,7 +831,7 @@ struct TopicDetailsView: View {
   }
 
   func openInBrowser() {
-    if let url = navID.webpageURL {
+    if let url = topic.navID.webpageURL {
       OpenURLModel.shared.open(url: url)
     }
   }
