@@ -128,7 +128,7 @@ struct TopicDetailsView: View {
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @EnvironmentObject var viewingImage: ViewingImageModel
-  @EnvironmentObject var postReply: PostReplyModel
+  @EnvironmentObject.Optional var postReply: PostReplyModel?
 
   @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
@@ -323,7 +323,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var replyButton: some View {
-    if !mock, onlyPost.id == nil {
+    if !mock, onlyPost.id == nil, postReply != nil {
       Button(action: { doReplyTopic() }) {
         Label("Reply", systemImage: "arrowshape.turn.up.left")
       }
@@ -673,7 +673,6 @@ struct TopicDetailsView: View {
     .withTopicDetailsAction(action: action)
     .navigationDestination(item: $action.showingReplyChain) {
       PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
-        .environmentObject(postReply)
     }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
@@ -696,7 +695,7 @@ struct TopicDetailsView: View {
     .toolbar { toolbar }
     .refreshable(dataSource: dataSource)
     .toolbarRole(.editor) // make title left aligned
-    .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
+    .onChange(of: postReply?.sent) { reloadPageAfter(sent: $1) }
     .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
     .onChange(of: dataSource.latestError) { onError(e: $1) }
     .onDisappearOrInactive { syncTopicProgress() }
@@ -714,7 +713,6 @@ struct TopicDetailsView: View {
     }
     .mayGroupedListStyle()
     .onAppear { dataSource.initialLoad() }
-    .environmentObject(postReply)
   }
 
   var maxFloor: Int {
@@ -755,7 +753,7 @@ struct TopicDetailsView: View {
   }
 
   func doReplyTopic() {
-    postReply.show(action: .with {
+    postReply?.show(action: .with {
       $0.operation = .reply
       $0.forumID = .with { f in
         f.fid = topic.fid

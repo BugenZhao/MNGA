@@ -88,11 +88,21 @@ struct TopicRowLinkView: View {
     self.showIndicators = showIndicators
   }
 
+  @ViewBuilder
+  var destination: some View {
+    TopicDetailsView.build(topicBinding: $topic)
+  }
+
   var body: some View {
-    CrossStackNavigationLinkHack(id: topic.id, destination: {
-      TopicDetailsView.build(topicBinding: $topic)
-    }) {
+    CrossStackNavigationLinkHack(id: topic.id, destination: { destination }) {
       TopicRowView(topic: topic, useTopicPostDate: useTopicPostDate, dimmedSubject: dimmedSubject, showIndicators: showIndicators)
+    }
+    .contextMenu {
+      CrossStackNavigationLinkHack(id: topic.id, destination: { destination }) {
+        Label("Goto Topic", systemImage: "arrow.right")
+      }
+    } preview: {
+      TopicDetailsView.build(previewTopic: topic)
     }
   }
 }
