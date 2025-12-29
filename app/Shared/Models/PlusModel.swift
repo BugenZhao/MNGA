@@ -190,13 +190,13 @@ struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Dest
 
   let destination: Destination
   let feature: PlusFeature
-  let isDetailLink: Bool?
+  let isDetailLink: Bool
   let label: Label
 
   init(
     destination: Destination,
     feature: PlusFeature,
-    isDetailLink: Bool? = nil,
+    isDetailLink: Bool = true,
     @ViewBuilder label: () -> Label
   ) {
     self.destination = destination
@@ -208,7 +208,7 @@ struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Dest
   var body: some View {
     if paywall.isUnlocked {
       NavigationLink(destination: destination, label: { label })
-        .if(isDetailLink != nil) { $0.isDetailLink(isDetailLink!) }
+        .isDetailLink(isDetailLink)
     } else {
       Button(action: { ToastModel.showAuto(.requirePlus(feature)) }, label: { label })
     }

@@ -56,15 +56,11 @@ struct ContentView: View {
           main
         }
       } content: {
-        // Subforum, hot/recommended topics may be pushed to this stack.
-        NavigationStack {
-          TopicListPlaceholderView()
-        }
+        // Subforum, hot/recommended topics may replace this with a stack.
+        TopicListPlaceholderView()
       } detail: {
-        // User profile, detailed reading may be pushed to this stack.
-        NavigationStack {
-          TopicDetailsPlaceholderView()
-        }
+        // User profile, detailed reading may replace this with a stack.
+        TopicDetailsPlaceholderView()
       }
     } else {
       NavigationStack {

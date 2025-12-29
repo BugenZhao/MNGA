@@ -112,7 +112,7 @@ struct UserSearchView: View {
         List {
           Section(header: Text("Search Results")) {
             ForEach(dataSource.items, id: \.id) { user in
-              NavigationLink(destination: UserProfileView.build(user: user)) {
+              CrossStackNavigationLinkHack(destination: UserProfileView.build(user: user), id: user.id) {
                 UserView(user: user, style: .huge)
               }
             }
