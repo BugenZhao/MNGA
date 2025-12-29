@@ -49,11 +49,8 @@ struct TopicSearchView: View {
       List {
         Section(header: Text("Search Results")) {
           SafeForEach($dataSource.items, id: \.id) { topic in
-            CrossStackNavigationLinkHack(id: topic.w.id, destination: {
-              TopicDetailsView.build(topicBinding: topic)
-            }) {
-              TopicRowView(topic: topic.w)
-            }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            TopicRowLinkView(topic: topic)
+              .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
         }
       }

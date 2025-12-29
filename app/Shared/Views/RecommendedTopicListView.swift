@@ -44,9 +44,8 @@ struct RecommendedTopicListView: View {
       } else {
         List {
           SafeForEach($dataSource.items, id: \.id) { topic in
-            CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: topic), id: topic.w.id) {
-              TopicRowView(topic: topic.w, useTopicPostDate: true)
-            }.onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            TopicRowLinkView(topic: topic, useTopicPostDate: true)
+              .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
         }
         .mayGroupedListStyle()

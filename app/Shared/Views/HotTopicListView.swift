@@ -45,9 +45,7 @@ struct HotTopicListInnerView: View {
         List {
           Section(header: Text(range.description)) {
             SafeForEach($dataSource.items, id: \.id) { topic in
-              NavigationLink(destination: TopicDetailsView.build(topicBinding: topic)) {
-                TopicRowView(topic: topic.w)
-              }
+              TopicRowLinkView(topic: topic)
             }
           }
         }.mayGroupedListStyle()

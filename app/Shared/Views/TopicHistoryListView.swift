@@ -30,15 +30,21 @@ struct TopicHistoryListView: View {
   }
 
   func topicLink(@Binding snapshot: TopicSnapshot) -> some View {
-    // Set the post date to the snapshot timestamp for display.
-    var displayTopic = snapshot.topicSnapshot
-    let snapshotDate = snapshot.timestamp / 1000 // snapshot timestamp is in milliseconds
-    displayTopic.postDate = snapshotDate
-    displayTopic.lastPostDate = snapshotDate
+    let topic = Binding(
+      get: {
+        // Set the post date to the snapshot timestamp for display.
+        var topic = snapshot.topicSnapshot
+        let snapshotDate = snapshot.timestamp / 1000 // snapshot timestamp is in milliseconds
+        topic.postDate = snapshotDate
+        topic.lastPostDate = snapshotDate
+        return topic
+      },
+      set: {
+        snapshot.topicSnapshot = $0
+      }
+    )
 
-    return CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: $snapshot.topicSnapshot), id: displayTopic.id) {
-      TopicRowView(topic: displayTopic, dimmedSubject: false)
-    }
+    return TopicRowLinkView(topic: topic, dimmedSubject: false)
   }
 
   var body: some View {
