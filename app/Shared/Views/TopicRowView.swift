@@ -75,6 +75,39 @@ struct TopicRowView: View {
   }
 }
 
+struct TopicRowLinkView: View {
+  @Binding var topic: Topic
+  let useTopicPostDate: Bool
+  let dimmedSubject: Bool
+  let showIndicators: Bool
+
+  init(topic: Binding<Topic>, useTopicPostDate: Bool = false, dimmedSubject: Bool = true, showIndicators: Bool = true) {
+    _topic = topic
+    self.useTopicPostDate = useTopicPostDate
+    self.dimmedSubject = dimmedSubject
+    self.showIndicators = showIndicators
+  }
+
+  @ViewBuilder
+  var destination: some View {
+    TopicDetailsView.build(topicBinding: $topic)
+  }
+
+  var body: some View {
+    CrossStackNavigationLinkHack(id: topic.id, destination: { destination }) {
+      TopicRowView(topic: topic, useTopicPostDate: useTopicPostDate, dimmedSubject: dimmedSubject, showIndicators: showIndicators)
+    }
+    .contextMenu {
+      CrossStackNavigationLinkHack(id: topic.id, destination: { destination }) {
+        Label("Goto Topic", systemImage: "arrow.right")
+      }
+      ShareLinksView(navigationID: topic.navID, others: {})
+    } preview: {
+      TopicDetailsView.build(topicBinding: $topic, previewMode: true)
+    }
+  }
+}
+
 struct TopicView_Previews: PreviewProvider {
   static var previews: some View {
     let item = { (n: UInt32) in

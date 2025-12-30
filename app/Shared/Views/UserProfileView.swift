@@ -93,9 +93,8 @@ struct UserProfileView: View {
           } else {
             SafeForEach($topicDataSource.items, id: \.id) { topic in
               // My profile may show on the 2nd stack, requiring cross-stack.
-              CrossStackNavigationLinkHack(destination: TopicDetailsView.build(topicBinding: topic), id: topic.w.id) {
-                TopicRowView(topic: topic.w)
-              }.onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
+              TopicRowLinkView(topic: topic)
+                .onAppear { topicDataSource.loadMoreIfNeeded(currentItem: topic.w) }
             }
           }
         }

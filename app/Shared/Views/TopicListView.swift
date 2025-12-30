@@ -305,11 +305,7 @@ struct TopicListView: View {
     if topic.hasShortcutForum {
       ForumRowLinkView(forum: topic.shortcutForum, asTopicShortcut: topic)
     } else {
-      CrossStackNavigationLinkHack(id: topic.id, destination: {
-        TopicDetailsView.build(topicBinding: $topic)
-      }) {
-        TopicRowView(topic: topic, useTopicPostDate: orderOrDefault == .postDate)
-      }
+      TopicRowLinkView(topic: $topic, useTopicPostDate: orderOrDefault == .postDate)
     }
   }
 

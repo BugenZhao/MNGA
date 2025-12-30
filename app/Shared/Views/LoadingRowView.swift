@@ -19,7 +19,8 @@ struct LoadingRowView: View {
     HStack {
       Spacer()
       ProgressView()
+        .controlSize(high ? .large : .regular)
       Spacer()
-    }.frame(minHeight: high ? 100 : 0)
+    }.frame(minHeight: high ? 80 : 0)
   }
 }

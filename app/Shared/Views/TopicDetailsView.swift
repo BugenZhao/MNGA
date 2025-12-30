@@ -128,7 +128,7 @@ struct TopicDetailsView: View {
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @EnvironmentObject var viewingImage: ViewingImageModel
-  @EnvironmentObject var postReply: PostReplyModel
+  @EnvironmentObject.Optional var postReply: PostReplyModel?
 
   @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
@@ -139,6 +139,7 @@ struct TopicDetailsView: View {
 
   let onlyPost: (id: PostId?, atPage: Int?)
   let forceLocalMode: Bool
+  let previewMode: Bool
 
   @State var showJumpSelector = false
   @State var floorToJump: Int?
@@ -177,8 +178,9 @@ struct TopicDetailsView: View {
   static func build(
     topicBinding: Binding<Topic>,
     localMode: Bool = false,
+    previewMode: Bool = false,
     onlyPost: (id: PostId?, atPage: Int?) = (nil, nil),
-    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil)
+    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil),
   ) -> some View {
     let topic = topicBinding.wrappedValue
 
@@ -234,6 +236,7 @@ struct TopicDetailsView: View {
       dataSource: dataSource,
       onlyPost: onlyPost,
       forceLocalMode: localMode,
+      previewMode: previewMode,
       floorToJump: initialFloor,
       postIdToJump: jumpToPost.id
     )
@@ -277,7 +280,7 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false)
+      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false, previewMode: false)
         .environment(\.enableAuthorOnly, false)
     }
   }
@@ -314,7 +317,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var replyButton: some View {
-    if !mock, onlyPost.id == nil {
+    if !mock, onlyPost.id == nil, postReply != nil {
       Button(action: { doReplyTopic() }) {
         Label("Reply", systemImage: "arrowshape.turn.up.left")
       }
@@ -371,7 +374,7 @@ struct TopicDetailsView: View {
         }
       }
 
-      ShareLinksView(navigationID: navID, others: {})
+      ShareLinksView(navigationID: topic.navID, others: {})
 
       Section {
         favoriteMenu
@@ -442,6 +445,8 @@ struct TopicDetailsView: View {
 
     if let first, firstFloorExpanded {
       buildRow(post: first)
+    } else if previewMode, dataSource.isLoading {
+      LoadingRowView(high: true)
     }
   }
 
@@ -450,7 +455,7 @@ struct TopicDetailsView: View {
     Section {
       headerSectionInner
     } header: {
-      if first == nil {
+      if previewMode || first == nil {
         Text("Topic")
       } else {
         CollapsibleSectionHeader(title: "Topic", isExpanded: $firstFloorExpanded)
@@ -468,7 +473,11 @@ struct TopicDetailsView: View {
           buildRow(post: post, withId: false)
         }
       } header: {
-        CollapsibleSectionHeader(title: "Hot Replies", isExpanded: $hotRepliesExpanded)
+        if previewMode {
+          Text("Hot Replies")
+        } else {
+          CollapsibleSectionHeader(title: "Hot Replies", isExpanded: $hotRepliesExpanded)
+        }
       }
     }
   }
@@ -571,6 +580,9 @@ struct TopicDetailsView: View {
     return (titles.first, titles.dropFirst().first)
   }
 
+  var title: String? { titles.0 }
+  var subtitle: String? { titles.1 }
+
   @ViewBuilder
   var loadFirstPageButton: some View {
     if let page = dataSource.firstLoadedPage, page >= 2 {
@@ -650,47 +662,51 @@ struct TopicDetailsView: View {
         let item = dataSource.items.first { $0.id.pid == pid }
         withAnimation { proxy.scrollTo(item, anchor: .top) }
       }
-    }.mayGroupedListStyle()
-      // Action Navigation
-      .withTopicDetailsAction(action: action)
-      .navigationDestination(item: $action.showingReplyChain) {
-        PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
-          .environmentObject(postReply)
-      }
-      .navigationDestination(item: $action.navigateToAuthorOnly) {
-        TopicDetailsView.build(topic: topic, only: $0)
-      }
-      .navigationDestination(isPresented: $action.navigateToLocalMode) {
-        TopicDetailsView.build(topic: topic, localMode: true)
-      }
-      // Action Navigation End
-      .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
-      .sheet(isPresented: $showJumpSelector) { jumpSelector }
-      // Favorite to new folder
-      .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
-        TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
-        Button("Done", role: .maybeConfirm) {}
-        Button("Cancel", role: .cancel) { newFolderName = nil }
-      }
+    }
+    // Action Navigation
+    .withTopicDetailsAction(action: action)
+    .navigationDestination(item: $action.showingReplyChain) {
+      PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
+    }
+    .navigationDestination(item: $action.navigateToAuthorOnly) {
+      TopicDetailsView.build(topic: topic, only: $0)
+    }
+    .navigationDestination(isPresented: $action.navigateToLocalMode) {
+      TopicDetailsView.build(topic: topic, localMode: true)
+    }
+    // Action Navigation End
+    .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
+    .sheet(isPresented: $showJumpSelector) { jumpSelector }
+    // Favorite to new folder
+    .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
+      TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
+      Button("Done", role: .maybeConfirm) {}
+      Button("Cancel", role: .cancel) { newFolderName = nil }
+    }
+    .navigationTitle(title ?? "")
+    .maybeNavigationSubtitle(subtitle ?? "")
+    .navigationBarTitleDisplayMode(.inline)
+    .toolbar { toolbar }
+    .refreshable(dataSource: dataSource)
+    .toolbarRole(.editor) // make title left aligned
+    .onChange(of: postReply?.sent) { reloadPageAfter(sent: $1) }
+    .onChange(of: dataSource.latestError) { onError(e: $1) }
+    .onDisappearOrInactive { syncTopicProgress() }
+    .userActivity(Constants.Activity.openTopic) { $0.webpageURL = topic.navID.webpageURL }
   }
 
   var body: some View {
-    let (title, subtitle) = titles
-
-    main
-      .navigationTitle(title ?? "")
-      .maybeNavigationSubtitle(subtitle ?? "")
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar { toolbar }
-      .refreshable(dataSource: dataSource)
-      .toolbarRole(.editor) // make title left aligned
-      .onChange(of: postReply.sent) { reloadPageAfter(sent: $1) }
-      .onChange(of: dataSource.latestResponse) { onNewResponse(response: $1) }
-      .onChange(of: dataSource.latestError) { onError(e: $1) }
-      .environmentObject(postReply)
-      .onAppear { dataSource.initialLoad() }
-      .onDisappearOrInactive { syncTopicProgress() }
-      .userActivity(Constants.Activity.openTopic) { $0.webpageURL = navID.webpageURL }
+    Group {
+      if previewMode {
+        // We don't want side effects when previewing, thus use `listMain` instead of `main`.
+        listMain
+      } else {
+        main
+      }
+    }
+    .mayGroupedListStyle()
+    .onAppear { dataSource.initialLoad() }
+    .onChange(of: dataSource.latestResponse) { updateTopicOnNewResponse(response: $1) }
   }
 
   var maxFloor: Int {
@@ -726,12 +742,8 @@ struct TopicDetailsView: View {
     topic.lastViewingFloor = current
   }
 
-  var navID: NavigationIdentifier {
-    .topicID(tid: topic.id, fav: topic.fav != "" ? topic.fav : nil)
-  }
-
   func doReplyTopic() {
-    postReply.show(action: .with {
+    postReply?.show(action: .with {
       $0.operation = .reply
       $0.forumID = .with { f in
         f.fid = topic.fid
@@ -756,7 +768,7 @@ struct TopicDetailsView: View {
     }
   }
 
-  func onNewResponse(response: TopicDetailsResponse?) {
+  func updateTopicOnNewResponse(response: TopicDetailsResponse?) {
     guard let response else { return }
     let newTopic = response.topic
 
@@ -816,12 +828,10 @@ struct TopicDetailsView: View {
     .fixedSize(horizontal: false, vertical: true)
     .frame(width: Screen.main.bounds.size.width)
     .background(.secondarySystemGroupedBackground)
-    .withTopicDetailsAction(action: action)
-    .environmentObject(postReply)
   }
 
   func openInBrowser() {
-    if let url = navID.webpageURL {
+    if let url = topic.navID.webpageURL {
       OpenURLModel.shared.open(url: url)
     }
   }
