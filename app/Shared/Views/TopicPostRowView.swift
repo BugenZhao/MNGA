@@ -37,7 +37,7 @@ struct TopicPostRowView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      TopicSubjectView(topic: topic, lineLimit: 2)
+      TopicSubjectView(topic: topic)
 
       QuoteView(fullWidth: false) {
         PostContentView(lightPost: cleanPost, initialInQuote: true)
