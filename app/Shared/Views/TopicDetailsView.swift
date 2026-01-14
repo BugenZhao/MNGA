@@ -502,12 +502,44 @@ struct TopicDetailsView: View {
     }
   }
 
+  private var shouldShowTailSection: Bool {
+    !previewMode && onlyPost.id == nil && !dataSource.isInitialLoading
+  }
+
+  private var shouldShowTailLoadingRow: Bool {
+    guard shouldShowTailSection else { return false }
+    if prefs.usePaginatedDetails, onlyPost.id == nil, dataSource.nextPage != nil {
+      return false
+    }
+    return dataSource.isLoading
+  }
+
+  private var shouldShowRefreshLastPageButton: Bool {
+    guard shouldShowTailSection else { return false }
+    // Don't show when there are only a few replies.
+    return maxFloor >= 5 && !dataSource.isLoading && !dataSource.hasMore && dataSource.latestResponse != nil
+  }
+
+  @ViewBuilder
+  var tailSection: some View {
+    if shouldShowTailLoadingRow {
+      Section { LoadingRowView() }
+    } else if shouldShowRefreshLastPageButton {
+      Section {
+        Button(action: { refreshLastPage() }) {
+          Label("Refresh Last Page", systemImage: "arrow.clockwise")
+        }
+      }
+    }
+  }
+
   @ViewBuilder
   var listMain: some View {
     List {
       headerSection
       hotRepliesSection
       allRepliesSection
+      tailSection
     }
   }
 
@@ -550,6 +582,7 @@ struct TopicDetailsView: View {
       headerSection
       hotRepliesSection
       paginatedAllRepliesSectionsNew
+      tailSection
     }
   }
 
@@ -762,9 +795,15 @@ struct TopicDetailsView: View {
     case let .exact(page):
       dataSource.reload(page: page, evenIfNotLoaded: false)
     case .last:
-      dataSource.reloadLastPages(evenIfNotLoaded: false)
+      dataSource.reloadLastPage(evenIfNotLoaded: false)
     case .none:
       break
+    }
+  }
+
+  func refreshLastPage() {
+    dataSource.reloadLastPage(evenIfNotLoaded: true) {
+      HapticUtils.play(type: .success)
     }
   }
 
