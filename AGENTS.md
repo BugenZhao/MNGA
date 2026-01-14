@@ -82,4 +82,4 @@ Generates Swift protobuf code. Rust protobuf code is generated automatically dur
 - Avoid any Chinese in source code, including comments and string literals.
 - The project is targeting iOS 26. Note that this is NOT a typo. Apple released iOS 26 in 2025.
 - APIs of SwiftUI is evolving very fast. Always refer to the latest documentation via `sosumi` MCP server.
-- Always update localization file at `app/Shared/Localization/zh-Hans.lproj/Localizable.strings` after making any changes to the UI.
+- Always update localization file at `app/Shared/Localization/zh-Hans.lproj/Localizable.strings` after making any changes to the UI. No need to update English localization file, as you can directly use English string literals in the code.

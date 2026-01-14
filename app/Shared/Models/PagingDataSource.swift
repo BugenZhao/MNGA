@@ -211,8 +211,13 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
 
   func reload(page: Int, evenIfNotLoaded: Bool, animated: Bool = true, after: (() -> Void)? = nil) {
     guard page <= loadedPage || evenIfNotLoaded else { return }
+    if isLoading { return }
     let request = buildRequest(page)
     let currentId = dataFlowId
+
+    withAnimation(when: animated) {
+      isLoading = true
+    }
 
     logicCallAsync(request) { (response: Res) in
       guard currentId == self.dataFlowId else { return }
@@ -230,7 +235,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       self.totalPages = newTotalPages ?? self.totalPages
       if let after { after() }
     } onError: { e in
-      withAnimation {
+      withAnimation(when: animated) {
         self.isLoading = false
       }
       self.onError(e)
