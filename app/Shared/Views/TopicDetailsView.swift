@@ -503,7 +503,7 @@ struct TopicDetailsView: View {
   }
 
   private var shouldShowTailSection: Bool {
-    onlyPost.id == nil && !dataSource.isInitialLoading
+    !previewMode && onlyPost.id == nil && !dataSource.isInitialLoading
   }
 
   private var shouldShowTailLoadingRow: Bool {
@@ -516,7 +516,8 @@ struct TopicDetailsView: View {
 
   private var shouldShowRefreshLastPageButton: Bool {
     guard shouldShowTailSection else { return false }
-    return !dataSource.isLoading && !dataSource.hasMore && dataSource.latestResponse != nil
+    // Don't show when there are only a few replies.
+    return maxFloor >= 5 && !dataSource.isLoading && !dataSource.hasMore && dataSource.latestResponse != nil
   }
 
   @ViewBuilder
