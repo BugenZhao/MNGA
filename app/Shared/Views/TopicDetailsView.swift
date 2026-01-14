@@ -794,15 +794,16 @@ struct TopicDetailsView: View {
     case let .exact(page):
       dataSource.reload(page: page, evenIfNotLoaded: false)
     case .last:
-      dataSource.reloadLastPages(evenIfNotLoaded: false)
+      dataSource.reloadLastPage(evenIfNotLoaded: false)
     case .none:
       break
     }
   }
 
   func refreshLastPage() {
-    dataSource.reloadLastPages(evenIfNotLoaded: true)
-    HapticUtils.play(type: .success)
+    dataSource.reloadLastPage(evenIfNotLoaded: true) {
+      HapticUtils.play(type: .success)
+    }
   }
 
   func updateTopicOnNewResponse(response: TopicDetailsResponse?) {

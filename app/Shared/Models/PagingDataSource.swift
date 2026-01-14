@@ -203,9 +203,20 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func reloadLastPages(evenIfNotLoaded: Bool) {
-    for page in [totalPages, totalPages + 1] {
-      reload(page: page, evenIfNotLoaded: evenIfNotLoaded)
+  func reloadLastPage(
+    evenIfNotLoaded: Bool,
+    animated: Bool = true,
+    after: (() -> Void)? = nil
+  ) {
+    let oldTotalPages = totalPages
+    let oldLoadedPage = loadedPage
+
+    reload(page: oldTotalPages, evenIfNotLoaded: evenIfNotLoaded, animated: animated) {
+      after?()
+
+      if self.totalPages > oldTotalPages, oldLoadedPage == oldTotalPages {
+        self.loadMore(background: false, alwaysAnimation: animated)
+      }
     }
   }
 

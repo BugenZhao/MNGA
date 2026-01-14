@@ -84,7 +84,7 @@ struct ShortMessageDetailsView: View {
       .refreshable(dataSource: dataSource)
       .withTopicDetailsAction()
       .toolbar { toolbar }
-      .onChange(of: postModel.sent) { dataSource.reloadLastPages(evenIfNotLoaded: false) }
+      .onChange(of: postModel.sent) { dataSource.reloadLastPage(evenIfNotLoaded: false) }
   }
 
   func doReply() {
