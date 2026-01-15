@@ -119,6 +119,13 @@ class ContentCombiner {
     set { setEnv(key: "inQuote", value: newValue ? "true" : nil) }
   }
 
+  // When rendering an inline "quoted post" summary, we want to skip *reply quotes*
+  // (quotes that reference another post and have reply metadata), but keep other quote usage.
+  var inReplyQuote: Bool {
+    get { getEnv(key: "inReplyQuote") != nil }
+    set { setEnv(key: "inReplyQuote", value: newValue ? "true" : nil) }
+  }
+
   private var replyTo: PostId? {
     get { getEnv(key: "replyTo") as! PostId? }
     set { setEnv(key: "replyTo", value: newValue) }
@@ -262,6 +269,9 @@ class ContentCombiner {
     } else {
       // complex view
       tryAppendTextBuffer()
+      if tableContext == .none, inReplyQuote, results.count > 3 {
+        results = Array(results.prefix(3))
+      }
       let forEach =
         ForEach(results.indices, id: \.self) { index in
           results[index]
@@ -419,6 +429,15 @@ class ContentCombiner {
     }
   }
 
+  private func buildQuoteMeta(from spans: ArraySlice<Span>) -> (pid: PostId, uid: String, username: String?, envs: [String: Any])? {
+    let metaCombiner = ContentCombiner(parent: nil)
+    metaCombiner.inQuote = true
+    metaCombiner.visit(spans: spans)
+    guard let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? else { return nil }
+    let name = metaCombiner.getEnv(key: "username") as! String?
+    return (pid, uid, name, metaCombiner.envs)
+  }
+
   private func visit(image: Span.Tagged) {
     guard let value = image.spans.first?.value else { return }
     guard case let .plain(plain) = value else { return }
@@ -484,24 +503,28 @@ class ContentCombiner {
 
     let spans = quote.spans
     let metaSpans = spans.prefix { $0.value != .breakLine(.init()) }
-    let metaCombiner = ContentCombiner(parent: nil)
-    metaCombiner.inQuote = true
-    metaCombiner.visit(spans: metaSpans)
 
     var tapAction: (() -> Void)?
     var lineLimit: Int?
 
-    if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
+    if let meta = buildQuoteMeta(from: metaSpans) {
+      if inReplyQuote {
+        // In inline quoted-post summary, skip reply quotes to avoid showing long quote chains.
+        return
+      }
+
+      combiner.inReplyQuote = true
+      let pid = meta.pid
+      let uid = meta.uid
       if let model = actionModel, let id = selfId {
         model.recordReply(from: id, to: pid)
         tapAction = { model.showReplyChain(from: id) }
         lineLimit = 5 // TODO: add an option
       }
 
-      let name = metaCombiner.getEnv(key: "username") as! String?
-      let userView = QuoteUserView(uid: uid, nameHint: name, action: tapAction)
+      let userView = QuoteUserView(uid: uid, nameHint: meta.username, action: tapAction)
       combiner.append(userView)
-      combiner.envs = metaCombiner.envs
+      combiner.envs = meta.envs
       let contentSpans = spans[metaSpans.count...]
       combiner.visit(spans: contentSpans)
     } else {
@@ -516,16 +539,30 @@ class ContentCombiner {
   }
 
   private func visit(bold: Span.Tagged) {
-    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
-
     if bold.spans.first?.plain.text.starts(with: "Reply to") == true {
-      combiner.visit(quote: Span.Tagged.with {
-        $0.spans = Array(bold.spans.dropFirst())
-      })
-    } else {
-      combiner.visit(spans: bold.spans)
+      let metaSpans = Array(bold.spans.dropFirst())
+
+      if let meta = buildQuoteMeta(from: metaSpans[...]) {
+        if let model = actionModel, let id = selfId {
+          model.recordReply(from: id, to: meta.pid)
+        }
+
+        let quotedFont: Font = font == .callout ? .subheadline : .callout
+        let view = InlineQuotedPostView(
+          postId: meta.pid,
+          uid: meta.uid,
+          nameHint: meta.username,
+          sourcePostId: selfId,
+          defaultFont: quotedFont,
+          defaultColor: Color.primary.opacity(0.9)
+        )
+        append(view)
+        return
+      }
     }
 
+    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
+    combiner.visit(spans: bold.spans)
     append(combiner.build())
   }
 

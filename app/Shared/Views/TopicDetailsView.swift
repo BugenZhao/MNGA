@@ -133,6 +133,7 @@ struct TopicDetailsView: View {
   @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
   @StateObject var votes = VotesModel()
+  @StateObject var quotedPosts: QuotedPostResolver
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
   @StateObject var alert = ToastModel.editorAlert
@@ -159,6 +160,30 @@ struct TopicDetailsView: View {
 
   var mock: Bool {
     topic.id.isMNGAMockID
+  }
+
+  init(
+    topic: Binding<Topic>,
+    dataSource: DataSource,
+    onlyPost: (id: PostId?, atPage: Int?),
+    forceLocalMode: Bool,
+    previewMode: Bool,
+    floorToJump: Int? = nil,
+    postIdToJump: PostId? = nil
+  ) {
+    _topic = topic
+    _dataSource = StateObject(wrappedValue: dataSource)
+
+    let resolver = QuotedPostResolver { [weak dataSource] id in
+      dataSource?.items.first(where: { $0.id == id })
+    }
+    _quotedPosts = StateObject(wrappedValue: resolver)
+
+    self.onlyPost = onlyPost
+    self.forceLocalMode = forceLocalMode
+    self.previewMode = previewMode
+    _floorToJump = State(initialValue: floorToJump)
+    _postIdToJump = State(initialValue: postIdToJump)
   }
 
   static func build(id: String, fav: String? = nil) -> some View {
@@ -698,8 +723,9 @@ struct TopicDetailsView: View {
     }
     // Action Navigation
     .withTopicDetailsAction(action: action)
+    .environmentObject(quotedPosts)
     .navigationDestination(item: $action.showingReplyChain) {
-      PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
+      PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0)
     }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
@@ -810,6 +836,7 @@ struct TopicDetailsView: View {
   func updateTopicOnNewResponse(response: TopicDetailsResponse?) {
     guard let response else { return }
     let newTopic = response.topic
+    quotedPosts.seed(posts: response.replies)
 
     if topic.id.isEmpty { // for onlyPost, we may not have the topic id initially
       topic.id = newTopic.id
