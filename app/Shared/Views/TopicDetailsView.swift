@@ -174,8 +174,7 @@ struct TopicDetailsView: View {
     _topic = topic
     _dataSource = StateObject(wrappedValue: dataSource)
 
-    let resolver = QuotedPostResolver()
-    resolver.localPostProvider = { [weak dataSource] id in
+    let resolver = QuotedPostResolver { [weak dataSource] id in
       dataSource?.items.first(where: { $0.id == id })
     }
     _quotedPosts = StateObject(wrappedValue: resolver)

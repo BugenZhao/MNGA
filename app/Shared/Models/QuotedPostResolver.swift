@@ -18,6 +18,10 @@ final class QuotedPostResolver: ObservableObject {
 
   private var inFlight = Set<PostId>()
 
+  init(localPostProvider: ((PostId) -> Post?)? = nil) {
+    self.localPostProvider = localPostProvider
+  }
+
   func seed(posts: some Sequence<Post>) {
     for post in posts {
       self.posts[post.id] = post
