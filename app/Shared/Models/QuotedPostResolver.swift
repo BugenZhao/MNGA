@@ -5,8 +5,8 @@
 //  Created by Codex on 2026/1/14.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 final class QuotedPostResolver: ObservableObject {
   @Published private(set) var posts = [PostId: Post]()

@@ -67,17 +67,17 @@ struct InlineQuotedPostView: View {
     }
     .lineLimit(showChainAction == nil ? nil : 5)
     .onAppear { resolver.load(id: postId) }
-#if DEBUG
-    .overlay(alignment: .topTrailing) {
-      Text("INL")
-        .font(.caption2.monospaced().weight(.semibold))
-        .foregroundColor(.secondary.opacity(0.35))
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
-        .background(Capsule().fill(Color.secondary.opacity(0.08)))
-        .padding(6)
-        .allowsHitTesting(false)
-    }
-#endif
+    #if DEBUG
+      .overlay(alignment: .topTrailing) {
+        Text("INL")
+          .font(.caption2.monospaced().weight(.semibold))
+          .foregroundColor(.secondary.opacity(0.35))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Capsule().fill(Color.secondary.opacity(0.08)))
+          .padding(6)
+          .allowsHitTesting(false)
+      }
+    #endif
   }
 }

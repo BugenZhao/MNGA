@@ -33,10 +33,12 @@ struct PostReplyChainView: View {
             .onAppear { resolver.load(id: id) }
         }
       }
-    }.navigationTitle("Replies")
-      .withTopicDetailsAction()
-      .environment(\.enableShowReplyChain, false)
-      .mayGroupedListStyle()
-      .refreshable { resolver.resetFailures() }
+    }
+    .environmentObject(resolver)
+    .navigationTitle("Replies")
+    .withTopicDetailsAction()
+    .environment(\.enableShowReplyChain, false)
+    .mayGroupedListStyle()
+    .refreshable { resolver.resetFailures() }
   }
 }
