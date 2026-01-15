@@ -426,6 +426,15 @@ class ContentCombiner {
     }
   }
 
+  private func buildQuoteMeta(from spans: ArraySlice<Span>) -> (pid: PostId, uid: String, username: String?, envs: [String: Any])? {
+    let metaCombiner = ContentCombiner(parent: nil)
+    metaCombiner.inQuote = true
+    metaCombiner.visit(spans: spans)
+    guard let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? else { return nil }
+    let name = metaCombiner.getEnv(key: "username") as! String?
+    return (pid, uid, name, metaCombiner.envs)
+  }
+
   private func visit(image: Span.Tagged) {
     guard let value = image.spans.first?.value else { return }
     guard case let .plain(plain) = value else { return }
@@ -491,29 +500,27 @@ class ContentCombiner {
 
     let spans = quote.spans
     let metaSpans = spans.prefix { $0.value != .breakLine(.init()) }
-    let metaCombiner = ContentCombiner(parent: nil)
-    metaCombiner.inQuote = true
-    metaCombiner.visit(spans: metaSpans)
 
     var tapAction: (() -> Void)?
     var lineLimit: Int?
 
-    if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
+    if let meta = buildQuoteMeta(from: metaSpans) {
       if ignoreReplyQuotes {
         // In inline quoted-post summary, skip reply quotes to avoid showing long quote chains.
         return
       }
 
+      let pid = meta.pid
+      let uid = meta.uid
       if let model = actionModel, let id = selfId {
         model.recordReply(from: id, to: pid)
         tapAction = { model.showReplyChain(from: id) }
         lineLimit = 5 // TODO: add an option
       }
 
-      let name = metaCombiner.getEnv(key: "username") as! String?
-      let userView = QuoteUserView(uid: uid, nameHint: name, action: tapAction)
+      let userView = QuoteUserView(uid: uid, nameHint: meta.username, action: tapAction)
       combiner.append(userView)
-      combiner.envs = metaCombiner.envs
+      combiner.envs = meta.envs
       let contentSpans = spans[metaSpans.count...]
       combiner.visit(spans: contentSpans)
     } else {
@@ -531,21 +538,16 @@ class ContentCombiner {
     if bold.spans.first?.plain.text.starts(with: "Reply to") == true {
       let metaSpans = Array(bold.spans.dropFirst())
 
-      let metaCombiner = ContentCombiner(parent: nil)
-      metaCombiner.inQuote = true
-      metaCombiner.visit(spans: metaSpans)
-
-      if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
+      if let meta = buildQuoteMeta(from: metaSpans[...]) {
         if let model = actionModel, let id = selfId {
-          model.recordReply(from: id, to: pid)
+          model.recordReply(from: id, to: meta.pid)
         }
 
-        let name = metaCombiner.getEnv(key: "username") as! String?
         let quotedFont: Font = font == .callout ? .subheadline : .callout
         let view = InlineQuotedPostView(
-          postId: pid,
-          uid: uid,
-          nameHint: name,
+          postId: meta.pid,
+          uid: meta.uid,
+          nameHint: meta.username,
           sourcePostId: selfId,
           defaultFont: quotedFont,
           defaultColor: Color.primary.opacity(0.9)
