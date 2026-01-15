@@ -66,6 +66,11 @@ final class QuotedPostResolver: ObservableObject {
           self.failed.insert(id)
         }
       }
+    } onError: { _ in
+      withAnimation {
+        self.inFlight.remove(id)
+        self.failed.insert(id)
+      }
     }
   }
 
