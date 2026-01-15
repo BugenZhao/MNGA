@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import SwiftUI
 
 final class QuotedPostResolver: ObservableObject {
   @Published private(set) var posts = [PostId: Post]()
@@ -52,7 +53,7 @@ final class QuotedPostResolver: ObservableObject {
       $0.topicID = id.tid
       $0.postID = id.pid
     })) { (response: TopicDetailsResponse) in
-      DispatchQueue.main.async {
+      withAnimation {
         self.inFlight.remove(id)
         if let post = response.replies.first {
           self.posts[id] = post
