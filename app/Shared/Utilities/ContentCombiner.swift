@@ -121,9 +121,9 @@ class ContentCombiner {
 
   // When rendering an inline "quoted post" summary, we want to skip *reply quotes*
   // (quotes that reference another post and have reply metadata), but keep other quote usage.
-  var ignoreReplyQuotes: Bool {
-    get { getEnv(key: "ignoreReplyQuotes") != nil }
-    set { setEnv(key: "ignoreReplyQuotes", value: newValue ? "true" : nil) }
+  var inReplyQuote: Bool {
+    get { getEnv(key: "inReplyQuote") != nil }
+    set { setEnv(key: "inReplyQuote", value: newValue ? "true" : nil) }
   }
 
   private var replyTo: PostId? {
@@ -269,6 +269,9 @@ class ContentCombiner {
     } else {
       // complex view
       tryAppendTextBuffer()
+      if tableContext == .none, inReplyQuote, results.count > 3 {
+        results = Array(results.prefix(3))
+      }
       let forEach =
         ForEach(results.indices, id: \.self) { index in
           results[index]
@@ -505,11 +508,12 @@ class ContentCombiner {
     var lineLimit: Int?
 
     if let meta = buildQuoteMeta(from: metaSpans) {
-      if ignoreReplyQuotes {
+      if inReplyQuote {
         // In inline quoted-post summary, skip reply quotes to avoid showing long quote chains.
         return
       }
 
+      combiner.inReplyQuote = true
       let pid = meta.pid
       let uid = meta.uid
       if let model = actionModel, let id = selfId {
