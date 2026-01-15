@@ -133,7 +133,7 @@ struct TopicDetailsView: View {
   @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
   @StateObject var votes = VotesModel()
-  @StateObject var quotedPosts = QuotedPostResolver()
+  @StateObject var quotedPosts: QuotedPostResolver
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
   @StateObject var alert = ToastModel.editorAlert
@@ -160,6 +160,31 @@ struct TopicDetailsView: View {
 
   var mock: Bool {
     topic.id.isMNGAMockID
+  }
+
+  init(
+    topic: Binding<Topic>,
+    dataSource: DataSource,
+    onlyPost: (id: PostId?, atPage: Int?),
+    forceLocalMode: Bool,
+    previewMode: Bool,
+    floorToJump: Int? = nil,
+    postIdToJump: PostId? = nil
+  ) {
+    _topic = topic
+    _dataSource = StateObject(wrappedValue: dataSource)
+
+    let resolver = QuotedPostResolver()
+    resolver.localPostProvider = { [weak dataSource] id in
+      dataSource?.items.first(where: { $0.id == id })
+    }
+    _quotedPosts = StateObject(wrappedValue: resolver)
+
+    self.onlyPost = onlyPost
+    self.forceLocalMode = forceLocalMode
+    self.previewMode = previewMode
+    _floorToJump = State(initialValue: floorToJump)
+    _postIdToJump = State(initialValue: postIdToJump)
   }
 
   static func build(id: String, fav: String? = nil) -> some View {
@@ -701,7 +726,7 @@ struct TopicDetailsView: View {
     .withTopicDetailsAction(action: action)
     .environmentObject(quotedPosts)
     .navigationDestination(item: $action.showingReplyChain) {
-      PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
+      PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0)
     }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
@@ -740,12 +765,7 @@ struct TopicDetailsView: View {
       }
     }
     .mayGroupedListStyle()
-    .onAppear {
-      quotedPosts.localPostProvider = { [weak dataSource] id in
-        dataSource?.items.first(where: { $0.id == id })
-      }
-      dataSource.initialLoad()
-    }
+    .onAppear { dataSource.initialLoad() }
     .onChange(of: dataSource.latestResponse) { updateTopicOnNewResponse(response: $1) }
   }
 

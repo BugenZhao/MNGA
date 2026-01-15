@@ -20,7 +20,6 @@ struct InlineQuotedPostView: View {
   @EnvironmentObject<TopicDetailsActionModel>.Optional private var actionModel
   @EnvironmentObject<QuotedPostResolver>.Optional private var resolverEnv
 
-  @StateObject private var prefs = PreferencesStorage.shared
   @StateObject private var localResolver = QuotedPostResolver()
 
   private var resolver: QuotedPostResolver {
@@ -67,7 +66,7 @@ struct InlineQuotedPostView: View {
       }
     }
     .lineLimit(showChainAction == nil ? nil : 5)
-    .onAppear { resolver.load(id: postId, webApiStrategy: prefs.topicDetailsWebApiStrategy) }
+    .onAppear { resolver.load(id: postId) }
 #if DEBUG
     .overlay(alignment: .topTrailing) {
       Text("INL")
