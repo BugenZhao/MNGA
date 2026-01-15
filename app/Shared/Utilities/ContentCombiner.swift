@@ -119,6 +119,13 @@ class ContentCombiner {
     set { setEnv(key: "inQuote", value: newValue ? "true" : nil) }
   }
 
+  // When rendering an inline "quoted post" summary, we want to skip *reply quotes*
+  // (quotes that reference another post and have reply metadata), but keep other quote usage.
+  var ignoreReplyQuotes: Bool {
+    get { getEnv(key: "ignoreReplyQuotes") != nil }
+    set { setEnv(key: "ignoreReplyQuotes", value: newValue ? "true" : nil) }
+  }
+
   private var replyTo: PostId? {
     get { getEnv(key: "replyTo") as! PostId? }
     set { setEnv(key: "replyTo", value: newValue) }
@@ -492,6 +499,11 @@ class ContentCombiner {
     var lineLimit: Int?
 
     if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
+      if ignoreReplyQuotes {
+        // In inline quoted-post summary, skip reply quotes to avoid showing long quote chains.
+        return
+      }
+
       if let model = actionModel, let id = selfId {
         model.recordReply(from: id, to: pid)
         tapAction = { model.showReplyChain(from: id) }
@@ -516,16 +528,35 @@ class ContentCombiner {
   }
 
   private func visit(bold: Span.Tagged) {
-    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
-
     if bold.spans.first?.plain.text.starts(with: "Reply to") == true {
-      combiner.visit(quote: Span.Tagged.with {
-        $0.spans = Array(bold.spans.dropFirst())
-      })
-    } else {
-      combiner.visit(spans: bold.spans)
+      let metaSpans = Array(bold.spans.dropFirst())
+
+      let metaCombiner = ContentCombiner(parent: nil)
+      metaCombiner.inQuote = true
+      metaCombiner.visit(spans: metaSpans)
+
+      if let pid = metaCombiner.replyTo, let uid = metaCombiner.getEnv(key: "uid") as! String? {
+        if let model = actionModel, let id = selfId {
+          model.recordReply(from: id, to: pid)
+        }
+
+        let name = metaCombiner.getEnv(key: "username") as! String?
+        let quotedFont: Font = font == .callout ? .subheadline : .callout
+        let view = InlineQuotedPostView(
+          postId: pid,
+          uid: uid,
+          nameHint: name,
+          sourcePostId: selfId,
+          defaultFont: quotedFont,
+          defaultColor: Color.primary.opacity(0.9)
+        )
+        append(view)
+        return
+      }
     }
 
+    let combiner = ContentCombiner(parent: self, font: { $0?.bold() })
+    combiner.visit(spans: bold.spans)
     append(combiner.build())
   }
 

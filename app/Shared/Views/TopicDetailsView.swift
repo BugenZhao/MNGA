@@ -133,6 +133,7 @@ struct TopicDetailsView: View {
   @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
   @StateObject var votes = VotesModel()
+  @StateObject var quotedPosts = QuotedPostResolver()
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
   @StateObject var alert = ToastModel.editorAlert
@@ -698,6 +699,7 @@ struct TopicDetailsView: View {
     }
     // Action Navigation
     .withTopicDetailsAction(action: action)
+    .environmentObject(quotedPosts)
     .navigationDestination(item: $action.showingReplyChain) {
       PostReplyChainView(baseDataSource: dataSource, votes: votes, chain: $0)
     }
@@ -738,7 +740,12 @@ struct TopicDetailsView: View {
       }
     }
     .mayGroupedListStyle()
-    .onAppear { dataSource.initialLoad() }
+    .onAppear {
+      quotedPosts.localPostProvider = { [weak dataSource] id in
+        dataSource?.items.first(where: { $0.id == id })
+      }
+      dataSource.initialLoad()
+    }
     .onChange(of: dataSource.latestResponse) { updateTopicOnNewResponse(response: $1) }
   }
 
@@ -810,6 +817,7 @@ struct TopicDetailsView: View {
   func updateTopicOnNewResponse(response: TopicDetailsResponse?) {
     guard let response else { return }
     let newTopic = response.topic
+    quotedPosts.seed(posts: response.replies)
 
     if topic.id.isEmpty { // for onlyPost, we may not have the topic id initially
       topic.id = newTopic.id
