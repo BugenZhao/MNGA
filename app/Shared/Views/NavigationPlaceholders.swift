@@ -17,5 +17,8 @@ struct TopicListPlaceholderView: View {
 struct TopicDetailsPlaceholderView: View {
   var body: some View {
     ContentUnavailableView("Select a Topic", systemImage: "doc.richtext")
+      .toolbar {
+        NotificationToolbarItem(placement: .navigationBarTrailing)
+      }
   }
 }
