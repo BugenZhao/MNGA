@@ -50,7 +50,7 @@
 "Post by" = "发表自";
 "Filters" = "过滤";
 "Hot Replies" = "热门回复";
-"Refresh Last Page" = "刷新最后一页";
+"Load New Replies" = "加载新回复";
 "Collapsed Content" = "折叠的内容";
 "Favorite Topics" = "收藏话题";
 "Error" = "错误";
@@ -218,7 +218,7 @@
 "Clear" = "清除";
 "View Attachment" = "查看附件";
 "Attachments" = "附件";
-"Attachments (%lld)" = "附件 (%lld)";
+"Attachments (%lld)" = "附件（%lld）";
 "MNGA Development" = "MNGA 开发";
 "Post Appearance" = "回复外观";
 "Dummy User" = "某用户";

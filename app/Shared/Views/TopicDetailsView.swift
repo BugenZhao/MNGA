@@ -531,29 +531,32 @@ struct TopicDetailsView: View {
     !previewMode && onlyPost.id == nil && !dataSource.isInitialLoading
   }
 
-  private var shouldShowTailLoadingRow: Bool {
-    guard shouldShowTailSection else { return false }
-    if prefs.usePaginatedDetails, onlyPost.id == nil, dataSource.nextPage != nil {
-      return false
-    }
-    return dataSource.isLoading
-  }
-
   private var shouldShowRefreshLastPageButton: Bool {
     guard shouldShowTailSection else { return false }
-    // Don't show when there are only a few replies.
-    return maxFloor >= 5 && !dataSource.isLoading && !dataSource.hasMore && dataSource.latestResponse != nil
+    // Don't show when the last reply is too old.
+    guard !dataSource.hasMore, dataSource.latestResponse != nil else { return false }
+    guard let lastRefreshTime = dataSource.lastRefreshTime else { return false }
+    guard let lastReplyTimestamp = dataSource.items.map(\.postDate).max(), lastReplyTimestamp > 0 else { return false }
+
+    let lastReplyTime = Date(timeIntervalSince1970: TimeInterval(lastReplyTimestamp))
+    return lastReplyTime >= lastRefreshTime.addingTimeInterval(-3600)
   }
 
   @ViewBuilder
   var tailSection: some View {
-    if shouldShowTailLoadingRow {
-      Section { LoadingRowView() }
-    } else if shouldShowRefreshLastPageButton {
+    if shouldShowRefreshLastPageButton {
       Section {
         Button(action: { refreshLastPage() }) {
-          Label("Refresh Last Page", systemImage: "arrow.clockwise")
+          HStack {
+            Label("Load New Replies", systemImage: "arrow.clockwise")
+            Spacer()
+            if dataSource.isLoading {
+              ProgressView()
+            }
+          }
         }
+        .disabled(dataSource.isLoading)
+        .foregroundColor(dataSource.isLoading ? .secondary : nil)
       }
     }
   }

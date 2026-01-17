@@ -99,6 +99,9 @@ struct PostRowView: View {
         if !post.alterInfo.isEmpty {
           Image(systemName: "pencil")
         }
+        if !post.attachments.isEmpty {
+          Image(systemName: "paperclip")
+        }
         DateTimeTextView.build(timestamp: post.postDate)
           .id(pref.postRowDateTimeStrategy)
         Image(systemName: post.device.icon)
