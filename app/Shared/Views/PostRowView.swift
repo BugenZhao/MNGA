@@ -63,7 +63,12 @@ struct PostRowView: View {
   }
 
   var navID: NavigationIdentifier {
-    .postID(post.id.pid)
+    // `pid == "0"` means this is the main floor of the topic, which is not a valid `pid` share link.
+    // Use the topic link instead.
+    if post.id.pid == "0" {
+      return .topicID(tid: post.id.tid, fav: nil)
+    }
+    return .postID(post.id.pid)
   }
 
   @State var highlight = false
