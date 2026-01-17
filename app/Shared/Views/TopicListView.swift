@@ -49,6 +49,7 @@ struct TopicListView: View {
   @StateObject var prefs = PreferencesStorage.shared
 
   @State var currentShowingSubforum: Forum? = nil
+  @State var showingSubforum: Bool = false
   @State var showingSubforumsModal = false
   @State var order: TopicListRequest.Order? = nil
   @State var triggerRefresh = false
@@ -231,6 +232,7 @@ struct TopicListView: View {
             onNavigateToForum: { subforum in
               showingSubforumsModal = false
               currentShowingSubforum = subforum
+              showingSubforum = true
             }
           )
         } else {
@@ -358,7 +360,8 @@ struct TopicListView: View {
     .scrollAwareTitle { principal }
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply?.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }
-    .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
+    // .navigationDestination(item: $currentShowingSubforum) { TopicListView.build(forum: $0) }
+    .navigationDestination(isPresented: $showingSubforum) { if let f = currentShowingSubforum { TopicListView.build(forum: f) } }
     .toolbar { toolbar }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
