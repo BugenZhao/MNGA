@@ -202,7 +202,11 @@ struct ForumListView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
-    NotificationToolbarItem(placement: .navigationBarLeading, show: .fromUserMenu)
+    NotificationToolbarItem(
+      placement: .navigationBarLeading,
+      // Always show as sheet on iPad.
+      show: UserInterfaceIdiom.current == .pad ? .sheet : .fromUserMenu
+    )
 
     if !paywall.status.isPaid {
       ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
