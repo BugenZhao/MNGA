@@ -218,7 +218,7 @@
 "Clear" = "清除";
 "View Attachment" = "查看附件";
 "Attachments" = "附件";
-"Attachments (%lld)" = "附件 (%lld)";
+"Attachments (%lld)" = "附件（%lld）";
 "MNGA Development" = "MNGA 开发";
 "Post Appearance" = "回复外观";
 "Dummy User" = "某用户";
