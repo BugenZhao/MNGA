@@ -105,19 +105,15 @@ extension EnvironmentValues {
 }
 
 struct NotificationListNavigationView: View {
-  @State var detents: Set<PresentationDetent> = Self.defaultDetents
-  @State var detent: PresentationDetent = .medium
+  @State var detents: Set<PresentationDetent> = Set(Self.defaultDetents)
+  @State var detent: PresentationDetent = Self.defaultDetents[0]
 
-  static var defaultDetents: Set<PresentationDetent> {
-    if UserInterfaceIdiom.current == .pad {
-      [.large]
-    } else {
-      [.medium, .large]
-    }
-  }
+  static let defaultDetents: [PresentationDetent] =
+    UserInterfaceIdiom.current == .pad ?
+    [.large] : [.medium, .large]
 
   func enableMediumDetent() {
-    detents = Self.defaultDetents
+    detents = Set(Self.defaultDetents)
   }
 
   func disableMediumDetent() {
