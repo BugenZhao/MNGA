@@ -148,6 +148,8 @@ struct NotificationToolbarItem: ToolbarContent {
   }
 
   @StateObject var notis = NotificationModel.shared
+  @StateObject var prefs = PreferencesStorage.shared
+
   @Environment(\.inNotificationSheet) var inNotificationSheet
 
   func showAction() {
@@ -166,7 +168,7 @@ struct NotificationToolbarItem: ToolbarContent {
   @ViewBuilder
   var bodyView: some View {
     // Only show if not from notification list view.
-    if unreadCount > 0,
+    if unreadCount > 0 || prefs.debugAlwaysShowNotificationBadge,
        show == .fromUserMenu || !notis.showingFromUserMenu,
        !inNotificationSheet
     {

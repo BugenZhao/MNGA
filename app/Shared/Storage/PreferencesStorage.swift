@@ -59,6 +59,7 @@ class PreferencesStorage: ObservableObject {
 
   @AppStorage("debugResetTips") var debugResetTips = false
   @AppStorage("debugResetWhatsNew") var debugResetWhatsNew = false
+  @AppStorage("debugAlwaysShowNotificationBadge") var debugAlwaysShowNotificationBadge = false
 
   init() {
     syncRequestOptionWithLogic()

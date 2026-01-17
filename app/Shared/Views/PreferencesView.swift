@@ -172,6 +172,9 @@ struct PreferencesInnerView: View {
   @ViewBuilder
   var debug: some View {
     UnlockStatusDebugPickerView()
+    Toggle(isOn: $pref.debugAlwaysShowNotificationBadge) {
+      Text("Always Show Notification Badge")
+    }
     Toggle(isOn: $pref.debugResetTips) {
       Text("Reset Tips on Next Launch")
     }
