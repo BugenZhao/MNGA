@@ -40,7 +40,7 @@ struct InlineQuotedPostView: View {
       defaultColor: defaultColor
     )
     combiner.inQuote = true
-    combiner.inReplyQuote = true
+    combiner.inInlineReplyQuote = true
     combiner.visit(spans: post.content.spans)
     return combiner.buildView()
   }

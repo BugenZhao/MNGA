@@ -121,9 +121,9 @@ class ContentCombiner {
 
   // When rendering an inline "quoted post" summary, we want to skip *reply quotes*
   // (quotes that reference another post and have reply metadata), but keep other quote usage.
-  var inReplyQuote: Bool {
-    get { getEnv(key: "inReplyQuote") != nil }
-    set { setEnv(key: "inReplyQuote", value: newValue ? "true" : nil) }
+  var inInlineReplyQuote: Bool {
+    get { getEnv(key: "inInlineReplyQuote") != nil }
+    set { setEnv(key: "inInlineReplyQuote", value: newValue ? "true" : nil) }
   }
 
   private var replyTo: PostId? {
@@ -269,8 +269,9 @@ class ContentCombiner {
     } else {
       // complex view
       tryAppendTextBuffer()
-      if tableContext == .none, inReplyQuote, results.count > 3 {
-        results = Array(results.prefix(3))
+      // truncate too long inline reply quotes
+      if tableContext == .none, inInlineReplyQuote, results.count > 5 {
+        results = Array(results.prefix(5))
       }
       let forEach =
         ForEach(results.indices, id: \.self) { index in
@@ -508,12 +509,11 @@ class ContentCombiner {
     var lineLimit: Int?
 
     if let meta = buildQuoteMeta(from: metaSpans) {
-      if inReplyQuote {
-        // In inline quoted-post summary, skip reply quotes to avoid showing long quote chains.
+      if inInlineReplyQuote {
+        // Skip nested reply quotes in inline reply quotes.
         return
       }
 
-      combiner.inReplyQuote = true
       let pid = meta.pid
       let uid = meta.uid
       if let model = actionModel, let id = selfId {
@@ -525,6 +525,7 @@ class ContentCombiner {
       let userView = QuoteUserView(uid: uid, nameHint: meta.username, action: tapAction)
       combiner.append(userView)
       combiner.envs = meta.envs
+
       let contentSpans = spans[metaSpans.count...]
       combiner.visit(spans: contentSpans)
     } else {
@@ -543,6 +544,11 @@ class ContentCombiner {
       let metaSpans = Array(bold.spans.dropFirst())
 
       if let meta = buildQuoteMeta(from: metaSpans[...]) {
+        if inInlineReplyQuote {
+          // Skip nested reply quotes in inline reply quotes.
+          return
+        }
+
         if let model = actionModel, let id = selfId {
           model.recordReply(from: id, to: meta.pid)
         }
