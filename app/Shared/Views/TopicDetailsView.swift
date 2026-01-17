@@ -533,7 +533,7 @@ struct TopicDetailsView: View {
 
   private var shouldShowRefreshLastPageButton: Bool {
     guard shouldShowTailSection else { return false }
-    // Don't show when there are only a few replies or the last reply is too old.
+    // Don't show when the last reply is too old.
     guard !dataSource.hasMore, dataSource.latestResponse != nil else { return false }
     guard let lastRefreshTime = dataSource.lastRefreshTime else { return false }
     guard let lastReplyTimestamp = dataSource.items.map(\.postDate).max(), lastReplyTimestamp > 0 else { return false }
