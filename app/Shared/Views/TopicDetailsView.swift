@@ -548,7 +548,7 @@ struct TopicDetailsView: View {
       Section {
         Button(action: { refreshLastPage() }) {
           HStack {
-            Label("Refresh Last Page", systemImage: "arrow.clockwise")
+            Label("Load New Replies", systemImage: "arrow.clockwise")
             Spacer()
             if dataSource.isLoading {
               ProgressView()
