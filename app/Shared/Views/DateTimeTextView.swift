@@ -44,11 +44,18 @@ struct DateTimeTextView: View {
   }
 
   var body: some View {
+    let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+
     let view = Group {
       if showDetailed {
         Text(detailedTime(timestamp))
       } else {
-        Text(timeAgo(timestamp))
+        TimelineView(.everyMinute) { _ in
+          let now = Date()
+          Text(timeAgo(date: date, relativeTo: now))
+            .monospacedDigit()
+            .contentTransition(.numericText())
+        }
       }
     }
 
