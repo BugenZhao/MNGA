@@ -277,7 +277,9 @@ struct TopicListView: View {
   var toolbar: some ToolbarContent {
     #if os(iOS)
       // -- Navigation Bar
-      NotificationToolbarItem(placement: .navigationBarTrailing)
+      if UserInterfaceIdiom.current != .pad {
+        NotificationToolbarItem(placement: .navigationBarTrailing)
+      }
       ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
 
       // -- Bottom Bar
