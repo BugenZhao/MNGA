@@ -57,10 +57,16 @@ struct ContentView: View {
         }
       } content: {
         // Subforum, hot/recommended topics may replace this with a stack.
-        TopicListPlaceholderView()
+        // XXX: must wrap with `NavigationStack`, otherwise navigation will be broken on iPad!
+        NavigationStack {
+          TopicListPlaceholderView()
+        }
       } detail: {
         // User profile, detailed reading may replace this with a stack.
-        TopicDetailsPlaceholderView()
+        // XXX: must wrap with `NavigationStack`, otherwise navigation will be broken on iPad!
+        NavigationStack {
+          TopicDetailsPlaceholderView()
+        }
       }
     } else {
       NavigationStack {
