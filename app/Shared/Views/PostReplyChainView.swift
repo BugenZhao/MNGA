@@ -12,9 +12,11 @@ struct PostReplyChainView: View {
   @ObservedObject var votes: VotesModel
 
   @ObservedObject var resolver: QuotedPostResolver
+  @StateObject private var action = TopicDetailsActionModel()
   @StateObject var prefs = PreferencesStorage.shared
 
   let chain: [PostId]
+  let topic: Topic
 
   @ViewBuilder
   func buildRow(post: Post) -> some View {
@@ -36,9 +38,12 @@ struct PostReplyChainView: View {
     }
     .environmentObject(resolver)
     .navigationTitle("Replies")
-    .withTopicDetailsAction()
+    .withTopicDetailsAction(action: action)
     .environment(\.enableShowReplyChain, false)
     .mayGroupedListStyle()
     .refreshable { resolver.resetFailures() }
+    .navigationDestination(item: $action.navigateToAuthorOnly) { author in
+      TopicDetailsView.build(topic: topic, only: author)
+    }
   }
 }
