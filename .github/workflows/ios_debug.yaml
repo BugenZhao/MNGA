@@ -19,6 +19,10 @@ jobs:
           fetch-depth: 0
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: irgaly/xcode-cache@v1
+        with:
+          key: mnga-debug-xcode-cache-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: mnga-debug-xcode-cache-${{ github.workflow }}-
       - uses: arduino/setup-protoc@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
