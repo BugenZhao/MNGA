@@ -97,9 +97,9 @@ struct PostRowView: View {
 
   @ViewBuilder
   var footer: some View {
-    HStack {
+    AdaptiveFooterView {
       voter
-      Spacer()
+    } trailing: {
       Group {
         if !post.alterInfo.isEmpty {
           Image(systemName: "pencil")

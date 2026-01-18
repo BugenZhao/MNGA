@@ -23,7 +23,7 @@ struct TopicLikeRowInnerView<S: View>: View {
         RepliesNumView(num: num, lastNum: lastNum)
       }
 
-      HStack {
+      DateTimeFooterView(timestamp: date, switchable: false) {
         HStack(alignment: .center) {
           switch names.count {
           case 0:
@@ -37,10 +37,7 @@ struct TopicLikeRowInnerView<S: View>: View {
             Text(names.map(\.display).joined(separator: ", "))
           }
         }
-        Spacer()
-        DateTimeTextView.build(timestamp: date, switchable: false)
-      }.foregroundColor(.secondary)
-        .font(.footnote)
+      }
     }.padding(.vertical, 2)
   }
 }

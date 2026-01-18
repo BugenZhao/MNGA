@@ -37,13 +37,7 @@ struct ShortMessagePostRowView: View {
 
   @ViewBuilder
   var footer: some View {
-    HStack {
-      Spacer()
-      Group {
-        DateTimeTextView.build(timestamp: post.postDate)
-      }.foregroundColor(.secondary)
-        .font(.footnote)
-    }
+    DateTimeFooterView(timestamp: post.postDate)
   }
 
   @ViewBuilder
