@@ -119,27 +119,18 @@ struct TransferablePlainImage: Transferable {
 class ViewingImageModel: ObservableObject {
   private let prefs = PreferencesStorage.shared
 
-  @Published var view: AnyView?
-  @Published var transferable: TransferableImage?
+  @Published var urls: [URL] = []
+  @Published var currentIndex = 0
   @Published var showing = false
 
   func show(url: URL) {
-    transferable = nil
-    view = WebImage(url: url).resizable()
-      .onSuccess { image, _, _ in
-        let forceFile = self.prefs.alwaysShareImageAsFile
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-          // In case the constructor is heavy, let's do it in a background thread.
-          let transferable = TransferableImage(url: url, image: image, forceFile: forceFile)
-          DispatchQueue.main.async {
-            self?.transferable = transferable
-          }
-        }
-      }
-      .indicator(.progress)
-      .frame(minWidth: 50) // HACK: ensure progress view has width
-      .eraseToAnyView()
+    show(urls: [url], current: url)
+  }
 
+  func show(urls: [URL], current: URL) {
+    if urls.isEmpty { return }
+    self.urls = urls
+    currentIndex = urls.firstIndex(of: current) ?? 0
     withAnimation { showing = true }
   }
 }

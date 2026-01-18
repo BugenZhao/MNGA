@@ -44,11 +44,7 @@ struct TopicPostRowView: View {
           .lineLimit(5)
       }
 
-      HStack {
-        Spacer()
-        DateTimeTextView.build(timestamp: post.postDate, switchable: false)
-      }.foregroundColor(.secondary)
-        .font(.footnote)
+      DateTimeFooterView(timestamp: post.postDate, switchable: false)
     }.fixedSize(horizontal: false, vertical: true)
       .padding(.vertical, 2)
   }

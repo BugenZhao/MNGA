@@ -105,11 +105,15 @@ extension EnvironmentValues {
 }
 
 struct NotificationListNavigationView: View {
-  @State var detents: Set<PresentationDetent> = [.medium, .large]
-  @State var detent: PresentationDetent = .medium
+  @State var detents: Set<PresentationDetent> = Set(Self.defaultDetents)
+  @State var detent: PresentationDetent = Self.defaultDetents[0]
+
+  static let defaultDetents: [PresentationDetent] =
+    UserInterfaceIdiom.current == .pad ?
+    [.large] : [.medium, .large]
 
   func enableMediumDetent() {
-    detents = [.medium, .large]
+    detents = Set(Self.defaultDetents)
   }
 
   func disableMediumDetent() {
@@ -148,6 +152,8 @@ struct NotificationToolbarItem: ToolbarContent {
   }
 
   @StateObject var notis = NotificationModel.shared
+  @StateObject var prefs = PreferencesStorage.shared
+
   @Environment(\.inNotificationSheet) var inNotificationSheet
 
   func showAction() {
@@ -166,7 +172,7 @@ struct NotificationToolbarItem: ToolbarContent {
   @ViewBuilder
   var bodyView: some View {
     // Only show if not from notification list view.
-    if unreadCount > 0,
+    if unreadCount > 0 || prefs.debugAlwaysShowNotificationBadge,
        show == .fromUserMenu || !notis.showingFromUserMenu,
        !inNotificationSheet
     {

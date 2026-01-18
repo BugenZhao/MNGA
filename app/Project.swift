@@ -20,7 +20,8 @@ let project = Project(
         .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .exact("1.5.2")),
         .remote(url: "https://github.com/gh123man/LazyPager", requirement: .exact("1.1.13")),
         .remote(url: "https://github.com/tevelee/SwiftUI-Flow", requirement: .exact("3.1.0")),
-        .remote(url: "https://github.com/SvenTiigi/WhatsNewKit.git", requirement: .exact("2.2.1")),
+        // .remote(url: "https://github.com/SvenTiigi/WhatsNewKit.git", requirement: .exact("2.2.1")),
+        .remote(url: "https://github.com/joshbirnholz/WhatsNewKit", requirement: .revision("f509ee14716567e2155eae2f0910184a19f08428")),
         .remote(url: "https://github.com/apple/swift-collections", requirement: .exact("1.3.0")),
         .remote(url: "https://github.com/Chronos2500/CustomNavigationTitle", requirement: .revision("37269a4478a9f7596ea8382ce3bf006530b1ad12")),
     ],
@@ -67,7 +68,7 @@ let project = Project(
             settings: .settings(
                 base: [
                     "ASSETCATALOG_COMPILER_APPICON_NAME": "MNGA",
-                    "MARKETING_VERSION": "2.2",
+                    "MARKETING_VERSION": "2.3",
                     "CURRENT_PROJECT_VERSION": "1",
                     "SWIFT_VERSION": "5.0",
                     "ENABLE_BITCODE": "NO",

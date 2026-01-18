@@ -63,7 +63,12 @@ struct PostRowView: View {
   }
 
   var navID: NavigationIdentifier {
-    .postID(post.id.pid)
+    // `pid == "0"` means this is the main floor of the topic, which is not a valid `pid` share link.
+    // Use the topic link instead.
+    if post.id.pid == "0" {
+      return .topicID(tid: post.id.tid, fav: nil)
+    }
+    return .postID(post.id.pid)
   }
 
   @State var highlight = false
@@ -92,12 +97,15 @@ struct PostRowView: View {
 
   @ViewBuilder
   var footer: some View {
-    HStack {
+    AdaptiveFooterView {
       voter
-      Spacer()
+    } trailing: {
       Group {
         if !post.alterInfo.isEmpty {
           Image(systemName: "pencil")
+        }
+        if !post.attachments.isEmpty {
+          Image(systemName: "paperclip")
         }
         DateTimeTextView.build(timestamp: post.postDate)
           .id(pref.postRowDateTimeStrategy)
@@ -135,9 +143,11 @@ struct PostRowView: View {
       }.buttonStyle(.plain)
 
       let font = Font.subheadline.monospacedDigit()
-      Text("\(max(Int32(post.score) + vote.delta, 0))")
+      let score = max(Int32(post.score) + vote.delta, 0)
+      Text("\(score)")
         .foregroundColor(vote.state == .up ? .accentColor : .secondary)
         .font(vote.state == .up ? font.bold() : font)
+        .contentTransition(.numericText(value: Double(score)))
 
       Button(action: { doVote(.downvote) }) {
         Image(systemName: vote.state == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown")

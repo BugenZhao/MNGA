@@ -43,7 +43,7 @@ struct ContentImageView: View {
   let onlyThumbs: Bool
   let isOpenSourceStickers: Bool
 
-  @Environment(\.inRealPost) var inRealPost
+  @Environment(\.inRealPost) var inRealPost // false when in editor preview
   @Environment(\.colorScheme) private var colorScheme
   @EnvironmentObject var viewingImage: ViewingImageModel
 
@@ -95,8 +95,12 @@ struct ContentImageView: View {
 
   func showImage() {
     guard inRealPost else { return }
-    let attachURL = attachmentsModel?.attachmentURL(for: url) ?? url
-    viewingImage.show(url: attachURL)
+    // Use multi-page view if we can find it in attachments.
+    if let model = attachmentsModel, let attachURL = model.attachmentURL(for: url) {
+      viewingImage.show(urls: model.allImageURLs, current: attachURL)
+    } else {
+      viewingImage.show(url: url)
+    }
   }
 
   private var shouldDimImage: Bool {

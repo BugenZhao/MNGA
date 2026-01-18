@@ -20,6 +20,7 @@
 "Latest Topics" = "最新话题";
 "Favorites" = "收藏";
 "No Favorites" = "没有收藏";
+"No Results" = "没有结果";
 "Remove from Favorites" = "取消收藏";
 "Mark as Favorite" = "添加收藏";
 "Favorite in..." = "收藏到…";
@@ -38,6 +39,7 @@
 "Subforums of %@" = "“%@”的子版块";
 "Swipe a forum to mark it as favorite" = "滑动版块来收藏";
 "History" = "浏览历史";
+"No History" = "没有浏览历史";
 "Hot Topics" = "热门话题";
 "Last 24 hours" = "最近24小时";
 "Last week" = "最近一周";
@@ -48,6 +50,7 @@
 "Post by" = "发表自";
 "Filters" = "过滤";
 "Hot Replies" = "热门回复";
+"Load New Replies" = "加载新回复";
 "Collapsed Content" = "折叠的内容";
 "Favorite Topics" = "收藏话题";
 "Error" = "错误";
@@ -121,6 +124,7 @@
 "View Cached Topic" = "查看本地缓存";
 "Cache Loaded" = "已加载本地缓存";
 "About & Feedback" = "关于 & 反馈";
+"Just now" = "刚刚";
 "MNGA Description" = "MNGA 是一个开源的泥潭 iOS 客户端，基于 SwiftUI 和 Rust 开发。如果您在使用 MNGA App 的遇到了一些问题，或是希望添加新的功能，您可以轻触上面的按钮以通过 GitHub、NGA 短消息、邮件方式反馈。";
 "MNGA Please Share" = "轻触右上方的按钮分享 MNGA 的获取链接！";
 "Support" = "支持";
@@ -145,6 +149,7 @@
 "Copy" = "拷贝";
 "Open in Browser" = "在浏览器中打开";
 "Short Messages" = "短消息";
+"No Short Messages" = "没有短消息";
 "Short Message" = "短消息";
 "%lld new unread notifications" = "%lld 个新的未读通知";
 "Replies Chain" = "回复链";
@@ -220,7 +225,7 @@
 "Clear" = "清除";
 "View Attachment" = "查看附件";
 "Attachments" = "附件";
-"Attachments (%lld)" = "附件 (%lld)";
+"Attachments (%lld)" = "附件（%lld）";
 "MNGA Development" = "MNGA 开发";
 "Post Appearance" = "回复外观";
 "Dummy User" = "某用户";
@@ -331,6 +336,9 @@
 "Album" = "相册";
 "Multicolor Subject" = "彩色标题";
 "Sync Favorites" = "同步收藏";
+"Back" = "返回";
+"Sync Favorite Forums" = "同步收藏版块";
+"MNGA Login Notice" = "MNGA 提示：如遇登录限制，请在 PC 网页端成功登录一次，然后再尝试登录 MNGA。";
 
 "All Plus Features" = "Plus 功能一览";
 "Comment on posts in all topics." = "在话题中对帖子进行贴条。";
@@ -347,6 +355,7 @@
 "Block contents from specific users, or with specific keywords." = "屏蔽来自特定用户或包含特定关键词的帖子。";
 "Organize favorite topics into multiple folders." = "使用多个收藏夹整理收藏的话题。";
 "Resume reading progress from where you left off." = "从之前停下来的地方继续阅读进度。";
+"Sync favorite forums across devices." = "跨设备云端同步收藏版块。";
 "More Features in the Future" = "解锁未来更多功能";
 "Plus More Feature" = "MNGA 得以持续开发和维护，离不开您的支持。更多功能正在开发中！";
 

@@ -318,6 +318,10 @@ extension Topic {
   var tagsCompat: [String] {
     subject.tags.isEmpty ? tags : subject.tags
   }
+
+  var navID: NavigationIdentifier {
+    .topicID(tid: id, fav: fav != "" ? fav : nil)
+  }
 }
 
 extension CacheType {
@@ -475,5 +479,11 @@ extension TopicDetailsRequest.WebApiStrategy {
     default:
       nil
     }
+  }
+}
+
+extension Attachment {
+  var isImage: Bool {
+    type == "img"
   }
 }

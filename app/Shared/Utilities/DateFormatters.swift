@@ -15,8 +15,19 @@ public func timeAgo(_ timestamp: UInt64) -> String {
 }
 
 public func timeAgo(date: Date) -> String {
-  let dateString = timeAgoFormatter.localizedString(for: date, relativeTo: Date())
-  return dateString
+  timeAgo(date: date, relativeTo: Date())
+}
+
+public func timeAgo(date: Date, relativeTo: Date) -> String {
+  // Clamp future timestamps to avoid showing "in X seconds" when clocks drift.
+  let clampedDate = Swift.min(date, relativeTo)
+  let delta = relativeTo.timeIntervalSince(clampedDate)
+
+  if delta < 60 {
+    return "Just now".localized
+  }
+
+  return timeAgoFormatter.localizedString(for: clampedDate, relativeTo: relativeTo)
 }
 
 private let detailedFormatter: DateFormatter = {

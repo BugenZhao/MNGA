@@ -21,4 +21,10 @@ class AttachmentsModel: ObservableObject {
     let url = URL(string: attach.url, relativeTo: URLs.attachmentBase)
     return url
   }
+
+  var allImageURLs: [URL] {
+    items
+      .filter(\.isImage)
+      .compactMap { URL(string: $0.url, relativeTo: URLs.attachmentBase) }
+  }
 }

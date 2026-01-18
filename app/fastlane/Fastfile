@@ -18,7 +18,18 @@ default_platform(:ios)
 platform :ios do
   desc "Build MNGA"
   lane :build do
-    build_app(scheme: "MNGA")
+    # CI builds should not require signing credentials.
+    if ENV["CI"]
+      build_app(
+        scheme: "MNGA",
+        configuration: "Debug",
+        skip_archive: true,
+        skip_codesigning: true,
+        skip_package_ipa: true,
+      )
+    else
+      build_app(scheme: "MNGA")
+    end
   end
 
   desc "Push a new beta build to TestFlight"

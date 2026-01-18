@@ -21,6 +21,10 @@ extension WhatsNew.PrimaryAction {
     .init(title: "Continue".localizedWNText)
   }
 
+  static var back: Self {
+    .init(title: "Back".localizedWNText)
+  }
+
   static var done: Self {
     .init(title: "Done".localizedWNText)
   }
@@ -99,6 +103,35 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
           image: .init(systemName: "checklist.checked"),
           title: "持续修复与改进",
           subtitle: "持续修复已知问题，进一步整合 iOS 26 全新 API，使用体验更加稳定丝滑。"
+        ),
+      ],
+      primaryAction: .continue,
+      secondaryAction: .checkOutPlus
+    )
+
+    WhatsNew(
+      version: "2.2",
+      title: whatsNewTitle(version: "2.2"),
+      features: [
+        .init(
+          image: .init(systemName: "photo.stack"),
+          title: "多图翻页浏览",
+          subtitle: "图片多也不怕：左右滑动一口气翻完，放大缩小也顺手。"
+        ),
+        .init(
+          image: .init(systemName: "bell.badge"),
+          title: "随处打开通知",
+          subtitle: "不管你在列表还是看帖，工具栏都能一键直达未读通知，重要消息不迷路。"
+        ),
+        .init(
+          image: .init(systemName: "icloud"),
+          title: "收藏版块云端同步",
+          subtitle: "开启后，版块收藏会自动随账号同步云端，多台设备间无缝切换。"
+        ),
+        .init(
+          image: .init(systemName: "checklist.checked"),
+          title: "阅读体验持续打磨",
+          subtitle: "匿名帖子只看作者、帖子列表跳转版块、全新表情输入面板；阅读体验更加流畅舒适。"
         ),
       ],
       primaryAction: .continue,

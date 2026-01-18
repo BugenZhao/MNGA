@@ -62,7 +62,7 @@ struct SearchableModifier: ViewModifier {
     if UserInterfaceIdiom.current == .pad {
       // By `.toolbar` the search field from every column will all be placed in
       // the top-right corner, which seems weird.
-      .navigationBarDrawer(displayMode: .always)
+      .navigationBarDrawer(displayMode: .automatic)
     } else {
       .automatic
     }

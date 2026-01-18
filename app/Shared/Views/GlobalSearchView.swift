@@ -83,10 +83,12 @@ struct ForumSearchView: View {
       if dataSource.notLoaded {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
+      } else if dataSource.items.isEmpty {
+        ContentUnavailableView("No Results", systemImage: "magnifyingglass")
       } else {
         List {
           Section(header: Text("Search Results")) {
-            ForEachOrEmpty(dataSource.items, id: \.id) { forum in
+            ForEach(dataSource.items, id: \.id) { forum in
               buildLink(forum)
             }
           }
@@ -104,11 +106,13 @@ struct UserSearchView: View {
       if dataSource.notLoaded {
         ProgressView()
           .onAppear { dataSource.initialLoad() }
+      } else if dataSource.items.isEmpty {
+        ContentUnavailableView("No Results", systemImage: "magnifyingglass")
       } else {
         List {
           Section(header: Text("Search Results")) {
-            ForEachOrEmpty(dataSource.items, id: \.id) { user in
-              NavigationLink(destination: UserProfileView.build(user: user)) {
+            ForEach(dataSource.items, id: \.id) { user in
+              CrossStackNavigationLinkHack(destination: UserProfileView.build(user: user), id: user.id) {
                 UserView(user: user, style: .huge)
               }
             }

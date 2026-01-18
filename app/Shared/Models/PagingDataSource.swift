@@ -203,16 +203,32 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
-  func reloadLastPages(evenIfNotLoaded: Bool) {
-    for page in [totalPages, totalPages + 1] {
-      reload(page: page, evenIfNotLoaded: evenIfNotLoaded)
+  func reloadLastPage(
+    evenIfNotLoaded: Bool,
+    animated: Bool = true,
+    after: (() -> Void)? = nil
+  ) {
+    let oldTotalPages = totalPages
+    let oldLoadedPage = loadedPage
+
+    reload(page: oldTotalPages, evenIfNotLoaded: evenIfNotLoaded, animated: animated) {
+      after?()
+
+      if self.totalPages > oldTotalPages, oldLoadedPage == oldTotalPages {
+        self.loadMore(background: false, alwaysAnimation: animated)
+      }
     }
   }
 
   func reload(page: Int, evenIfNotLoaded: Bool, animated: Bool = true, after: (() -> Void)? = nil) {
     guard page <= loadedPage || evenIfNotLoaded else { return }
+    if isLoading { return }
     let request = buildRequest(page)
     let currentId = dataFlowId
+
+    withAnimation(when: animated) {
+      isLoading = true
+    }
 
     logicCallAsync(request) { (response: Res) in
       guard currentId == self.dataFlowId else { return }
@@ -230,7 +246,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       self.totalPages = newTotalPages ?? self.totalPages
       if let after { after() }
     } onError: { e in
-      withAnimation {
+      withAnimation(when: animated) {
         self.isLoading = false
       }
       self.onError(e)

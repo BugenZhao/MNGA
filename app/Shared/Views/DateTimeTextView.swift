@@ -44,11 +44,16 @@ struct DateTimeTextView: View {
   }
 
   var body: some View {
+    let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+
     let view = Group {
       if showDetailed {
         Text(detailedTime(timestamp))
       } else {
-        Text(timeAgo(timestamp))
+        TimelineView(.everyMinute) { _ in
+          // use system time instead of the date from timeline context, which is not accurate
+          Text(timeAgo(date: date, relativeTo: Date()))
+        }
       }
     }
 
@@ -59,5 +64,30 @@ struct DateTimeTextView: View {
     } else {
       view
     }
+  }
+}
+
+struct DateTimeFooterView<Content: View>: View {
+  let timestamp: UInt64
+  let switchable: Bool
+
+  let content: () -> Content
+
+  init(timestamp: UInt64, switchable: Bool = true,
+       @ViewBuilder content: @escaping () -> Content = { EmptyView() })
+  {
+    self.timestamp = timestamp
+    self.switchable = switchable
+    self.content = content
+  }
+
+  var body: some View {
+    AdaptiveFooterView {
+      content()
+    } trailing: {
+      DateTimeTextView.build(timestamp: timestamp, switchable: switchable)
+    }
+    .foregroundColor(.secondary)
+    .font(.footnote)
   }
 }

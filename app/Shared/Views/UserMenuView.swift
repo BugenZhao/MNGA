@@ -43,7 +43,14 @@ struct UserMenuView: View {
 
   @ViewBuilder
   var notificationButton: some View {
-    Button(action: { notification.showingFromUserMenu = true }) {
+    Button(action: {
+      if UserInterfaceIdiom.current == .pad {
+        // Always show as sheet on iPad.
+        notification.showingSheet = true
+      } else {
+        notification.showingFromUserMenu = true
+      }
+    }) {
       Label("Notifications", systemImage: unreadCount > 0 ? "bell.badge.fill" : "bell")
     }
   }

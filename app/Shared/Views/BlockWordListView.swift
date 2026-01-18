@@ -66,7 +66,7 @@ struct BlockWordListView: View {
   var body: some View {
     Group {
       if storage.words.isEmpty, newWord == nil {
-        PlaceholderView(icon: nil, title: "No Block Words")
+        ContentUnavailableView("No Block Words", systemImage: "hand.raised")
       } else {
         list
       }

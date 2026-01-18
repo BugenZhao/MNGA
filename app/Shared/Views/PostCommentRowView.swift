@@ -13,10 +13,10 @@ struct PostCommentRowView: View {
 
   @ViewBuilder
   var header: some View {
-    HStack {
+    AdaptiveFooterView {
       PostRowUserView(post: comment, compact: true, isAuthor: false)
         .equatable(by: comment.id)
-      Spacer()
+    } trailing: {
       DateTimeTextView.build(timestamp: comment.postDate)
         .foregroundColor(.secondary)
         .font(.footnote)

@@ -25,24 +25,19 @@ struct NotificationRowView: View {
       .topicSubjectDimmed(noti.read)
       .foregroundColor(noti.read ? .secondary : .primary)
 
-      HStack {
-        HStack(alignment: .center) {
-          switch noti.type {
-          case .replyPost, .replyTopic, .shortMessage, .shortMessageStart, .atPost, .atTopic:
-            Image(systemName: "person")
-            Text(noti.otherUser.nameDisplayCompat)
-          case .vote:
-            Image(systemName: "text.bubble")
-            Text("Your post")
-          default:
-            EmptyView()
-          }
+      DateTimeFooterView(timestamp: noti.timestamp, switchable: false) {
+        switch noti.type {
+        case .replyPost, .replyTopic, .shortMessage, .shortMessageStart, .atPost, .atTopic:
+          Image(systemName: "person")
+          Text(noti.otherUser.nameDisplayCompat)
+        case .vote:
+          Image(systemName: "text.bubble")
+          Text("Your post")
+        default:
+          EmptyView()
         }
         Text(noti.type.description)
-        Spacer()
-        DateTimeTextView.build(timestamp: noti.timestamp, switchable: false)
-      }.foregroundColor(.secondary)
-        .font(.footnote)
+      }
     }.padding(.vertical, 2)
   }
 }
