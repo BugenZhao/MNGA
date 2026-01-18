@@ -51,10 +51,8 @@ struct DateTimeTextView: View {
         Text(detailedTime(timestamp))
       } else {
         TimelineView(.everyMinute) { _ in
-          let now = Date()
-          Text(timeAgo(date: date, relativeTo: now))
-            .monospacedDigit()
-            .contentTransition(.numericText())
+          // use system time instead of the date from timeline context, which is not accurate
+          Text(timeAgo(date: date, relativeTo: Date()))
         }
       }
     }
