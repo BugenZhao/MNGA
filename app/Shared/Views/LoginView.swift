@@ -175,13 +175,19 @@ struct LoginView: View {
       .ignoresSafeArea() // modern view
   }
 
+  var alert: Alert {
+    // Add our notice to the alert message.
+    let msg = "\(alertMessage ?? "")\n\n\("MNGA Login Notice".localized)"
+    return Alert(title: "From NGA".localized, message: msg)
+  }
+
   @ViewBuilder
   var inner: some View {
     ZStack {
       webView.opacity(loading ? 0.0 : 1.0)
       ProgressView().hidden(!loading)
     }.toolbar { toolbar }
-      .alert(isPresented: $alertMessage.isNotNil()) { Alert(title: "From NGA".localized, message: alertMessage) }
+      .alert(isPresented: $alertMessage.isNotNil()) { alert }
       .onChange(of: alertMessage) { if $1 == nil, let c = alertCompletion { c(); alertCompletion = nil } }
   }
 
