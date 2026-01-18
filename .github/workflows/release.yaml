@@ -1,4 +1,4 @@
-name: iOS
+name: iOS Release
 on:
   workflow_dispatch:
   push:
@@ -16,7 +16,7 @@ jobs:
     name: Upload to TestFlight
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Run sccache-cache
@@ -37,7 +37,6 @@ jobs:
           brew install swift-protobuf
           brew tap tuist/tuist
           brew install --formula tuist
-          rustup target add aarch64-apple-ios
       - name: Build Logic for Deployment
         run: make logic-deploy
         env:
