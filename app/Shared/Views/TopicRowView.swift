@@ -56,13 +56,13 @@ struct TopicRowView: View {
   }
 
   var shouldDim: Bool {
-    dimmedSubject && !topic.id.isMNGAMockID && topic.hasRepliesNumLastVisit
+    dimmedSubject && !topic.id.isMNGAMockID && topic.read
   }
 
   @ViewBuilder
   var subject: some View {
     BlockedView(content: BlockWordsStorage.content(for: topic), revealOnTap: false) {
-      TopicSubjectView(topic: topic, lineLimit: 2, showIndicators: showIndicators)
+      TopicSubjectView(topic: topic, showIndicators: showIndicators)
         .topicSubjectDimmed(shouldDim)
     }
   }

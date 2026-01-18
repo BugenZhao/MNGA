@@ -93,7 +93,7 @@ struct TopicSubjectView: View {
   let lineLimit: Int?
   let showIndicators: Bool
 
-  init(topic: Topic, lineLimit: Int? = nil, showIndicators: Bool = false) {
+  init(topic: Topic, lineLimit: Int? = 2, showIndicators: Bool = false) {
     self.topic = topic
     self.lineLimit = lineLimit
     self.showIndicators = showIndicators
