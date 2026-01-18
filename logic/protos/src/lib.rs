@@ -2,7 +2,9 @@
 #[allow(mismatched_lifetime_syntaxes)]
 #[allow(renamed_and_removed_lints)]
 #[allow(unused_parens)]
+#[rustfmt::skip]
 mod generated;
+
 mod mock;
 mod to_value;
 

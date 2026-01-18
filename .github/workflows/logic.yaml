@@ -1,29 +1,20 @@
 name: Logic
 on:
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Test
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    env:
-      AUTH_DEBUG_UID: ${{ secrets.LOGIC_AUTH_DEBUG_UID }}
-      AUTH_DEBUG_TOKEN: ${{ secrets.LOGIC_AUTH_DEBUG_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: arduino/setup-protoc@v1
+      - uses: actions/checkout@v6
+      - uses: arduino/setup-protoc@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - name: Cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+      - name: Cargo fmt
+        run: cargo fmt --all -- --check
+      - name: Cargo clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings

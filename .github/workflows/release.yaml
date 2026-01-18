@@ -1,4 +1,4 @@
-name: iOS
+name: iOS Release
 on:
   workflow_dispatch:
   push:
@@ -16,28 +16,19 @@ jobs:
     name: Upload to TestFlight
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.0"
-      # error:iOS 26.0 is not installed. Please download and install
-      # https://github.com/actions/runner-images/issues/12904
-      - name: Install iOS (with retry)
-        uses: nick-fields/retry@v3
-        with:
-          timeout_minutes: 20
-          max_attempts: 3
-          command: xcodebuild -downloadPlatform iOS
+          xcode-version: "26"
       - name: Install Prereqs
         run: |
           brew install swift-protobuf
           brew tap tuist/tuist
           brew install --formula tuist
-          rustup target add aarch64-apple-ios
       - name: Build Logic for Deployment
         run: make logic-deploy
         env:
