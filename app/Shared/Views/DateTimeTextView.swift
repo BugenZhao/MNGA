@@ -66,3 +66,28 @@ struct DateTimeTextView: View {
     }
   }
 }
+
+struct DateTimeFooterView<Content: View>: View {
+  let timestamp: UInt64
+  let switchable: Bool
+
+  let content: () -> Content
+
+  init(timestamp: UInt64, switchable: Bool = true,
+       @ViewBuilder content: @escaping () -> Content = { EmptyView() })
+  {
+    self.timestamp = timestamp
+    self.switchable = switchable
+    self.content = content
+  }
+
+  var body: some View {
+    AdaptiveFooterView {
+      content()
+    } trailing: {
+      DateTimeTextView.build(timestamp: timestamp, switchable: switchable)
+    }
+    .foregroundColor(.secondary)
+    .font(.footnote)
+  }
+}
