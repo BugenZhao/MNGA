@@ -86,7 +86,7 @@ Remember to update localization file at `app/Shared/Localization/zh-Hans.lproj/L
 - `make logic-ios` - Build iOS framework
 - `make swift-pb` - Generate Swift protobuf code
 - `make logic-sim` - Build simulator-only version (faster for development)
-- `make logic-deploy` - Build production version
+- `make logic-deploy` - Build release version
 
 ## Important Notes
 

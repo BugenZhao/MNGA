@@ -14,7 +14,5 @@ members = [
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 
-[profile.production]
-inherits = "release"
-opt-level = "s"   # Optimize for size.
-lto = true        # Enable link time optimization
+[profile.release]
+lto = true

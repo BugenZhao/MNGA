@@ -34,8 +34,8 @@ endif
 
 .PHONY: logic
 
-ios: logic-ios-production
-macos: logic-macos-production
+ios: logic-ios-release
+macos: logic-macos-release
 
 logic-ios-%:
 	make logic-ios MODE=$*
@@ -45,7 +45,7 @@ logic-ios:
 logic-sim:
 	make logic ALL_TARGETS="${IOS_SIM_TARGET}" MODE=debug
 logic-deploy:
-	make logic ALL_TARGETS="${IOS_TARGET}" MODE=production
+	make logic ALL_TARGETS="${IOS_TARGET}" MODE=release
 
 logic-macos-%:
 	make logic-macos MODE=$*
@@ -89,11 +89,6 @@ create-framework:
 	@CMD="xcodebuild -create-xcframework" ;\
 	for target in ${ALL_TARGETS}; do \
 		logic_lib="${TARGET_DIR}/$${target}/${MODE}/liblogic.a" ;\
-		if [[ ${MODE} != "debug" ]]; then \
-			strip_cmd="strip $${logic_lib}" ;\
-			echo ">>> $${strip_cmd}" ;\
-			$${strip_cmd} >/dev/null 2>&1 || true ;\
-		fi ;\
 		CMD="$${CMD} -library $${logic_lib}" ;\
 	done ;\
 	CMD="$${CMD} -headers ${OUT_INCLUDE}/* -output ${OUT_FRAMEWORK}" ;\
