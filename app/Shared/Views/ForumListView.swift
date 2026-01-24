@@ -26,7 +26,7 @@ struct ForumListView: View {
   func isCategoryExpanded(_ id: String) -> Binding<Bool> {
     .init(
       get: { !collapsedCategories.inner.contains(id) },
-      set: { if $0 { collapsedCategories.inner.remove(id) } else { collapsedCategories.inner.insert(id) } }
+      set: { if $0 { collapsedCategories.inner.remove(id) } else { collapsedCategories.inner.insert(id) } },
     )
   }
 
@@ -205,7 +205,7 @@ struct ForumListView: View {
     if UserInterfaceIdiom.current != .pad {
       NotificationToolbarItem(
         placement: .navigationBarLeading,
-        show: .fromUserMenu
+        show: .fromUserMenu,
       )
     }
 

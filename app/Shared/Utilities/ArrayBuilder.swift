@@ -23,7 +23,7 @@ public enum ArrayBuilder<Element> {
   }
 
   public static func buildBlock(_ children: Component...) -> Component {
-    children.flatMap { $0 }
+    children.flatMap(\.self)
   }
 
   public static func buildOptional(_ children: Component?) -> Component {

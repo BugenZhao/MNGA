@@ -28,7 +28,7 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
   private var notificationCancellables = Set<AnyCancellable>()
 
   var unreadCount: Int {
-    items.filter { !$0.read }.count
+    items.count(where: { !$0.read })
   }
 
   @Published var unreadCountAnimated: Int = 0
@@ -52,7 +52,7 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
         let items = response.notis
         return (items, 1)
       },
-      id: \.id
+      id: \.id,
     )
 
     // Refresh periodically.
@@ -64,7 +64,7 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
     // Not sure why `unreadCount` does not trigger animation.
     // Duplicate it to another `@Published` to make it work.
     $items
-      .map { $0.filter { !$0.read }.count }
+      .map { $0.count(where: { !$0.read }) }
       .debounce(for: .seconds(0), scheduler: RunLoop.main) // filter out intermediate changes
       .sink { [weak self] new in
         DispatchQueue.main.async { // can only trigger animation in next frame

@@ -55,14 +55,14 @@ struct TopicJumpSelectorView: View {
       set: { newValue in
         guard let number = Int(newValue) else { return }
         selectedFloor = min(max(number, 0), maxFloor)
-      }
+      },
     )
   }
 
   var selectedPage: Binding<Int> {
     .init(
       get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage },
-      set: { selectedFloor = ($0 - 1) * Constants.postPerPage }
+      set: { selectedFloor = ($0 - 1) * Constants.postPerPage },
     )
   }
 
@@ -72,7 +72,7 @@ struct TopicJumpSelectorView: View {
       set: { newValue in
         guard let number = Int(newValue) else { return }
         selectedPage.wrappedValue = min(max(number, 1), maxPage)
-      }
+      },
     )
   }
 
@@ -119,7 +119,7 @@ struct TopicJumpSelectorView: View {
         Slider(
           value: .convert($selectedFloor),
           in: 0 ... Double(maxFloor),
-          step: 1
+          step: 1,
         )
       }
     }
@@ -143,7 +143,7 @@ struct TopicJumpSelectorView: View {
         Slider(
           value: .convert(selectedPage),
           in: 1 ... Double(maxPage),
-          step: 1
+          step: 1,
         )
       }
     }

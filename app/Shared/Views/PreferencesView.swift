@@ -142,7 +142,7 @@ struct PreferencesInnerView: View {
 
     Section(
       header: Text("Plus"),
-      footer: Text(status.isPaid ? "Plus Thanks" : "Plus Explanation")
+      footer: Text(status.isPaid ? "Plus Thanks" : "Plus Explanation"),
     ) {
       if status.isPaid {
         NavigationLink(destination: PlusView()) {

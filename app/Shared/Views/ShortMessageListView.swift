@@ -25,7 +25,7 @@ struct ShortMessageListView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.id
+      id: \.id,
     )
 
     return Self(dataSource: dataSource)

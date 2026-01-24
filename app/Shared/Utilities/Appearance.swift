@@ -11,7 +11,8 @@ import SwiftUIX
 
 enum ColorSchemeMode: Int, CaseIterable {
   case auto
-  case light, dark
+  case light
+  case dark
 }
 
 extension ColorSchemeMode {
@@ -34,7 +35,19 @@ extension ColorSchemeMode {
 
 enum ThemeColor: Int, CaseIterable {
   case mnga
-  case red, orange, yellow, green, mint, teal, cyan, blue, indigo, purple, pink, brown, gray
+  case red
+  case orange
+  case yellow
+  case green
+  case mint
+  case teal
+  case cyan
+  case blue
+  case indigo
+  case purple
+  case pink
+  case brown
+  case gray
 }
 
 extension ThemeColor {

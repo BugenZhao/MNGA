@@ -61,7 +61,7 @@ struct NewImageViewer: View {
         ViewingImageView(
           url: url,
           isCurrent: index == model.currentIndex,
-          currentTransferable: $currentTransferable
+          currentTransferable: $currentTransferable,
         )
       }
       // Add some spacing between pages so it looks like the system album

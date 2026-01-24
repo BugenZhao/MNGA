@@ -23,7 +23,7 @@ extension Binding {
   {
     Binding<TFloat>(
       get: { TFloat(intBinding.wrappedValue) },
-      set: { intBinding.wrappedValue = TInt($0) }
+      set: { intBinding.wrappedValue = TInt($0) },
     )
   }
 
@@ -33,7 +33,7 @@ extension Binding {
   {
     Binding<TInt>(
       get: { TInt(floatBinding.wrappedValue) },
-      set: { floatBinding.wrappedValue = TFloat($0) }
+      set: { floatBinding.wrappedValue = TFloat($0) },
     )
   }
 }

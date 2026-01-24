@@ -37,7 +37,7 @@ class CurrentUserModel: ObservableObject {
       .store(in: &cancellables)
 
     $user
-      .compactMap { $0 }
+      .compactMap(\.self)
       .removeDuplicates { $0.id == $1.id }
       .dropFirst()
       .filter { $0.id != "" }

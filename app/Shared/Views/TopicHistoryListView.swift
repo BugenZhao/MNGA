@@ -23,7 +23,7 @@ struct TopicHistoryListView: View {
         let items = response.topics
         return (items, 1)
       },
-      id: \.topicSnapshot.id
+      id: \.topicSnapshot.id,
     )
 
     return Self(dataSource: dataSource)
@@ -41,7 +41,7 @@ struct TopicHistoryListView: View {
       },
       set: {
         snapshot.topicSnapshot = $0
-      }
+      },
     )
 
     return TopicRowLinkView(topic: topic, dimmedSubject: false)
@@ -63,7 +63,7 @@ struct TopicHistoryListView: View {
           SafeForEach(
             $dataSource.items,
             id: \.topicSnapshot.id,
-            where: { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) }
+            where: { search.commitedText == nil || $0.topicSnapshot.subject.full.contains(search.commitedText!) },
           ) { snapshotBinding in
             topicLink($snapshot: snapshotBinding)
           }

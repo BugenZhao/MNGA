@@ -34,8 +34,7 @@ enum DiceRoller {
     }
 
     func copy(withSeedOffset offset: Int? = nil) -> Context {
-      let copy = Context(authorId: authorId, topicId: topicId, postId: postId, seedOffset: offset ?? seedOffset, rndSeed: rndSeed)
-      return copy
+      Context(authorId: authorId, topicId: topicId, postId: postId, seedOffset: offset ?? seedOffset, rndSeed: rndSeed)
     }
 
     private func ensureSeed() -> Int {
@@ -172,7 +171,7 @@ enum DiceRoller {
     return Result(
       originalExpression: original,
       expandedExpression: expanded,
-      totalDescription: sum.rendered()
+      totalDescription: sum.rendered(),
     )
   }
 }

@@ -30,7 +30,7 @@ struct RecommendedTopicListView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.id
+      id: \.id,
     )
 
     return Self(forum: forum, dataSource: dataSource)

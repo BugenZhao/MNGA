@@ -49,37 +49,16 @@ class TopicDetailsActionModel: ObservableObject {
   }
 }
 
-struct EnableAuthorOnlyKey: EnvironmentKey {
-  static let defaultValue: Bool = true
+extension EnvironmentValues {
+  @Entry var enableAuthorOnly: Bool = true
 }
 
 extension EnvironmentValues {
-  var enableAuthorOnly: Bool {
-    get { self[EnableAuthorOnlyKey.self] }
-    set { self[EnableAuthorOnlyKey.self] = newValue }
-  }
-}
-
-struct EnableShowReplyChainKey: EnvironmentKey {
-  static let defaultValue: Bool = true
+  @Entry var enableShowReplyChain: Bool = true
 }
 
 extension EnvironmentValues {
-  var enableShowReplyChain: Bool {
-    get { self[EnableShowReplyChainKey.self] }
-    set { self[EnableShowReplyChainKey.self] = newValue }
-  }
-}
-
-struct CurrentlyLocalModeKey: EnvironmentKey {
-  static let defaultValue: Bool = false
-}
-
-extension EnvironmentValues {
-  var currentlyLocalMode: Bool {
-    get { self[CurrentlyLocalModeKey.self] }
-    set { self[CurrentlyLocalModeKey.self] = newValue }
-  }
+  @Entry var currentlyLocalMode: Bool = false
 }
 
 // MARK: TopicDetailsAction

@@ -28,7 +28,8 @@ extension NavigationIdentifier {
       pid.isMNGAMockID
     case let .forumID(forumID):
       forumID.fid.isMNGAMockID || forumID.stid.isMNGAMockID
-    case .userID, .userName:
+    case .userID,
+         .userName:
       false
     }
   }

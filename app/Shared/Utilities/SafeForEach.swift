@@ -25,7 +25,7 @@ struct SafeBindingView<Item, ID: Hashable, Content: View>: View {
     items: Binding<[Item]>,
     item: Item,
     id: KeyPath<Item, ID>,
-    build: @escaping (Binding<Item>) -> Content
+    build: @escaping (Binding<Item>) -> Content,
   ) {
     self.items = items
     idPath = id
@@ -52,7 +52,7 @@ struct SafeBindingView<Item, ID: Hashable, Content: View>: View {
           logger.debug("binding is invalidated, set cached \(Item.self) instead")
           cachedItem = newValue
         }
-      }
+      },
     )
   }
 
@@ -72,7 +72,7 @@ struct SafeForEach<Item, ID: Hashable, Content: View>: View {
     _ items: Binding<[Item]>,
     id: KeyPath<Item, ID>,
     where predicate: ((Item) -> Bool)? = nil,
-    @ViewBuilder build: @escaping (Binding<Item>) -> Content
+    @ViewBuilder build: @escaping (Binding<Item>) -> Content,
   ) {
     self.items = items
     idPath = id

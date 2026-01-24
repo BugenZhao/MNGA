@@ -30,7 +30,7 @@ struct HotTopicListInnerView: View {
         let items = response.topics
         return (items, 1)
       },
-      id: \.id
+      id: \.id,
     )
 
     return Self(forum: forum, range: range, dataSource: dataSource)

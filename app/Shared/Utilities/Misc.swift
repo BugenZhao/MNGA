@@ -40,7 +40,7 @@ struct BuildInfo {
 
   static let current = BuildInfo(
     version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-    build: Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+    build: Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
   )
 }
 

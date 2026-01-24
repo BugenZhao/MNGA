@@ -180,7 +180,7 @@ extension Binding where Value: Equatable {
       set: { newValue in
         if newValue == self.wrappedValue { return }
         MNGA.withPlusCheck(feature) { self.wrappedValue = newValue }
-      }
+      },
     )
   }
 }
@@ -197,7 +197,7 @@ struct PlusCheckNavigationLink<Label, Destination>: View where Label: View, Dest
     destination: Destination,
     feature: PlusFeature,
     isDetailLink: Bool = true,
-    @ViewBuilder label: () -> Label
+    @ViewBuilder label: () -> Label,
   ) {
     self.destination = destination
     self.feature = feature

@@ -71,7 +71,7 @@ struct TopicFavorMenuView: View {
       set: { _ in
         guard folder.isDefault || checkPlus(.multiFavorite) else { return }
         Task { await setFavor(isFavored ? .delete : .add, folderID: folder.id) }
-      }
+      },
     )
 
     Toggle(isOn: binding) {
@@ -169,7 +169,7 @@ struct TopicDetailsView: View {
     forceLocalMode: Bool,
     previewMode: Bool,
     floorToJump: Int? = nil,
-    postIdToJump: PostId? = nil
+    postIdToJump: PostId? = nil,
   ) {
     _topic = topic
     _dataSource = StateObject(wrappedValue: dataSource)
@@ -205,7 +205,7 @@ struct TopicDetailsView: View {
     localMode: Bool = false,
     previewMode: Bool = false,
     onlyPost: (id: PostId?, atPage: Int?) = (nil, nil),
-    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil)
+    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil),
   ) -> some View {
     let topic = topicBinding.wrappedValue
 
@@ -253,7 +253,7 @@ struct TopicDetailsView: View {
       },
       id: \.floor.description,
       finishOnError: localMode,
-      initialPage: initialPage
+      initialPage: initialPage,
     )
 
     return Self(
@@ -263,7 +263,7 @@ struct TopicDetailsView: View {
       forceLocalMode: localMode,
       previewMode: previewMode,
       floorToJump: initialFloor,
-      postIdToJump: jumpToPost.id
+      postIdToJump: jumpToPost.id,
     )
     .environment(\.enableAuthorOnly, !localMode)
   }
@@ -272,7 +272,7 @@ struct TopicDetailsView: View {
     topic: Topic,
     localMode: Bool = false,
     onlyPost: (id: PostId?, atPage: Int?) = (nil, nil),
-    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil)
+    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil),
   ) -> some View {
     StaticTopicDetailsView(topic: topic) { binding in
       build(topicBinding: binding, localMode: localMode, onlyPost: onlyPost, jumpToPost: jumpToPost)
@@ -301,7 +301,7 @@ struct TopicDetailsView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.floor.description
+      id: \.floor.description,
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
@@ -355,7 +355,7 @@ struct TopicDetailsView: View {
       TopicFavorMenuView(
         topic: $topic,
         showingCreateFolderAlert: $showingCreateFolderAlert.withPlusCheck(.multiFavorite),
-        newFolderName: $newFolderName
+        newFolderName: $newFolderName,
       )
     }
   }
@@ -697,7 +697,7 @@ struct TopicDetailsView: View {
       mode: $jumpSelectorMode,
       initialFloor: currentViewingFloor.currentLowest ?? 0,
       floorToJump: $floorToJump,
-      pageToJump: $dataSource.loadFromPage
+      pageToJump: $dataSource.loadFromPage,
     )
     .maybeNavigationTransition(.zoom(sourceID: "jump", in: transition))
     .presentationDetents([.medium])

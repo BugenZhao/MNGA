@@ -163,7 +163,7 @@ class ContentCombiner {
     font: @escaping (Font?) -> Font? = { $0 },
     color: @escaping (Color?) -> Color? = { $0 },
     otherStyles: @escaping (OtherStyles) -> OtherStyles = { $0 },
-    overrideAlignment: HorizontalAlignment? = nil
+    overrideAlignment: HorizontalAlignment? = nil,
   ) {
     self.parent = parent
     actionModel = parent?.actionModel
@@ -299,7 +299,8 @@ class ContentCombiner {
   @ViewBuilder
   consuming func buildView() -> some View {
     switch build() {
-    case nil, .breakline:
+    case nil,
+         .breakline:
       EmptyView()
     case let .text(text):
       text
@@ -362,7 +363,7 @@ class ContentCombiner {
       view = Text(
         Image(uiImage: image)
           .renderingMode(renderingMode)
-          .antialiased(true)
+          .antialiased(true),
       )
     } else {
       view = Text("[🐶\(sticker.name)]").foregroundColor(.secondary)
@@ -373,7 +374,8 @@ class ContentCombiner {
 
   private func visit(tagged: Span.Tagged) {
     switch tagged.tag {
-    case "_divider", "h":
+    case "_divider",
+         "h":
       visit(divider: tagged)
     case "img":
       visit(image: tagged)
@@ -498,7 +500,7 @@ class ContentCombiner {
     let combiner = ContentCombiner(
       parent: self,
       font: { $0 == .callout ? .subheadline : .callout },
-      color: { _ in Color.primary.opacity(0.9) }
+      color: { _ in Color.primary.opacity(0.9) },
     )
     combiner.inQuote = true
 
@@ -560,7 +562,7 @@ class ContentCombiner {
           nameHint: meta.username,
           sourcePostId: selfId,
           defaultFont: quotedFont,
-          defaultColor: Color.primary.opacity(0.9)
+          defaultColor: Color.primary.opacity(0.9),
         )
         append(view)
         return
@@ -856,7 +858,8 @@ class ContentCombiner {
 
     let cellView = Group {
       switch cellCombiner.build() {
-      case nil, .breakline:
+      case nil,
+           .breakline:
         Color.clear.gridCellUnsizedAxes([.vertical, .horizontal])
       case let .text(text):
         text // do not append it as text, otherwise it will be concatenated to the previous cell

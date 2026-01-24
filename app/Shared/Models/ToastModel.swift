@@ -40,7 +40,9 @@ class ToastModel: ObservableObject {
           switch message! {
           case .error:
             HapticUtils.play(type: .error)
-          case .notification, .requirePlus, .cacheLoaded:
+          case .notification,
+               .requirePlus,
+               .cacheLoaded:
             HapticUtils.play(type: .warning)
           default:
             HapticUtils.play(type: .success)
@@ -51,9 +53,15 @@ class ToastModel: ObservableObject {
 
   static func showAuto(_ message: Message?) {
     switch message {
-    case .success, .error, .cacheLoaded:
+    case .success,
+         .error,
+         .cacheLoaded:
       ToastModel.banner.message = message
-    case .notification, .userSwitch, .clockIn, .autoRefreshed, .openURL:
+    case .notification,
+         .userSwitch,
+         .clockIn,
+         .autoRefreshed,
+         .openURL:
       ToastModel.hud.message = message
     case .requirePlus:
       ToastModel.alert.message = message

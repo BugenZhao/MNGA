@@ -28,7 +28,7 @@ class GlobalSearchModel: SearchModel<DataSource> {
           let items = response.forums
           return (items, 1)
         },
-        id: \.idDescription
+        id: \.idDescription,
       ),
 
       topic: .init(
@@ -44,7 +44,7 @@ class GlobalSearchModel: SearchModel<DataSource> {
           let pages = Int(response.pages)
           return (items, pages)
         },
-        id: \.id
+        id: \.id,
       ),
 
       user: .init(
@@ -64,8 +64,8 @@ class GlobalSearchModel: SearchModel<DataSource> {
             ([], 1)
           }
         },
-        id: \.id
-      )
+        id: \.id,
+      ),
     )
   }
 }

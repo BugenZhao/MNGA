@@ -47,7 +47,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     id: KeyPath<Item, String>,
     finishOnError: Bool = false,
     initialPage: Int = 1,
-    neverRemove: Bool = false
+    neverRemove: Bool = false,
   ) {
     self.buildRequest = buildRequest
     self.onResponse = onResponse
@@ -57,7 +57,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     self.neverRemove = neverRemove
 
     $loadFromPage
-      .compactMap { $0 }
+      .compactMap(\.self)
       .sink { [weak self] in self?.refresh(fromPage: $0) }
       .store(in: &cancellables)
   }
@@ -134,8 +134,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     totalPages = fromPage
 
     let page = fromPage
-    let request = buildRequest(page)
-    return request
+    return buildRequest(page)
   }
 
   private func onRefreshSuccess(response: Res, animated: Bool, fromPage: Int) {
@@ -206,7 +205,7 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   func reloadLastPage(
     evenIfNotLoaded: Bool,
     animated: Bool = true,
-    after: (() -> Void)? = nil
+    after: (() -> Void)? = nil,
   ) {
     let oldTotalPages = totalPages
     let oldLoadedPage = loadedPage
@@ -364,12 +363,12 @@ extension View {
   func refreshable(
     dataSource: PagingDataSource<some SwiftProtobuf.Message, some Any>,
     refreshAfterIdle: Bool = false,
-    triggerRefresh: Bool? = nil
+    triggerRefresh: Bool? = nil,
   ) -> some View {
     modifier(PagingDataSourceRefreshable(
       dataSource: dataSource,
       refreshAfterIdle: refreshAfterIdle,
-      triggerRefresh: triggerRefresh
+      triggerRefresh: triggerRefresh,
     ))
   }
 }

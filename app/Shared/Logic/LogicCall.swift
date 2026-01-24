@@ -13,7 +13,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
   requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
   errorToastModel: ToastModel? = .banner,
   onSuccess: @escaping (Response) -> Void,
-  onError: @escaping (LogicError) -> Void = { _ in }
+  onError: @escaping (LogicError) -> Void = { _ in },
 ) {
   let errorCallback = { (e: LogicError) in
     logger.error("logicCallAsync: \(e)")
@@ -26,7 +26,7 @@ func logicCallAsync<Response: SwiftProtobuf.Message>(
 func logicCallAsync<Response: SwiftProtobuf.Message>(
   _ requestValue: AsyncRequest.OneOf_Value,
   requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
-  errorToastModel: ToastModel? = .banner
+  errorToastModel: ToastModel? = .banner,
 ) async -> Result<Response, LogicError> {
   await withCheckedContinuation { (continuation: CheckedContinuation<Result<Response, LogicError>, Never>) in
     logicCallAsync(requestValue, requestDispatchQueue: requestDispatchQueue, errorToastModel: errorToastModel) { (res: Response) in
