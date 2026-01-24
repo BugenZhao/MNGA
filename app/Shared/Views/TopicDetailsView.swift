@@ -205,7 +205,7 @@ struct TopicDetailsView: View {
     localMode: Bool = false,
     previewMode: Bool = false,
     onlyPost: (id: PostId?, atPage: Int?) = (nil, nil),
-    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil),
+    jumpToPost: (id: PostId?, atPage: Int?) = (nil, nil)
   ) -> some View {
     let topic = topicBinding.wrappedValue
 
