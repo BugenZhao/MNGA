@@ -39,8 +39,8 @@ struct InlineQuotedPostView: View {
       defaultFont: defaultFont,
       defaultColor: defaultColor
     )
-    combiner.inQuote = true
     combiner.inInlineReplyQuote = true
+    combiner.replyTo = sourcePostId
     combiner.visit(spans: post.content.spans)
     return combiner.buildView()
   }

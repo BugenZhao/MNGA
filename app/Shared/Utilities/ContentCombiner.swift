@@ -115,7 +115,7 @@ class ContentCombiner {
   }
 
   var inQuote: Bool {
-    get { getEnv(key: "inQuote") != nil }
+    get { inInlineReplyQuote || getEnv(key: "inQuote") != nil }
     set { setEnv(key: "inQuote", value: newValue ? "true" : nil) }
   }
 
@@ -126,7 +126,7 @@ class ContentCombiner {
     set { setEnv(key: "inInlineReplyQuote", value: newValue ? "true" : nil) }
   }
 
-  private var replyTo: PostId? {
+  var replyTo: PostId? {
     get { getEnv(key: "replyTo") as! PostId? }
     set { setEnv(key: "replyTo", value: newValue) }
   }
