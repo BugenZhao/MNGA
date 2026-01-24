@@ -16,7 +16,7 @@ enum StickerCategory: Hashable {
 struct StickerInputView: View {
   @ObservedObject var model: ContentEditorModel
 
-  @State var category = StickerCategory.recent
+  @State var category: StickerCategory = .recent
   @AppStorage("recentStickers") var recentStickers = JSONRepr(inner: [String]())
 
   var currentStickers: [String] {

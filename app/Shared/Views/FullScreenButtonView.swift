@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftUIX
 
 class ColumnVisibility: ObservableObject {
-  @Published var value = NavigationSplitViewVisibility.all
+  @Published var value: NavigationSplitViewVisibility = .all
 }
 
 /// Toggle full screen mode (detail only column visibility) on iPad.

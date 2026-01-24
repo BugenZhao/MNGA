@@ -12,7 +12,7 @@ struct CollapsedContentView<Content: View>: View {
   let title: String
   @ViewBuilder let content: () -> Content
 
-  @State private var collapsed = true
+  @State private var collapsed: Bool = true
 
   var body: some View {
     VStack(alignment: .leading) {

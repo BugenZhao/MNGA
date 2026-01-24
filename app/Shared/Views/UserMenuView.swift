@@ -18,7 +18,7 @@ struct UserMenuView: View {
 
   @EnvironmentObject var model: CurrentUserModel
 
-  @State var showAboutViewAsModal = false
+  @State var showAboutViewAsModal: Bool = false
 
   var user: User? {
     model.user

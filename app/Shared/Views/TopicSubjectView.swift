@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 extension EnvironmentValues {
-  @Entry var topicSubjectDimmed = false
+  @Entry var topicSubjectDimmed: Bool = false
 }
 
 extension View {

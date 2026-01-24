@@ -7,9 +7,6 @@
 --exclude app/Project.swift
 
 --enable environmentEntry
---enable propertyTypes
---property-types inferred
---enable redundantMemberwiseInit
 --enable redundantProperty
 --enable unusedPrivateDeclarations
 --enable wrapEnumCases

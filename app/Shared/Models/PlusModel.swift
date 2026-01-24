@@ -68,7 +68,7 @@ class PaywallModel: ObservableObject {
 
   @Published var isShowingModal = false
 
-  @AppStorage("cachedUnlockStatus") var cachedStatusData = Data()
+  @AppStorage("cachedUnlockStatus") var cachedStatusData: Data = .init()
   private var cachedStatus: UnlockStatus {
     get {
       (try? JSONDecoder().decode(UnlockStatus.self, from: cachedStatusData)) ?? .lite

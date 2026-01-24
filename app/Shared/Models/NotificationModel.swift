@@ -31,7 +31,7 @@ class NotificationModel: PagingDataSource<FetchNotificationResponse, Notificatio
     items.count(where: { !$0.read })
   }
 
-  @Published var unreadCountAnimated = 0
+  @Published var unreadCountAnimated: Int = 0
 
   private func refreshNotis() {
     Task {

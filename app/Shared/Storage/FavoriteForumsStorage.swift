@@ -108,8 +108,8 @@ class FavoriteForumsStorage: ObservableObject {
 
   private var syncTaskAfterSwitch: Task<Void, Never>?
 
-  @Published private var local = LocalFavoriteForumsStorage()
-  @Published private var remote = RemoteFavoriteForumsStorage()
+  @Published private var local: LocalFavoriteForumsStorage = .init()
+  @Published private var remote: RemoteFavoriteForumsStorage = .init()
   @Published var synced = false
 
   private var inner: any FavoriteForumsStorageProtocol {

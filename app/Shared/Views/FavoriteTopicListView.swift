@@ -11,7 +11,7 @@ import SwiftUI
 class FavoriteFolderModel: ObservableObject {
   static let shared = FavoriteFolderModel()
 
-  @Published var allFolders = [FavoriteTopicFolder]()
+  @Published var allFolders: [FavoriteTopicFolder] = []
 
   // Default folder should be the first one.
   var sortedFolders: [FavoriteTopicFolder] {

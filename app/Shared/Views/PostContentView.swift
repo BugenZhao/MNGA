@@ -11,7 +11,7 @@ import SwiftUI
 import SwiftUIX
 
 extension EnvironmentValues {
-  @Entry var inRealPost = true
+  @Entry var inRealPost: Bool = true
 }
 
 enum PostFontSize {

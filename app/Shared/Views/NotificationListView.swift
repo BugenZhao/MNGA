@@ -95,7 +95,7 @@ struct NotificationListView: View {
 }
 
 extension EnvironmentValues {
-  @Entry var inNotificationSheet = false
+  @Entry var inNotificationSheet: Bool = false
 }
 
 struct NotificationListNavigationView: View {

@@ -20,7 +20,7 @@ struct StaticTopicDetailsView<Content: View>: View {
 
 // Track the floors currently on the screen.
 final class CurrentViewingFloor {
-  private(set) var floors = Set<Int>()
+  private(set) var floors: Set<Int> = []
   var highestSeen: Int?
 
   var currentLowest: Int? {
@@ -615,7 +615,7 @@ struct TopicDetailsView: View {
   }
 
   var titles: (String?, String?) {
-    var titles = [String]()
+    var titles: [String] = []
 
     if !topic.subject.content.isEmpty {
       titles.append(topic.subject.content)

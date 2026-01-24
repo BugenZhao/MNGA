@@ -119,7 +119,7 @@ struct TransferablePlainImage: Transferable {
 }
 
 class ViewingImageModel: ObservableObject {
-  @Published var urls = [URL]()
+  @Published var urls: [URL] = []
   @Published var currentIndex = 0
   @Published var showing = false
 

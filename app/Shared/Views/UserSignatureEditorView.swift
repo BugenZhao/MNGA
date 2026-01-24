@@ -9,16 +9,20 @@ import Foundation
 import SwiftUI
 
 struct UserSignatureEditAction: Hashable {
-  var userID = ""
-  var initialSignature = ""
+  var userID: String = ""
+  var initialSignature: String = ""
 }
 
 struct UserSignatureEditTask: TaskProtocol, Hashable {
   typealias Action = UserSignatureEditAction
 
-  static var dummy = Self(action: .init())
+  static var dummy: Self = .init(action: .init())
 
   var action: UserSignatureEditAction
+
+  init(action: UserSignatureEditAction, pageToReload _: PageToReload? = nil) {
+    self.action = action
+  }
 
   var actionTitle: LocalizedStringKey {
     "Edit Signature"

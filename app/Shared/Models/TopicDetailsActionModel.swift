@@ -25,7 +25,7 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var navigateToRemoteUserID: String? = nil
   @Published var navigateToRemoteUserName: String? = nil
   @Published var navigateToAuthorOnly: AuthorOnly? = nil
-  @Published var navigateToLocalMode = false
+  @Published var navigateToLocalMode: Bool = false
   @Published var navigateToView: AnyView? = nil
 
   private var replyTo = [PostId: PostId]()
@@ -50,15 +50,15 @@ class TopicDetailsActionModel: ObservableObject {
 }
 
 extension EnvironmentValues {
-  @Entry var enableAuthorOnly = true
+  @Entry var enableAuthorOnly: Bool = true
 }
 
 extension EnvironmentValues {
-  @Entry var enableShowReplyChain = true
+  @Entry var enableShowReplyChain: Bool = true
 }
 
 extension EnvironmentValues {
-  @Entry var currentlyLocalMode = false
+  @Entry var currentlyLocalMode: Bool = false
 }
 
 // MARK: TopicDetailsAction

@@ -112,7 +112,7 @@ enum DiceRoller {
 
     var output = ""
     var cursor = working.startIndex
-    var sum = Sum.number(0)
+    var sum: Sum = .number(0)
 
     for match in matches {
       guard let range = Range(match.range, in: working) else { continue }
