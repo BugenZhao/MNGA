@@ -19,7 +19,8 @@ struct NotificationListView: View {
     CrossStackNavigationLinkHack(id: notification.id, destination: {
       Group {
         switch notification.type {
-        case .shortMessage, .shortMessageStart:
+        case .shortMessage,
+             .shortMessageStart:
           ShortMessageDetailsView.build(mid: notification.otherPostID.tid)
         default:
           TopicDetailsView.build(onlyPost: (id: notification.otherPostID, atPage: max(Int(notification.page), 1)))
@@ -93,15 +94,8 @@ struct NotificationListView: View {
   }
 }
 
-struct InNotificationSheetKey: EnvironmentKey {
-  static let defaultValue = false
-}
-
 extension EnvironmentValues {
-  var inNotificationSheet: Bool {
-    get { self[InNotificationSheetKey.self] }
-    set { self[InNotificationSheetKey.self] = newValue }
-  }
+  @Entry var inNotificationSheet = false
 }
 
 struct NotificationListNavigationView: View {

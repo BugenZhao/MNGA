@@ -30,12 +30,12 @@ private class MenuDelegate: NSObject, UIContextMenuInteractionDelegate {
         return UIAction(
           title: action.title.localized,
           image: UIImage(systemName: action.systemImage),
-          handler: { _ in action.callback() }
+          handler: { _ in action.callback() },
         )
       }
 
       let children = actions.split(separator: nil).enumerated().flatMap { i, actions -> [UIMenuElement] in
-        let actions = actions.compactMap { $0 }
+        let actions = actions.compactMap(\.self)
         if i == 0 {
           return actions
         } else {

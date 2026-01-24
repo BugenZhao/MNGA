@@ -34,8 +34,7 @@ enum DiceRoller {
     }
 
     func copy(withSeedOffset offset: Int? = nil) -> Context {
-      let copy = Context(authorId: authorId, topicId: topicId, postId: postId, seedOffset: offset ?? seedOffset, rndSeed: rndSeed)
-      return copy
+      Context(authorId: authorId, topicId: topicId, postId: postId, seedOffset: offset ?? seedOffset, rndSeed: rndSeed)
     }
 
     private func ensureSeed() -> Int {
@@ -113,7 +112,7 @@ enum DiceRoller {
 
     var output = ""
     var cursor = working.startIndex
-    var sum: Sum = .number(0)
+    var sum = Sum.number(0)
 
     for match in matches {
       guard let range = Range(match.range, in: working) else { continue }
@@ -172,7 +171,7 @@ enum DiceRoller {
     return Result(
       originalExpression: original,
       expandedExpression: expanded,
-      totalDescription: sum.rendered()
+      totalDescription: sum.rendered(),
     )
   }
 }

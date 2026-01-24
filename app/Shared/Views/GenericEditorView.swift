@@ -153,7 +153,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
     .confirmationDialog(
       "Discard the draft?",
       isPresented: $showingDiscardConfirmation,
-      titleVisibility: .visible
+      titleVisibility: .visible,
     ) {
       Button("Discard", role: .destructive) {
         postReply.discardCurrentContext()

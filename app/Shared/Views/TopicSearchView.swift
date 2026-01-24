@@ -31,7 +31,7 @@ class TopicSearchModel: SearchModel<PagingDataSource<TopicSearchResponse, Topic>
         let pages = Int(response.pages)
         return (items, pages)
       },
-      id: \.id
+      id: \.id,
     )
   }
 }

@@ -1,8 +1,16 @@
 --indent 2
---swift-version 5.9
+--swift-version 6.2
 --language-mode 5
 
 --exclude app/Shared/Protos/*
 --exclude app/Derived/**/*
 --exclude app/Project.swift
 
+--enable environmentEntry
+--enable propertyTypes
+--property-types inferred
+--enable redundantMemberwiseInit
+--enable redundantProperty
+--enable unusedPrivateDeclarations
+--enable wrapEnumCases
+--enable wrapSwitchCases

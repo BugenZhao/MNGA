@@ -73,8 +73,7 @@ func logicCall<Response: SwiftProtobuf.Message>(_ requestValue: SyncRequest.OneO
   defer { rust_free(resByteBuffer) }
 
   if let resData {
-    let res = try Response(serializedBytes: resData, options: binaryDecodingOptions)
-    return res
+    return try Response(serializedBytes: resData, options: binaryDecodingOptions)
   } else {
     throw resError!
   }
@@ -88,7 +87,7 @@ private class WrappedDataCallback {
 
   init(
     callback: @escaping (Data) -> Void,
-    errorCallback: @escaping (LogicError) -> Void
+    errorCallback: @escaping (LogicError) -> Void,
   ) {
     self.callback = callback
     self.errorCallback = errorCallback
@@ -119,7 +118,7 @@ func basicLogicCallAsync<Response: SwiftProtobuf.Message>(
   _ requestValue: AsyncRequest.OneOf_Value,
   requestDispatchQueue: DispatchQueue = .global(qos: .userInitiated),
   onSuccess: @escaping (Response) -> Void,
-  onError: @escaping (LogicError) -> Void = { _ in }
+  onError: @escaping (LogicError) -> Void = { _ in },
 ) {
   requestDispatchQueue.async {
     let request = AsyncRequest.with { $0.value = requestValue }
@@ -142,7 +141,7 @@ func basicLogicCallAsync<Response: SwiftProtobuf.Message>(
           onError(e)
         }
       },
-      errorCallback: onError
+      errorCallback: onError,
     )
     let dataCallbackPtr = Unmanaged.passRetained(dataCallback).toOpaque()
     let rustCallback = Callback(user_data: dataCallbackPtr, callback: byteBufferCallback)

@@ -41,7 +41,7 @@ struct CacheRowView: View {
             title: Text("Are you sure to clear the cache?"),
             message: Text("This will take a while."),
             primaryButton: .destructive(Text("Clear")) { clear() },
-            secondaryButton: .cancel()
+            secondaryButton: .cancel(),
           )
         }
       } else {

@@ -25,7 +25,7 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var navigateToRemoteUserID: String? = nil
   @Published var navigateToRemoteUserName: String? = nil
   @Published var navigateToAuthorOnly: AuthorOnly? = nil
-  @Published var navigateToLocalMode: Bool = false
+  @Published var navigateToLocalMode = false
   @Published var navigateToView: AnyView? = nil
 
   private var replyTo = [PostId: PostId]()
@@ -49,37 +49,16 @@ class TopicDetailsActionModel: ObservableObject {
   }
 }
 
-struct EnableAuthorOnlyKey: EnvironmentKey {
-  static let defaultValue: Bool = true
+extension EnvironmentValues {
+  @Entry var enableAuthorOnly = true
 }
 
 extension EnvironmentValues {
-  var enableAuthorOnly: Bool {
-    get { self[EnableAuthorOnlyKey.self] }
-    set { self[EnableAuthorOnlyKey.self] = newValue }
-  }
-}
-
-struct EnableShowReplyChainKey: EnvironmentKey {
-  static let defaultValue: Bool = true
+  @Entry var enableShowReplyChain = true
 }
 
 extension EnvironmentValues {
-  var enableShowReplyChain: Bool {
-    get { self[EnableShowReplyChainKey.self] }
-    set { self[EnableShowReplyChainKey.self] = newValue }
-  }
-}
-
-struct CurrentlyLocalModeKey: EnvironmentKey {
-  static let defaultValue: Bool = false
-}
-
-extension EnvironmentValues {
-  var currentlyLocalMode: Bool {
-    get { self[CurrentlyLocalModeKey.self] }
-    set { self[CurrentlyLocalModeKey.self] = newValue }
-  }
+  @Entry var currentlyLocalMode = false
 }
 
 // MARK: TopicDetailsAction

@@ -50,7 +50,7 @@ struct UserProfileView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.id
+      id: \.id,
     )
 
     let postDataSource = PostDataSource(
@@ -65,7 +65,7 @@ struct UserProfileView: View {
         return (items, Int.max)
       },
       id: \.post.id.description,
-      finishOnError: true
+      finishOnError: true,
     )
 
     return Self(user: user, topicDataSource: topicDataSource, postDataSource: postDataSource)

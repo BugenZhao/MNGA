@@ -39,8 +39,7 @@ private let detailedFormatter: DateFormatter = {
 
 public func detailedTime(_ timestamp: UInt64) -> String {
   let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
-  let dateString = detailedFormatter.string(from: date)
-  return dateString
+  return detailedFormatter.string(from: date)
 }
 
 public func currentDateString() -> String {

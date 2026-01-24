@@ -16,7 +16,8 @@ struct NotificationRowView: View {
       HStack {
         Image(systemName: noti.type.icon)
         switch noti.type {
-        case .shortMessage, .shortMessageStart:
+        case .shortMessage,
+             .shortMessageStart:
           TopicSubjectView(topic: .with { $0.subject.content = "Short Message".localized }, showIndicators: false)
         default:
           TopicSubjectView(topic: noti.asTopic, showIndicators: false)
@@ -25,7 +26,12 @@ struct NotificationRowView: View {
 
       DateTimeFooterView(timestamp: noti.timestamp, switchable: false) {
         switch noti.type {
-        case .replyPost, .replyTopic, .shortMessage, .shortMessageStart, .atPost, .atTopic:
+        case .replyPost,
+             .replyTopic,
+             .shortMessage,
+             .shortMessageStart,
+             .atPost,
+             .atTopic:
           Image(systemName: "person")
           Text(noti.otherUser.nameDisplayCompat)
         case .vote:

@@ -29,26 +29,26 @@ struct PlusFeaturesView: View {
       WhatsNew.Feature(
         image: .init(systemName: feature.icon),
         title: feature.name.localizedWNText,
-        subtitle: feature.description.localizedWNText
+        subtitle: feature.description.localizedWNText,
       )
     }
 
     features.append(.init(
       image: .init(systemName: "sparkles"),
       title: "More Features in the Future".localizedWNText,
-      subtitle: "Plus More Feature".localizedWNText
+      subtitle: "Plus More Feature".localizedWNText,
     ))
 
     return WhatsNew(
       title: "All Plus Features".localizedWNTitle,
       features: features,
-      primaryAction: .done
+      primaryAction: .done,
     )
   }
 
   var layout: WhatsNew.Layout {
     .init(
-      showsScrollViewIndicators: true
+      showsScrollViewIndicators: true,
     )
   }
 
@@ -191,7 +191,8 @@ struct PlusView: View {
     switch status {
     case .paid:
       EmptyView()
-    case .trial, .lite:
+    case .trial,
+         .lite:
       VStack(spacing: 16) {
         let displayProducts = productsToDisplay(for: status)
 
@@ -305,7 +306,8 @@ struct PlusView: View {
         } else {
           errorMessage = "We couldn't verify your purchase. Please try again.".localized
         }
-      case .pending, .userCancelled:
+      case .pending,
+           .userCancelled:
         break
       @unknown default:
         break

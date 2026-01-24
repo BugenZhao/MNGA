@@ -17,7 +17,7 @@ struct AdaptiveFooterView<Leading: View, Trailing: View>: View {
 
   init(
     @ViewBuilder leading: @escaping () -> Leading,
-    @ViewBuilder trailing: @escaping () -> Trailing
+    @ViewBuilder trailing: @escaping () -> Trailing,
   ) {
     self.leading = leading
     self.trailing = trailing

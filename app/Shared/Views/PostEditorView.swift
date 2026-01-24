@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct PostReplyTask: TaskProtocol {
-  static var dummy: Self = .init(action: .init(), pageToReload: nil)
+  static var dummy = Self(action: .init(), pageToReload: nil)
 
   static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.action.operation == rhs.action.operation

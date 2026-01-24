@@ -37,7 +37,7 @@ struct InlineQuotedPostView: View {
       id: post.id,
       postDate: post.postDate,
       defaultFont: defaultFont,
-      defaultColor: defaultColor
+      defaultColor: defaultColor,
     )
     combiner.inInlineReplyQuote = true
     combiner.replyTo = sourcePostId

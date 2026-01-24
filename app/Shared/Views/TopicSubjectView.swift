@@ -9,15 +9,8 @@ import Flow
 import Foundation
 import SwiftUI
 
-private struct TopicSubjectDimmedKey: EnvironmentKey {
-  static let defaultValue: Bool = false
-}
-
 extension EnvironmentValues {
-  var topicSubjectDimmed: Bool {
-    get { self[TopicSubjectDimmedKey.self] }
-    set { self[TopicSubjectDimmedKey.self] = newValue }
-  }
+  @Entry var topicSubjectDimmed = false
 }
 
 extension View {
@@ -142,7 +135,7 @@ struct TopicSubjectView: View {
       TopicSubjectContentInnerView(
         content: content,
         lineLimit: lineLimit,
-        modifiers: topic.subject.fontModifiers
+        modifiers: topic.subject.fontModifiers,
       )
     }
   }

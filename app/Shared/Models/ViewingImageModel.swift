@@ -43,7 +43,9 @@ extension PlatformImage {
 
     switch utType {
     // This covers almost all common image formats in use.
-    case .jpeg, .png, .webP: return true
+    case .jpeg,
+         .png,
+         .webP: return true
     default: return false
     }
   }
@@ -117,9 +119,7 @@ struct TransferablePlainImage: Transferable {
 }
 
 class ViewingImageModel: ObservableObject {
-  private let prefs = PreferencesStorage.shared
-
-  @Published var urls: [URL] = []
+  @Published var urls = [URL]()
   @Published var currentIndex = 0
   @Published var showing = false
 

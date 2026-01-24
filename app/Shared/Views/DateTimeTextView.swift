@@ -11,7 +11,8 @@ import SwiftUI
 struct DateTimeTextView: View {
   enum Strategy: Int, CaseIterable {
     case automatic
-    case detailed, timeAgo
+    case detailed
+    case timeAgo
 
     var description: LocalizedStringKey {
       switch self {

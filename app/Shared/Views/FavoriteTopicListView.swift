@@ -11,7 +11,7 @@ import SwiftUI
 class FavoriteFolderModel: ObservableObject {
   static let shared = FavoriteFolderModel()
 
-  @Published var allFolders: [FavoriteTopicFolder] = []
+  @Published var allFolders = [FavoriteTopicFolder]()
 
   // Default folder should be the first one.
   var sortedFolders: [FavoriteTopicFolder] {
@@ -85,7 +85,7 @@ struct FavoriteTopicListInnerView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.id
+      id: \.id,
     )
 
     return Self(folderID: folderID, dataSource: dataSource)
@@ -168,15 +168,14 @@ struct FavoriteTopicListView: View {
       Toggle(isOn:
         Binding(
           get: { currentFolder?.id == folder.id },
-          set: { _ in withPlusCheck(.multiFavorite) { currentFolder = folder } }
-        )
-      ) {
-        Text(folder.name)
-        if folder.isDefault {
-          Text("Default Folder")
+          set: { _ in withPlusCheck(.multiFavorite) { currentFolder = folder } },
+        )) {
+          Text(folder.name)
+          if folder.isDefault {
+            Text("Default Folder")
+          }
         }
-      }
-      .menuActionDismissBehavior(.disabled)
+        .menuActionDismissBehavior(.disabled)
     }
   }
 
@@ -217,7 +216,7 @@ struct FavoriteTopicListView: View {
       .confirmationDialog(
         "Delete the folder and all its topics?",
         isPresented: $showingDeleteConfirmation,
-        titleVisibility: .visible
+        titleVisibility: .visible,
       ) {
         Button("Delete", role: .destructive) {
           modifyCurrentFolder(.with { $0.delete = true })

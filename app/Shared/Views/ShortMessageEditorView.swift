@@ -9,13 +9,9 @@ import Foundation
 import SwiftUI
 
 struct ShortMessagePostTask: TaskProtocol, Hashable {
-  static var dummy: Self = .init(action: .init())
+  static var dummy = Self(action: .init())
 
   var action: ShortMessagePostAction
-
-  init(action: ShortMessagePostAction, pageToReload _: PageToReload? = nil) {
-    self.action = action
-  }
 
   var actionTitle: LocalizedStringKey {
     action.title

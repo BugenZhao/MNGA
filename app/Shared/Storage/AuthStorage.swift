@@ -29,8 +29,6 @@ class AuthStorage: ObservableObject {
 
   @AppStorage("allAuthInfos") var allAuthInfos = Set<AuthInfo>()
 
-  private var cancellables = Set<AnyCancellable>()
-
   init(defaultAuthInfo: AuthInfo? = nil) {
     if signedIn, allAuthInfos.isEmpty {
       allAuthInfos = [authInfo] // for backward compatibility

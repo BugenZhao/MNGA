@@ -10,15 +10,8 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
-struct InRealPostKey: EnvironmentKey {
-  static let defaultValue: Bool = true
-}
-
 extension EnvironmentValues {
-  var inRealPost: Bool {
-    get { self[InRealPostKey.self] }
-    set { self[InRealPostKey.self] = newValue }
-  }
+  @Entry var inRealPost = true
 }
 
 enum PostFontSize {
@@ -60,7 +53,7 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
     authorId: String? = nil,
     fontSize: PostFontSize = .normal,
     defaultColor: Color = .primary,
-    initialInQuote: Bool = false
+    initialInQuote: Bool = false,
   ) {
     self.spans = spans
     self.error = error
@@ -82,7 +75,7 @@ struct PostContentView<S: Sequence & Hashable>: View where S.Element == Span {
       id: id,
       postDate: postDate,
       defaultFont: defaultFont,
-      defaultColor: defaultColor
+      defaultColor: defaultColor,
     )
     if initialInQuote {
       combiner.inQuote = true
@@ -121,7 +114,7 @@ extension PostContentView where S == [Span] {
     authorId: String? = nil,
     fontSize: PostFontSize = .normal,
     defaultColor: Color = .primary,
-    initialInQuote: Bool = false
+    initialInQuote: Bool = false,
   ) {
     self.init(
       spans: content.spans,
@@ -131,7 +124,7 @@ extension PostContentView where S == [Span] {
       authorId: authorId,
       fontSize: fontSize,
       defaultColor: defaultColor,
-      initialInQuote: initialInQuote
+      initialInQuote: initialInQuote,
     )
   }
 
@@ -140,20 +133,20 @@ extension PostContentView where S == [Span] {
       content: post.content,
       id: post.id,
       postDate: post.postDate,
-      authorId: post.authorID
+      authorId: post.authorID,
     )
   }
 
   init(
     lightPost: LightPost,
-    initialInQuote: Bool = false
+    initialInQuote: Bool = false,
   ) {
     self.init(
       content: lightPost.content,
       id: lightPost.id,
       postDate: lightPost.postDate,
       authorId: lightPost.authorID,
-      initialInQuote: initialInQuote
+      initialInQuote: initialInQuote,
     )
   }
 }

@@ -22,7 +22,7 @@ class VotesModel: ObservableObject {
       },
       set: {
         self.votes[post.id] = $0
-      }
+      },
     )
   }
 }

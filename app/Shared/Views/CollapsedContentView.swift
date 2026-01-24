@@ -12,7 +12,7 @@ struct CollapsedContentView<Content: View>: View {
   let title: String
   @ViewBuilder let content: () -> Content
 
-  @State private var collapsed: Bool = true
+  @State private var collapsed = true
 
   var body: some View {
     VStack(alignment: .leading) {
@@ -20,7 +20,7 @@ struct CollapsedContentView<Content: View>: View {
         HStack {
           Image(systemName: collapsed ? "chevron.down" : "chevron.up")
             .contentTransition(
-              .symbolEffect(.replace.magic(fallback: .downUp))
+              .symbolEffect(.replace.magic(fallback: .downUp)),
             )
           Text(title)
             .animation(.none, value: collapsed) // disable animation to avoid glitch

@@ -100,7 +100,7 @@ struct TopicListView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.id
+      id: \.id,
     )
     let dataSourcePostDate = DataSource(
       buildRequest: { page in
@@ -115,7 +115,7 @@ struct TopicListView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.id
+      id: \.id,
     )
 
     logger.trace("init topic list view for \(forum.idDescription)")
@@ -123,7 +123,7 @@ struct TopicListView: View {
       forum: forum,
       dataSourceLastPost: dataSourceLastPost,
       dataSourcePostDate: dataSourcePostDate,
-      searchModel: TopicSearchModel(id: forum.id)
+      searchModel: TopicSearchModel(id: forum.id),
     )
   }
 
@@ -205,7 +205,7 @@ struct TopicListView: View {
         Button(action: { favoriteForums.toggle(forum: forum) }) {
           Label(
             isFavorite ? "Remove from Favorites" : "Mark as Favorite",
-            systemImage: isFavorite ? "star.slash.fill" : "star"
+            systemImage: isFavorite ? "star.slash.fill" : "star",
           )
         }
         #if os(macOS)
@@ -231,7 +231,7 @@ struct TopicListView: View {
             onNavigateToForum: { subforum in
               showingSubforumsModal = false
               currentShowingSubforum = subforum
-            }
+            },
           )
         } else {
           ProgressView()
@@ -331,8 +331,8 @@ struct TopicListView: View {
         List {
           Section(header:
             Text(orderOrDefault.description)
-              .titleVisibilityAnchor()
-          ) {
+              .titleVisibilityAnchor())
+          {
             EmptyView().id("top-placeholder") // for auto refresh
             SafeForEach(itemBindings, id: \.id) { topicBinding in
               topicLink($topic: topicBinding)

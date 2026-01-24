@@ -30,7 +30,7 @@ struct ShortMessageDetailsView: View {
         let pages = response.pages
         return (items, Int(pages))
       },
-      id: \.id
+      id: \.id,
     )
 
     return Self(mid: mid, dataSource: dataSource)
