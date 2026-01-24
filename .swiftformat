@@ -1,0 +1,8 @@
+--indent 2
+--swift-version 5.9
+--language-mode 5
+
+--exclude app/Shared/Protos/*
+--exclude app/Derived/**/*
+--exclude app/Project.swift
+

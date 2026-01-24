@@ -115,7 +115,7 @@ swiftformat:
 	@if [ -z "${SWIFTFORMAT}" ]; then \
 		echo "warning: swiftformat not installed, skip" ;\
 	else \
-		${SWIFTFORMAT} --indent 2 --swiftversion 5.9 --exclude "app/Shared/Protos/*" --exclude "app/Derived/**/*" --exclude "app/Project.swift" . ;\
+		${SWIFTFORMAT} . ;\
 	fi
 
 tuist:
