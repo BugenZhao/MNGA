@@ -401,7 +401,7 @@ struct TopicDetailsView: View {
       }
 
       ShareLinksView(navigationID: topic.navID) {
-        Button(action: { viewScreenshot() }) {
+        Button(action: { withPlusCheck(.shareScreenshot) { viewScreenshot() } }) {
           Label("Screenshot", systemImage: "photo")
         }
       }

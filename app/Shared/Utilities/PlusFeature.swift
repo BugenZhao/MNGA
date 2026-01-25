@@ -15,6 +15,7 @@ enum PlusFeature: CaseIterable {
   case jump
   case resumeProgress
   case blockContents
+  case shareScreenshot
   case syncForums
   case anonymous
   case newTopic
@@ -31,6 +32,8 @@ enum PlusFeature: CaseIterable {
       "Hot Topics"
     case .shortMessage:
       "Short Messages"
+    case .shareScreenshot:
+      "Share Screenshot"
     case .topicHistory:
       "History"
     case .authorOnly:
@@ -62,6 +65,8 @@ enum PlusFeature: CaseIterable {
       "View hot topics from the past 24 hours, week, or month."
     case .shortMessage:
       "Send and receive short messages with other users."
+    case .shareScreenshot:
+      "Share topics as screenshots."
     case .topicHistory:
       "View your footprint of topics you have explored."
     case .authorOnly:
@@ -93,6 +98,8 @@ enum PlusFeature: CaseIterable {
       "flame"
     case .shortMessage:
       "message"
+    case .shareScreenshot:
+      "photo.on.rectangle"
     case .topicHistory:
       "clock"
     case .authorOnly:
