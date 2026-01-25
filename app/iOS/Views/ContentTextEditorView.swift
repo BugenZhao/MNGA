@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 struct ContentTextEditorView: View {
   @ObservedObject var model: ContentEditorModel
@@ -48,8 +49,38 @@ struct ContentTextEditorView: View {
     }
   }
 
+  var conversationContext: UIConversationContext {
+    let entry = UIConversationContext.Entry()
+    entry.text = "Are you available tomorrow to have a chat?"
+    entry.senderIdentifier = "MNGA"
+    entry.sentDate = /* 24 hours ago */ Date().addingTimeInterval(-24 * 60 * 60)
+    entry.entryIdentifier = UUID().uuidString
+    entry.primaryRecipientIdentifiers = ["Self"]
+
+    let context = UIConversationContext()
+    context.threadIdentifier = UUID().uuidString
+    context.entries = [entry]
+    context.participantNameByIdentifier = [
+      "MNGA": .init(givenName: "MNGA"),
+      "Self": .init(givenName: "Self"),
+    ]
+    context.selfIdentifiers = ["Self"]
+    context.responsePrimaryRecipientIdentifiers = ["MNGA"]
+
+    return context
+  }
+
   var body: some View {
     TextEditor(text: $model.text, selection: $model.selection)
+      .introspect(.textEditor, on: .iOS(.v26)) { e in
+        // For apple intelligence.
+        let context = conversationContext
+        e.conversationContext = context
+        if let delegate = e.inputDelegate {
+          print("introspected text editor")
+          delegate.conversationContext(context, didChange: e)
+        }
+      }
       .toolbar {
         // Show toolbar only when focused, otherwise it will also be shown in other text fields.
         if focused {
