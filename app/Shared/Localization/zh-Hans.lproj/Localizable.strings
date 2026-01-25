@@ -200,7 +200,8 @@
 "Share" = "分享";
 "MNGA Link" = "MNGA 链接";
 "NGA Link" = "NGA 链接";
-"Screenshot (Beta)" = "截图 (Beta)";
+"Screenshot" = "截图";
+"Failed to render screenshot." = "渲染截图失败。";
 "Navigated to Link" = "跳转至链接";
 "Not a valid NGA or MNGA link in the pasteboard." = "剪贴板中不是有效的 NGA 或 MNGA 链接。";
 "Invalid URL" = "无效的链接";

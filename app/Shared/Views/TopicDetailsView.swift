@@ -126,6 +126,7 @@ struct TopicDetailsView: View {
 
   @Binding var topic: Topic
 
+  @Environment(\.colorScheme) private var colorScheme
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @EnvironmentObject var viewingImage: ViewingImageModel
   @EnvironmentObject.Optional var postReply: PostReplyModel?
@@ -399,7 +400,11 @@ struct TopicDetailsView: View {
         }
       }
 
-      ShareLinksView(navigationID: topic.navID, others: {})
+      ShareLinksView(navigationID: topic.navID) {
+        Button(action: { viewScreenshot() }) {
+          Label("Screenshot", systemImage: "photo")
+        }
+      }
 
       Section {
         favoriteMenu
@@ -867,36 +872,45 @@ struct TopicDetailsView: View {
   }
 
   @ViewBuilder
+  func screenshotReplies(title: LocalizedStringKey, posts: some RandomAccessCollection<Post>) -> some View {
+    if !posts.isEmpty {
+      Spacer().height(20)
+      Text(title)
+        .font(.subheadline.bold())
+        .foregroundColor(.secondary)
+      ForEach(posts, id: \.id.pid) { post in
+        Divider()
+        buildRow(post: post, withId: false)
+      }
+    }
+  }
+
+  @ViewBuilder
   var screenshotView: some View {
     VStack(alignment: .leading) {
       headerSectionInner
 
       if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
-        Text("Hot Replies")
-          .font(.footnote)
-          .foregroundColor(.secondary)
-        ForEach(hotReplies, id: \.id.pid) { post in
-          Divider()
-          buildRow(post: post, withId: false)
-        }
+        screenshotReplies(title: "Hot Replies", posts: hotReplies)
       } else {
-        let latestReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5)
-
-        if !latestReplies.isEmpty {
-          Text("Replies")
-            .font(.footnote)
-            .foregroundColor(.secondary)
-          ForEach(latestReplies, id: \.id.pid) { post in
-            Divider()
-            buildRow(post: post, withId: false)
-          }
-        }
+        let firstReplies = dataSource.sortedItems(by: \.floor).dropFirst().prefix(5)
+        screenshotReplies(title: "Replies", posts: firstReplies)
       }
     }
     .padding()
-    .fixedSize(horizontal: false, vertical: true)
-    .frame(width: Screen.main.bounds.size.width)
+    .frame(width: Screen.main.bounds.size.width) // 402 on iPhone 16 Pro
     .background(.secondarySystemGroupedBackground)
+    .environment(\.colorScheme, colorScheme)
+    .accentColor(prefs.themeColor.color)
+  }
+
+  @MainActor
+  func viewScreenshot() {
+    if let url = screenshotView.snapshot() {
+      viewingImage.show(url: url)
+    } else {
+      ToastModel.showAuto(.error("Failed to render screenshot."))
+    }
   }
 
   func openInBrowser() {

@@ -9,19 +9,34 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+extension EnvironmentValues {
+  @Entry var inSnapshot: Bool = false
+}
+
 extension View {
-  func snapshot() -> AppKitOrUIKitImage {
-    let controller = AppKitOrUIKitHostingController(rootView: self)
-    let view = controller.view
+  /// Renders the view into an image file and returns its temporary file URL.
+  ///
+  /// This uses SwiftUI's `ImageRenderer` so it can render SwiftUI primitives (text, shapes, images, etc.).
+  /// Note that some UIKit-backed views (like web views and media players) may be rendered as placeholders.
+  @MainActor
+  func snapshot() -> URL? {
+    let renderer = ImageRenderer(content:
+      `self`
+        .environment(\.inSnapshot, true))
+    renderer.scale = Screen.main.scale
+    renderer.isOpaque = true
 
-    let targetSize = controller.view.intrinsicContentSize
-    view?.bounds = CGRect(origin: .zero, size: targetSize)
-    view?.backgroundColor = .clear
+    guard let image = renderer.uiImage else { return nil }
 
-    let renderer = UIGraphicsImageRenderer(size: targetSize)
+    let fileName = "MNGA_Snapshot_\(UUID().uuidString).jpg"
+    let url = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
 
-    return renderer.image { _ in
-      view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+    guard let data = image.jpegData(compressionQuality: 0.9) else { return nil }
+    do {
+      try data.write(to: url, options: .atomic)
+      return url
+    } catch {
+      return nil
     }
   }
 }

@@ -45,6 +45,7 @@ struct ContentImageView: View {
 
   @Environment(\.inRealPost) var inRealPost // false when in editor preview
   @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.inSnapshot) var inSnapshot
   @EnvironmentObject var viewingImage: ViewingImageModel
 
   @EnvironmentObject<AttachmentsModel>.Optional var attachmentsModel
@@ -59,6 +60,15 @@ struct ContentImageView: View {
   }
 
   @State var frameWidth: CGFloat? = nil
+
+  var options: SDWebImageOptions {
+    if inSnapshot {
+      // Ensure we have the image loaded synchronously to correctly render in snapshot.
+      [.queryDiskDataSync, .queryMemoryDataSync]
+    } else {
+      []
+    }
+  }
 
   var body: some View {
     if isOpenSourceStickers {
@@ -76,7 +86,7 @@ struct ContentImageView: View {
               .scaledToFit()
               .frame(maxWidth: image.size.width * prefs.postRowImageScale.scale)
           } else {
-            WebImage(url: url).resizable()
+            WebImage(url: url, options: options).resizable()
               .onSuccess { image, _, _ in frameWidth = image.size.width * prefs.postRowImageScale.scale }
               .onFailure { logger.error("sdwebimage failed to load image: \(url), error: \($0)") }
               .indicator(.activity)

@@ -36,7 +36,9 @@ struct PostRowView: View {
   @EnvironmentObject<TopicDetailsActionModel>.Optional var action
   @EnvironmentObject<PostReplyModel>.Optional var postReply
   @EnvironmentObject var textSelection: TextSelectionModel
+
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
+  @Environment(\.inSnapshot) var inSnapshot
 
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var pref = PreferencesStorage.shared
@@ -91,7 +93,7 @@ struct PostRowView: View {
       PostRowUserView(post: post, compact: false, isAuthor: isAuthor)
       Spacer()
       floor
-      if !dummy { RowMenuButtonView { menu } }
+      if !dummy, !inSnapshot { RowMenuButtonView { menu } }
     }
   }
 
