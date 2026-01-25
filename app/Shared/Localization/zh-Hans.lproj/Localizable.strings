@@ -101,6 +101,8 @@
 "Tap an item to clear it." = "轻触一项来清除缓存。";
 "View Image" = "查看图片";
 "Share As Image" = "作为图片分享";
+"Share Screenshot" = "分享截图";
+"Share topics as screenshots." = "将话题作为截图分享。";
 "Page %lld" = "第 %lld 页";
 "Load This Page" = "加载本页";
 "Paginated Reading" = "分页阅读";
@@ -200,7 +202,8 @@
 "Share" = "分享";
 "MNGA Link" = "MNGA 链接";
 "NGA Link" = "NGA 链接";
-"Screenshot (Beta)" = "截图 (Beta)";
+"Screenshot" = "截图";
+"Failed to render screenshot." = "渲染截图失败。";
 "Navigated to Link" = "跳转至链接";
 "Not a valid NGA or MNGA link in the pasteboard." = "剪贴板中不是有效的 NGA 或 MNGA 链接。";
 "Invalid URL" = "无效的链接";
