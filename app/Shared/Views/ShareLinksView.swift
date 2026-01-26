@@ -10,7 +10,18 @@ import SwiftUI
 
 struct ShareLinksView<V: View>: View {
   let navigationID: NavigationIdentifier
+  let viewScreenshot: (() -> Void)?
   @ViewBuilder let others: () -> V
+
+  init(
+    navigationID: NavigationIdentifier,
+    viewScreenshot: (() -> Void)? = nil,
+    @ViewBuilder others: @escaping () -> V = { EmptyView() },
+  ) {
+    self.navigationID = navigationID
+    self.viewScreenshot = viewScreenshot
+    self.others = others
+  }
 
   var body: some View {
     Menu {
@@ -23,6 +34,12 @@ struct ShareLinksView<V: View>: View {
       if let webpageURL = navigationID.webpageURL {
         ShareLink(item: webpageURL) {
           Label("NGA Link", systemImage: "network")
+        }
+      }
+
+      if let viewScreenshot {
+        Button(action: { withPlusCheck(.shareScreenshot) { viewScreenshot() } }) {
+          Label("Screenshot", systemImage: "photo")
         }
       }
 

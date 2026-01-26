@@ -164,7 +164,7 @@ struct UserProfileView: View {
 
         if !user.isAnonymous {
           Section {
-            ShareLinksView(navigationID: .userID(user.id)) {}
+            ShareLinksView(navigationID: .userID(user.id))
           }
         }
       } label: {

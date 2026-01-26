@@ -400,11 +400,7 @@ struct TopicDetailsView: View {
         }
       }
 
-      ShareLinksView(navigationID: topic.navID) {
-        Button(action: { withPlusCheck(.shareScreenshot) { viewScreenshot() } }) {
-          Label("Screenshot", systemImage: "photo")
-        }
-      }
+      ShareLinksView(navigationID: topic.navID, viewScreenshot: { viewScreenshot() })
 
       Section {
         favoriteMenu
@@ -874,33 +870,22 @@ struct TopicDetailsView: View {
   @ViewBuilder
   func screenshotReplies(title: LocalizedStringKey, posts: some RandomAccessCollection<Post>) -> some View {
     if !posts.isEmpty {
-      Spacer().height(20)
-      Text(title)
-        .font(.subheadline.bold())
-        .foregroundColor(.secondary)
-      ForEach(posts, id: \.id.pid) { post in
-        Divider()
-        buildRow(post: post, withId: false)
+      Divided {
+        Text(title)
+          .font(.subheadline.bold())
+          .foregroundColor(.secondary)
+          .padding(.top, 20)
+
+        ForEach(posts, id: \.id.pid) { post in
+          buildRow(post: post, withId: false)
+        }
       }
     }
   }
 
   @ViewBuilder
   var screenshotView: some View {
-    VStack(alignment: .leading) {
-      HStack(alignment: .center) {
-        Spacer()
-        Image("mnga_logo")
-          .renderingMode(.template)
-          .resizable()
-          .scaledToFit()
-          .frame(height: 36)
-        Spacer()
-      }
-      .foregroundColor(.accentColor)
-
-      Spacer().height(20)
-
+    ScreenshotContainerView(colorScheme: colorScheme) {
       headerSectionInner
 
       if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
@@ -910,11 +895,6 @@ struct TopicDetailsView: View {
         screenshotReplies(title: "Replies", posts: firstReplies)
       }
     }
-    .padding()
-    .frame(width: Screen.main.bounds.size.width) // 402 on iPhone 16 Pro
-    .background(.secondarySystemGroupedBackground)
-    .environment(\.colorScheme, colorScheme)
-    .accentColor(prefs.themeColor.color)
   }
 
   @MainActor
