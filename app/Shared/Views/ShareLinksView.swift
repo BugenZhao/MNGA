@@ -38,7 +38,7 @@ struct ShareLinksView<V: View>: View {
       }
 
       if let viewScreenshot {
-        Button(action: { withPlusCheck(.shareScreenshot) { viewScreenshot() } }) {
+        Button(action: { viewScreenshot() }) {
           Label("Screenshot", systemImage: "photo")
         }
       }
