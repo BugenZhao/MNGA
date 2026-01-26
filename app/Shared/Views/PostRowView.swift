@@ -240,11 +240,7 @@ struct PostRowView: View {
         }
       }
     }
-    ShareLinksView(navigationID: navID) {
-      Button(action: { withPlusCheck(.shareScreenshot) { viewScreenshot() } }) {
-        Label("Screenshot", systemImage: "photo")
-      }
-    }
+    ShareLinksView(navigationID: navID, viewScreenshot: { viewScreenshot() })
   }
 
   @ViewBuilder

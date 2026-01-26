@@ -98,7 +98,7 @@ struct TopicRowLinkView: View {
       CrossStackNavigationLinkHack(id: topic.id, destination: { destination }) {
         Label("Goto Topic", systemImage: "arrow.right")
       }
-      ShareLinksView(navigationID: topic.navID, others: {})
+      ShareLinksView(navigationID: topic.navID)
     } preview: {
       TopicDetailsView.build(topicBinding: $topic, previewMode: true)
     }
