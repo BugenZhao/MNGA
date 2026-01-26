@@ -874,13 +874,15 @@ struct TopicDetailsView: View {
   @ViewBuilder
   func screenshotReplies(title: LocalizedStringKey, posts: some RandomAccessCollection<Post>) -> some View {
     if !posts.isEmpty {
-      Spacer().height(20)
-      Text(title)
-        .font(.subheadline.bold())
-        .foregroundColor(.secondary)
-      ForEach(posts, id: \.id.pid) { post in
-        Divider()
-        buildRow(post: post, withId: false)
+      Divided {
+        Text(title)
+          .font(.subheadline.bold())
+          .foregroundColor(.secondary)
+          .padding(.top, 20)
+
+        ForEach(posts, id: \.id.pid) { post in
+          buildRow(post: post, withId: false)
+        }
       }
     }
   }
@@ -899,7 +901,7 @@ struct TopicDetailsView: View {
       }
       .foregroundColor(.accentColor)
 
-      Spacer().height(20)
+      Divider().height(20)
 
       headerSectionInner
 
