@@ -50,7 +50,7 @@ struct DateTimeTextView: View {
     let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
 
     let view = Group {
-      if showDetailed || inSnapshot /* for snapshot, aleays use detailed time */ {
+      if showDetailed || inSnapshot /* for snapshot, always use detailed time */ {
         Text(detailedTime(timestamp))
       } else {
         TimelineView(.everyMinute) { _ in
