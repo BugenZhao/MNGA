@@ -29,10 +29,12 @@ struct DateTimeTextView: View {
   let timestamp: UInt64
   let switchable: Bool
 
+  @Environment(\.inSnapshot) var inSnapshot
+
   @State var showDetailed: Bool
 
   static func build(timestamp: UInt64, switchable: Bool = true) -> Self {
-    let showDetailed: Bool = switch PreferencesStorage.shared.postRowDateTimeStrategy {
+    let showDetailed = switch PreferencesStorage.shared.postRowDateTimeStrategy {
     case .automatic:
       (Date().timeIntervalSince1970 - TimeInterval(timestamp)) > 30 * 24 * 3600
     case .detailed:
@@ -48,7 +50,7 @@ struct DateTimeTextView: View {
     let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
 
     let view = Group {
-      if showDetailed {
+      if showDetailed || inSnapshot /* for snapshot, aleays use detailed time */ {
         Text(detailedTime(timestamp))
       } else {
         TimelineView(.everyMinute) { _ in
