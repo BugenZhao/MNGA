@@ -27,6 +27,42 @@ struct RowMenuButtonView<MenuContent: View>: View {
   }
 }
 
+struct PostRowHeaderView<MenuContent: View>: View {
+  let post: Post
+  let isAuthor: Bool
+  let showMenu: Bool
+  @ViewBuilder let menu: MenuContent
+
+  @Environment(\.inSnapshot) var inSnapshot
+
+  init(post: Post, isAuthor: Bool, showMenu: Bool, @ViewBuilder menu: () -> MenuContent) {
+    self.post = post
+    self.isAuthor = isAuthor
+    self.showMenu = showMenu
+    self.menu = menu()
+  }
+
+  @ViewBuilder
+  var floor: some View {
+    if post.floor != 0 {
+      (Text("#").font(.footnote) + Text("\(post.floor)").font(.callout))
+        .fontWeight(.medium)
+        .foregroundColor(.accentColor)
+    }
+  }
+
+  var body: some View {
+    HStack {
+      PostRowUserView(post: post, compact: false, isAuthor: isAuthor)
+      Spacer()
+      floor
+      if showMenu, !inSnapshot {
+        RowMenuButtonView { menu }
+      }
+    }
+  }
+}
+
 struct PostRowView: View {
   let post: Post
   let isAuthor: Bool
@@ -36,9 +72,10 @@ struct PostRowView: View {
   @EnvironmentObject<TopicDetailsActionModel>.Optional var action
   @EnvironmentObject<PostReplyModel>.Optional var postReply
   @EnvironmentObject var textSelection: TextSelectionModel
+  @EnvironmentObject<ViewingImageModel>.Optional var viewingImage
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
-  @Environment(\.inSnapshot) var inSnapshot
+  @Environment(\.colorScheme) private var colorScheme
 
   @StateObject var authStorage = AuthStorage.shared
   @StateObject var pref = PreferencesStorage.shared
@@ -79,21 +116,9 @@ struct PostRowView: View {
   }
 
   @ViewBuilder
-  var floor: some View {
-    if post.floor != 0 {
-      (Text("#").font(.footnote) + Text("\(post.floor)").font(.callout))
-        .fontWeight(.medium)
-        .foregroundColor(.accentColor)
-    }
-  }
-
-  @ViewBuilder
   var header: some View {
-    HStack {
-      PostRowUserView(post: post, compact: false, isAuthor: isAuthor)
-      Spacer()
-      floor
-      if !dummy, !inSnapshot { RowMenuButtonView { menu } }
+    PostRowHeaderView(post: post, isAuthor: isAuthor, showMenu: !dummy) {
+      menu
     }
   }
 
@@ -215,7 +240,11 @@ struct PostRowView: View {
         }
       }
     }
-    ShareLinksView(navigationID: navID, others: {})
+    ShareLinksView(navigationID: navID) {
+      Button(action: { withPlusCheck(.shareScreenshot) { viewScreenshot() } }) {
+        Label("Screenshot", systemImage: "photo")
+      }
+    }
   }
 
   @ViewBuilder
@@ -244,17 +273,33 @@ struct PostRowView: View {
     }
   }
 
-  var body: some View {
+  @ViewBuilder
+  var mainContent: some View {
     VStack(alignment: .leading, spacing: 10) {
       header
       content
       footer
       comments
       signature
-    }.padding(.vertical, 2)
-      .fixedSize(horizontal: false, vertical: true)
+    }
+    .padding(.vertical, 2)
+    .fixedSize(horizontal: false, vertical: true)
+  }
+
+  @ViewBuilder
+  var screenshotView: some View {
+    ScreenshotContainerView(colorScheme: colorScheme) {
+      mainContent
+    }
+  }
+
+  var body: some View {
+    mainContent
       .contextMenu { menu }
-      .sheet(isPresented: $showAttachments) { NavigationView { AttachmentsView(model: attachments, isPresented: $showAttachments) }.presentationDetents([.medium, .large]) }
+      .sheet(isPresented: $showAttachments) {
+        NavigationView { AttachmentsView(model: attachments, isPresented: $showAttachments) }
+          .presentationDetents([.medium, .large])
+      }
       .environmentObject(attachments)
       .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) { swipeActions }
       .onChange(of: shouldHighlight, initial: true) { if $1 {
@@ -264,6 +309,15 @@ struct PostRowView: View {
         }
       }}
       .listRowBackground(highlight ? Color.accentColor.opacity(0.1) : nil) // TODO: why not animated?
+  }
+
+  @MainActor
+  func viewScreenshot() {
+    if let url = screenshotView.snapshot() {
+      viewingImage?.show(url: url)
+    } else {
+      ToastModel.showAuto(.error("Failed to render screenshot."))
+    }
   }
 
   func doVote(_ operation: PostVoteRequest.Operation) {

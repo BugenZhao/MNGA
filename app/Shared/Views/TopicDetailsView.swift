@@ -889,20 +889,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var screenshotView: some View {
-    VStack(alignment: .leading) {
-      HStack(alignment: .center) {
-        Spacer()
-        Image("mnga_logo")
-          .renderingMode(.template)
-          .resizable()
-          .scaledToFit()
-          .frame(height: 36)
-        Spacer()
-      }
-      .foregroundColor(.accentColor)
-
-      Divider().height(20)
-
+    ScreenshotContainerView(colorScheme: colorScheme) {
       headerSectionInner
 
       if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
@@ -912,11 +899,6 @@ struct TopicDetailsView: View {
         screenshotReplies(title: "Replies", posts: firstReplies)
       }
     }
-    .padding()
-    .frame(width: Screen.main.bounds.size.width) // 402 on iPhone 16 Pro
-    .background(.secondarySystemGroupedBackground)
-    .environment(\.colorScheme, colorScheme)
-    .accentColor(prefs.themeColor.color)
   }
 
   @MainActor
