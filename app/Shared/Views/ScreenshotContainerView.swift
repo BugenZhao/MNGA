@@ -19,8 +19,8 @@ struct QRCodeView: View {
   private var qrCGImage: CGImage? {
     let data = Data(text.utf8)
     let filter = CIFilter.qrCodeGenerator()
-    filter.setValue(data, forKey: "inputMessage")
-    filter.setValue("L", forKey: "inputCorrectionLevel")
+    filter.message = data
+    filter.correctionLevel = "L"
     guard let outputImage = filter.outputImage else { return nil }
     let colored = outputImage.applyingFilter("CIFalseColor", parameters: [
       "inputColor0": CIColor.black,
@@ -31,7 +31,7 @@ struct QRCodeView: View {
 
   var body: some View {
     if let qrCGImage {
-      Image(decorative: qrCGImage, scale: displayScale)
+      Image(qrCGImage, scale: displayScale, label: Text("QR"))
         .interpolation(.none)
         .renderingMode(.template)
         .resizable()
