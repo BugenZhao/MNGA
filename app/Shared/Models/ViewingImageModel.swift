@@ -40,6 +40,7 @@ extension PlatformImage {
 
   var isPlainImage: Bool {
     if sd_isAnimated { return false }
+    if cgImage?.alphaInfo ?? .none != .none { return false }
 
     switch utType {
     // This covers almost all common image formats in use.
