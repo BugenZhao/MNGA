@@ -71,6 +71,7 @@ struct PostRowView: View {
 
   @EnvironmentObject<TopicDetailsActionModel>.Optional var action
   @EnvironmentObject<PostReplyModel>.Optional var postReply
+  @EnvironmentObject<QuotedPostResolver>.Optional private var quotedPosts
   @EnvironmentObject var textSelection: TextSelectionModel
   @EnvironmentObject<ViewingImageModel>.Optional var viewingImage
 
@@ -287,6 +288,9 @@ struct PostRowView: View {
     ScreenshotContainerView(colorScheme: colorScheme, mngaURL: navID.mngaURL) {
       mainContent
     }
+    .if(quotedPosts != nil) { $0.environmentObject(quotedPosts!) }
+    // When taking screenshot of a single post, we want to show the full image.
+    .environment(\.contentImageForceNotThumb, true)
   }
 
   var body: some View {

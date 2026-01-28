@@ -895,6 +895,7 @@ struct TopicDetailsView: View {
         screenshotReplies(title: "Replies", posts: firstReplies)
       }
     }
+    .environmentObject(quotedPosts)
   }
 
   @MainActor

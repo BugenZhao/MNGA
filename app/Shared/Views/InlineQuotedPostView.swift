@@ -17,6 +17,7 @@ struct InlineQuotedPostView: View {
   let defaultFont: Font
   let defaultColor: Color
 
+  @Environment(\.inSnapshot) private var inSnapshot
   @EnvironmentObject<TopicDetailsActionModel>.Optional private var actionModel
   @EnvironmentObject<QuotedPostResolver>.Optional private var resolverEnv
 
@@ -51,6 +52,10 @@ struct InlineQuotedPostView: View {
       quotedPostContent(post)
     } else if resolver.failed.contains(postId) {
       EmptyRowView(title: "Reply not found. It may have been deleted.")
+    } else if inSnapshot {
+      // When in snapshot and the post cannot be synchronously loaded,
+      // we just skip it to avoid incorrect rendering.
+      EmptyView()
     } else {
       ProgressView()
         .controlSize(.small)

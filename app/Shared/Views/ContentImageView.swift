@@ -10,6 +10,10 @@ import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
 
+extension EnvironmentValues {
+  @Entry var contentImageForceNotThumb: Bool = false
+}
+
 enum ContentImageScale: String, CaseIterable {
   case small
   case medium
@@ -46,6 +50,7 @@ struct ContentImageView: View {
   @Environment(\.inRealPost) var inRealPost // false when in editor preview
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.inSnapshot) var inSnapshot
+  @Environment(\.contentImageForceNotThumb) var contentImageForceNotThumb
   @EnvironmentObject var viewingImage: ViewingImageModel
 
   @EnvironmentObject<AttachmentsModel>.Optional var attachmentsModel
@@ -77,7 +82,7 @@ struct ContentImageView: View {
         .scaledToFit()
         .frame(width: 50, height: 50)
     } else {
-      if onlyThumbs {
+      if onlyThumbs, !contentImageForceNotThumb {
         ContentButtonView(icon: "photo", title: Text("View Image"), inQuote: true) { showImage() }
       } else {
         Group {
