@@ -289,6 +289,8 @@ struct PostRowView: View {
       mainContent
     }
     .if(quotedPosts != nil) { $0.environmentObject(quotedPosts!) }
+    // When taking screenshot of a single post, we want to show the full image.
+    .environment(\.contentImageForceNotThumb, true)
   }
 
   var body: some View {
