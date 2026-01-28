@@ -284,7 +284,7 @@ struct PostRowView: View {
 
   @ViewBuilder
   var screenshotView: some View {
-    ScreenshotContainerView(colorScheme: colorScheme) {
+    ScreenshotContainerView(colorScheme: colorScheme, mngaURL: navID.mngaURL) {
       mainContent
     }
   }

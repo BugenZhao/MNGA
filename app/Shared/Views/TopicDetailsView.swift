@@ -885,7 +885,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var screenshotView: some View {
-    ScreenshotContainerView(colorScheme: colorScheme) {
+    ScreenshotContainerView(colorScheme: colorScheme, mngaURL: topic.navID.mngaURL) {
       headerSectionInner
 
       if let hotReplies = first?.hotReplies, !hotReplies.isEmpty {
