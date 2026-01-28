@@ -77,7 +77,7 @@ struct ContentImageView: View {
         .scaledToFit()
         .frame(width: 50, height: 50)
     } else {
-      if onlyThumbs {
+      if onlyThumbs, !inSnapshot /* always show image in snapshot */ {
         ContentButtonView(icon: "photo", title: Text("View Image"), inQuote: true) { showImage() }
       } else {
         Group {
