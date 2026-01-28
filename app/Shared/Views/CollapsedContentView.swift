@@ -12,11 +12,17 @@ struct CollapsedContentView<Content: View>: View {
   let title: String
   @ViewBuilder let content: () -> Content
 
-  @State private var collapsed: Bool = true
+  @State private var collapsedState: Bool = true
+  @Environment(\.inSnapshot) private var inSnapshot
+
+  // When in snapshot, we always show the content.
+  var collapsed: Bool {
+    inSnapshot ? false : collapsedState
+  }
 
   var body: some View {
     VStack(alignment: .leading) {
-      Button(action: { collapsed.toggle() }) {
+      Button(action: { collapsedState.toggle() }) {
         HStack {
           Image(systemName: collapsed ? "chevron.down" : "chevron.up")
             .contentTransition(
