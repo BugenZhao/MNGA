@@ -19,6 +19,11 @@ extension URL {
     let digest = Insecure.MD5.hash(data: data)
     return digest.map { String(format: "%02hhx", $0) }.joined()
   }
+
+  var inferredUTType: UTType? {
+    guard !pathExtension.isEmpty else { return nil }
+    return UTType(filenameExtension: pathExtension)
+  }
 }
 
 extension PlatformImage {
@@ -38,7 +43,7 @@ extension PlatformImage {
     }
   }
 
-  var isPlainImage: Bool {
+  func isPlainImage(for utType: UTType) -> Bool {
     if sd_isAnimated { return false }
 
     switch utType {
@@ -60,10 +65,10 @@ enum TransferableImage {
   case file(TransferableFileImage)
 
   init?(url: URL, image: PlatformImage, forceFile: Bool) {
-    guard let utType = image.utType else { return nil }
+    guard let utType = image.utType ?? url.inferredUTType else { return nil }
     let base = TransferableImageBase(image: image, utType: utType, url: url)
 
-    self = if !forceFile, image.isPlainImage {
+    self = if !forceFile, image.isPlainImage(for: utType) {
       .plain(.init(base: base))
     } else {
       .file(.init(base: base))
