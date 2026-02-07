@@ -66,6 +66,7 @@ struct PostRowHeaderView<MenuContent: View>: View {
 struct PostRowView: View {
   let post: Post
   let isAuthor: Bool
+  let screenshotTopic: Topic?
 
   @Binding var vote: VotesModel.Vote
 
@@ -85,9 +86,20 @@ struct PostRowView: View {
 
   @State var showAttachments = false
 
-  static func build(post: Post, isAuthor: Bool = false, vote: Binding<VotesModel.Vote>) -> Self {
+  static func build(
+    post: Post,
+    isAuthor: Bool = false,
+    screenshotTopic: Topic? = nil,
+    vote: Binding<VotesModel.Vote>,
+  ) -> Self {
     let attachments = AttachmentsModel(post.attachments)
-    return .init(post: post, isAuthor: isAuthor, vote: vote, attachments: attachments)
+    return .init(
+      post: post,
+      isAuthor: isAuthor,
+      screenshotTopic: screenshotTopic,
+      vote: vote,
+      attachments: attachments,
+    )
   }
 
   private var user: User? {
@@ -286,6 +298,10 @@ struct PostRowView: View {
   @ViewBuilder
   var screenshotView: some View {
     ScreenshotContainerView(colorScheme: colorScheme, mngaURL: navID.mngaURL) {
+      if let screenshotTopic {
+        TopicSubjectView(topic: screenshotTopic, lineLimit: nil)
+          .fixedSize(horizontal: false, vertical: true)
+      }
       mainContent
     }
     .if(quotedPosts != nil) { $0.environmentObject(quotedPosts!) }
