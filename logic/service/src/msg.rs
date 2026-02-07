@@ -155,6 +155,8 @@ pub async fn post_short_msg(
     request: ShortMessagePostRequest,
 ) -> ServiceResult<ShortMessagePostResponse> {
     let to = request.get_to().join(" ");
+    let escaped_subject = text::escape_for_submit(request.get_subject());
+    let escaped_content = text::escape_for_submit(request.get_content());
 
     let _package = fetch_package(
         "nuke.php",
@@ -162,8 +164,8 @@ pub async fn post_short_msg(
             ("__lib", "message"),
             ("__act", "message"),
             ("act", request.get_action().get_operation().to_value()),
-            ("subject", request.get_subject()),
-            ("content", request.get_content()),
+            ("subject", escaped_subject.as_str()),
+            ("content", escaped_content.as_str()),
             ("to", request.get_action().get_single_to()),
             ("to", to.as_str()),
             ("mid", request.get_action().get_mid()),
