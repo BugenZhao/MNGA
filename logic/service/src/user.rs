@@ -223,6 +223,7 @@ pub async fn update_signature(
     request: UserSignatureUpdateRequest,
 ) -> ServiceResult<UserSignatureUpdateResponse> {
     let uid = auth::current_uid();
+    let escaped_signature = text::escape_for_submit(request.get_signature());
     if uid.is_empty() {
         return Err(ServiceError::MngaInternal("Not logged in".to_owned()));
     }
@@ -233,7 +234,7 @@ pub async fn update_signature(
             ("__lib", "set_sign"),
             ("__act", "set"),
             ("uid", &uid),
-            ("sign", request.get_signature()),
+            ("sign", escaped_signature.as_str()),
         ],
         vec![],
     )

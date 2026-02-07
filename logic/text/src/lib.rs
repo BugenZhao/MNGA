@@ -5,14 +5,10 @@ use subject::do_parse_subject;
 use crate::error::ParseError;
 
 mod content;
+mod escape;
 pub mod error;
 mod subject;
-
-pub fn unescape(text: &str) -> String {
-    // todo: Cow
-    let first = html_escape::decode_html_entities(text);
-    html_escape::decode_html_entities(&first).into_owned()
-}
+pub use escape::{escape_for_submit, unescape};
 
 pub fn parse_content(text: &str) -> PostContent {
     let text = unescape(text).replace('\n', "<br/>");
@@ -57,18 +53,5 @@ pub fn parse_subject(text: &str) -> Subject {
         tags: tags.into(),
         content,
         ..Default::default()
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_unescape() {
-        let text = "&amp;#128514;&amp;#128513;";
-        let unescaped = unescape(text);
-        println!("{}", unescaped);
-        assert_eq!(unescaped, "😂😁");
     }
 }

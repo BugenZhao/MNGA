@@ -201,6 +201,11 @@ macro_rules! query_insert_id {
 }
 
 pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyResponse> {
+    let escaped_content = text::escape_for_submit(request.get_content());
+    let escaped_subject = request
+        .has_subject()
+        .then(|| text::escape_for_submit(request.get_subject()));
+
     if matches!(
         request.get_action().get_operation(),
         PostReplyAction_Operation::REPORT
@@ -209,7 +214,7 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
             ("__lib", "log_post"),
             ("__act", "report"),
             ("raw", "3"),
-            ("info", request.get_content()),
+            ("info", escaped_content.as_str()),
         ];
         query_insert_id!(query, request);
 
@@ -236,12 +241,12 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
         let mut query = vec![
             ("action", action),
             ("step", "2"),
-            ("post_content", request.get_content()),
+            ("post_content", escaped_content.as_str()),
             ("attachments", &attachments),
             ("attachments_check", &attachments_check),
         ];
-        if request.has_subject() {
-            query.push(("post_subject", request.get_subject()));
+        if let Some(escaped_subject) = &escaped_subject {
+            query.push(("post_subject", escaped_subject.as_str()));
         }
         if request.get_action().get_operation() == PostReplyAction_Operation::COMMENT {
             query.push(("comment", "1"));
@@ -396,6 +401,7 @@ mod test {
     use crate::{
         fetch::with_fetch_check,
         forum::{make_fid, make_stid},
+        utils::get_unique_id,
     };
 
     use super::*;
@@ -448,6 +454,32 @@ mod test {
             })
             .into(),
             content: "测试回复 from logic test".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_post_reply_emoji() -> ServiceResult<()> {
+        let marker = get_unique_id();
+        let content = format!("测试回帖表情验证 {marker} 😄❤️");
+
+        let _response = post_reply(PostReplyRequest {
+            action: Some(PostReplyAction {
+                operation: PostReplyAction_Operation::REPLY,
+                post_id: Some(PostId {
+                    tid: "45150945".to_owned(),
+                    pid: "0".to_owned(),
+                    ..Default::default()
+                })
+                .into(),
+                ..Default::default()
+            })
+            .into(),
+            content: content.clone(),
             ..Default::default()
         })
         .await?;
