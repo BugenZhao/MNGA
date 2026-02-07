@@ -75,9 +75,10 @@ Generates Swift protobuf code. Rust protobuf code is generated automatically dur
 ```bash
 make tuist
 make swiftformat
+make build
 ```
 
-Updates the Xcode project file (if necessary, e.g., when adding new files) and formats the Swift code.
+Updates the Xcode project file (if necessary, e.g., when adding new files, dependencies, etc.) and formats the Swift code. Build the app (for check purposes only) after making changes.
 
 Remember to update localization file at `app/Shared/Localization/zh-Hans.lproj/Localizable.strings` after making changes to the UI, if applicable. No need to update English localization file, as you can directly use English string literals in the code.
 
