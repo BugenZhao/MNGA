@@ -126,6 +126,8 @@ message AsyncRequest {
     FavoriteForumListRequest favorite_forum_list = 28;
     // Add or remove a favorite forum (forum_favor2).
     FavoriteForumModifyRequest favorite_forum_modify = 29;
+    // Get followed activity list (follow_v2.get_push_list).
+    ActivityListRequest activity_list = 30;
   }
 }
 
@@ -307,6 +309,12 @@ message PostReplyResponse { string message = 1; }
 
 message FetchNotificationRequest {}
 message FetchNotificationResponse { repeated Notification notis = 1; }
+
+message ActivityListRequest { uint32 page = 1; }
+message ActivityListResponse {
+  repeated Activity activities = 1;
+  uint32 pages = 2;
+}
 
 message UploadAttachmentRequest {
   PostReplyAction action = 1;
