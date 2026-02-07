@@ -5,8 +5,8 @@ use subject::do_parse_subject;
 use crate::error::ParseError;
 
 mod content;
-mod escape;
 pub mod error;
+mod escape;
 mod subject;
 pub use escape::{escape_for_submit, unescape};
 
