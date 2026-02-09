@@ -734,7 +734,15 @@ struct TopicDetailsView: View {
     .withTopicDetailsAction(action: action)
     .environmentObject(quotedPosts)
     .navigationDestination(item: $action.showingReplyChain) {
-      PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0, topic: topic)
+      PostReplyChainView(
+        votes: votes,
+        resolver: quotedPosts,
+        chain: $0,
+        topic: topic,
+        locateFloorInTopic: onlyPost.id == nil ? { post in
+          action.scrollToPid = post.id.pid
+        } : nil,
+      )
     }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
