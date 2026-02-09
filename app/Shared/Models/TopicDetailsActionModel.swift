@@ -33,21 +33,9 @@ class TopicDetailsActionModel: ObservableObject {
   private var replyTo = [PostId: PostId]()
   private var quotedBy = [PostId: Set<PostId>]()
   private var indexedReplyTo = [PostId: PostId]()
-  private var indexingReplyRelations = false
 
   func recordReply(from: PostId, to: PostId) {
     replyTo[from] = to
-
-    guard indexingReplyRelations else { return }
-
-    if let oldTarget = indexedReplyTo[from], oldTarget != to {
-      quotedBy[oldTarget]?.remove(from)
-      if quotedBy[oldTarget]?.isEmpty == true {
-        quotedBy.removeValue(forKey: oldTarget)
-      }
-    }
-    indexedReplyTo[from] = to
-    quotedBy[to, default: []].insert(from)
   }
 
   private func removeIndexedReply(from: PostId) {
@@ -56,25 +44,20 @@ class TopicDetailsActionModel: ObservableObject {
       if quotedBy[to]?.isEmpty == true {
         quotedBy.removeValue(forKey: to)
       }
+      if replyTo[from] == to {
+        replyTo.removeValue(forKey: from)
+      }
     }
-    replyTo.removeValue(forKey: from)
   }
 
   func indexReplyRelations(in posts: some Sequence<Post>) {
     for post in posts {
       removeIndexedReply(from: post.id)
-      // Reuse the exact parsing path used by post rendering so the indexed
-      // relation is consistent with existing reply-chain behavior.
-      indexingReplyRelations = true
-      let combiner = ContentCombiner(
-        actionModel: self,
-        id: post.id,
-        postDate: post.postDate,
-        defaultFont: .body,
-        defaultColor: .primary,
-      )
-      combiner.visit(spans: post.content.spans)
-      indexingReplyRelations = false
+      if let to = PostReplyRelationScanner.target(in: post.content) {
+        indexedReplyTo[post.id] = to
+        quotedBy[to, default: []].insert(post.id)
+        replyTo[post.id] = to
+      }
     }
     quotedTargets = Set(quotedBy.keys)
   }
