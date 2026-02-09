@@ -13,6 +13,8 @@ enum PostReplyRelationScanner {
   }
 
   private static func target(in spans: some Sequence<Span>) -> PostId? {
+    // Backend contract guarantees a single quote relation per post.
+    // Keep only one target so index/update logic stays simple and deterministic.
     var latest: PostId?
 
     for span in spans {
@@ -27,8 +29,10 @@ enum PostReplyRelationScanner {
           if let nested = target(in: contentSpans) {
             latest = nested
           }
-        } else if let nested = target(in: tagged.spans) {
-          latest = nested
+        } else {
+          if let nested = target(in: tagged.spans) {
+            latest = nested
+          }
         }
       case "b":
         if tagged.spans.first?.plain.text.starts(with: "Reply to") == true {
