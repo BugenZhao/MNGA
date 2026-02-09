@@ -17,6 +17,7 @@ struct PostReplyChainView: View {
 
   let chain: [PostId]
   let topic: Topic
+  let title: LocalizedStringKey
 
   @ViewBuilder
   func buildRow(post: Post) -> some View {
@@ -37,7 +38,7 @@ struct PostReplyChainView: View {
       }
     }
     .environmentObject(resolver)
-    .navigationTitle("Replies")
+    .navigationTitle(title)
     .withTopicDetailsAction(action: action)
     .environment(\.enableShowReplyChain, false)
     .mayGroupedListStyle()
@@ -45,5 +46,24 @@ struct PostReplyChainView: View {
     .navigationDestination(item: $action.navigateToAuthorOnly) { author in
       TopicDetailsView.build(topic: topic, only: author)
     }
+    .navigationDestination(item: $action.showingQuotedReplies) {
+      PostReplyChainView(votes: votes, resolver: resolver, chain: $0, topic: topic, title: "Quoted Replies")
+    }
+  }
+}
+
+extension PostReplyChainView {
+  init(
+    votes: VotesModel,
+    resolver: QuotedPostResolver,
+    chain: [PostId],
+    topic: Topic,
+    title: LocalizedStringKey = "Replies",
+  ) {
+    self.votes = votes
+    self.resolver = resolver
+    self.chain = chain
+    self.topic = topic
+    self.title = title
   }
 }

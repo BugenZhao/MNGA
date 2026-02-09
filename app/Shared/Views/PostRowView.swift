@@ -252,6 +252,11 @@ struct PostRowView: View {
           Label("This Author Only", systemImage: "person")
         }
       }
+      if let action, action.hasQuotedReplies(for: post.id) {
+        Button(action: { action.showQuotedReplies(for: post.id) }) {
+          Label("View Replies", systemImage: "text.quote")
+        }
+      }
     }
     ShareLinksView(navigationID: navID, viewScreenshot: { viewScreenshot() })
   }

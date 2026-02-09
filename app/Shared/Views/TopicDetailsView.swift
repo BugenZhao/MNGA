@@ -736,6 +736,9 @@ struct TopicDetailsView: View {
     .navigationDestination(item: $action.showingReplyChain) {
       PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0, topic: topic)
     }
+    .navigationDestination(item: $action.showingQuotedReplies) {
+      PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0, topic: topic, title: "Quoted Replies")
+    }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
     }
@@ -846,6 +849,10 @@ struct TopicDetailsView: View {
     guard let response else { return }
     let newTopic = response.topic
     quotedPosts.seed(posts: response.replies)
+    action.indexReplyRelations(in: response.replies)
+    if let first = response.replies.first(where: { $0.id.pid == "0" }), !first.hotReplies.isEmpty {
+      action.indexReplyRelations(in: first.hotReplies)
+    }
 
     if topic.id.isEmpty { // for onlyPost, we may not have the topic id initially
       topic.id = newTopic.id

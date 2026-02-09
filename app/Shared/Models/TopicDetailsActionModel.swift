@@ -18,6 +18,7 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var scrollToPid: String? = nil
   @Published var scrollToFloor: Int? = nil
   @Published var showingReplyChain: [PostId]? = nil
+  @Published var showingQuotedReplies: [PostId]? = nil
   @Published var navigateToTid: String? = nil
   @Published var navigateToPid: String? = nil
   @Published var navigateToForum: Forum? = nil
@@ -27,11 +28,55 @@ class TopicDetailsActionModel: ObservableObject {
   @Published var navigateToAuthorOnly: AuthorOnly? = nil
   @Published var navigateToLocalMode: Bool = false
   @Published var navigateToView: AnyView? = nil
+  @Published private var quotedTargets = Set<PostId>()
 
   private var replyTo = [PostId: PostId]()
+  private var quotedBy = [PostId: Set<PostId>]()
+  private var indexedReplyTo = [PostId: PostId]()
+  private var indexingReplyRelations = false
 
   func recordReply(from: PostId, to: PostId) {
     replyTo[from] = to
+
+    guard indexingReplyRelations else { return }
+
+    if let oldTarget = indexedReplyTo[from], oldTarget != to {
+      quotedBy[oldTarget]?.remove(from)
+      if quotedBy[oldTarget]?.isEmpty == true {
+        quotedBy.removeValue(forKey: oldTarget)
+      }
+    }
+    indexedReplyTo[from] = to
+    quotedBy[to, default: []].insert(from)
+  }
+
+  private func removeIndexedReply(from: PostId) {
+    if let to = indexedReplyTo.removeValue(forKey: from) {
+      quotedBy[to]?.remove(from)
+      if quotedBy[to]?.isEmpty == true {
+        quotedBy.removeValue(forKey: to)
+      }
+    }
+    replyTo.removeValue(forKey: from)
+  }
+
+  func indexReplyRelations(in posts: some Sequence<Post>) {
+    for post in posts {
+      removeIndexedReply(from: post.id)
+      // Reuse the exact parsing path used by post rendering so the indexed
+      // relation is consistent with existing reply-chain behavior.
+      indexingReplyRelations = true
+      let combiner = ContentCombiner(
+        actionModel: self,
+        id: post.id,
+        postDate: post.postDate,
+        defaultFont: .body,
+        defaultColor: .primary,
+      )
+      combiner.visit(spans: post.content.spans)
+      indexingReplyRelations = false
+    }
+    quotedTargets = Set(quotedBy.keys)
   }
 
   func replyChain(from: PostId) -> [PostId] {
@@ -46,6 +91,31 @@ class TopicDetailsActionModel: ObservableObject {
 
   func showReplyChain(from: PostId) {
     showingReplyChain = replyChain(from: from)
+  }
+
+  func quotedReplies(for postId: PostId) -> [PostId] {
+    let ids = quotedBy[postId] ?? []
+    return ids.sorted { lhs, rhs in
+      if lhs.tid != rhs.tid {
+        return lhs.tid < rhs.tid
+      }
+      let l = Int(lhs.pid)
+      let r = Int(rhs.pid)
+      if let l, let r {
+        return l < r
+      }
+      return lhs.pid < rhs.pid
+    }
+  }
+
+  func hasQuotedReplies(for postId: PostId) -> Bool {
+    quotedTargets.contains(postId)
+  }
+
+  func showQuotedReplies(for postId: PostId) {
+    let replies = quotedReplies(for: postId)
+    guard !replies.isEmpty else { return }
+    showingQuotedReplies = [postId] + replies.filter { $0 != postId }
   }
 }
 
@@ -91,6 +161,7 @@ extension View {
   // - navigateToAuthorOnly
   // - navigateToLocalMode
   // - showingReplyChain
+  // - showingQuotedReplies
   @ViewBuilder
   func withTopicDetailsAction(action: TopicDetailsActionModel? = nil) -> some View {
     if let action {

@@ -16,6 +16,7 @@
 "Refresh" = "刷新";
 "Copy Raw Content" = "拷贝原始内容";
 "Reply" = "回复";
+"Quoted Replies" = "引用回复";
 "Forums" = "版块";
 "Latest Topics" = "最新话题";
 "Favorites" = "收藏";
@@ -111,6 +112,7 @@
 "Append" = "追加编辑";
 "New Topic" = "发表话题";
 "View" = "查看";
+"View Replies" = "查看回复";
 "User Profile" = "用户档案";
 "Author Only" = "只看作者";
 "This Author Only" = "只看该作者";

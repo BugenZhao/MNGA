@@ -35,7 +35,7 @@ else
 	OUT_FRAMEWORK = out/logic-macos.xcframework
 endif
 
-.PHONY: logic build
+.PHONY: logic build tuist
 
 ios: logic-ios-release
 macos: logic-macos-release
