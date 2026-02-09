@@ -67,6 +67,7 @@ struct PostRowView: View {
   let post: Post
   let isAuthor: Bool
   let screenshotTopic: Topic?
+  let locateFloor: ((Post) -> Void)?
 
   @Binding var vote: VotesModel.Vote
 
@@ -91,12 +92,14 @@ struct PostRowView: View {
     isAuthor: Bool = false,
     screenshotTopic: Topic? = nil,
     vote: Binding<VotesModel.Vote>,
+    locateFloor: ((Post) -> Void)? = nil,
   ) -> Self {
     let attachments = AttachmentsModel(post.attachments)
     return .init(
       post: post,
       isAuthor: isAuthor,
       screenshotTopic: screenshotTopic,
+      locateFloor: locateFloor,
       vote: vote,
       attachments: attachments,
     )
@@ -252,6 +255,11 @@ struct PostRowView: View {
           Label("This Author Only", systemImage: "person")
         }
       }
+      if let locateFloor {
+        Button(action: { locateFloor(post) }) {
+          Label("Locate This Floor", systemImage: "scope")
+        }
+      }
     }
     ShareLinksView(navigationID: navID, viewScreenshot: { viewScreenshot() })
   }
@@ -318,12 +326,15 @@ struct PostRowView: View {
       }
       .environmentObject(attachments)
       .swipeActions(edge: pref.postRowSwipeActionLeading ? .leading : .trailing) { swipeActions }
-      .onChange(of: shouldHighlight, initial: true) { if $1 {
+      .onChange(of: shouldHighlight, initial: true) { _, shouldHighlight in
+        guard shouldHighlight else { return }
+        action?.scrollToPid = nil
+
         withAnimation { highlight = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
           withAnimation { highlight = false }
         }
-      }}
+      }
       .listRowBackground(highlight ? Color.accentColor.opacity(0.1) : nil) // TODO: why not animated?
   }
 
