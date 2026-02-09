@@ -57,10 +57,12 @@ Services under `logic/service/src`:
 ### After updating Rust code
 
 ```bash
+cargo clippy
 make logic-ios
 ```
 
-Compiles a new logic framework for Swift to link against.
+Run `cargo clippy` to check for potential issues.
+Compiles a new logic framework for Swift to link against, if you're going to build the app.
 
 ### After updating .proto files
 
