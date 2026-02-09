@@ -34,10 +34,6 @@ class TopicDetailsActionModel: ObservableObject {
   private var quotedBy = [PostId: Set<PostId>]()
   private var indexedReplyTo = [PostId: PostId]()
 
-  func recordReply(from: PostId, to: PostId) {
-    replyTo[from] = to
-  }
-
   private func removeIndexedReply(from: PostId) {
     if let to = indexedReplyTo.removeValue(forKey: from) {
       quotedBy[to]?.remove(from)
@@ -53,6 +49,7 @@ class TopicDetailsActionModel: ObservableObject {
   func indexReplyRelations(in posts: some Sequence<Post>) {
     for post in posts {
       removeIndexedReply(from: post.id)
+      // Reply-chain and quoted-replies both use the same scanner result.
       if let to = PostReplyRelationScanner.target(in: post.content) {
         indexedReplyTo[post.id] = to
         quotedBy[to, default: []].insert(post.id)
