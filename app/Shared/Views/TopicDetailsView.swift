@@ -737,7 +737,7 @@ struct TopicDetailsView: View {
       PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0, topic: topic)
     }
     .navigationDestination(item: $action.showingQuotedReplies) {
-      PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0, topic: topic, title: "Quoted Replies")
+      PostReplyChainView(votes: votes, resolver: quotedPosts, chain: $0, topic: topic)
     }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
