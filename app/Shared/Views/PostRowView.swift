@@ -255,6 +255,11 @@ struct PostRowView: View {
           Label("This Author Only", systemImage: "person")
         }
       }
+      if let action, action.hasQuotedReplies(for: post.id) {
+        Button(action: { action.showQuotedReplies(for: post.id) }) {
+          Label("View Replies", systemImage: "text.quote")
+        }
+      }
       if let locateFloor {
         Button(action: { locateFloor(post) }) {
           Label("Locate This Floor", systemImage: "scope")

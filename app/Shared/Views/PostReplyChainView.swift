@@ -18,7 +18,7 @@ struct PostReplyChainView: View {
 
   let chain: [PostId]
   let topic: Topic
-  let locateFloorInTopic: ((Post) -> Void)?
+  var locateFloorInTopic: ((Post) -> Void)?
 
   @ViewBuilder
   func buildRow(post: Post) -> some View {
@@ -57,5 +57,21 @@ struct PostReplyChainView: View {
     .navigationDestination(item: $action.navigateToAuthorOnly) { author in
       TopicDetailsView.build(topic: topic, only: author)
     }
+  }
+}
+
+extension PostReplyChainView {
+  init(
+    votes: VotesModel,
+    resolver: QuotedPostResolver,
+    chain: [PostId],
+    topic: Topic,
+    locateFloorInTopic: ((Post) -> Void)? = nil,
+  ) {
+    self.votes = votes
+    self.resolver = resolver
+    self.chain = chain
+    self.topic = topic
+    self.locateFloorInTopic = locateFloorInTopic
   }
 }

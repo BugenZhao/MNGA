@@ -709,6 +709,18 @@ struct TopicDetailsView: View {
     .presentationDetents([.medium])
   }
 
+  private func postReplyChainDestination(chain: [PostId]) -> PostReplyChainView {
+    PostReplyChainView(
+      votes: votes,
+      resolver: quotedPosts,
+      chain: chain,
+      topic: topic,
+      locateFloorInTopic: onlyPost.id == nil ? { post in
+        action.scrollToPid = post.id.pid
+      } : nil,
+    )
+  }
+
   @ViewBuilder
   var main: some View {
     ScrollViewReader { proxy in
@@ -734,15 +746,10 @@ struct TopicDetailsView: View {
     .withTopicDetailsAction(action: action)
     .environmentObject(quotedPosts)
     .navigationDestination(item: $action.showingReplyChain) {
-      PostReplyChainView(
-        votes: votes,
-        resolver: quotedPosts,
-        chain: $0,
-        topic: topic,
-        locateFloorInTopic: onlyPost.id == nil ? { post in
-          action.scrollToPid = post.id.pid
-        } : nil,
-      )
+      postReplyChainDestination(chain: $0)
+    }
+    .navigationDestination(item: $action.showingQuotedReplies) {
+      postReplyChainDestination(chain: $0)
     }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
@@ -854,6 +861,10 @@ struct TopicDetailsView: View {
     guard let response else { return }
     let newTopic = response.topic
     quotedPosts.seed(posts: response.replies)
+    action.indexReplyRelations(in: response.replies)
+    if let first = response.replies.first(where: { $0.id.pid == "0" }), !first.hotReplies.isEmpty {
+      action.indexReplyRelations(in: first.hotReplies)
+    }
 
     if topic.id.isEmpty { // for onlyPost, we may not have the topic id initially
       topic.id = newTopic.id
