@@ -709,6 +709,20 @@ struct TopicDetailsView: View {
     .presentationDetents([.medium])
   }
 
+  private var postReplyChainDestination: ([PostId]) -> PostReplyChainView {
+    { chain in
+      PostReplyChainView(
+        votes: votes,
+        resolver: quotedPosts,
+        chain: chain,
+        topic: topic,
+        locateFloorInTopic: onlyPost.id == nil ? { post in
+          action.scrollToPid = post.id.pid
+        } : nil,
+      )
+    }
+  }
+
   @ViewBuilder
   var main: some View {
     ScrollViewReader { proxy in
@@ -733,28 +747,8 @@ struct TopicDetailsView: View {
     // Action Navigation
     .withTopicDetailsAction(action: action)
     .environmentObject(quotedPosts)
-    .navigationDestination(item: $action.showingReplyChain) {
-      PostReplyChainView(
-        votes: votes,
-        resolver: quotedPosts,
-        chain: $0,
-        topic: topic,
-        locateFloorInTopic: onlyPost.id == nil ? { post in
-          action.scrollToPid = post.id.pid
-        } : nil,
-      )
-    }
-    .navigationDestination(item: $action.showingQuotedReplies) {
-      PostReplyChainView(
-        votes: votes,
-        resolver: quotedPosts,
-        chain: $0,
-        topic: topic,
-        locateFloorInTopic: onlyPost.id == nil ? { post in
-          action.scrollToPid = post.id.pid
-        } : nil,
-      )
-    }
+    .navigationDestination(item: $action.showingReplyChain, destination: postReplyChainDestination)
+    .navigationDestination(item: $action.showingQuotedReplies, destination: postReplyChainDestination)
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
     }
