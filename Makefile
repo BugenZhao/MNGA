@@ -131,7 +131,7 @@ tuist:
 clean-xcode-proj:
 	rm -rf app/MNGA.xcodeproj app/MNGA.xcworkspace
 
-build: tuist swift-pb
+build: swift-pb tuist
 	@echo ">>>>> Xcode build check for MNGA (${XCODE_CONFIGURATION}) on ${XCODE_DESTINATION}"
 	@if [ -n "${XCBEAUTIFY}" ]; then \
 		set -o pipefail ;\
