@@ -295,10 +295,11 @@ pub async fn post_reply_fetch_content(
 
     let package = fetch_package("post.php", query, vec![]).await?;
 
-    let content = extract_string(&package, "/root/content").unwrap_or_default();
+    let content = decode_editor_text(extract_string(&package, "/root/content").unwrap_or_default());
     let subject = extract_string(&package, "/root/subject")
         .ok()
         .filter(|s| !s.is_empty());
+    let subject = subject.map(decode_editor_text);
 
     let modify_append = !extract_string(&package, "/root/modify_append")
         .unwrap_or_default()
@@ -318,6 +319,10 @@ pub async fn post_reply_fetch_content(
         verbatim: Some(verbatim).into(),
         ..Default::default()
     })
+}
+
+fn decode_editor_text(text: String) -> String {
+    text::unescape(&text)
 }
 
 pub async fn upload_attachment(
@@ -506,6 +511,39 @@ mod test {
         .await?;
 
         assert!(response.get_content().contains("[quote][tid=27455825]"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_decode_editor_text() {
+        let encoded = "emoji test &amp;#55357;&amp;#56837;&amp;#55358;&amp;#56650;";
+        assert_eq!(decode_editor_text(encoded.to_owned()), "emoji test 😅🥊");
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_post_reply_fetch_content_modify_unescape_online() -> ServiceResult<()> {
+        let expected_content = "测试表情 😅😅🥊👨🏽‍❤️‍👨🏿👩🏽‍❤️‍💋‍👨🏽".to_owned();
+
+        let response = post_reply_fetch_content(PostReplyFetchContentRequest {
+            action: Some(PostReplyAction {
+                operation: PostReplyAction_Operation::MODIFY,
+                post_id: Some(PostId {
+                    tid: "45150945".to_owned(),
+                    pid: "857399126".to_owned(),
+                    ..Default::default()
+                })
+                .into(),
+                ..Default::default()
+            })
+            .into(),
+            ..Default::default()
+        })
+        .await?;
+
+        let content = response.get_content();
+        assert_eq!(content.trim_end(), expected_content);
 
         Ok(())
     }

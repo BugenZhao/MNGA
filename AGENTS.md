@@ -57,10 +57,12 @@ Services under `logic/service/src`:
 ### After updating Rust code
 
 ```bash
+cargo clippy
 make logic-ios
 ```
 
-Compiles a new logic framework for Swift to link against.
+Run `cargo clippy` to check for potential issues.
+Compiles a new logic framework for Swift to link against, if you're going to build the app.
 
 ### After updating .proto files
 
@@ -91,6 +93,6 @@ Remember to update localization file at `app/Shared/Localization/zh-Hans.lproj/L
 
 ## Important Notes
 
-- Avoid any Chinese in source code, including comments and string literals.
+- Avoid any Chinese in source code, including comments and string literals, unless it's a user-generated content in test data.
 - The project is targeting iOS 26. Note that this is NOT a typo. Apple released iOS 26 in 2025.
 - APIs of SwiftUI is evolving very fast. Always refer to the latest documentation via `sosumi` MCP server.

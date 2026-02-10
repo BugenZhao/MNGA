@@ -14,13 +14,25 @@ struct PostReplyChainView: View {
   @ObservedObject var resolver: QuotedPostResolver
   @StateObject private var action = TopicDetailsActionModel()
   @StateObject var prefs = PreferencesStorage.shared
+  @Environment(\.dismiss) private var dismiss
 
   let chain: [PostId]
   let topic: Topic
+  let locateFloorInTopic: ((Post) -> Void)?
 
   @ViewBuilder
   func buildRow(post: Post) -> some View {
-    PostRowView.build(post: post, screenshotTopic: topic, vote: votes.binding(for: post))
+    PostRowView.build(
+      post: post,
+      screenshotTopic: topic,
+      vote: votes.binding(for: post),
+      locateFloor: locateFloorInTopic == nil ? nil : { _ in
+        dismiss()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+          locateFloorInTopic?(post)
+        }
+      },
+    )
   }
 
   var body: some View {
