@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "setup": "ln -sFf \"$CONDUCTOR_ROOT_PATH/target\" ./target\nln -sFf \"$CONDUCTOR_ROOT_PATH/out/logic-ios.xcframework\" ./out/logic-ios.xcframework\nln -sFf \"$CONDUCTOR_ROOT_PATH/out/include/bindings.h\" ./out/include/bindings.h\nln -sFf \"$CONDUCTOR_ROOT_PATH/logic/.env\" ./logic/.env"
+    },
+    "runScriptMode": "nonconcurrent"
+}
