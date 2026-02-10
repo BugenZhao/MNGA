@@ -93,6 +93,7 @@ class TopicDetailsActionModel: ObservableObject {
   }
 
   func showQuotedReplies(for postId: PostId) {
+    // TODO: This currently lists quoted replies only from posts loaded in memory.
     let replies = quotedReplies(for: postId)
     guard !replies.isEmpty else { return }
     showingQuotedReplies = [postId] + replies.filter { $0 != postId }
