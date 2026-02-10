@@ -7,6 +7,10 @@ XCODE_DESTINATION ?= generic/platform=iOS
 TARGET_DIR = target
 OUT_LIBS_ANDROID ?= out/libs/jniLibs
 OUT_INCLUDE ?= out/include
+PROTO_DIR ?= protos
+SWIFT_PROTO_OUT_DIR ?= app/Shared/Protos
+
+PROTO_SRCS := $(wildcard $(PROTO_DIR)/*.proto)
 
 PROCESSOR ?= $(shell uname -p)
 
@@ -35,7 +39,7 @@ else
 	OUT_FRAMEWORK = out/logic-macos.xcframework
 endif
 
-.PHONY: logic build tuist
+.PHONY: logic build tuist swift-pb
 
 ios: logic-ios-release
 macos: logic-macos-release
@@ -69,7 +73,8 @@ logic-lipo:
 
 swift-pb:
 	@echo ">>>>> Swift PB"
-	protoc --swift_out=app/Shared/Protos/ --swift_opt=Visibility=Public -I protos/ protos/*.proto
+	@mkdir -p $(SWIFT_PROTO_OUT_DIR)
+	protoc --swift_out=$(SWIFT_PROTO_OUT_DIR)/ --swift_opt=Visibility=Public -I $(PROTO_DIR)/ $(PROTO_SRCS)
 
 build-logic:
 	@echo ">>>>> Build liblogic.a for '${ALL_TARGETS}' in ${MODE} mode"
@@ -126,7 +131,7 @@ tuist:
 clean-xcode-proj:
 	rm -rf app/MNGA.xcodeproj app/MNGA.xcworkspace
 
-build:
+build: swift-pb tuist
 	@echo ">>>>> Xcode build check for MNGA (${XCODE_CONFIGURATION}) on ${XCODE_DESTINATION}"
 	@if [ -n "${XCBEAUTIFY}" ]; then \
 		set -o pipefail ;\
