@@ -519,7 +519,6 @@ class ContentCombiner {
       let pid = meta.pid
       let uid = meta.uid
       if let model = actionModel, let id = selfId {
-        model.recordReply(from: id, to: pid)
         tapAction = { model.showReplyChain(from: id) }
         lineLimit = 5 // TODO: add an option
       }
@@ -549,10 +548,6 @@ class ContentCombiner {
         if inInlineReplyQuote {
           // Skip nested reply quotes in inline reply quotes.
           return
-        }
-
-        if let model = actionModel, let id = selfId {
-          model.recordReply(from: id, to: meta.pid)
         }
 
         let quotedFont: Font = font == .callout ? .subheadline : .callout
