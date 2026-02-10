@@ -57,14 +57,5 @@ struct PostReplyChainView: View {
     .navigationDestination(item: $action.navigateToAuthorOnly) { author in
       TopicDetailsView.build(topic: topic, only: author)
     }
-    .navigationDestination(item: $action.showingQuotedReplies) {
-      PostReplyChainView(
-        votes: votes,
-        resolver: resolver,
-        chain: $0,
-        topic: topic,
-        locateFloorInTopic: locateFloorInTopic,
-      )
-    }
   }
 }
