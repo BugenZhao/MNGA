@@ -709,18 +709,16 @@ struct TopicDetailsView: View {
     .presentationDetents([.medium])
   }
 
-  private var postReplyChainDestination: ([PostId]) -> PostReplyChainView {
-    { chain in
-      PostReplyChainView(
-        votes: votes,
-        resolver: quotedPosts,
-        chain: chain,
-        topic: topic,
-        locateFloorInTopic: onlyPost.id == nil ? { post in
-          action.scrollToPid = post.id.pid
-        } : nil,
-      )
-    }
+  private func postReplyChainDestination(chain: [PostId]) -> PostReplyChainView {
+    PostReplyChainView(
+      votes: votes,
+      resolver: quotedPosts,
+      chain: chain,
+      topic: topic,
+      locateFloorInTopic: onlyPost.id == nil ? { post in
+        action.scrollToPid = post.id.pid
+      } : nil,
+    )
   }
 
   @ViewBuilder
@@ -747,8 +745,12 @@ struct TopicDetailsView: View {
     // Action Navigation
     .withTopicDetailsAction(action: action)
     .environmentObject(quotedPosts)
-    .navigationDestination(item: $action.showingReplyChain, destination: postReplyChainDestination)
-    .navigationDestination(item: $action.showingQuotedReplies, destination: postReplyChainDestination)
+    .navigationDestination(item: $action.showingReplyChain) {
+      postReplyChainDestination(chain: $0)
+    }
+    .navigationDestination(item: $action.showingQuotedReplies) {
+      postReplyChainDestination(chain: $0)
+    }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
       TopicDetailsView.build(topic: topic, only: $0)
     }
