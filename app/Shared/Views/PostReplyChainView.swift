@@ -18,7 +18,7 @@ struct PostReplyChainView: View {
 
   let chain: [PostId]
   let topic: Topic
-  let locateFloorInTopic: ((Post) -> Void)?
+  let locateFloorInTopic: ((Post) -> Void)? = nil
 
   @ViewBuilder
   func buildRow(post: Post) -> some View {
@@ -66,21 +66,5 @@ struct PostReplyChainView: View {
         locateFloorInTopic: locateFloorInTopic,
       )
     }
-  }
-}
-
-extension PostReplyChainView {
-  init(
-    votes: VotesModel,
-    resolver: QuotedPostResolver,
-    chain: [PostId],
-    topic: Topic,
-    locateFloorInTopic: ((Post) -> Void)? = nil,
-  ) {
-    self.votes = votes
-    self.resolver = resolver
-    self.chain = chain
-    self.topic = topic
-    self.locateFloorInTopic = locateFloorInTopic
   }
 }
