@@ -58,7 +58,13 @@ struct PostReplyChainView: View {
       TopicDetailsView.build(topic: topic, only: author)
     }
     .navigationDestination(item: $action.showingQuotedReplies) {
-      PostReplyChainView(votes: votes, resolver: resolver, chain: $0, topic: topic)
+      PostReplyChainView(
+        votes: votes,
+        resolver: resolver,
+        chain: $0,
+        topic: topic,
+        locateFloorInTopic: locateFloorInTopic,
+      )
     }
   }
 }
@@ -69,10 +75,12 @@ extension PostReplyChainView {
     resolver: QuotedPostResolver,
     chain: [PostId],
     topic: Topic,
+    locateFloorInTopic: ((Post) -> Void)? = nil,
   ) {
     self.votes = votes
     self.resolver = resolver
     self.chain = chain
     self.topic = topic
+    self.locateFloorInTopic = locateFloorInTopic
   }
 }
