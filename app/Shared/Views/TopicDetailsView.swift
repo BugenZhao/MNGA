@@ -400,7 +400,7 @@ struct TopicDetailsView: View {
         }
       }
 
-      ShareLinksView(navigationID: topic.navID, viewScreenshot: { viewScreenshot() })
+      ShareLinksView(navigationID: topic.navID, shareTitle: topic.subject.full, viewScreenshot: { viewScreenshot() })
 
       Section {
         favoriteMenu

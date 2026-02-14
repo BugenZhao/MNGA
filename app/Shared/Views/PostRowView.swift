@@ -266,7 +266,11 @@ struct PostRowView: View {
         }
       }
     }
-    ShareLinksView(navigationID: navID, viewScreenshot: { viewScreenshot() })
+    ShareLinksView(
+      navigationID: navID,
+      shareTitle: screenshotTopic?.subject.full,
+      viewScreenshot: { viewScreenshot() },
+    )
   }
 
   @ViewBuilder
