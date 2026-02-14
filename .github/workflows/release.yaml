@@ -40,7 +40,6 @@ jobs:
       - name: Set up Ruby & Bundler
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ".ruby-version"
           bundler-cache: true
         env:
           BUNDLE_GEMFILE: app/Gemfile
