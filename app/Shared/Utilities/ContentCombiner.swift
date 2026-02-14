@@ -145,6 +145,17 @@ class ContentCombiner {
     set { setEnv(key: "tableContext", value: newValue) }
   }
 
+  private var listDepth: Int {
+    get { getEnv(key: "listDepth") as? Int ?? 0 }
+    set { setEnv(key: "listDepth", value: newValue) }
+  }
+
+  private var bulletSymbol: String {
+    let symbols = ["•", "◦", "▪"]
+    let level = max(listDepth, 1)
+    return symbols[(level - 1) % symbols.count]
+  }
+
   var diceContext: DiceRoller.Context? {
     get { getEnv(key: "diceContext") as? DiceRoller.Context }
     set { setEnv(key: "diceContext", value: newValue) }
@@ -409,7 +420,7 @@ class ContentCombiner {
     }
 
     let row = HStack(alignment: .top, spacing: 8) {
-      styledText(Text("•"))
+      styledText(Text(bulletSymbol))
         .frame(width: 12, alignment: .leading)
       content
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -419,6 +430,10 @@ class ContentCombiner {
   }
 
   private func visit(list: Span.Tagged) {
+    let previousDepth = listDepth
+    listDepth = previousDepth + 1
+    defer { listDepth = previousDepth }
+
     let hasListItemMarker = list.spans.contains {
       if case let .plain(plain) = $0.value {
         plain.text.contains("[*]")
