@@ -13,6 +13,10 @@ GoogleService-Info.plist
 
 .DS_Store
 
+# Bundler artifacts in CI
+app/.bundle/
+/vendor/
+
 # fastlane specific
 **/fastlane/report.xml
 

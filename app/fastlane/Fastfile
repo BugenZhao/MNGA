@@ -33,7 +33,9 @@ platform :ios do
   end
 
   desc "Push a new beta build to TestFlight"
-  lane :beta do
+  lane :beta do |options|
+    dry_run = options[:dry_run].to_s == "true"
+
     ensure_git_status_clean
 
     if ENV["CI"]
@@ -64,13 +66,15 @@ platform :ios do
       date_format: "short",
     )
 
-    upload_to_testflight(
-      changelog: changelog,
-      distribute_external: true,
-      groups: ["AfterPlus"],
-    )
+    unless dry_run
+      upload_to_testflight(
+        changelog: changelog,
+        distribute_external: true,
+        groups: ["AfterPlus"],
+      )
 
-    add_git_tag
-    push_git_tags
+      add_git_tag
+      push_git_tags
+    end
   end
 end
