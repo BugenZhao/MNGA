@@ -67,7 +67,6 @@ class ContentCombiner {
 
   // Tags in this list will be ignored and the spans will be visited directly.
   private static let ignoredTags = [
-    "list",
     "font",
   ]
 
@@ -328,18 +327,117 @@ class ContentCombiner {
     }
   }
 
-  private func visit(plain: Span.Plain) {
-    let text: Text
-
-    var plain = plain
-    plain.text = plain.text.replacingOccurrences(of: "[*]", with: "→ ")
-
-    if plain.text == "Post by " {
-      text = Text("Post by") + Text(" ")
+  private func plainText(_ raw: String) -> Text {
+    if raw == "Post by " {
+      Text("Post by") + Text(" ")
     } else {
-      text = Text(plain.text)
+      Text(raw)
     }
-    append(text)
+  }
+
+  private func visit(plain: Span.Plain) {
+    guard plain.text.contains("[*]") else {
+      append(plainText(plain.text))
+      return
+    }
+
+    let segments = plain.text.components(separatedBy: "[*]")
+    for (index, segment) in segments.enumerated() {
+      guard !segment.isEmpty else { continue }
+      if index == 0 {
+        append(plainText(segment))
+      } else if let row = buildListItemView(spans: [.plainText(segment)]) {
+        append(row)
+      }
+    }
+  }
+
+  private func splitListItems(spans: [Span]) -> [[Span]] {
+    var items = [[Span]]()
+    var current = [Span]()
+
+    func flushCurrent() {
+      guard !current.isEmpty else { return }
+      items.append(current)
+      current = []
+    }
+
+    for span in spans {
+      guard case let .plain(plain) = span.value else {
+        current.append(span)
+        continue
+      }
+
+      guard plain.text.contains("[*]") else {
+        current.append(span)
+        continue
+      }
+
+      let segments = plain.text.components(separatedBy: "[*]")
+      for (index, segment) in segments.enumerated() {
+        if index == 0 {
+          if !segment.isEmpty {
+            current.append(.plainText(segment))
+          }
+          continue
+        }
+
+        flushCurrent()
+        if !segment.isEmpty {
+          current.append(.plainText(segment))
+        }
+      }
+    }
+
+    flushCurrent()
+    return items
+  }
+
+  private func buildListItemView(spans: [Span]) -> AnyView? {
+    let itemCombiner = ContentCombiner(parent: self)
+    itemCombiner.visit(spans: spans)
+
+    let content: AnyView
+    switch itemCombiner.build() {
+    case nil,
+         .breakline:
+      return nil
+    case let .text(text):
+      content = text.eraseToAnyView()
+    case let .other(any):
+      content = any
+    }
+
+    let row = HStack(alignment: .top, spacing: 8) {
+      styledText(Text("•"))
+        .frame(width: 12, alignment: .leading)
+      content
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    return row.eraseToAnyView()
+  }
+
+  private func visit(list: Span.Tagged) {
+    let hasListItemMarker = list.spans.contains {
+      if case let .plain(plain) = $0.value {
+        plain.text.contains("[*]")
+      } else {
+        false
+      }
+    }
+    guard hasListItemMarker else {
+      visit(spans: list.spans)
+      return
+    }
+
+    let rows = splitListItems(spans: list.spans)
+      .compactMap { buildListItemView(spans: $0) }
+    guard !rows.isEmpty else { return }
+
+    for row in rows {
+      append(row)
+    }
   }
 
   private func visit(divider: Span.Tagged) {
@@ -413,6 +511,8 @@ class ContentCombiner {
       visit(flash: tagged)
     case "attach":
       visit(attach: tagged)
+    case "list":
+      visit(list: tagged)
     case "align":
       visit(align: tagged)
     case "table":
