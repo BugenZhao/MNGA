@@ -616,7 +616,6 @@ class ContentCombiner {
         return
       }
 
-      let pid = meta.pid
       let uid = meta.uid
       if let model = actionModel, let id = selfId {
         tapAction = { model.showReplyChain(from: id) }
