@@ -1,6 +1,12 @@
 name: iOS Release
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and validate release flow without uploading to TestFlight
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       # Let's manually release.
@@ -43,7 +49,7 @@ jobs:
           bundler-cache: true
         env:
           BUNDLE_GEMFILE: app/Gemfile
-      - run: bundle exec fastlane beta
+      - run: bundle exec fastlane beta dry_run:${{ inputs.dry_run && 'true' || 'false' }}
         working-directory: app
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
