@@ -55,8 +55,21 @@ platform :ios do
       match(type: "appstore")
     end
 
+    testflight_build_number = latest_testflight_build_number.to_i
+    latest_tag_build_number =
+      sh("git tag --list 'builds/iosbeta/*'")
+        .split("\n")
+        .filter_map do |tag|
+          match = tag.match(%r{\Abuilds/iosbeta/(\d+)\z})
+          match[1].to_i if match
+        end
+        .max || 0
+
+    next_build_number = [testflight_build_number, latest_tag_build_number].max + 1
+    UI.message("Next build number: #{next_build_number} (testflight=#{testflight_build_number}, tag=#{latest_tag_build_number})")
+
     increment_build_number(
-      build_number: latest_testflight_build_number + 1,
+      build_number: next_build_number,
       xcodeproj: "MNGA.xcodeproj",
     )
 
