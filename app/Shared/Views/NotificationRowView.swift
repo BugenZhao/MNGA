@@ -22,7 +22,9 @@ struct NotificationRowView: View {
         default:
           TopicSubjectView(topic: noti.asTopic, showIndicators: false)
         }
-      }.foregroundColor(noti.read ? .secondary : .primary)
+      }
+      .topicSubjectDimmed(noti.read)
+      .foregroundColor(noti.read ? .secondary : .primary)
 
       DateTimeFooterView(timestamp: noti.timestamp, switchable: false) {
         switch noti.type {

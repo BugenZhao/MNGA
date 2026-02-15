@@ -66,6 +66,9 @@
 "Share" = "分享";
 "Notifications" = "通知";
 "Notifications (%lld)" = "通知 (%lld)";
+"Followed Activity" = "关注动态";
+"No Activity" = "没有动态";
+"View activity from the users you follow." = "查看你关注的用户的动态。";
 "%lld Unread" = "%lld个未读";
 "All Read" = "全部已读";
 "Read" = "已读";
@@ -73,8 +76,11 @@
 "Mark All as Read" = "全部标记为已读";
 "replied to your post" = "回复了你的回复";
 "replied to your topic" = "回复了你的话题";
+"posted a topic" = "发表了话题";
+"posted a reply" = "发表了回复";
+"favorited" = "收藏了内容";
 "Your post" = "你的回复";
-"received 10 more votes" = "收获了 10 个评价";
+"received 10 more votes" = "获得了 10 个评价";
 "Discard" = "舍弃";
 "Discard the draft?" = "舍弃草稿？";
 "Save the draft by swiping down to dismiss the editor." = "你可以通过下滑关闭编辑器来保存草稿。";
