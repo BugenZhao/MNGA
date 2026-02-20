@@ -1,9 +1,6 @@
 CARGO ?= $(shell which cargo)
 XARGO ?= $(shell which xargo)
 SWIFTFORMAT ?= $(shell which swiftformat)
-XCBEAUTIFY ?= $(shell which xcbeautify)
-XCODE_CONFIGURATION ?= Debug
-XCODE_DESTINATION ?= generic/platform=iOS
 TARGET_DIR = target
 OUT_LIBS_ANDROID ?= out/libs/jniLibs
 OUT_INCLUDE ?= out/include
@@ -132,25 +129,7 @@ clean-xcode-proj:
 	rm -rf app/MNGA.xcodeproj app/MNGA.xcworkspace
 
 build: swift-pb tuist
-	@echo ">>>>> Xcode build check for MNGA (${XCODE_CONFIGURATION}) on ${XCODE_DESTINATION}"
-	@if [ -n "${XCBEAUTIFY}" ]; then \
-		set -o pipefail ;\
-		xcodebuild \
-			-workspace app/MNGA.xcworkspace \
-			-scheme MNGA \
-			-configuration ${XCODE_CONFIGURATION} \
-			-destination "${XCODE_DESTINATION}" \
-			CODE_SIGNING_ALLOWED=NO \
-			build | ${XCBEAUTIFY} ;\
-	else \
-		xcodebuild \
-			-workspace app/MNGA.xcworkspace \
-			-scheme MNGA \
-			-configuration ${XCODE_CONFIGURATION} \
-			-destination "${XCODE_DESTINATION}" \
-			CODE_SIGNING_ALLOWED=NO \
-			build ;\
-	fi
+	xcli build
 
 nightly:
 	rustup override set nightly

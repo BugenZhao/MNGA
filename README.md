@@ -77,6 +77,7 @@
    ```bash
    $ brew install swift-protobuf tuist
    $ cargo install cargo-lipo
+   $ cargo install --git https://github.com/BugenZhao/xcli
 
    $ rustup target add aarch64-apple-ios
    $ rustup target add aarch64-apple-ios-sim
@@ -88,16 +89,8 @@
 
    ```bash
    $ make ios
-   $ make tuist
+   $ make build
    ```
-
-   You'll find `logic-ios.xcframework` under `out`.
-
-   检查 `out` 目录，将会生成 `logic-ios.xcframework` Xcode Framework.
-
-4. Open the Xcode project `app/NGA.xcodeproj`. Build and run the app after you set the correct Developer Profile.
-
-   打开 Xcode 工程 `app/NGA.xcodeproj`，重新设置 Developer Profile 后，编译运行 MNGA。
 
 <!-- ## Donation
 
