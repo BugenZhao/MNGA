@@ -1,3 +1,4 @@
+mod activity;
 mod attachment;
 mod auth;
 mod cache;
