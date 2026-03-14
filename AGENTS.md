@@ -119,5 +119,7 @@ You can use the `AXe` CLI for iOS Simulator automation to conduct end-to-end tes
 - `make launch-sim` is the fastest way to get a simulator build running before using AXe.
 - Always verify the current screen with `axe describe-ui` or a screenshot after taps; AXe confirms input dispatch, not successful navigation.
 - Prefer selector-based taps, but bottom bars, overlays, and duplicate labels can make coordinate taps necessary.
+- AXe can be unreliable when toggling SwiftUI switches. After tapping a `Toggle`, re-check its `AXValue`; if it does not change, fall back to tapping the actual switch control, or verify behavior through the same persisted setting in the simulator container.
 - In MNGA, the accessibility tree is good enough for navigation and screen-state confirmation.
 - Prefer deep links like `mnga://topic/<tid>` when a known topic must be opened quickly.
+- If you need to rotate the simulator from the terminal, `osascript` can click Simulator menu items such as `Device > Rotate Left/Right`, but this requires macOS Accessibility permission for the terminal process first.

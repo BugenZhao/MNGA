@@ -31,6 +31,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true
   @AppStorage("hideMNGAMeta") var hideMNGAMeta = false
   @AppStorage("showPlusInTitle") var showPlusInTitle = false
+  @AppStorage("alwaysPortraitOnPhone") var alwaysPortraitOnPhone = false
 
   @AppStorage("requestOption") var requestOptionWrapper = WrappedMessage(inner: RequestOption()) {
     didSet { syncRequestOptionWithLogic() }

@@ -13,6 +13,10 @@ import TipKit
 struct MNGAApp: App {
   @ObserveInjection var forceRedraw
 
+  #if os(iOS)
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+  #endif
+
   @StateObject var prefs = PreferencesStorage()
   @StateObject var networkMonitor = NetworkMonitor()
 
@@ -45,7 +49,9 @@ struct MNGAApp: App {
     WindowGroup {
       ContentView()
         .onChange(of: prefs.themeColor) { setupColor() }
+        .onChange(of: prefs.alwaysPortraitOnPhone) { AppInterfaceOrientation.applyCurrentPreference() }
         .onAppear { setupColor() }
+        .onAppear { AppInterfaceOrientation.applyCurrentPreference() }
         .environment(\.whatsNew, MNGAWhatsNew.environment)
       // .enableInjection()
     }

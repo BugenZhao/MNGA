@@ -206,6 +206,12 @@ struct PreferencesInnerView: View {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
     }.disableWithPlusCheck(.customAppearance)
+
+    if UserInterfaceIdiom.current == .phone {
+      Toggle(isOn: $pref.alwaysPortraitOnPhone) {
+        Label("Lock Screen Rotation", systemImage: "iphone")
+      }
+    }
   }
 
   @ViewBuilder
@@ -343,6 +349,7 @@ struct PreferencesInnerView: View {
     .mayInsetGroupedListStyle()
     .navigationTitle("Settings")
     .toolbar { toolbar }
+    .onChange(of: pref.alwaysPortraitOnPhone) { AppInterfaceOrientation.applyCurrentPreference() }
     .preferredColorScheme(pref.colorScheme.scheme) // workaround
   }
 }
