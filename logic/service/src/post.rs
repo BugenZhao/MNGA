@@ -516,6 +516,31 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
+    #[tokio::test]
+    async fn test_post_reply_fetch_content_reply_to_post() -> ServiceResult<()> {
+        let response = post_reply_fetch_content(PostReplyFetchContentRequest {
+            action: Some(PostReplyAction {
+                operation: PostReplyAction_Operation::REPLY,
+                post_id: Some(PostId {
+                    tid: "45150945".to_owned(),
+                    pid: "857399126".to_owned(),
+                    ..Default::default()
+                })
+                .into(),
+                ..Default::default()
+            })
+            .into(),
+            ..Default::default()
+        })
+        .await?;
+
+        assert!(response.get_content().contains("Reply to"));
+        assert!(!response.get_content().contains("[quote]"));
+
+        Ok(())
+    }
+
     #[test]
     fn test_decode_editor_text() {
         let encoded = "emoji test &amp;#55357;&amp;#56837;&amp;#55358;&amp;#56650;";

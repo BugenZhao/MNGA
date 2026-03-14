@@ -220,6 +220,9 @@ struct PostRowView: View {
   var menu: some View {
     if let model = postReply, !mock, !dummy {
       ControlGroup {
+        Button(action: { doReply(model: model) }) {
+          Label("Reply", systemImage: "arrowshape.turn.up.left")
+        }
         Button(action: { doQuote(model: model) }) {
           Label("Quote", systemImage: "quote.bubble")
         }
@@ -229,11 +232,6 @@ struct PostRowView: View {
         if authStorage.authInfo.uid == post.authorID {
           Button(action: { doEdit(model: model) }) {
             Label("Edit", systemImage: "pencil")
-          }
-        } else {
-          // Why reporting myself?
-          Button(role: .destructive, action: { doReport(model: model) }) {
-            Label("Report", systemImage: "exclamationmark.bubble")
           }
         }
       }
@@ -263,6 +261,11 @@ struct PostRowView: View {
       if let locateFloor {
         Button(action: { locateFloor(post) }) {
           Label("Locate This Floor", systemImage: "scope")
+        }
+      }
+      if let model = postReply, !mock, !dummy, authStorage.authInfo.uid != post.authorID {
+        Button(action: { doReport(model: model) }) {
+          Label("Report", systemImage: "exclamationmark.bubble")
         }
       }
     }
@@ -393,6 +396,18 @@ struct PostRowView: View {
         f.fid = post.fid
       }
       $0.operation = .quote
+    }, pageToReload: .last)
+  }
+
+  func doReply(model: PostReplyModel) {
+    if dummy { return }
+
+    model.show(action: .with {
+      $0.postID = post.id
+      $0.forumID = .with { f in
+        f.fid = post.fid
+      }
+      $0.operation = .reply
     }, pageToReload: .last)
   }
 

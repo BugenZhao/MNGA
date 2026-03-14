@@ -35,6 +35,14 @@ This section covers the design and implementation of the Rust-based business mod
    - Sync services: add a wrapper in `logic/service/src/dispatch/handlers_sync.rs` and match the new variant in `dispatch_sync` inside `logic/service/src/dispatch/mod.rs`.
 5. If the service needs caching or shared state, reuse the helpers in `logic/cache`, `logic/text`, and `logic/service/src/utils.rs` to stay consistent with existing code.
 
+#### References
+
+Here are the references for NGA's interface specifications. The information might not be completely accurate or up-to-date, so compare different information sources before taking action.
+
+- https://github.com/wolfcon/NGA-API-Documents/wiki
+- https://gitee.com/AgMonk/nga-api-doc
+- Android open-source client: https://github.com/Justwen/NGA-CLIENT-VER-OPEN-SOURCE
+
 ### Existing Services
 
 Services under `logic/service/src`:
