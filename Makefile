@@ -134,6 +134,8 @@ build: swift-pb logic-ios
 	xcli build
 launch: swift-pb logic-deploy
 	xcli launch
+launch-sim: swift-pb logic-sim
+	xcli launch --profile sim
 
 nightly:
 	rustup override set nightly
