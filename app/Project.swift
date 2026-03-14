@@ -93,44 +93,5 @@ let project = Project(
             )
         ),
 
-        // macOS App Target - Temporarily disabled
-        // .target(
-        //     name: "MNGA-macOS",
-        //     destinations: .macOS,
-        //     product: .app,
-        //     bundleId: "com.bugenzhao.MNGA",
-        //     deploymentTargets: .macOS("26.0"),
-        //     infoPlist: .file(path: "macOS/Info.plist"),
-        //     sources: [
-        //         "Shared/**",
-        //         "macOS/**",
-        //     ],
-        //     resources: [
-        //         "Shared/Assets.xcassets",
-        //         "Shared/Localization/**",
-        //     ],
-        //     entitlements: "macOS/macOS.entitlements",
-        //     dependencies: [
-        //         .xcframework(path: "out/logic-macos.xcframework"),
-        //     ],
-        //     settings: .settings(
-        //         base: [
-        //             "MARKETING_VERSION": "1.1.2",
-        //             "CURRENT_PROJECT_VERSION": "1",
-        //             "SWIFT_VERSION": "5.0",
-        //             "SWIFT_OBJC_BRIDGING_HEADER": "../out/include/bindings.h",
-        //             "LIBRARY_SEARCH_PATHS": "../out/libs/**",
-        //             "CODE_SIGN_IDENTITY": "-",
-        //             "ENABLE_APP_SANDBOX": "YES",
-        //             "ENABLE_HARDENED_RUNTIME": "YES",
-        //             "ENABLE_OUTGOING_NETWORK_CONNECTIONS": "YES",
-        //             "ENABLE_USER_SELECTED_FILES": "readonly",
-        //         ],
-        //         configurations: [
-        //             .debug(name: .debug),
-        //             .release(name: .release),
-        //         ]
-        //     )
-        // ),
     ]
 )
