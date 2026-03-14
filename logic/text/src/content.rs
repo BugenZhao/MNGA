@@ -60,7 +60,7 @@ peg::parser! {
                 let complex_attributes = complex_attributes.into_iter().map(|s| s.to_owned()).collect();
 
                 Ok(span_of!(tagged(Span_Tagged {
-                    tag: start_tag.to_owned(),
+                    tag: start_tag.to_ascii_lowercase(),
                     attributes,
                     complex_attributes,
                     spans: s.into(),
@@ -398,6 +398,20 @@ size=百分比]
             let r = do_parse_content(text).unwrap();
             println!("{:#?}", r);
         }
+    }
+
+    #[test]
+    fn test_uppercase_tags_normalized() {
+        let text = r#"[DEL]deleted[/DEL] [B]bold[/B] [Quote]quoted[/Quote] [DEL]mixed[/del]"#;
+        let r = do_parse_content(text).unwrap();
+        let tags: Vec<&str> = r
+            .iter()
+            .filter_map(|span| match span.value.as_ref() {
+                Some(Span_oneof_value::tagged(tagged)) => Some(tagged.tag.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(tags, vec!["del", "b", "quote", "del"]);
     }
 
     fn span_tag_depth(span: &Span) -> usize {
