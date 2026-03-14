@@ -166,7 +166,8 @@ struct NotificationToolbarItem: ToolbarContent {
   @ViewBuilder
   var bodyView: some View {
     // Only show if not from notification list view.
-    if unreadCount > 0 || prefs.debugAlwaysShowNotificationBadge,
+    if !prefs.hideNotificationToolbarShortcut,
+       unreadCount > 0 || prefs.debugAlwaysShowNotificationBadge,
        show == .fromUserMenu || !notis.showingFromUserMenu,
        !inNotificationSheet
     {

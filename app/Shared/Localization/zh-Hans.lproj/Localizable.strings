@@ -155,6 +155,7 @@
 "Appearance" = "外观";
 "Custom Appearance" = "自定义外观";
 "Theme Color" = "主题色";
+"Hide Notification Shortcut" = "隐藏通知快捷入口";
 "New Short Message" = "发表短消息";
 "Send To" = "发送至";
 "Separate multiple users with space." = "使用空格分隔多个用户。";
