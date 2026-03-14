@@ -33,24 +33,22 @@ extension View {
   }
 }
 
-extension View {
-  func copyToPasteboard(_ content: Any) {
-    if let text = content as? String {
-      copyToPasteboard(string: text)
-    } else if let url = content as? URL {
-      copyToPasteboard(string: url.absoluteString)
-    } else if let image = content as? AppKitOrUIKitImage {
-      copyToPasteboard(image: image)
-    }
+func copyToPasteboard(_ content: Any) {
+  if let text = content as? String {
+    copyToPasteboard(string: text)
+  } else if let url = content as? URL {
+    copyToPasteboard(string: url.absoluteString)
+  } else if let image = content as? AppKitOrUIKitImage {
+    copyToPasteboard(image: image)
   }
+}
 
-  func copyToPasteboard(string: String) {
-    UIPasteboard.general.string = string
-  }
+func copyToPasteboard(string: String) {
+  UIPasteboard.general.string = string
+}
 
-  func copyToPasteboard(image: AppKitOrUIKitImage) {
-    UIPasteboard.general.image = image
-  }
+func copyToPasteboard(image: AppKitOrUIKitImage) {
+  UIPasteboard.general.image = image
 }
 
 struct MaybeToolbarSpacer: ToolbarContent {
