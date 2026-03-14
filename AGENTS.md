@@ -111,3 +111,13 @@ When you are asked to submit a PR, please make sure to:
 
 - Follow the PR title convention by checking the history of commit messages in `main` branch.
 - Provide a clear and concise description of the changes you made and the reason behind them.
+
+## Simulator Automation
+
+You can use the `AXe` CLI for iOS Simulator automation to conduct end-to-end testing and development of the app.
+
+- `make launch-sim` is the fastest way to get a simulator build running before using AXe.
+- Always verify the current screen with `axe describe-ui` or a screenshot after taps; AXe confirms input dispatch, not successful navigation.
+- Prefer selector-based taps, but bottom bars, overlays, and duplicate labels can make coordinate taps necessary.
+- In MNGA, the accessibility tree is good enough for navigation and screen-state confirmation.
+- Prefer deep links like `mnga://topic/<tid>` when a known topic must be opened quickly.
