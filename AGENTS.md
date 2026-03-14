@@ -75,9 +75,8 @@ Generates Swift protobuf code. Rust protobuf code is generated automatically dur
 ### After making changes to Swift app code
 
 ```bash
-make tuist
 make swiftformat
-make build
+make build # xcli will regenerate the Xcode project via Tuist if necessary
 ```
 
 Updates the Xcode project file (if necessary, e.g., when adding new files, dependencies, etc.) and formats the Swift code. Build the app (for check purposes only) after making changes.
@@ -96,3 +95,11 @@ Remember to update localization file at `app/Shared/Localization/zh-Hans.lproj/L
 - Avoid any Chinese in source code, including comments and string literals, unless it's a user-generated content in test data.
 - The project is targeting iOS 26. Note that this is NOT a typo. Apple released iOS 26 in 2025.
 - APIs of SwiftUI is evolving very fast. Always refer to the latest documentation via `sosumi` MCP server.
+- If you need real NGA data for testing, study the existing Rust API implementations under `logic/service/src` first (`topic.rs`, `post.rs`, `forum.rs`, etc.) to understand the NGA request/response shape, then send real requests following those implementations instead of inventing new endpoints or payloads. You may have to pass some auth info when making requests, see `logic/.env`; use them locally and do not expose or commit them.
+
+## Pull Request
+
+When you are asked to submit a PR, please make sure to:
+
+- Follow the PR title convention by checking the history of commit messages in `main` branch.
+- Provide a clear and concise description of the changes you made and the reason behind them.

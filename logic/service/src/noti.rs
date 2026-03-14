@@ -158,6 +158,7 @@ pub fn mark_noti_read(
 mod test {
     use super::*;
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_notis() -> ServiceResult<()> {
         let response = fetch_notis(FetchNotificationRequest::new()).await?;

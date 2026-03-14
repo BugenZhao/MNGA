@@ -47,9 +47,11 @@ logic-ios:
 	make logic ALL_TARGETS="${IOS_ALL_TARGETS}"
 
 logic-sim:
-	make logic ALL_TARGETS="${IOS_SIM_TARGET}" MODE=debug
+	make logic ALL_TARGETS="${IOS_SIM_TARGET}"
 logic-deploy:
 	make logic ALL_TARGETS="${IOS_TARGET}" MODE=release
+logic-deploy-debug:
+	make logic ALL_TARGETS="${IOS_TARGET}" MODE=debug
 
 logic-macos-%:
 	make logic-macos MODE=$*
@@ -128,8 +130,10 @@ tuist:
 clean-xcode-proj:
 	rm -rf app/MNGA.xcodeproj app/MNGA.xcworkspace
 
-build: swift-pb tuist
+build: swift-pb logic-ios
 	xcli build
+launch: swift-pb logic-deploy
+	xcli launch
 
 nightly:
 	rustup override set nightly

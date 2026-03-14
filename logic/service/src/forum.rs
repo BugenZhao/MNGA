@@ -236,6 +236,7 @@ mod test {
 
     use super::*;
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_set_filter() -> ServiceResult<()> {
         let _response = with_fetch_check(
@@ -252,6 +253,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_get_forum_list() -> ServiceResult<()> {
         let response = get_forum_list(ForumListRequest::new()).await?;
@@ -268,6 +270,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_search_forum_chinese() -> ServiceResult<()> {
         let response = search_forum(ForumSearchRequest {
@@ -284,6 +287,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_search_forum_not_exist() -> ServiceResult<()> {
         let response = search_forum(ForumSearchRequest {
@@ -299,6 +303,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_favorite_forum() -> ServiceResult<()> {
         let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;

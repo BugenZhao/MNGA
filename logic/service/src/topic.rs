@@ -775,6 +775,7 @@ mod test {
     use super::*;
     use crate::{constants::REVIEW_UID, fetch::with_fetch_check, user::UserController};
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_topic_list() -> ServiceResult<()> {
         let id = make_fid("650".to_owned());
@@ -794,6 +795,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_topic_list_with_shortcuts() -> ServiceResult<()> {
         let id = make_fid("-447601".to_owned());
@@ -816,6 +818,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_topic_details_new() -> ServiceResult<()> {
         let response = get_topic_details(TopicDetailsRequest {
@@ -848,6 +851,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_hot_topic_list() -> ServiceResult<()> {
         let id = make_fid("650".to_owned());
@@ -865,6 +869,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_topic_favor() -> ServiceResult<()> {
         use TopicFavorRequest_Operation::*;
@@ -894,6 +899,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_favor_folder_list() -> ServiceResult<()> {
         let response = get_favorite_folder_list(FavoriteFolderListRequest::new()).await?;
@@ -907,6 +913,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_create_delete_favor_folder() -> ServiceResult<()> {
         let response = create_favorite_folder(FavoriteFolderCreateRequest {
@@ -940,6 +947,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_specific_post() -> ServiceResult<()> {
         let response = get_topic_details(TopicDetailsRequest {
@@ -962,6 +970,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_author_only() -> ServiceResult<()> {
         // https://ngabbs.com/read.php?tid=28454798&authorid=62765271
@@ -985,6 +994,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_search_topic() -> ServiceResult<()> {
         let id = make_fid("650".to_owned());
@@ -1004,6 +1014,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_get_user_no_topic_not_err() -> ServiceResult<()> {
         let request = UserTopicListRequest {
@@ -1016,6 +1027,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_forum_name() -> ServiceResult<()> {
         let cases = [("29094948", "手机研究所"), ("29100260", "原神")];
@@ -1078,6 +1090,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_anonymous_names() -> ServiceResult<()> {
         for page in [1, 2] {
