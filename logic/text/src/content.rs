@@ -32,7 +32,7 @@ peg::parser! {
         rule at() = "@"
 
         rule token() -> &'input str
-            = $( aldig()+ )
+            = $( alpha() aldig()* )
         rule sticker_name() -> &'input str
             = $( (!right_bracket() any_char())+ )
         rule attribute() -> &'input str
@@ -398,5 +398,27 @@ size=百分比]
             let r = do_parse_content(text).unwrap();
             println!("{:#?}", r);
         }
+    }
+
+    fn span_tag_depth(span: &Span) -> usize {
+        match span.value.as_ref() {
+            Some(Span_oneof_value::tagged(tagged)) => {
+                1 + tagged.spans.iter().map(span_tag_depth).max().unwrap_or(0)
+            }
+            _ => 0,
+        }
+    }
+
+    #[test]
+    fn test_numeric_brackets_are_plain_text() {
+        let text = r#"
+[quote][collapse=558个安科][list=1]<br/>[*][1003][url=https://ngabbs.com/read.php?tid=43273008]女神异闻录5：重启[/url]<br/>[*][1004][url=https://ngabbs.com/read.php?tid=36303803]在无法城市开了一家事务解决所[/url][/list][/collapse][/quote]
+        "#;
+        let r = do_parse_content(text).unwrap();
+        let depth = r.iter().map(span_tag_depth).max().unwrap_or(0);
+        assert_eq!(depth, 4);
+
+        let contains_numeric_tag = format!("{r:#?}").contains("tag: \"1003\"");
+        assert!(!contains_numeric_tag);
     }
 }
