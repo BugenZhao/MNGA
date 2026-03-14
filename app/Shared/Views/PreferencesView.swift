@@ -206,6 +206,12 @@ struct PreferencesInnerView: View {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
     }.disableWithPlusCheck(.customAppearance)
+
+    if UserInterfaceIdiom.current == .phone {
+      Toggle(isOn: $pref.alwaysPortraitOnPhone) {
+        Label("Lock Screen Rotation", systemImage: "iphone")
+      }
+    }
   }
 
   @ViewBuilder

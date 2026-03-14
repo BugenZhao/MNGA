@@ -10,6 +10,8 @@ import Foundation
 import SwiftUI
 import SwiftUIX
 
+let alwaysPortraitOnPhonePreferenceKey = "alwaysPortraitOnPhone"
+
 class PreferencesStorage: ObservableObject {
   @Published var showing = false
 
@@ -31,6 +33,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true
   @AppStorage("hideMNGAMeta") var hideMNGAMeta = false
   @AppStorage("showPlusInTitle") var showPlusInTitle = false
+  @AppStorage(alwaysPortraitOnPhonePreferenceKey) var alwaysPortraitOnPhone = false
 
   @AppStorage("requestOption") var requestOptionWrapper = WrappedMessage(inner: RequestOption()) {
     didSet { syncRequestOptionWithLogic() }
