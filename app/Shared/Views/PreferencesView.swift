@@ -228,6 +228,10 @@ struct PreferencesInnerView: View {
       Label("Resume Reading Progress", systemImage: "clock.arrow.circlepath")
     }.disableWithPlusCheck(.resumeProgress)
 
+    Toggle(isOn: $pref.hideNotificationToolbarShortcut) {
+      Label("Hide Notification Shortcut", systemImage: "bell.slash")
+    }
+
     Toggle(isOn: $pref.useInAppSafari) {
       Label("Always Use In-App Safari", systemImage: "safari")
     }
