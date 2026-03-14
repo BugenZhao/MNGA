@@ -26,11 +26,6 @@ extension View {
   func mayGroupedListStyle() -> some View {
     modifier(MayGroupedListStyleModifier())
   }
-
-  @ViewBuilder
-  func mayInsetGroupedListStyle() -> some View {
-    listStyle(.insetGrouped)
-  }
 }
 
 func copyToPasteboard(_ content: Any) {

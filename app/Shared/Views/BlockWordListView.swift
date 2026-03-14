@@ -70,7 +70,7 @@ struct BlockWordListView: View {
       } else {
         list
       }
-    }.mayInsetGroupedListStyle()
+    }.listStyle(.insetGrouped)
       .toolbar { ToolbarItem(placement: .navigationBarTrailing) { addButton } }
   }
 }

@@ -189,7 +189,7 @@ struct TopicJumpSelectorView: View {
   var body: some View {
     NavigationView {
       main
-        .mayInsetGroupedListStyle()
+        .listStyle(.insetGrouped)
         .toolbar { ToolbarItem(placement: .primaryAction) { jumpButton } }
     }
   }

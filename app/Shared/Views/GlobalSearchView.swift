@@ -141,7 +141,7 @@ struct GlobalSearchView: View {
           }
         }
       }
-    }.mayInsetGroupedListStyle()
+    }.listStyle(.insetGrouped)
       // Auto commit (then build a new data source) on type, so that user don't need to press enter.
       .onChange(of: model.text, initial: true) { model.commit() }
   }
