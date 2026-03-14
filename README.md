@@ -29,7 +29,7 @@
 
 ## Features
 
-- Built with SwiftUI which provides awesome UX feelings for **multiple platforms** including iOS, iPadOS and macOS
+- Built with SwiftUI which provides awesome UX feelings for iOS and iPadOS
 - High-performance logic layer energized by Rust (and can be ported to other platforms with ease, check [Android Instructions](android/README.md))
 
 ## Screenshots
@@ -54,12 +54,6 @@
   <img src="https://github.com/user-attachments/assets/1a0049aa-41cb-46d0-bd8a-f106792fa956"/>
 </p>
 
-<!-- ### macOS
-
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/25862682/136158065-d6df1506-6192-4360-9d96-d850126ae339.png"/>
-</p> -->
-
 ## Build the Project
 
 1. Install Xcode and Rust toolchains. Make sure you have set your command line tools location correctly by
@@ -76,7 +70,7 @@
 
    ```bash
    $ brew install swift-protobuf tuist xcbeautify
-   $ cargo install cargo-lipo xcraft
+   $ cargo install xcraft
 
    $ rustup target add aarch64-apple-ios
    $ rustup target add aarch64-apple-ios-sim

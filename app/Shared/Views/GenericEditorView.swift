@@ -163,50 +163,24 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
     }
   }
 
-  #if os(iOS)
-    var body: some View {
-      inner
-        .mayGroupedListStyle()
-        .modifier(MainToastModifier.editorAlertOnly())
-        .navigationTitleInline(key: title)
-        .environmentObject(presendAttachments)
-        .toolbar {
-          ToolbarItem(placement: .confirmationAction) {
-            switch displayMode {
-            case .plain: previewButton
-            case .preview: sendButton
-            }
-          }
-          ToolbarItem(placement: .cancellationAction) { discardButton }
-          ToolbarItem(placement: .bottomBar) { picker }
-        }
-    }
-
-  #elseif os(macOS)
-    var body: some View {
-      if let context = postReply.context {
-        VStack {
-          HStack {
-            ContentEditorView.build(context: $postReply.context ?? .dummy)
-              .id(context.task)
-            Divider()
-            preview
-              .onChange(of: context.subject) { _ in parseContent() }
-              .onChange(of: context.content) { _ in parseContent() }
-          }
-          Divider()
-          HStack {
-            discardButton
-            Spacer()
-            cancelButton.keyboardShortcut(.cancelAction)
-            sendButton.keyboardShortcut(.defaultAction)
+  var body: some View {
+    inner
+      .mayGroupedListStyle()
+      .modifier(MainToastModifier.editorAlertOnly())
+      .navigationTitle(title)
+      .navigationBarTitleDisplayMode(.inline)
+      .environmentObject(presendAttachments)
+      .toolbar {
+        ToolbarItem(placement: .confirmationAction) {
+          switch displayMode {
+          case .plain: previewButton
+          case .preview: sendButton
           }
         }
-      } else {
-        ProgressView()
+        ToolbarItem(placement: .cancellationAction) { discardButton }
+        ToolbarItem(placement: .bottomBar) { picker }
       }
-    }
-  #endif
+  }
 
   func doSend() {
     postReply.send()
@@ -215,15 +189,9 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
 
 struct GenericEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   var body: some View {
-    #if os(iOS)
-      NavigationView {
-        GenericEditorViewInner<T, M>()
-      }.modifier(PaywallSheetModifier())
-    #else
+    NavigationView {
       GenericEditorViewInner<T, M>()
-        .padding()
-        .frame(width: 800, height: 600)
-    #endif
+    }.modifier(PaywallSheetModifier())
   }
 }
 

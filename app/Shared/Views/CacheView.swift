@@ -81,7 +81,7 @@ struct CacheView: View {
 
   var body: some View {
     list
-      .mayInsetGroupedListStyle()
+      .listStyle(.insetGrouped)
   }
 
   func clearImageCache() {

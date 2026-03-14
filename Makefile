@@ -1,5 +1,4 @@
 CARGO ?= $(shell which cargo)
-XARGO ?= $(shell which xargo)
 SWIFTFORMAT ?= $(shell which swiftformat)
 TARGET_DIR = target
 OUT_LIBS_ANDROID ?= out/libs/jniLibs
@@ -18,8 +17,6 @@ else
 endif
 IOS_TARGET = aarch64-apple-ios
 IOS_ALL_TARGETS = ${IOS_TARGET} ${IOS_SIM_TARGET}
-MACOS_ALL_TARGETS = aarch64-apple-darwin x86_64-apple-darwin
-CATALYST_TARGET = x86_64-apple-ios-macabi
 
 ALL_TARGETS ?= unspecified-target
 MODE ?= debug
@@ -30,16 +27,11 @@ else
 	CARGO_MODE_ARG = --profile ${MODE}
 endif
 
-ifneq (,$(findstring ios, $(ALL_TARGETS)))
-	OUT_FRAMEWORK = out/logic-ios.xcframework
-else
-	OUT_FRAMEWORK = out/logic-macos.xcframework
-endif
+OUT_FRAMEWORK = out/logic-ios.xcframework
 
 .PHONY: logic build tuist swift-pb
 
 ios: logic-ios-release
-macos: logic-macos-release
 
 logic-ios-%:
 	make logic-ios MODE=$*
@@ -53,22 +45,8 @@ logic-deploy:
 logic-deploy-debug:
 	make logic ALL_TARGETS="${IOS_TARGET}" MODE=debug
 
-logic-macos-%:
-	make logic-macos MODE=$*
-logic-macos:
-	make logic-lipo ALL_TARGETS="${MACOS_ALL_TARGETS}"
-
-logic-catalyst-%:
-	make logic-catalyst MODE=$*
-logic-catalyst:
-	make logic ALL_TARGETS="${CATALYST_TARGET}"
-
 
 logic: swift-pb build-logic create-framework
-logic-lipo:
-	@make swift-pb
-	@make build-logic-lipo
-	@make create-framework ALL_TARGETS=universal
 
 swift-pb:
 	@echo ">>>>> Swift PB"
@@ -82,12 +60,6 @@ build-logic:
 		echo ">>> $${CMD}" ;\
 		$${CMD} ;\
 	done
-	@echo ">>>>> Copy bindings"
-	cp logic/logic/bindings.h ${OUT_INCLUDE}
-
-build-logic-lipo:
-	@echo ">>>>> Build liblogic.a for '${ALL_TARGETS}' in ${MODE} mode using lipo"
-	${CARGO} lipo --package logic --targets ${ALL_TARGETS} ${CARGO_MODE_ARG}
 	@echo ">>>>> Copy bindings"
 	cp logic/logic/bindings.h ${OUT_INCLUDE}
 

@@ -115,7 +115,8 @@ struct NewImageViewer: View {
             }
           }
         }
-        .navigationTitleInline(key: "")
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
     }
     .opacity(opacity)
     .background(ClearFullScreenBackground())

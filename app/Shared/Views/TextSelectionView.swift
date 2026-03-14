@@ -21,7 +21,7 @@ struct TextSelectionView: View {
 
   @ViewBuilder
   var copyButton: some View {
-    Button(action: { copyToPasteboard(string: text); presentation.dismiss() }) {
+    Button(action: { copyToPasteboard(text); presentation.dismiss() }) {
       Text("Copy All").bold()
     }
   }
@@ -37,7 +37,8 @@ struct TextSelectionView: View {
         .scrollContentBackground(.hidden) // transparent material in medium detent
         .padding(.horizontal)
         .toolbar { ToolbarItem(placement: .bottomBar) { copyButton } }
-        .navigationTitleInline(key: "Text Selection")
+        .navigationTitle("Text Selection")
+        .navigationBarTitleDisplayMode(.inline)
     }
   }
 }
