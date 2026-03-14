@@ -37,7 +37,7 @@ This section covers the design and implementation of the Rust-based business mod
 
 #### References
 
-Here are the references for NGA's interface specifications. The information might not be completely accurate or up-to-date, so compare different information sources before taking actions.
+Here are the references for NGA's interface specifications. The information might not be completely accurate or up-to-date, so compare different information sources before taking action.
 
 - https://github.com/wolfcon/NGA-API-Documents/wiki
 - https://gitee.com/AgMonk/nga-api-doc
