@@ -76,6 +76,7 @@ async fn do_test(request: TopicDetailsRequest) {
 }
 
 // PASSED
+#[ignore = "manual: requires network or mutable external state"]
 #[tokio::test]
 async fn test_first_page() {
     do_test(TopicDetailsRequest {
@@ -87,6 +88,7 @@ async fn test_first_page() {
 }
 
 // FIXME: missing: post_date
+#[ignore = "manual: requires network or mutable external state"]
 #[tokio::test]
 async fn test_subsequent_page() {
     do_test(TopicDetailsRequest {
@@ -98,6 +100,7 @@ async fn test_subsequent_page() {
 }
 
 // FIXME: incorrect: post_date, pages
+#[ignore = "manual: requires network or mutable external state"]
 #[tokio::test]
 async fn test_specific_post() {
     do_test(TopicDetailsRequest {
@@ -108,6 +111,7 @@ async fn test_specific_post() {
 }
 
 // FIXME: incorrect: pages
+#[ignore = "manual: requires network or mutable external state"]
 #[tokio::test]
 async fn test_author_only() {
     do_test(TopicDetailsRequest {
@@ -119,6 +123,7 @@ async fn test_author_only() {
 }
 
 // PASSED
+#[ignore = "manual: requires network or mutable external state"]
 #[tokio::test]
 async fn test_anonymous() {
     do_test(TopicDetailsRequest {
@@ -130,6 +135,7 @@ async fn test_anonymous() {
 }
 
 // PASSED
+#[ignore = "manual: requires network or mutable external state"]
 #[tokio::test]
 async fn test_error() {
     do_test(TopicDetailsRequest {

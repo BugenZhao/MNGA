@@ -412,8 +412,8 @@ mod test {
     use super::*;
     use protos::DataModel::PostId;
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
-    #[ignore]
     async fn test_post_vote() -> ServiceResult<()> {
         use PostVoteRequest_Operation::*;
         let vote = |op| {
@@ -443,8 +443,8 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
-    #[ignore]
     async fn test_post_reply() -> ServiceResult<()> {
         let _response = post_reply(PostReplyRequest {
             action: Some(PostReplyAction {
@@ -466,8 +466,8 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
-    #[ignore]
     async fn test_post_reply_emoji() -> ServiceResult<()> {
         let marker = get_unique_id();
         let content = format!("测试回帖表情验证 {marker} 😄❤️");
@@ -492,6 +492,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_post_reply_fetch_content() -> ServiceResult<()> {
         let response = post_reply_fetch_content(PostReplyFetchContentRequest {
@@ -521,8 +522,8 @@ mod test {
         assert_eq!(decode_editor_text(encoded.to_owned()), "emoji test 😅🥊");
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
-    #[ignore]
     async fn test_post_reply_fetch_content_modify_unescape_online() -> ServiceResult<()> {
         let expected_content = "测试表情 😅😅🥊👨🏽‍❤️‍👨🏿👩🏽‍❤️‍💋‍👨🏽".to_owned();
 
@@ -548,8 +549,8 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
-    #[ignore]
     async fn test_post_new_topic() -> ServiceResult<()> {
         let _response = post_reply(PostReplyRequest {
             action: Some(PostReplyAction {
@@ -570,6 +571,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_upload_attachment() -> ServiceResult<()> {
         let mut action = PostReplyAction {
@@ -614,6 +616,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_user_post_list() -> ServiceResult<()> {
         let response = get_user_post_list(UserPostListRequest {
@@ -628,8 +631,8 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
-    #[ignore]
     async fn test_post_report() -> ServiceResult<()> {
         let _response = post_reply(PostReplyRequest {
             action: Some(PostReplyAction {

@@ -50,6 +50,7 @@ mod test {
 
     use protos::DataModel::{CacheType::*, Subject};
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_clear_cache() -> ServiceResult<()> {
         let insert = |tp: CacheType, count: u64| {

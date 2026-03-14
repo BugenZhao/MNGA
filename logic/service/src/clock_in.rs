@@ -40,8 +40,8 @@ pub async fn clock_in(_request: ClockInRequest) -> ServiceResult<ClockInResponse
 mod test {
     use super::*;
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
-    #[ignore]
     async fn test_clock_in() -> ServiceResult<()> {
         clock_in(ClockInRequest::default()).await?;
         assert!(clocked_in_today().unwrap());

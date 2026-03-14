@@ -250,6 +250,7 @@ pub async fn update_signature(
 mod test {
     use super::*;
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_remote_user() -> ServiceResult<()> {
         let response = get_remote_user(RemoteUserRequest {
@@ -266,6 +267,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_remote_user_name() -> ServiceResult<()> {
         let response = get_remote_user(RemoteUserRequest {
@@ -308,6 +310,7 @@ mod test {
         assert_eq!(user.get_name().get_anonymous(), "壬宫窦丁钱甄");
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_update_signature() -> ServiceResult<()> {
         async fn get_signature() -> ServiceResult<String> {

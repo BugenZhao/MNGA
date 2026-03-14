@@ -183,6 +183,7 @@ mod test {
 
     use super::*;
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_get_short_msg_list() -> ServiceResult<()> {
         let response = get_short_msg_list(ShortMessageListRequest {
@@ -205,6 +206,7 @@ mod test {
         Ok(())
     }
 
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_get_short_msg_details() -> ServiceResult<()> {
         let response = get_short_msg_details(ShortMessageDetailsRequest {
@@ -225,7 +227,7 @@ mod test {
         Ok(())
     }
 
-    #[ignore]
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_post_new_short_msg() -> ServiceResult<()> {
         let action = ShortMessagePostAction {
@@ -247,7 +249,7 @@ mod test {
         Ok(())
     }
 
-    #[ignore]
+    #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
     async fn test_reply_short_msg() -> ServiceResult<()> {
         let action = ShortMessagePostAction {
