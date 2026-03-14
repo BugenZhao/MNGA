@@ -263,7 +263,7 @@ struct PostRowView: View {
           Label("Locate This Floor", systemImage: "scope")
         }
       }
-      if let model = postReply, authStorage.authInfo.uid != post.authorID {
+      if let model = postReply, !mock, !dummy, authStorage.authInfo.uid != post.authorID {
         Button(action: { doReport(model: model) }) {
           Label("Report", systemImage: "exclamationmark.bubble")
         }
