@@ -150,6 +150,7 @@
 "%lld new unread notifications" = "%lld 个新的未读通知";
 "Replies Chain" = "回复链";
 "Goto Topic" = "前往话题";
+"Copy Title" = "拷贝标题";
 "Short Message Details" = "短消息详情";
 "Appearance" = "外观";
 "Custom Appearance" = "自定义外观";
