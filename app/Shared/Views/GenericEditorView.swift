@@ -167,7 +167,8 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
     inner
       .mayGroupedListStyle()
       .modifier(MainToastModifier.editorAlertOnly())
-      .navigationTitleInline(key: title)
+      .navigationTitle(title)
+      .navigationBarTitleDisplayMode(.inline)
       .environmentObject(presendAttachments)
       .toolbar {
         ToolbarItem(placement: .confirmationAction) {

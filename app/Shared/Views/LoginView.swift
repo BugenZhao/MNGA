@@ -131,7 +131,7 @@ struct LoginView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) { Button(role: .cancel, action: close) { Image(systemName: "xmark") } }
-    ToolbarItem(placement: .mayNavigationBarTrailing) {
+    ToolbarItem(placement: .navigationBarTrailing) {
       if authing { ProgressView() }
       else { Button(action: reload) { Image(systemName: "arrow.clockwise") } }
     }
@@ -170,7 +170,8 @@ struct LoginView: View {
       .onReceive(timer) { _ in
         webViewStore.configuration.websiteDataStore.httpCookieStore.getAllCookies(authWithCookies)
       }
-      .navigationTitleInline(key: "Sign in to NGA")
+      .navigationTitle("Sign in to NGA")
+      .navigationBarTitleDisplayMode(.inline)
       .maybeNavigationSubtitle(webViewStore.webView.url?.absoluteString ?? "")
       .ignoresSafeArea() // modern view
   }

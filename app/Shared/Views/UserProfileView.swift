@@ -135,7 +135,7 @@ struct UserProfileView: View {
       }
     }
 
-    ToolbarItem(placement: .mayNavigationBarTrailing) {
+    ToolbarItem(placement: .navigationBarTrailing) {
       Menu {
         if isMyself {
           Section {
@@ -202,7 +202,8 @@ struct UserProfileView: View {
     .refreshable { await refresh() }
     .withTopicDetailsAction() // for signature only
     .mayGroupedListStyle()
-    .navigationTitleInline(string: title)
+    .navigationTitle(title)
+    .navigationBarTitleDisplayMode(.inline)
   }
 
   func newShortMessage() {
@@ -258,7 +259,8 @@ struct RemoteUserProfileView: View {
       UserProfileView.build(user: user)
     } else {
       ProgressView()
-        .navigationTitleInline(string: dummyName)
+        .navigationTitle(dummyName)
+        .navigationBarTitleDisplayMode(.inline)
         .task {
           if let remoteUser = await UsersModel.shared.remoteUser(req) {
             withAnimation { user = remoteUser }

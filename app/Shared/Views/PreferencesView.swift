@@ -83,7 +83,8 @@ private struct PostRowAppearanceView: View {
 
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)
-      .navigationTitleInline(string: "")
+      .navigationTitle("")
+      .navigationBarTitleDisplayMode(.inline)
   }
 }
 
@@ -128,7 +129,8 @@ private struct TopicListAppearanceView: View {
       }
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)
-      .navigationTitleInline(string: "")
+      .navigationTitle("")
+      .navigationBarTitleDisplayMode(.inline)
   }
 }
 

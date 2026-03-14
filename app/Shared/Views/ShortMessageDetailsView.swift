@@ -78,13 +78,15 @@ struct ShortMessageDetailsView: View {
           }
         }
       }
-    }.navigationTitleInline(key: "Short Message Details")
-      .maybeNavigationSubtitle(debugID)
-      .mayGroupedListStyle()
-      .refreshable(dataSource: dataSource)
-      .withTopicDetailsAction()
-      .toolbar { toolbar }
-      .onChange(of: postModel.sent) { dataSource.reloadLastPage(evenIfNotLoaded: false) }
+    }
+    .navigationTitle("Short Message Details")
+    .navigationBarTitleDisplayMode(.inline)
+    .maybeNavigationSubtitle(debugID)
+    .mayGroupedListStyle()
+    .refreshable(dataSource: dataSource)
+    .withTopicDetailsAction()
+    .toolbar { toolbar }
+    .onChange(of: postModel.sent) { dataSource.reloadLastPage(evenIfNotLoaded: false) }
   }
 
   func doReply() {

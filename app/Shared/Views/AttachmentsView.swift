@@ -37,7 +37,8 @@ struct AttachmentsView: View {
         .buttonStyle(.plain)
       }
     }
-    .navigationTitleInline(key: "Attachments")
+    .navigationTitle("Attachments")
+    .navigationBarTitleDisplayMode(.inline)
   }
 
   func show(_ attachment: Attachment) {

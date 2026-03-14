@@ -344,7 +344,8 @@ struct TopicListView: View {
       }
     }
     .searchable(model: searchModel, prompt: "Search Topics".localized, if: !mock)
-    .navigationTitleLarge(string: forum.name)
+    .navigationTitle(forum.name)
+    .navigationBarTitleDisplayMode(.large)
     .scrollAwareTitle { principal }
     .sheet(isPresented: $showingSubforumsModal) { subforumsModal }
     .onChange(of: postReply?.sent) { dataSource.reload(page: 1, evenIfNotLoaded: false) }

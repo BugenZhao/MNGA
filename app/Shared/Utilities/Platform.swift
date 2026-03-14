@@ -34,56 +34,22 @@ extension View {
 }
 
 extension View {
-  func navigationTitleInline(string title: some StringProtocol) -> some View {
-    navigationBarTitle(title, displayMode: .inline)
+  func copyToPasteboard(_ content: Any) {
+    if let text = content as? String {
+      copyToPasteboard(string: text)
+    } else if let url = content as? URL {
+      copyToPasteboard(string: url.absoluteString)
+    } else if let image = content as? AppKitOrUIKitImage {
+      copyToPasteboard(image: image)
+    }
   }
 
-  func navigationTitleInline(key title: LocalizedStringKey) -> some View {
-    navigationBarTitle(title, displayMode: .inline)
+  func copyToPasteboard(string: String) {
+    UIPasteboard.general.string = string
   }
 
-  func navigationTitleLarge(string title: some StringProtocol) -> some View {
-    navigationBarTitle(title, displayMode: .large)
-  }
-
-  func navigationTitleLarge(key title: LocalizedStringKey) -> some View {
-    navigationBarTitle(title, displayMode: .large)
-  }
-}
-
-func copyToPasteboard(_ content: Any) {
-  if let text = content as? String {
-    copyToPasteboard(string: text)
-  } else if let url = content as? URL {
-    copyToPasteboard(string: url.absoluteString)
-  } else if let image = content as? AppKitOrUIKitImage {
-    copyToPasteboard(image: image)
-  }
-}
-
-func copyToPasteboard(string: String) {
-  UIPasteboard.general.string = string
-}
-
-func copyToPasteboard(image: AppKitOrUIKitImage) {
-  UIPasteboard.general.image = image
-}
-
-extension ToolbarItemPlacement {
-  static var mayNavigationBarLeading: Self {
-    navigationBarLeading
-  }
-
-  static var mayNavigationBarLeadingOrAction: Self {
-    navigationBarLeading
-  }
-
-  static var mayNavigationBarTrailing: Self {
-    navigationBarTrailing
-  }
-
-  static var mayBottomBar: Self {
-    bottomBar
+  func copyToPasteboard(image: AppKitOrUIKitImage) {
+    UIPasteboard.general.image = image
   }
 }
 

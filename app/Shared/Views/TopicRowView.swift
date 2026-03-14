@@ -104,7 +104,7 @@ struct TopicRowLinkView: View {
         Label("Goto Topic", systemImage: "arrow.right")
       }
       if let copyableTitle {
-        Button(action: { copyToPasteboard(string: copyableTitle) }) {
+        Button(action: { copyToPasteboard(copyableTitle) }) {
           Label("Copy Title", systemImage: "doc.on.doc")
         }
       }

@@ -85,6 +85,6 @@ struct HotTopicListView: View {
       .id(range)
       .navigationTitle("Hot Topics")
       .maybeNavigationSubtitle(forum.name)
-      .toolbar { ToolbarItem(placement: .mayNavigationBarTrailing) { rangeMenu } }
+      .toolbar { ToolbarItem(placement: .navigationBarTrailing) { rangeMenu } }
   }
 }
