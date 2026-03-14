@@ -26,11 +26,13 @@ struct TopicSubjectContentInnerView: View {
   let content: String
   let lineLimit: Int?
   let modifiers: [Subject.FontModifier]
+  let selectable: Bool
 
-  init(content: String, lineLimit: Int? = nil, modifiers: [Subject.FontModifier] = []) {
+  init(content: String, lineLimit: Int? = nil, modifiers: [Subject.FontModifier] = [], selectable: Bool = false) {
     self.content = content
     self.lineLimit = lineLimit
     self.modifiers = modifiers
+    self.selectable = selectable
   }
 
   func applyFontModifiers(_ text: Text, dimmed: Bool) -> Text {
@@ -65,19 +67,19 @@ struct TopicSubjectContentInnerView: View {
   }
 
   var body: some View {
-    Group {
-      if content.isEmpty {
-        Text("Untitled")
-          .font(.headline.weight(.medium).italic())
-          .foregroundColor(.secondary)
-      } else {
-        Text(content)
-          .font(.headline.weight(.medium)) // headline is semibold by default
-          .if(prefs.topicListSubjectMulticolor) { applyFontModifiers($0, dimmed: topicSubjectDimmed) }
-          .foregroundColor(topicSubjectDimmed ? .secondary : .primary) // applicable for subjects without color modifiers
-      }
+    if content.isEmpty {
+      Text("Untitled")
+        .font(.headline.weight(.medium).italic())
+        .foregroundColor(.secondary)
+        .lineLimit(lineLimit)
+    } else {
+      Text(content)
+        .font(.headline.weight(.medium)) // headline is semibold by default
+        .if(prefs.topicListSubjectMulticolor) { applyFontModifiers($0, dimmed: topicSubjectDimmed) }
+        .foregroundColor(topicSubjectDimmed ? .secondary : .primary) // applicable for subjects without color modifiers
+        .if(selectable) { $0.textSelection(.enabled) }
+        .lineLimit(lineLimit)
     }
-    .lineLimit(lineLimit)
   }
 }
 
@@ -85,11 +87,13 @@ struct TopicSubjectView: View {
   let topic: Topic
   let lineLimit: Int?
   let showIndicators: Bool
+  let selectableContent: Bool
 
-  init(topic: Topic, lineLimit: Int? = nil, showIndicators: Bool = false) {
+  init(topic: Topic, lineLimit: Int? = nil, showIndicators: Bool = false, selectableContent: Bool = false) {
     self.topic = topic
     self.lineLimit = lineLimit
     self.showIndicators = showIndicators
+    self.selectableContent = selectableContent
   }
 
   @ViewBuilder
@@ -136,6 +140,7 @@ struct TopicSubjectView: View {
         content: content,
         lineLimit: lineLimit,
         modifiers: topic.subject.fontModifiers,
+        selectable: selectableContent,
       )
     }
   }

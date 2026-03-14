@@ -90,6 +90,11 @@ struct TopicRowLinkView: View {
     TopicDetailsView.build(topicBinding: $topic)
   }
 
+  var copyableTitle: String? {
+    let title = topic.subjectContentCompat.trimmingCharacters(in: .whitespacesAndNewlines)
+    return title.isEmpty ? nil : title
+  }
+
   var body: some View {
     CrossStackNavigationLinkHack(id: topic.id, destination: { destination }) {
       TopicRowView(topic: topic, useTopicPostDate: useTopicPostDate, dimmedSubject: dimmedSubject, showIndicators: showIndicators)
@@ -97,6 +102,11 @@ struct TopicRowLinkView: View {
     .contextMenu {
       CrossStackNavigationLinkHack(id: topic.id, destination: { destination }) {
         Label("Goto Topic", systemImage: "arrow.right")
+      }
+      if let copyableTitle {
+        Button(action: { copyToPasteboard(string: copyableTitle) }) {
+          Label("Copy Title", systemImage: "doc.on.doc")
+        }
       }
       ShareLinksView(navigationID: topic.navID, shareTitle: topic.subject.full)
     } preview: {

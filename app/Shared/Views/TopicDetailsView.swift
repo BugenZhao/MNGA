@@ -471,7 +471,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var headerSectionInner: some View {
-    TopicSubjectView(topic: topic, lineLimit: nil)
+    TopicSubjectView(topic: topic, lineLimit: nil, selectableContent: true)
       .fixedSize(horizontal: false, vertical: true)
 
     if let first, firstFloorExpanded {

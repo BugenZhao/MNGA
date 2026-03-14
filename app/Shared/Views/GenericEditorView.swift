@@ -49,7 +49,7 @@ private struct GenericEditorViewInner<T: TaskProtocol, M: GenericPostModel<T>>: 
   @ViewBuilder
   var previewInner: some View {
     if let subject {
-      TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false)
+      TopicSubjectView(topic: .with { $0.subject = subject }, showIndicators: false, selectableContent: true)
     }
 
     VStack(alignment: .leading, spacing: 10) {
