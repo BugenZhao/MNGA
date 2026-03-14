@@ -35,5 +35,6 @@ buildServer.json
 # Temporary raw response for debugging
 *.php
 
-# xcli cache
+# xcraft cache
 .xcli/
+.xcraft/

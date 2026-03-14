@@ -84,7 +84,7 @@ Generates Swift protobuf code. Rust protobuf code is generated automatically dur
 
 ```bash
 make swiftformat
-make build # xcli will regenerate the Xcode project via Tuist if necessary
+make build # xcraft will regenerate the Xcode project via Tuist if necessary
 ```
 
 Updates the Xcode project file (if necessary, e.g., when adding new files, dependencies, etc.) and formats the Swift code. Build the app (for check purposes only) after making changes.

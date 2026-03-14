@@ -131,11 +131,11 @@ clean-xcode-proj:
 	rm -rf app/MNGA.xcodeproj app/MNGA.xcworkspace
 
 build: swift-pb logic-ios
-	xcli build
+	xcraft build
 launch: swift-pb logic-deploy
-	xcli launch
+	xcraft launch
 launch-sim: swift-pb logic-sim
-	xcli launch --profile sim
+	xcraft launch --profile sim
 
 nightly:
 	rustup override set nightly

@@ -75,9 +75,8 @@
    安装其他依赖。
 
    ```bash
-   $ brew install swift-protobuf tuist
-   $ cargo install cargo-lipo
-   $ cargo install --git https://github.com/BugenZhao/xcli
+   $ brew install swift-protobuf tuist xcbeautify
+   $ cargo install cargo-lipo xcraft
 
    $ rustup target add aarch64-apple-ios
    $ rustup target add aarch64-apple-ios-sim
