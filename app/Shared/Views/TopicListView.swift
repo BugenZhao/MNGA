@@ -208,11 +208,6 @@ struct TopicListView: View {
             systemImage: isFavorite ? "star.slash.fill" : "star",
           )
         }
-        #if os(macOS)
-          Button(action: { dataSource.refresh() }) {
-            Label("Refresh", systemImage: "arrow.clockwise")
-          }
-        #endif
       }
     } label: {
       Label("More", systemImage: "ellipsis".maybeCircledSymbol)
@@ -275,31 +270,24 @@ struct TopicListView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    #if os(iOS)
-      // -- Navigation Bar
-      if UserInterfaceIdiom.current != .pad {
-        NotificationToolbarItem(placement: .navigationBarTrailing)
-      }
-      ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+    // -- Navigation Bar
+    if UserInterfaceIdiom.current != .pad {
+      NotificationToolbarItem(placement: .navigationBarTrailing)
+    }
+    ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
 
-      // -- Bottom Bar
-      ToolbarItem(placement: .bottomBar) { subforumButton }
-      // FIXME: transition here may crash when navigating to subforum
-      // .maybeMatchedTransitionSource(id: "subforums", in: transition)
+    // -- Bottom Bar
+    ToolbarItem(placement: .bottomBar) { subforumButton }
+    // FIXME: transition here may crash when navigating to subforum
+    // .maybeMatchedTransitionSource(id: "subforums", in: transition)
+    MaybeToolbarSpacer(.fixed, placement: .bottomBar)
+    MaybeBottomBarSearchToolbarItem(asSpacer: true, if: prefs.topicListShowSearchInBottombar)
+    if prefs.topicListShowRefreshButton {
       MaybeToolbarSpacer(.fixed, placement: .bottomBar)
-      MaybeBottomBarSearchToolbarItem(asSpacer: true, if: prefs.topicListShowSearchInBottombar)
-      if prefs.topicListShowRefreshButton {
-        MaybeToolbarSpacer(.fixed, placement: .bottomBar)
-        ToolbarItem(placement: .bottomBar) { refreshButton }
-      }
-      MaybeToolbarSpacer(.fixed, placement: .bottomBar)
-      ToolbarItem(placement: .bottomBar) { newTopicButton }
-    #elseif os(macOS)
-      ToolbarItemGroup {
-        newTopicButton
-        moreMenu
-      }
-    #endif
+      ToolbarItem(placement: .bottomBar) { refreshButton }
+    }
+    MaybeToolbarSpacer(.fixed, placement: .bottomBar)
+    ToolbarItem(placement: .bottomBar) { newTopicButton }
   }
 
   @ViewBuilder

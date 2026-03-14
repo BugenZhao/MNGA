@@ -13,15 +13,11 @@ private struct MayGroupedListStyleModifier: ViewModifier {
   @StateObject var pref = PreferencesStorage.shared
 
   func body(content: Content) -> some View {
-    #if os(iOS)
-      if pref.useInsetGroupedModern {
-        content.listStyle(.insetGrouped)
-      } else {
-        content.listStyle(.grouped)
-      }
-    #else
-      content
-    #endif
+    if pref.useInsetGroupedModern {
+      content.listStyle(.insetGrouped)
+    } else {
+      content.listStyle(.grouped)
+    }
   }
 }
 
@@ -33,45 +29,25 @@ extension View {
 
   @ViewBuilder
   func mayInsetGroupedListStyle() -> some View {
-    #if os(iOS)
-      listStyle(.insetGrouped)
-    #else
-      self
-    #endif
+    listStyle(.insetGrouped)
   }
 }
 
 extension View {
   func navigationTitleInline(string title: some StringProtocol) -> some View {
-    #if os(iOS)
-      navigationBarTitle(title, displayMode: .inline)
-    #elseif os(macOS)
-      navigationTitle(title)
-    #endif
+    navigationBarTitle(title, displayMode: .inline)
   }
 
   func navigationTitleInline(key title: LocalizedStringKey) -> some View {
-    #if os(iOS)
-      navigationBarTitle(title, displayMode: .inline)
-    #elseif os(macOS)
-      navigationTitle(title)
-    #endif
+    navigationBarTitle(title, displayMode: .inline)
   }
 
   func navigationTitleLarge(string title: some StringProtocol) -> some View {
-    #if os(iOS)
-      navigationBarTitle(title, displayMode: .large)
-    #elseif os(macOS)
-      navigationTitle(title)
-    #endif
+    navigationBarTitle(title, displayMode: .large)
   }
 
   func navigationTitleLarge(key title: LocalizedStringKey) -> some View {
-    #if os(iOS)
-      navigationBarTitle(title, displayMode: .large)
-    #elseif os(macOS)
-      navigationTitle(title)
-    #endif
+    navigationBarTitle(title, displayMode: .large)
   }
 }
 
@@ -86,70 +62,30 @@ func copyToPasteboard(_ content: Any) {
 }
 
 func copyToPasteboard(string: String) {
-  #if os(iOS)
-    UIPasteboard.general.string = string
-  #elseif os(macOS)
-    let pb = NSPasteboard.general
-    pb.clearContents()
-    pb.writeObjects([string as NSString])
-  #endif
+  UIPasteboard.general.string = string
 }
 
 func copyToPasteboard(image: AppKitOrUIKitImage) {
-  #if os(iOS)
-    UIPasteboard.general.image = image
-  #elseif os(macOS)
-    let pb = NSPasteboard.general
-    pb.clearContents()
-    pb.writeObjects([image])
-  #endif
+  UIPasteboard.general.image = image
 }
 
 extension ToolbarItemPlacement {
   static var mayNavigationBarLeading: Self {
-    #if os(iOS)
-      navigationBarLeading
-    #else
-      navigation
-    #endif
+    navigationBarLeading
   }
 
   static var mayNavigationBarLeadingOrAction: Self {
-    #if os(iOS)
-      navigationBarLeading
-    #else
-      primaryAction
-    #endif
+    navigationBarLeading
   }
 
   static var mayNavigationBarTrailing: Self {
-    #if os(iOS)
-      navigationBarTrailing
-    #else
-      automatic
-    #endif
+    navigationBarTrailing
   }
 
   static var mayBottomBar: Self {
-    #if os(iOS)
-      bottomBar
-    #else
-      status
-    #endif
+    bottomBar
   }
 }
-
-#if os(macOS)
-  extension Color {
-    static var secondarySystemGroupedBackground: Self {
-      Color(NSColor.textBackgroundColor)
-    }
-
-    static var systemGroupedBackground: Self {
-      Color(NSColor.windowBackgroundColor)
-    }
-  }
-#endif
 
 struct MaybeToolbarSpacer: ToolbarContent {
   enum MySpacerSizing {

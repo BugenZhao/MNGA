@@ -1,5 +1,4 @@
 CARGO ?= $(shell which cargo)
-XARGO ?= $(shell which xargo)
 SWIFTFORMAT ?= $(shell which swiftformat)
 TARGET_DIR = target
 OUT_LIBS_ANDROID ?= out/libs/jniLibs

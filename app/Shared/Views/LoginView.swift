@@ -192,13 +192,9 @@ struct LoginView: View {
   }
 
   var body: some View {
-    #if os(iOS)
-      NavigationView {
-        inner
-      }.interactiveDismissDisabled()
-    #elseif os(macOS)
-      inner.frame(width: 300, height: 450)
-    #endif
+    NavigationView {
+      inner
+    }.interactiveDismissDisabled()
   }
 
   func authWithCookies(_ cookies: [HTTPCookie]) {
