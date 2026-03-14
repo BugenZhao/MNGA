@@ -349,7 +349,6 @@ struct PreferencesInnerView: View {
     .mayInsetGroupedListStyle()
     .navigationTitle("Settings")
     .toolbar { toolbar }
-    .onChange(of: pref.alwaysPortraitOnPhone) { AppInterfaceOrientation.applyCurrentPreference() }
     .preferredColorScheme(pref.colorScheme.scheme) // workaround
   }
 }

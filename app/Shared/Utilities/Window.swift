@@ -17,13 +17,11 @@ import Foundation
   }
 
   enum AppInterfaceOrientation {
-    static let alwaysPortraitOnPhoneKey = "alwaysPortraitOnPhone"
-
     static var supportedOrientations: UIInterfaceOrientationMask {
       guard UIDevice.current.userInterfaceIdiom == .phone else {
         return .allButUpsideDown
       }
-      return UserDefaults.standard.bool(forKey: alwaysPortraitOnPhoneKey) ? .portrait : .allButUpsideDown
+      return UserDefaults.standard.bool(forKey: alwaysPortraitOnPhonePreferenceKey) ? .portrait : .allButUpsideDown
     }
 
     @MainActor
@@ -40,13 +38,9 @@ import Foundation
       windowScene.keyWindow?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
 
       let geometryPreferences = UIWindowScene.GeometryPreferences.iOS(interfaceOrientations: supportedOrientations)
-      windowScene.requestGeometryUpdate(geometryPreferences) { _ in }
-    }
-  }
-
-  extension UIWindowScene {
-    var keyWindow: UIWindow? {
-      windows.first(where: \.isKeyWindow)
+      windowScene.requestGeometryUpdate(geometryPreferences) { error in
+        logger.warning("failed to update interface orientation: \(error.localizedDescription)")
+      }
     }
   }
 
