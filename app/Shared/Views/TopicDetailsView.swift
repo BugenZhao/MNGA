@@ -178,7 +178,7 @@ struct TopicDetailsView: View {
   ) {
     _topic = topic
     _dataSource = StateObject(wrappedValue: dataSource)
-    _postLocator = StateObject(wrappedValue: TopicPostLocator(topic: topic.wrappedValue))
+    _postLocator = StateObject(wrappedValue: TopicPostLocator(topic: topic.wrappedValue, localCache: forceLocalMode))
 
     let resolver = QuotedPostResolver { [weak dataSource] id in
       dataSource?.items.first(where: { $0.id == id })
@@ -346,7 +346,7 @@ struct TopicDetailsView: View {
     if let rowLocateFloorCallback {
       return rowLocateFloorCallback
     }
-    guard onlyPost.id == nil else { return nil }
+    guard !localMode, onlyPost.id == nil else { return nil }
     return { post in
       locatePostInCurrentTopic(post)
     }

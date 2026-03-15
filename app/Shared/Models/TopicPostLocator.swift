@@ -17,12 +17,14 @@ final class TopicPostLocator: ObservableObject {
 
   private let topicID: String
   private let fav: String?
+  private let localCache: Bool
   private var locations = [PostId: Location]()
   private var inFlight = [PostId: Task<Result<Location, LogicError>, Never>]()
 
-  init(topic: Topic) {
+  init(topic: Topic, localCache: Bool = false) {
     topicID = topic.id
     fav = topic.hasFav ? topic.fav : nil
+    self.localCache = localCache
   }
 
   func seed(posts: some Sequence<Post>) {
@@ -104,6 +106,7 @@ final class TopicPostLocator: ObservableObject {
       if let fav {
         $0.fav = fav
       }
+      $0.localCache = localCache
       $0.page = UInt32(page)
     })
   }
