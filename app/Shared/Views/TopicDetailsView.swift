@@ -178,7 +178,7 @@ struct TopicDetailsView: View {
   ) {
     _topic = topic
     _dataSource = StateObject(wrappedValue: dataSource)
-    _postLocator = StateObject(wrappedValue: TopicPostLocator(topic: topic.wrappedValue, localCache: forceLocalMode))
+    _postLocator = StateObject(wrappedValue: TopicPostLocator(topic: topic.wrappedValue))
 
     let resolver = QuotedPostResolver { [weak dataSource] id in
       dataSource?.items.first(where: { $0.id == id })
