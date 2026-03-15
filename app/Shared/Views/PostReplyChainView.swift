@@ -55,7 +55,7 @@ struct PostReplyChainView: View {
     .mayGroupedListStyle()
     .refreshable { resolver.resetFailures() }
     .navigationDestination(item: $action.navigateToAuthorOnly) { author in
-      TopicDetailsView.build(topic: topic, only: author)
+      TopicDetailsView.build(topic: topic, only: author, locateFloorInTopic: locateFloorInTopic)
     }
   }
 }
