@@ -40,26 +40,14 @@ struct ShareLinksView<V: View>: View {
   var body: some View {
     Menu {
       if let mngaURL = navigationID.mngaURL {
-        if let title = prefixedShareTitle("MNGA - ") {
-          ShareLink(item: mngaURL, message: Text(title)) {
-            Label("MNGA Link", systemImage: "m.circle")
-          }
-        } else {
-          ShareLink(item: mngaURL) {
-            Label("MNGA Link", systemImage: "m.circle")
-          }
+        ShareLink(item: mngaURL) {
+          Label("MNGA Link", systemImage: "m.circle")
         }
       }
 
       if let webpageURL = navigationID.webpageURL {
-        if let title = prefixedShareTitle("NGA - ") {
-          ShareLink(item: webpageURL, message: Text(title)) {
-            Label("NGA Link", systemImage: "network")
-          }
-        } else {
-          ShareLink(item: webpageURL) {
-            Label("NGA Link", systemImage: "network")
-          }
+        ShareLink(item: webpageURL) {
+          Label("NGA Link", systemImage: "network")
         }
       }
 
