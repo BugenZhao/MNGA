@@ -128,11 +128,13 @@ struct TopicDetailsView: View {
 
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
+  @Environment(\.dismiss) private var dismiss
   @EnvironmentObject var viewingImage: ViewingImageModel
   @EnvironmentObject.Optional var postReply: PostReplyModel?
 
   @StateObject var dataSource: DataSource
   @StateObject var action = TopicDetailsActionModel()
+  @StateObject var postLocator: TopicPostLocator
   @StateObject var votes = VotesModel()
   @StateObject var quotedPosts: QuotedPostResolver
   @StateObject var prefs = PreferencesStorage.shared
@@ -142,6 +144,7 @@ struct TopicDetailsView: View {
   let onlyPost: (id: PostId?, atPage: Int?)
   let forceLocalMode: Bool
   let previewMode: Bool
+  let locateFloorInTopic: ((Post) -> Void)?
 
   @State var showJumpSelector = false
   @State var floorToJump: Int?
@@ -169,11 +172,13 @@ struct TopicDetailsView: View {
     onlyPost: (id: PostId?, atPage: Int?),
     forceLocalMode: Bool,
     previewMode: Bool,
+    locateFloorInTopic: ((Post) -> Void)? = nil,
     floorToJump: Int? = nil,
     postIdToJump: PostId? = nil,
   ) {
     _topic = topic
     _dataSource = StateObject(wrappedValue: dataSource)
+    _postLocator = StateObject(wrappedValue: TopicPostLocator(topic: topic.wrappedValue))
 
     let resolver = QuotedPostResolver { [weak dataSource] id in
       dataSource?.items.first(where: { $0.id == id })
@@ -183,6 +188,7 @@ struct TopicDetailsView: View {
     self.onlyPost = onlyPost
     self.forceLocalMode = forceLocalMode
     self.previewMode = previewMode
+    self.locateFloorInTopic = locateFloorInTopic
     _floorToJump = State(initialValue: floorToJump)
     _postIdToJump = State(initialValue: postIdToJump)
   }
@@ -280,7 +286,11 @@ struct TopicDetailsView: View {
     }
   }
 
-  static func build(topic: Topic, only author: AuthorOnly) -> some View {
+  static func build(
+    topic: Topic,
+    only author: AuthorOnly,
+    locateFloorInTopic: ((Post) -> Void)? = nil,
+  ) -> some View {
     let dataSource = DataSource(
       buildRequest: { page in
         .topicDetails(TopicDetailsRequest.with {
@@ -306,8 +316,39 @@ struct TopicDetailsView: View {
     )
 
     return StaticTopicDetailsView(topic: topic) { binding in
-      Self(topic: binding, dataSource: dataSource, onlyPost: (nil, nil), forceLocalMode: false, previewMode: false)
-        .environment(\.enableAuthorOnly, false)
+      Self(
+        topic: binding,
+        dataSource: dataSource,
+        onlyPost: (nil, nil),
+        forceLocalMode: false,
+        previewMode: false,
+        locateFloorInTopic: locateFloorInTopic,
+      )
+      .environment(\.enableAuthorOnly, false)
+    }
+  }
+
+  private var canLocateBackInTopic: Bool {
+    locateFloorInTopic != nil
+  }
+
+  private var rowLocateFloorCallback: ((Post) -> Void)? {
+    guard let locateFloorInTopic else { return nil }
+    return { post in
+      dismiss()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        locateFloorInTopic(post)
+      }
+    }
+  }
+
+  private var childLocateFloorCallback: ((Post) -> Void)? {
+    if let rowLocateFloorCallback {
+      return rowLocateFloorCallback
+    }
+    guard onlyPost.id == nil else { return nil }
+    return { post in
+      locatePostInCurrentTopic(post)
     }
   }
 
@@ -458,6 +499,7 @@ struct TopicDetailsView: View {
       isAuthor: post.authorID == topic.authorID,
       screenshotTopic: topic,
       vote: votes.binding(for: post),
+      locateFloor: canLocateBackInTopic ? { _ in rowLocateFloorCallback?(post) } : nil,
     )
 
     if withId {
@@ -715,9 +757,7 @@ struct TopicDetailsView: View {
       resolver: quotedPosts,
       chain: chain,
       topic: topic,
-      locateFloorInTopic: onlyPost.id == nil ? { post in
-        action.scrollToPid = post.id.pid
-      } : nil,
+      locateFloorInTopic: childLocateFloorCallback,
     )
   }
 
@@ -752,7 +792,11 @@ struct TopicDetailsView: View {
       postReplyChainDestination(chain: $0)
     }
     .navigationDestination(item: $action.navigateToAuthorOnly) {
-      TopicDetailsView.build(topic: topic, only: $0)
+      TopicDetailsView.build(
+        topic: topic,
+        only: $0,
+        locateFloorInTopic: childLocateFloorCallback,
+      )
     }
     .navigationDestination(isPresented: $action.navigateToLocalMode) {
       TopicDetailsView.build(topic: topic, localMode: true)
@@ -860,6 +904,9 @@ struct TopicDetailsView: View {
   func updateTopicOnNewResponse(response: TopicDetailsResponse?) {
     guard let response else { return }
     let newTopic = response.topic
+    if onlyPost.id == nil, enableAuthorOnly {
+      postLocator.seed(posts: response.replies)
+    }
     quotedPosts.seed(posts: response.replies)
     action.indexReplyRelations(in: response.replies)
     if let first = response.replies.first(where: { $0.id.pid == "0" }), !first.hotReplies.isEmpty {
@@ -944,6 +991,35 @@ struct TopicDetailsView: View {
         openInBrowser()
       }
     }
+  }
+
+  @MainActor
+  private func locatePostInCurrentTopic(_ post: Post) {
+    Task {
+      let result = await postLocator.locate(post.id)
+
+      switch result {
+      case let .success(location):
+        jumpToLocatedPost(post, location: location)
+      case let .failure(error):
+        ToastModel.showAuto(.error(error.error))
+      }
+    }
+  }
+
+  @MainActor
+  private func jumpToLocatedPost(_ post: Post, location: TopicPostLocator.Location) {
+    action.scrollToFloor = nil
+    action.scrollToPid = nil
+    floorToJump = nil
+
+    if dataSource.items.contains(where: { $0.id == post.id }) {
+      action.scrollToPid = post.id.pid
+      return
+    }
+
+    postIdToJump = post.id
+    dataSource.loadFromPage = location.page
   }
 }
 
