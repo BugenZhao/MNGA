@@ -313,6 +313,11 @@ pub fn server_now() -> DateTime<FixedOffset> {
     Utc::now().with_timezone(&FixedOffset::east_opt(8 * HOUR).unwrap())
 }
 
+#[inline]
+pub fn server_today_string() -> String {
+    server_now().format("%Y-%m-%d").to_string()
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -327,9 +332,4 @@ mod test {
             "{\"data\":{\"message\":\"a\\tb\\nc\\r\\nd\",\"escaped\":\"x\\\\ty\",\"n\":1}}"
         );
     }
-}
-
-#[inline]
-pub fn server_today_string() -> String {
-    server_now().format("%Y-%m-%d").to_string()
 }
