@@ -278,6 +278,8 @@ pub async fn update_signature(
 
 #[cfg(test)]
 mod test {
+    use crate::error::ServiceError;
+
     use super::*;
 
     #[ignore = "manual: requires network or mutable external state"]
@@ -310,6 +312,27 @@ mod test {
 
         assert!(response.has_user());
         assert_eq!(response.get_user().get_id(), "63598535");
+
+        Ok(())
+    }
+
+    #[ignore = "manual: requires network or mutable external state"]
+    #[tokio::test]
+    async fn test_remote_user_not_found_error() -> ServiceResult<()> {
+        let err = get_remote_user(RemoteUserRequest {
+            user_id: "999999999999999999".to_owned(),
+            ..Default::default()
+        })
+        .await
+        .unwrap_err();
+
+        match err {
+            ServiceError::Nga(e) => {
+                assert_eq!(e.code, "?");
+                assert_eq!(e.info, "找不到用户");
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
 
         Ok(())
     }
