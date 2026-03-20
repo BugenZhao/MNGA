@@ -5,6 +5,7 @@ use crate::{
 use chrono::{DateTime, FixedOffset, Utc};
 use protos::DataModel::ErrorMessage;
 use std::collections::HashMap;
+use serde_json::Value;
 use sxd_document::Package;
 use sxd_xpath::{Context, Factory, XPath, nodeset::Node};
 use uuid::Uuid;
@@ -29,6 +30,67 @@ pub fn extract_kv_pairs(node: Node<'_>) -> Vec<(&str, String)> {
         // fixme: filter element?
         .map(|n| (n.expanded_name().unwrap().local_part(), n.string_value()))
         .collect::<Vec<_>>()
+}
+
+pub fn json_value_to_string(value: &Value) -> Option<String> {
+    match value {
+        Value::Null => Some(String::new()),
+        Value::String(s) => Some(s.clone()),
+        Value::Number(n) => Some(n.to_string()),
+        Value::Bool(b) => Some(if *b {
+            "1".to_owned()
+        } else {
+            "0".to_owned()
+        }),
+        _ => None,
+    }
+}
+
+pub fn json_field<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
+    value.as_object()?.get(key)
+}
+
+pub fn json_object_values(value: &Value) -> impl Iterator<Item = &Value> + '_ {
+    value.as_object().into_iter().flat_map(|object| object.values())
+}
+
+pub fn json_string(value: &Value, key: &str) -> Option<String> {
+    json_field(value, key).and_then(json_value_to_string)
+}
+
+pub fn json_u32(value: &Value, key: &str) -> Option<u32> {
+    json_field(value, key).and_then(|v| {
+        v.as_u64()
+            .and_then(|n| u32::try_from(n).ok())
+            .or_else(|| v.as_str().and_then(|s| s.parse::<u32>().ok()))
+    })
+}
+
+pub fn json_u64(value: &Value, key: &str) -> Option<u64> {
+    json_field(value, key).and_then(|v| {
+        v.as_u64()
+            .or_else(|| v.as_str().and_then(|s| s.parse::<u64>().ok()))
+    })
+}
+
+pub fn json_i64(value: &Value, key: &str) -> Option<i64> {
+    json_field(value, key).and_then(|v| {
+        v.as_i64()
+            .or_else(|| v.as_u64().and_then(|n| i64::try_from(n).ok()))
+            .or_else(|| v.as_str().and_then(|s| s.parse::<i64>().ok()))
+    })
+}
+
+pub fn json_bool(value: &Value, key: &str) -> Option<bool> {
+    json_field(value, key).and_then(|v| {
+        v.as_bool().or_else(|| {
+            v.as_u64().map(|n| n != 0).or_else(|| {
+                v.as_i64().map(|n| n != 0).or_else(|| {
+                    v.as_str().map(|s| !s.is_empty() && s != "0")
+                })
+            })
+        })
+    })
 }
 
 pub fn extract_nodes<T, F>(package: &Package, xpath: &str, f: F) -> ServiceResult<Vec<T>>

@@ -3,8 +3,8 @@ use std::iter::once;
 use crate::{
     constants::{FORUM_ICON_PATH, MNGA_ICON_PATH},
     error::ServiceResult,
-    fetch_package,
-    utils::{extract_kv, extract_nodes, extract_nodes_rel},
+    fetch::{fetch_json_value, fetch_package},
+    utils::{extract_kv, extract_nodes, json_object_values, json_string},
 };
 use protos::{
     DataModel::{Category, Forum, ForumId, ForumId_oneof_id},
@@ -15,6 +15,7 @@ use protos::{
         SubforumFilterRequest_Operation, SubforumFilterResponse,
     },
 };
+use serde_json::Value;
 use sxd_xpath::nodeset::Node;
 
 #[inline]
@@ -85,34 +86,55 @@ pub fn make_minimal_forum(id: ForumId, name: String) -> Forum {
     }
 }
 
-fn extract_category(node: Node) -> Option<Category> {
-    use super::macros::get;
-    let map = extract_kv(node);
+fn extract_forum_json(value: &Value) -> Option<Forum> {
+    let icon_id = json_string(value, "id")
+        .or_else(|| json_string(value, "fid"))
+        .unwrap_or_default();
+    let fid = json_string(value, "fid").map(make_fid).flatten();
+    let stid = json_string(value, "stid").map(make_stid).flatten();
 
-    let forums = extract_nodes_rel(node, "./groups/item/forums/item", |ns| {
-        ns.into_iter().filter_map(extract_forum).collect()
+    Some(Forum {
+        id: stid.or(fid).into(),
+        name: json_string(value, "name")?,
+        info: json_string(value, "info").unwrap_or_default(),
+        icon_url: format!("{}{}.png", FORUM_ICON_PATH, icon_id),
+        topped_topic_id: json_string(value, "topped_topic").unwrap_or_default(),
+        ..Default::default()
     })
-    .ok()?;
+}
 
-    let category = Category {
-        id: get!(map, "_id")?,
-        name: get!(map, "name")?,
+fn extract_category_json(value: &Value) -> Option<Category> {
+    let forums: Vec<_> = value
+        .get("groups")?
+        .as_object()?
+        .values()
+        .flat_map(|group| {
+            group
+                .get("forums")
+                .and_then(Value::as_object)
+                .into_iter()
+                .flat_map(|forums| forums.values())
+        })
+        .filter_map(extract_forum_json)
+        .collect();
+
+    Some(Category {
+        id: json_string(value, "_id")?,
+        name: json_string(value, "name")?,
         forums: forums.into(),
         ..Default::default()
-    };
-
-    Some(category)
+    })
 }
 
 pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumListResponse> {
-    let package = fetch_package(
+    let value = fetch_json_value(
         "app_api.php",
         vec![("__lib", "home"), ("__act", "category")],
         vec![],
     )
     .await?;
 
-    let categories = extract_nodes(&package, "/root/data/item", |ns| {
+    let categories: Vec<_> = {
         // todo: dynamic
         let mnga_category = Category {
             id: "mnga".to_owned(),
@@ -128,9 +150,9 @@ pub async fn get_forum_list(_request: ForumListRequest) -> ServiceResult<ForumLi
         };
 
         once(mnga_category)
-            .chain(ns.into_iter().filter_map(extract_category))
+            .chain(json_object_values(&value).filter_map(extract_category_json))
             .collect()
-    })?;
+    };
 
     Ok(ForumListResponse {
         categories: categories.into(),
@@ -181,16 +203,20 @@ pub async fn search_forum(request: ForumSearchRequest) -> ServiceResult<ForumSea
 pub async fn get_favorite_forum_list(
     _request: FavoriteForumListRequest,
 ) -> ServiceResult<FavoriteForumListResponse> {
-    let package = fetch_package(
+    let value = fetch_json_value(
         "nuke.php",
         vec![("__lib", "forum_favor2"), ("__act", "forum_favor")],
         vec![("action", "get")],
     )
     .await?;
 
-    let forums = extract_nodes(&package, "/root/data/item/item", |ns| {
-        ns.into_iter().filter_map(extract_forum).collect()
-    })?;
+    let forums: Vec<_> = value
+        .get("0")
+        .and_then(Value::as_object)
+        .into_iter()
+        .flat_map(|forums| forums.values())
+        .filter_map(extract_forum_json)
+        .collect();
 
     Ok(FavoriteForumListResponse {
         forums: forums.into(),
@@ -299,6 +325,16 @@ mod test {
         println!("response: {:?}", response);
 
         assert!(response.get_forums().is_empty());
+
+        Ok(())
+    }
+
+    #[ignore = "manual: requires network or mutable external state"]
+    #[tokio::test]
+    async fn test_get_favorite_forum_list() -> ServiceResult<()> {
+        let response = get_favorite_forum_list(FavoriteForumListRequest::new()).await?;
+
+        println!("response: {:?}", response);
 
         Ok(())
     }

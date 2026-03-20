@@ -1,7 +1,7 @@
 use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
-    fetch::{self, RetryMode, fetch_mock, fetch_package_with_retry, fetch_web_html},
+    fetch::{self, RetryMode, fetch_json_value, fetch_mock, fetch_package_with_retry, fetch_web_html},
     fetch_package,
     forum::{extract_forum, make_fid, make_minimal_forum, make_stid},
     history::{find_topic_history, insert_topic_history},
@@ -9,7 +9,7 @@ use crate::{
     user::{extract_local_user_and_cache, extract_user_name},
     utils::{
         extract_kv, extract_kv_pairs, extract_node, extract_node_rel, extract_nodes, extract_pages,
-        extract_string, extract_string_rel, get_unique_id, server_now,
+        extract_string, extract_string_rel, get_unique_id, json_string, json_u32, server_now,
     },
 };
 use cache::{CACHE, CacheResult};
@@ -17,6 +17,7 @@ use chrono::Duration;
 use futures::TryFutureExt;
 use protos::{DataModel::*, MockRequest, Service::*, ToValue};
 use std::cmp::Reverse;
+use serde_json::Value;
 use sxd_xpath::nodeset::Node;
 
 #[cfg(test)]
@@ -256,22 +257,14 @@ fn extract_subforum(node: Node, use_fid: bool) -> Option<Subforum> {
     Some(subforum)
 }
 
-fn extract_favorite_folder(node: Node) -> Option<FavoriteTopicFolder> {
-    use super::macros::get;
-    let map = extract_kv(node);
-
-    let id = get!(map, "id")?;
-    let name = get!(map, "name").unwrap_or_default();
-
-    let folder = FavoriteTopicFolder {
-        id,
-        name,
-        topic_count: get!(map, "length", u32).unwrap_or_default(),
-        is_default: get!(map, "default").is_some(),
+fn extract_favorite_folder_json(value: &Value) -> Option<FavoriteTopicFolder> {
+    Some(FavoriteTopicFolder {
+        id: json_string(value, "id")?,
+        name: json_string(value, "name").unwrap_or_default(),
+        topic_count: json_u32(value, "length").unwrap_or_default(),
+        is_default: value.get("default").is_some(),
         ..Default::default()
-    };
-
-    Some(folder)
+    })
 }
 
 #[derive(Clone, Copy)]
@@ -353,7 +346,7 @@ pub async fn get_favorite_topic_list(
 pub async fn get_favorite_folder_list(
     _request: FavoriteFolderListRequest,
 ) -> ServiceResult<FavoriteFolderListResponse> {
-    let package = fetch_package(
+    let value = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "topic_favor_v2"),
@@ -364,9 +357,13 @@ pub async fn get_favorite_folder_list(
     )
     .await?;
 
-    let folders = extract_nodes(&package, "/root/data/item/item", |ns| {
-        ns.into_iter().filter_map(extract_favorite_folder).collect()
-    })?;
+    let folders: Vec<_> = value
+        .get("0")
+        .and_then(Value::as_object)
+        .into_iter()
+        .flat_map(|folders| folders.values())
+        .filter_map(extract_favorite_folder_json)
+        .collect();
 
     Ok(FavoriteFolderListResponse {
         folders: folders.into(),

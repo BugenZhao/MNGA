@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use crate::{
     auth,
     error::{ServiceError, ServiceResult},
-    fetch_package,
-    utils::{extract_kv, extract_node, extract_string},
+    fetch::{fetch_json_value, fetch_package},
+    utils::{extract_kv, json_bool, json_i64, json_string, json_u32, json_u64},
 };
 use dashmap::DashMap;
 use lazy_static::lazy_static;
@@ -15,6 +15,7 @@ use protos::{
         UserSignatureUpdateRequest, UserSignatureUpdateResponse,
     },
 };
+use serde_json::Value;
 use sxd_xpath::nodeset::Node;
 
 lazy_static! {
@@ -150,6 +151,35 @@ fn extract_user(node: Node, remote: bool) -> Option<User> {
     Some(user)
 }
 
+fn extract_user_json(value: &Value, remote: bool) -> Option<User> {
+    static MUTE_BUFF: &str = "105";
+
+    let raw_signature = json_string(value, "signature")
+        .or_else(|| json_string(value, "sign"))
+        .unwrap_or_default();
+    let name = extract_user_name(json_string(value, "username")?);
+    let mute = json_bool(value, "mute")
+        .unwrap_or_else(|| json_string(value, "buffs").is_some_and(|buffs| buffs.contains(MUTE_BUFF)));
+
+    Some(User {
+        id: json_string(value, "uid")?,
+        name: Some(name).into(),
+        avatar_url: json_string(value, "avatar").unwrap_or_default(),
+        reg_date: json_u64(value, "regdate").unwrap_or_default(),
+        post_num: json_u32(value, "postnum")
+            .or_else(|| json_u32(value, "posts"))
+            .unwrap_or_default(),
+        fame: json_i64(value, "fame")
+            .or_else(|| json_i64(value, "rvrc"))
+            .unwrap_or_default(),
+        signature: Some(text::parse_content(&raw_signature)).into(),
+        mute,
+        ip_location: json_string(value, "ipLoc").unwrap_or_default(),
+        remote,
+        ..Default::default()
+    })
+}
+
 fn cache_user(mut user: User, context: Option<&str>) -> User {
     let controller = UserController::get();
     match (user.get_name().get_anonymous() != "", context) {
@@ -178,36 +208,41 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
         });
     }
 
-    let mut user = {
-        let package = fetch_package(
-            "nuke.php",
-            vec![
-                ("__lib", "ucp"),
-                ("__act", "get"),
-                if user_id.is_empty() {
-                    ("username", request.get_user_name())
-                } else {
-                    ("uid", user_id)
-                },
-            ],
-            vec![],
-        )
-        .await?;
-        extract_node(&package, "/root/data/item", |n| extract_user(n, true))?.flatten()
-    };
+    let value = fetch_json_value(
+        "nuke.php",
+        vec![
+            ("__lib", "ucp"),
+            ("__act", "get"),
+            if user_id.is_empty() {
+                ("username", request.get_user_name())
+            } else {
+                ("uid", user_id)
+            },
+        ],
+        vec![],
+    )
+    .await?;
+
+    let mut user = value
+        .get("0")
+        .and_then(|v| extract_user_json(v, true));
 
     if let Some(user) = &mut user
         && user.avatar_url.is_empty()
     {
         let avatar_url = {
-            let avatar_package = fetch_package(
+            let avatar_value = fetch_json_value(
                 "nuke.php",
                 // Always query avatar with uid instead of user name.
-                vec![("__lib", "ucp"), ("__act", "get_avatar"), ("uid", &user.id)],
+                vec![
+                    ("__lib", "ucp"),
+                    ("__act", "get_avatar"),
+                    ("uid", &user.id),
+                ],
                 vec![],
             )
             .await?;
-            extract_string(&avatar_package, "/root/data/item").unwrap_or_default()
+            json_string(&avatar_value, "0").unwrap_or_default()
         };
         user.avatar_url = avatar_url;
     }
