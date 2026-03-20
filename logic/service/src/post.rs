@@ -1,13 +1,14 @@
 use crate::{
     attachment::extract_attachment,
     error::ServiceResult,
+    fetch::fetch_json_value,
     fetch::fetch_package_multipart,
     fetch_package,
     topic::extract_topic,
     user,
     utils::{
         extract_kv, extract_node_rel, extract_nodes, extract_nodes_rel, extract_string,
-        get_unique_id,
+        get_unique_id, json_string,
     },
 };
 use cache::CACHE;
@@ -147,7 +148,7 @@ pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteRespon
 
     let value = request.get_operation().to_value();
 
-    let package = fetch_package(
+    let value = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "topic_recommend"),
@@ -160,7 +161,9 @@ pub async fn post_vote(request: PostVoteRequest) -> ServiceResult<PostVoteRespon
     )
     .await?;
 
-    let delta = extract_string(&package, "/root/data/item[2]")?
+    let delta = json_string(&value, "1")
+        .or_else(|| json_string(&value, "0"))
+        .unwrap_or_default()
         .parse::<i32>()
         .unwrap_or_default();
 
@@ -218,7 +221,7 @@ pub async fn post_reply(request: PostReplyRequest) -> ServiceResult<PostReplyRes
         ];
         query_insert_id!(query, request);
 
-        let _package = fetch_package("nuke.php", query, vec![]).await?;
+        let _value = fetch_json_value("nuke.php", query, vec![]).await?;
         return Ok(PostReplyResponse::new());
     }
 
@@ -499,7 +502,7 @@ mod test {
             action: Some(PostReplyAction {
                 operation: PostReplyAction_Operation::QUOTE,
                 post_id: Some(PostId {
-                    tid: "27455825".to_owned(),
+                    tid: "45150945".to_owned(),
                     pid: "0".to_owned(),
                     ..Default::default()
                 })
@@ -511,7 +514,7 @@ mod test {
         })
         .await?;
 
-        assert!(response.get_content().contains("[quote][tid=27455825]"));
+        assert!(response.get_content().contains("[quote][tid=45150945]"));
 
         Ok(())
     }
