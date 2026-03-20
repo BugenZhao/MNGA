@@ -90,8 +90,8 @@ fn extract_forum_json(value: &Value) -> Option<Forum> {
     let icon_id = json_string(value, "id")
         .or_else(|| json_string(value, "fid"))
         .unwrap_or_default();
-    let fid = json_string(value, "fid").map(make_fid).flatten();
-    let stid = json_string(value, "stid").map(make_stid).flatten();
+    let fid = json_string(value, "fid").and_then(make_fid);
+    let stid = json_string(value, "stid").and_then(make_stid);
 
     Some(Forum {
         id: stid.or(fid).into(),
@@ -167,7 +167,7 @@ pub async fn set_subforum_filter(
         SubforumFilterRequest_Operation::SHOW => "del",
         SubforumFilterRequest_Operation::BLOCK => "add",
     };
-    let _package = fetch_package(
+    let _value = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "user_option"),
@@ -244,7 +244,7 @@ pub async fn modify_favorite_forum(
         ));
     };
 
-    let _package = fetch_package(
+    let _value = fetch_json_value(
         "nuke.php",
         vec![("__lib", "forum_favor2"), ("__act", "forum_favor")],
         vec![("action", action), ("fid", &id)],

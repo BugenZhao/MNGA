@@ -4,8 +4,8 @@ use crate::{
 };
 use chrono::{DateTime, FixedOffset, Utc};
 use protos::DataModel::ErrorMessage;
-use std::collections::HashMap;
 use serde_json::Value;
+use std::collections::HashMap;
 use sxd_document::Package;
 use sxd_xpath::{Context, Factory, XPath, nodeset::Node};
 use uuid::Uuid;
@@ -37,11 +37,7 @@ pub fn json_value_to_string(value: &Value) -> Option<String> {
         Value::Null => Some(String::new()),
         Value::String(s) => Some(s.clone()),
         Value::Number(n) => Some(n.to_string()),
-        Value::Bool(b) => Some(if *b {
-            "1".to_owned()
-        } else {
-            "0".to_owned()
-        }),
+        Value::Bool(b) => Some(if *b { "1".to_owned() } else { "0".to_owned() }),
         _ => None,
     }
 }
@@ -51,7 +47,10 @@ pub fn json_field<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
 }
 
 pub fn json_object_values(value: &Value) -> impl Iterator<Item = &Value> + '_ {
-    value.as_object().into_iter().flat_map(|object| object.values())
+    value
+        .as_object()
+        .into_iter()
+        .flat_map(|object| object.values())
 }
 
 pub fn json_string(value: &Value, key: &str) -> Option<String> {
@@ -85,9 +84,9 @@ pub fn json_bool(value: &Value, key: &str) -> Option<bool> {
     json_field(value, key).and_then(|v| {
         v.as_bool().or_else(|| {
             v.as_u64().map(|n| n != 0).or_else(|| {
-                v.as_i64().map(|n| n != 0).or_else(|| {
-                    v.as_str().map(|s| !s.is_empty() && s != "0")
-                })
+                v.as_i64()
+                    .map(|n| n != 0)
+                    .or_else(|| v.as_str().map(|s| !s.is_empty() && s != "0"))
             })
         })
     })

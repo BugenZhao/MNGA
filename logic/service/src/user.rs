@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{
     auth,
     error::{ServiceError, ServiceResult},
-    fetch::{fetch_json_value, fetch_package},
+    fetch::fetch_json_value,
     utils::{extract_kv, json_bool, json_i64, json_string, json_u32, json_u64},
 };
 use dashmap::DashMap;
@@ -151,15 +151,16 @@ fn extract_user(node: Node, remote: bool) -> Option<User> {
     Some(user)
 }
 
-fn extract_user_json(value: &Value, remote: bool) -> Option<User> {
+pub(crate) fn extract_user_json(value: &Value, remote: bool) -> Option<User> {
     static MUTE_BUFF: &str = "105";
 
     let raw_signature = json_string(value, "signature")
         .or_else(|| json_string(value, "sign"))
         .unwrap_or_default();
     let name = extract_user_name(json_string(value, "username")?);
-    let mute = json_bool(value, "mute")
-        .unwrap_or_else(|| json_string(value, "buffs").is_some_and(|buffs| buffs.contains(MUTE_BUFF)));
+    let mute = json_bool(value, "mute").unwrap_or_else(|| {
+        json_string(value, "buffs").is_some_and(|buffs| buffs.contains(MUTE_BUFF))
+    });
 
     Some(User {
         id: json_string(value, "uid")?,
@@ -223,9 +224,7 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
     )
     .await?;
 
-    let mut user = value
-        .get("0")
-        .and_then(|v| extract_user_json(v, true));
+    let mut user = value.get("0").and_then(|v| extract_user_json(v, true));
 
     if let Some(user) = &mut user
         && user.avatar_url.is_empty()
@@ -234,11 +233,7 @@ pub async fn get_remote_user(request: RemoteUserRequest) -> ServiceResult<Remote
             let avatar_value = fetch_json_value(
                 "nuke.php",
                 // Always query avatar with uid instead of user name.
-                vec![
-                    ("__lib", "ucp"),
-                    ("__act", "get_avatar"),
-                    ("uid", &user.id),
-                ],
+                vec![("__lib", "ucp"), ("__act", "get_avatar"), ("uid", &user.id)],
                 vec![],
             )
             .await?;
@@ -263,7 +258,7 @@ pub async fn update_signature(
         return Err(ServiceError::MngaInternal("Not logged in".to_owned()));
     }
 
-    let _package = fetch_package(
+    let _value = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "set_sign"),

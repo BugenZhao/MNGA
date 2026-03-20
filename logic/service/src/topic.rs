@@ -1,7 +1,9 @@
 use crate::{
     constants::FORUM_ICON_PATH,
     error::{ServiceError, ServiceResult},
-    fetch::{self, RetryMode, fetch_json_value, fetch_mock, fetch_package_with_retry, fetch_web_html},
+    fetch::{
+        self, RetryMode, fetch_json_value, fetch_mock, fetch_package_with_retry, fetch_web_html,
+    },
     fetch_package,
     forum::{extract_forum, make_fid, make_minimal_forum, make_stid},
     history::{find_topic_history, insert_topic_history},
@@ -16,8 +18,8 @@ use cache::{CACHE, CacheResult};
 use chrono::Duration;
 use futures::TryFutureExt;
 use protos::{DataModel::*, MockRequest, Service::*, ToValue};
-use std::cmp::Reverse;
 use serde_json::Value;
+use std::cmp::Reverse;
 use sxd_xpath::nodeset::Node;
 
 #[cfg(test)]
@@ -386,7 +388,7 @@ pub async fn modify_favorite_folder(
     };
     form.push(("folder", folder_id));
 
-    let _package = fetch_package(
+    let _value = fetch_json_value(
         "nuke.php",
         vec![("__lib", "topic_favor_v2"), ("__act", act), ("raw", "3")],
         form,
@@ -409,7 +411,7 @@ pub async fn create_favorite_folder(
     let name = request.get_name();
     let opt_value = if request.get_set_default() { "2" } else { "0" };
 
-    let package = fetch_package(
+    let package = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "topic_favor_v2"),
@@ -420,7 +422,9 @@ pub async fn create_favorite_folder(
     )
     .await?;
 
-    let folder_id = extract_string(&package, "/root/data/item[2]")?;
+    let folder_id = json_string(&package, "1")
+        .or_else(|| json_string(&package, "0"))
+        .unwrap_or_default();
 
     Ok(FavoriteFolderCreateResponse {
         folder_id,
@@ -729,7 +733,7 @@ pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavor
     };
     let folder_id = request.get_folder_id();
 
-    let _ = fetch_package(
+    let _value = fetch_json_value(
         "nuke.php",
         vec![("__lib", "topic_favor_v2"), ("__act", act)],
         vec![(tid_key, request.get_topic_id()), ("folder", folder_id)],

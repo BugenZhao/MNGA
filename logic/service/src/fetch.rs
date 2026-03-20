@@ -462,18 +462,52 @@ mod json {
         static ref RE: Regex = Regex::new(r"([{,}]\s*)(\d+)(:)").unwrap();
     }
 
+    fn json_error(value: &serde_json::Value) -> Option<ServiceError> {
+        let error = value.get("error")?.as_object()?;
+
+        let code = error
+            .get("code")
+            .and_then(|v| match v {
+                serde_json::Value::String(s) => Some(s.clone()),
+                serde_json::Value::Number(n) => Some(n.to_string()),
+                _ => None,
+            })
+            .unwrap_or_else(|| "?".to_owned());
+        let info = error
+            .values()
+            .find_map(|v| match v {
+                serde_json::Value::String(s) => Some(s.clone()),
+                serde_json::Value::Number(n) => Some(n.to_string()),
+                _ => None,
+            })
+            .unwrap_or_default();
+
+        Some(ServiceError::Nga(protos::DataModel::ErrorMessage {
+            code,
+            info,
+            ..Default::default()
+        }))
+    }
+
     impl ResponseFormat for serde_json::Value {
         fn query_pairs() -> &'static [(&'static str, &'static str)] {
             &[("__output", "8")]
         }
 
-        fn parse_response(response: String) -> ServiceResult<Self> {
+        fn parse_response(mut response: String) -> ServiceResult<Self> {
+            if response.contains('\t') {
+                response = response.replace('\t', "\\t");
+            }
+
             let mut value = serde_json::from_str::<serde_json::Value>(&response).or_else(|_| {
                 let fixed_response = RE.replace_all(&response, r#"$1"$2"$3"#);
                 #[cfg(test)]
                 println!("fixed json: {}", fixed_response);
                 serde_json::from_str(&fixed_response)
             })?;
+            if let Some(error) = json_error(&value) {
+                return Err(error);
+            }
             let value = value["data"].take();
             Ok(value)
         }
