@@ -4,7 +4,8 @@ use crate::{
 };
 use chrono::{DateTime, FixedOffset, Utc};
 use protos::DataModel::ErrorMessage;
-use std::collections::HashMap;
+use serde_json::Value;
+use std::{borrow::Cow, collections::HashMap};
 use sxd_document::Package;
 use sxd_xpath::{Context, Factory, XPath, nodeset::Node};
 use uuid::Uuid;
@@ -29,6 +30,132 @@ pub fn extract_kv_pairs(node: Node<'_>) -> Vec<(&str, String)> {
         // fixme: filter element?
         .map(|n| (n.expanded_name().unwrap().local_part(), n.string_value()))
         .collect::<Vec<_>>()
+}
+
+pub fn json_value_to_string(value: &Value) -> Option<String> {
+    match value {
+        Value::Null => Some(String::new()),
+        Value::String(s) => Some(s.clone()),
+        Value::Number(n) => Some(n.to_string()),
+        Value::Bool(b) => Some(if *b { "1".to_owned() } else { "0".to_owned() }),
+        _ => None,
+    }
+}
+
+pub fn json_field<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
+    value.as_object()?.get(key)
+}
+
+pub fn json_object_values(value: &Value) -> impl Iterator<Item = &Value> + '_ {
+    value
+        .as_object()
+        .into_iter()
+        .flat_map(|object| object.values())
+}
+
+pub fn json_string(value: &Value, key: &str) -> Option<String> {
+    json_field(value, key).and_then(json_value_to_string)
+}
+
+pub fn json_u32(value: &Value, key: &str) -> Option<u32> {
+    json_field(value, key).and_then(|v| {
+        v.as_u64()
+            .and_then(|n| u32::try_from(n).ok())
+            .or_else(|| v.as_str().and_then(|s| s.parse::<u32>().ok()))
+    })
+}
+
+pub fn json_u64(value: &Value, key: &str) -> Option<u64> {
+    json_field(value, key).and_then(|v| {
+        v.as_u64()
+            .or_else(|| v.as_str().and_then(|s| s.parse::<u64>().ok()))
+    })
+}
+
+pub fn json_i64(value: &Value, key: &str) -> Option<i64> {
+    json_field(value, key).and_then(|v| {
+        v.as_i64()
+            .or_else(|| v.as_u64().and_then(|n| i64::try_from(n).ok()))
+            .or_else(|| v.as_str().and_then(|s| s.parse::<i64>().ok()))
+    })
+}
+
+pub fn json_bool(value: &Value, key: &str) -> Option<bool> {
+    json_field(value, key).and_then(|v| {
+        v.as_bool().or_else(|| {
+            v.as_u64().map(|n| n != 0).or_else(|| {
+                v.as_i64()
+                    .map(|n| n != 0)
+                    .or_else(|| v.as_str().map(|s| !s.is_empty() && s != "0"))
+            })
+        })
+    })
+}
+
+pub fn sanitize_json_control_chars_in_strings(response: &str) -> Cow<'_, str> {
+    let mut escaped = false;
+    let mut in_string = false;
+    let mut sanitized = String::with_capacity(response.len());
+    let mut changed = false;
+
+    for c in response.chars() {
+        if !in_string {
+            if c == '"' {
+                in_string = true;
+            }
+            sanitized.push(c);
+            continue;
+        }
+
+        if escaped {
+            escaped = false;
+            sanitized.push(c);
+            continue;
+        }
+
+        match c {
+            '\\' => {
+                escaped = true;
+                sanitized.push(c);
+            }
+            '"' => {
+                in_string = false;
+                sanitized.push(c);
+            }
+            '\u{08}' => {
+                changed = true;
+                sanitized.push_str("\\b");
+            }
+            '\t' => {
+                changed = true;
+                sanitized.push_str("\\t");
+            }
+            '\n' => {
+                changed = true;
+                sanitized.push_str("\\n");
+            }
+            '\u{0C}' => {
+                changed = true;
+                sanitized.push_str("\\f");
+            }
+            '\r' => {
+                changed = true;
+                sanitized.push_str("\\r");
+            }
+            '\u{0000}'..='\u{001F}' => {
+                changed = true;
+                let escaped = format!("\\u{:04x}", c as u32);
+                sanitized.push_str(&escaped);
+            }
+            _ => sanitized.push(c),
+        }
+    }
+
+    if changed {
+        Cow::Owned(sanitized)
+    } else {
+        Cow::Borrowed(response)
+    }
 }
 
 pub fn extract_nodes<T, F>(package: &Package, xpath: &str, f: F) -> ServiceResult<Vec<T>>
@@ -189,4 +316,20 @@ pub fn server_now() -> DateTime<FixedOffset> {
 #[inline]
 pub fn server_today_string() -> String {
     server_now().format("%Y-%m-%d").to_string()
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_sanitize_control_chars_in_json_strings() {
+        let input = "{\"data\":{\"message\":\"a\tb\nc\r\nd\",\"escaped\":\"x\\\\ty\",\"n\":1}}";
+        let sanitized = sanitize_json_control_chars_in_strings(input);
+
+        assert_eq!(
+            sanitized,
+            "{\"data\":{\"message\":\"a\\tb\\nc\\r\\nd\",\"escaped\":\"x\\\\ty\",\"n\":1}}"
+        );
+    }
 }

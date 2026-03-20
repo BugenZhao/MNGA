@@ -14,7 +14,7 @@ use crate::{
     },
     error::{ServiceError, ServiceResult},
     request,
-    utils::extract_error,
+    utils::{extract_error, sanitize_json_control_chars_in_strings},
 };
 use dashmap::DashMap;
 use itertools::Itertools;
@@ -462,18 +462,52 @@ mod json {
         static ref RE: Regex = Regex::new(r"([{,}]\s*)(\d+)(:)").unwrap();
     }
 
+    fn json_error(value: &serde_json::Value) -> Option<ServiceError> {
+        let error = value.get("error")?.as_object()?;
+
+        let code = error
+            .get("code")
+            .and_then(|v| match v {
+                serde_json::Value::String(s) => Some(s.clone()),
+                serde_json::Value::Number(n) => Some(n.to_string()),
+                _ => None,
+            })
+            .unwrap_or_else(|| "?".to_owned());
+        let info = error
+            .iter()
+            .filter(|(k, _)| *k != "code")
+            .map(|(_, v)| v)
+            .find_map(|v| match v {
+                serde_json::Value::String(s) => Some(s.clone()),
+                serde_json::Value::Number(n) => Some(n.to_string()),
+                _ => None,
+            })
+            .unwrap_or_default();
+
+        Some(ServiceError::Nga(protos::DataModel::ErrorMessage {
+            code,
+            info,
+            ..Default::default()
+        }))
+    }
+
     impl ResponseFormat for serde_json::Value {
         fn query_pairs() -> &'static [(&'static str, &'static str)] {
             &[("__output", "8")]
         }
 
         fn parse_response(response: String) -> ServiceResult<Self> {
+            let response = sanitize_json_control_chars_in_strings(&response);
+
             let mut value = serde_json::from_str::<serde_json::Value>(&response).or_else(|_| {
                 let fixed_response = RE.replace_all(&response, r#"$1"$2"$3"#);
                 #[cfg(test)]
                 println!("fixed json: {}", fixed_response);
                 serde_json::from_str(&fixed_response)
             })?;
+            if let Some(error) = json_error(&value) {
+                return Err(error);
+            }
             let value = value["data"].take();
             Ok(value)
         }
@@ -490,12 +524,41 @@ mod json {
     #[cfg(test)]
     mod test {
         use super::*;
+        use crate::error::ServiceError;
 
         #[test]
         fn test_int_key() {
             let s = r#"{"data": { 1: "233", 2: "233" }}"#.to_owned();
             let v = serde_json::Value::parse_response(s).unwrap();
             println!("{:#?}", v);
+        }
+
+        #[test]
+        fn test_parse_json_error_without_code() {
+            let s = r#"{"error":{"0":"找不到用户"},"time":1774012796}"#.to_owned();
+            let err = serde_json::Value::parse_response(s).unwrap_err();
+
+            match err {
+                ServiceError::Nga(e) => {
+                    assert_eq!(e.code, "?");
+                    assert_eq!(e.info, "找不到用户");
+                }
+                other => panic!("unexpected error: {other:?}"),
+            }
+        }
+
+        #[test]
+        fn test_parse_json_error_with_code() {
+            let s = r#"{"error":{"code":403,"0":"帖子不存在"},"time":1774012796}"#.to_owned();
+            let err = serde_json::Value::parse_response(s).unwrap_err();
+
+            match err {
+                ServiceError::Nga(e) => {
+                    assert_eq!(e.code, "403");
+                    assert_eq!(e.info, "帖子不存在");
+                }
+                other => panic!("unexpected error: {other:?}"),
+            }
         }
     }
 }

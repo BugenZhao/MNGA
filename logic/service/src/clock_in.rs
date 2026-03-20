@@ -2,7 +2,7 @@ use cache::CACHE;
 use protos::Service::{ClockInRequest, ClockInResponse};
 
 use crate::{
-    auth::current_uid, error::ServiceResult, fetch::fetch_package, utils::server_today_string,
+    auth::current_uid, error::ServiceResult, fetch::fetch_json_value, utils::server_today_string,
 };
 
 fn clock_in_key() -> String {
@@ -23,7 +23,7 @@ pub async fn clock_in(_request: ClockInRequest) -> ServiceResult<ClockInResponse
     };
 
     if !clocked_in_today()? {
-        let _package = fetch_package(
+        let _value = fetch_json_value(
             "nuke.php",
             vec![("__lib", "check_in"), ("__act", "check_in")],
             vec![],

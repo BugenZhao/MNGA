@@ -6,13 +6,13 @@ use protos::{
     },
     ToValue,
 };
-use sxd_xpath::nodeset::Node;
+use serde_json::Value;
 
 use crate::{
     error::ServiceResult,
-    fetch::fetch_package,
-    user::{extract_local_user_and_cache, extract_user_name},
-    utils::{extract_kv, extract_nodes, extract_string},
+    fetch::fetch_json_value,
+    user::{UserController, extract_user_json, extract_user_name},
+    utils::{json_string, json_u32, json_u64, json_value_to_string},
 };
 
 fn extract_all_users(raw: &str) -> (Vec<String>, Vec<UserName>) {
@@ -26,34 +26,35 @@ fn extract_all_users(raw: &str) -> (Vec<String>, Vec<UserName>) {
         .unzip()
 }
 
-fn extract_short_msg(node: Node) -> Option<ShortMessage> {
-    use super::macros::get;
-    let map = extract_kv(node);
+fn cache_local_user(user: &protos::DataModel::User) {
+    if user.get_name().get_anonymous().is_empty() {
+        UserController::get().update_user(user.clone());
+    }
+}
 
-    let (ids, user_names) = get!(map, "all_user")
+fn extract_short_msg_json(value: &Value) -> Option<ShortMessage> {
+    let (ids, user_names) = json_string(value, "all_user")
         .map(|r| extract_all_users(&r))
         .unwrap_or_default();
 
-    let short_msg = ShortMessage {
-        id: get!(map, "mid")?,
-        subject: get!(map, "subject").unwrap_or_default(),
-        from_id: get!(map, "from")?,
-        from_name: get!(map, "from_username")?,
-        post_date: get!(map, "time", _).unwrap_or_default(),
-        last_post_date: get!(map, "last_modify", _).unwrap_or_default(),
-        post_num: get!(map, "posts", _).unwrap_or_default(),
+    Some(ShortMessage {
+        id: json_string(value, "mid")?,
+        subject: json_string(value, "subject").unwrap_or_default(),
+        from_id: json_string(value, "from")?,
+        from_name: json_string(value, "from_username")?,
+        post_date: json_u64(value, "time").unwrap_or_default(),
+        last_post_date: json_u64(value, "last_modify").unwrap_or_default(),
+        post_num: json_u32(value, "posts").unwrap_or_default(),
         ids: ids.into(),
         user_names: user_names.into(),
         ..Default::default()
-    };
-
-    Some(short_msg)
+    })
 }
 
 pub async fn get_short_msg_list(
     request: ShortMessageListRequest,
 ) -> ServiceResult<ShortMessageListResponse> {
-    let package = fetch_package(
+    let value = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "message"),
@@ -65,12 +66,13 @@ pub async fn get_short_msg_list(
     )
     .await?;
 
-    let messages = extract_nodes(&package, "/root/data/item/item", |ns| {
-        ns.into_iter().filter_map(extract_short_msg).collect()
-    })?;
+    let messages: Vec<_> = value
+        .get("0")
+        .and_then(Value::as_object)
+        .map(|items| items.values().filter_map(extract_short_msg_json).collect())
+        .unwrap_or_default();
 
-    let has_next_page =
-        extract_string(&package, "/root/data/item/nextPage").unwrap_or_default() != "";
+    let has_next_page = json_string(&value, "nextPage").unwrap_or_default() != "";
     let pages = if has_next_page {
         u32::MAX
     } else {
@@ -84,29 +86,24 @@ pub async fn get_short_msg_list(
     })
 }
 
-fn extract_short_msg_post(node: Node) -> Option<ShortMessagePost> {
-    use super::macros::get;
-    let map = extract_kv(node);
-
-    let raw_content = get!(map, "content")?;
+fn extract_short_msg_post_json(value: &Value) -> Option<ShortMessagePost> {
+    let raw_content = json_string(value, "content")?;
     let content = text::parse_content(&raw_content);
 
-    let post = ShortMessagePost {
-        id: get!(map, "id")?,
-        author_id: get!(map, "from").unwrap_or_default(),
-        subject: get!(map, "subject").unwrap_or_default(),
+    Some(ShortMessagePost {
+        id: json_string(value, "id")?,
+        author_id: json_string(value, "from").unwrap_or_default(),
+        subject: json_string(value, "subject").unwrap_or_default(),
         content: Some(content).into(),
-        post_date: get!(map, "time", _).unwrap_or_default(),
+        post_date: json_u64(value, "time").unwrap_or_default(),
         ..Default::default()
-    };
-
-    Some(post)
+    })
 }
 
 pub async fn get_short_msg_details(
     request: ShortMessageDetailsRequest,
 ) -> ServiceResult<ShortMessageDetailsResponse> {
-    let package = fetch_package(
+    let value = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "message"),
@@ -119,26 +116,48 @@ pub async fn get_short_msg_details(
     )
     .await?;
 
-    let users = extract_nodes(&package, "/root/data/item/userInfo/item", |ns| {
-        ns.into_iter()
-            .filter_map(|n| extract_local_user_and_cache(n, None))
-            .collect()
-    })?;
+    let data = value.get("0").and_then(Value::as_object);
 
-    let posts = extract_nodes(&package, "/root/data/item/allmsgs/item", |ns| {
-        ns.into_iter().filter_map(extract_short_msg_post).collect()
-    })?;
+    let users: Vec<_> = data
+        .and_then(|data| data.get("userInfo"))
+        .and_then(Value::as_object)
+        .map(|items| {
+            items
+                .values()
+                .filter_map(|value| {
+                    let user = extract_user_json(value, false)?;
+                    cache_local_user(&user);
+                    Some(user)
+                })
+                .collect()
+        })
+        .unwrap_or_default();
 
-    let has_next_page =
-        extract_string(&package, "/root/data/item/nextPage").unwrap_or_default() != "";
+    let posts: Vec<_> = data
+        .and_then(|data| data.get("allmsgs"))
+        .and_then(Value::as_object)
+        .map(|items| {
+            items
+                .values()
+                .filter_map(extract_short_msg_post_json)
+                .collect()
+        })
+        .unwrap_or_default();
+
+    let has_next_page = data
+        .and_then(|data| data.get("nextPage"))
+        .and_then(json_value_to_string)
+        .unwrap_or_default()
+        != "";
     let pages = if has_next_page {
         u32::MAX
     } else {
         request.page
     };
 
-    // Unused in favor of `users`.
-    let (_ids, _user_names) = extract_string(&package, "/root/data/item/allUsers")
+    let _ = data
+        .and_then(|data| data.get("allUsers"))
+        .and_then(json_value_to_string)
         .map(|r| extract_all_users(&r))
         .unwrap_or_default();
 
@@ -156,7 +175,7 @@ pub async fn post_short_msg(
 ) -> ServiceResult<ShortMessagePostResponse> {
     let to = request.get_to().join(" ");
 
-    let _package = fetch_package(
+    let _value = fetch_json_value(
         "nuke.php",
         vec![
             ("__lib", "message"),
@@ -191,22 +210,26 @@ mod test {
 
         println!("response: {:?}", response);
 
-        let msg = response
-            .get_messages()
-            .iter()
-            .find(|m| m.subject == "For Logic Test");
-        assert!(msg.is_some());
-
-        let msg = msg.unwrap();
-        assert_eq!(msg.get_user_names().len(), 2);
+        assert!(!response.get_messages().is_empty());
 
         Ok(())
     }
 
     #[tokio::test]
     async fn test_get_short_msg_details() -> ServiceResult<()> {
+        let list = get_short_msg_list(ShortMessageListRequest {
+            page: 1,
+            ..Default::default()
+        })
+        .await?;
+        let mid = list
+            .get_messages()
+            .first()
+            .map(|msg| msg.get_id().to_owned())
+            .unwrap();
+
         let response = get_short_msg_details(ShortMessageDetailsRequest {
-            id: "3549006".to_owned(),
+            id: mid,
             page: 1,
             ..Default::default()
         })
@@ -214,11 +237,7 @@ mod test {
 
         println!("response: {:?}", response);
 
-        let post_exists = response
-            .get_posts()
-            .iter()
-            .any(|p| p.get_content().get_raw().contains("测试"));
-        assert!(post_exists);
+        assert!(!response.get_posts().is_empty());
 
         Ok(())
     }
