@@ -17,47 +17,6 @@
   <meta name="twitter:title" content="MNGA 支持与反馈" />
   <meta name="twitter:description" content="MNGA 的用户支持、联系方式与常见问题（FAQ）。" />
 
-  <!-- JSON-LD (FAQ schema for better search / optional) -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"FAQPage",
-    "mainEntity":[
-      {
-        "@type":"Question",
-        "name":"打开帖子时出现“XML 解析错误”怎么办？",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"这是由于 NGA 官方接口的封锁导致。请在 MNGA 设置中开启「封禁时自动访问网页版」，或更新至最新版本；更多说明见 GitHub 讨论 #104。"
-        }
-      },
-      {
-        "@type":"Question",
-        "name":"如何刷新帖子内容或列表？",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"点按屏幕最上方回到页面顶部后下拉刷新，或在右上角菜单中使用“刷新”。"
-        }
-      },
-      {
-        "@type":"Question",
-        "name":"字体太小/太大怎么办？",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"在 设置 → 话题内容样式 中选择“更大字体”。也可在 iOS 控制中心添加“文字大小”控制，单独调整 MNGA 字体。"
-        }
-      },
-      {
-        "@type":"Question",
-        "name":"网络报错 / 无法加载？",
-        "acceptedAnswer":{
-          "@type":"Answer",
-          "text":"请在 设置 → 后端 中更换域名。若开启了去广告服务，可能导致部分请求失败，建议临时关闭后再试。"
-        }
-      }
-    ]
-  }
-  </script>
 
   <style>
     :root { --bg:#0b0c0f; --card:#12141a; --text:#e7e9ee; --muted:#a6adbb; --link:#7aa2ff; --accent:#5ee1a9; }
@@ -118,14 +77,9 @@
       <h2 id="faq">常见问题（FAQ）</h2>
 
       <details>
-        <summary>打开帖子时出现“XML 解析错误”怎么办？</summary>
-        <p>这是由于 NGA 官方接口的封锁导致。请在 MNGA 设置中开启 <strong>「封禁时自动访问网页版」</strong>，或更新至最新版本。更多说明见
-          <a href="https://github.com/BugenZhao/MNGA/issues/104">GitHub 讨论 #104</a>。</p>
-      </details>
-
-      <details>
-        <summary>如何刷新帖子内容或列表？</summary>
-        <p>点按屏幕最上方回到页面顶部后下拉刷新，或在右上角菜单中使用「刷新」。</p>
+        <summary>打开帖子时出现“403 Forbidden”怎么办？</summary>
+        <p>这是由于官方接口变更所致。请更新到 <strong>MNGA v2.2.2</strong> 或更高版本，并通过
+          <a href="https://apps.apple.com/cn/app/mnga/id1586461246?l=zh">App Store</a> 获取最新版本。</p>
       </details>
 
       <details>
