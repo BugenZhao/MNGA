@@ -209,6 +209,13 @@ struct PreferencesInnerView: View {
       Text("Modern").tag(true)
     }.disableWithPlusCheck(.customAppearance)
 
+    if UIScreen.main.maximumFramesPerSecond > 60 {
+      Toggle(isOn: $pref.forceProMotionDisplayLink) {
+        Label("Prefer High Refresh Rate", systemImage: "bolt.fill")
+      }
+      .onChange(of: pref.forceProMotionDisplayLink) { ProMotionDisplayLink.shared.setEnabled($1) }
+    }
+
     if UserInterfaceIdiom.current == .phone {
       Toggle(isOn: $pref.alwaysPortraitOnPhone) {
         Label("Lock Screen Rotation", systemImage: "iphone")

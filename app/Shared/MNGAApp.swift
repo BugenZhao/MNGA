@@ -13,9 +13,7 @@ import TipKit
 struct MNGAApp: App {
   @ObserveInjection var forceRedraw
 
-  #if os(iOS)
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-  #endif
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
   @StateObject var prefs = PreferencesStorage()
   @StateObject var networkMonitor = NetworkMonitor()
@@ -23,6 +21,7 @@ struct MNGAApp: App {
   init() {
     logger.info("MNGA Init")
     logicInitialConfigure()
+    ProMotionDisplayLink.shared.setEnabled(prefs.forceProMotionDisplayLink)
 
     #if DEBUG
       if prefs.debugResetTips, (try? Tips.resetDatastore()) != nil {
@@ -50,6 +49,7 @@ struct MNGAApp: App {
       ContentView()
         .onChange(of: prefs.themeColor) { setupColor() }
         .onChange(of: prefs.alwaysPortraitOnPhone) { AppInterfaceOrientation.applyCurrentPreference() }
+        .onChange(of: prefs.forceProMotionDisplayLink) { ProMotionDisplayLink.shared.setEnabled($1) }
         .onAppear { setupColor() }
         .onAppear { AppInterfaceOrientation.applyCurrentPreference() }
         .environment(\.whatsNew, MNGAWhatsNew.environment)
