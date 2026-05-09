@@ -137,6 +137,35 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
       primaryAction: .continue,
       secondaryAction: .checkOutPlus,
     )
+
+    WhatsNew(
+      version: "2.3",
+      title: whatsNewTitle(version: "2.3"),
+      features: [
+        .init(
+          image: .init(systemName: "photo"),
+          title: "截图分享回归",
+          subtitle: "话题、单楼都能一键生成分享图，带上 MNGA 标识和二维码，安利起来更像样。",
+        ),
+        .init(
+          image: .init(systemName: "quote.bubble"),
+          title: "回复关系更清楚",
+          subtitle: "引用内容可直接展开预览，回复链、查看被回复、定位原楼层都更顺手。",
+        ),
+        .init(
+          image: .init(systemName: "bolt.fill"),
+          title: "刷帖更跟手",
+          subtitle: "ProMotion 设备可选择高刷新率优先，iPhone 也能锁定竖屏，躺着看帖更安分。",
+        ),
+        .init(
+          image: .init(systemName: "checklist.checked"),
+          title: "阅读体验持续打磨",
+          subtitle: "新增加载最新回复，优化列表、时间、附件、表情和引用渲染，并修复多项导航与内容解析问题。",
+        ),
+      ],
+      primaryAction: .continue,
+      secondaryAction: .checkOutPlus,
+    )
   }
 
   static let environment = WhatsNewEnvironment(
