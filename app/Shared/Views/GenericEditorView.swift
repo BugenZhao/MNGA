@@ -191,7 +191,7 @@ struct GenericEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
   var body: some View {
     NavigationView {
       GenericEditorViewInner<T, M>()
-    }.modifier(PaywallSheetModifier())
+    }
   }
 }
 

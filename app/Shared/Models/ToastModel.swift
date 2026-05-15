@@ -13,7 +13,6 @@ import SwiftUI
 class ToastModel: ObservableObject {
   static let hud = ToastModel()
   static let banner = ToastModel()
-  static let alert = ToastModel()
   static let editorAlert = ToastModel()
 
   enum Message {
@@ -25,7 +24,6 @@ class ToastModel: ObservableObject {
     case clockIn(String)
     case openURL(URL)
     case autoRefreshed
-    case requirePlus(PlusFeature)
   }
 
   @Published var message: Message? = nil
@@ -41,7 +39,6 @@ class ToastModel: ObservableObject {
           case .error:
             HapticUtils.play(type: .error)
           case .notification,
-               .requirePlus,
                .cacheLoaded:
             HapticUtils.play(type: .warning)
           default:
@@ -63,8 +60,6 @@ class ToastModel: ObservableObject {
          .autoRefreshed,
          .openURL:
       ToastModel.hud.message = message
-    case .requirePlus:
-      ToastModel.alert.message = message
     case .none:
       break
     }
@@ -91,8 +86,6 @@ extension ToastModel.Message {
       AlertToast(displayMode: displayMode, type: .complete(.accentColor), title: "Navigated to Link".localized, subTitle: url.absoluteString)
     case .autoRefreshed:
       AlertToast(displayMode: displayMode, type: .systemImage("checkmark.arrow.trianglehead.clockwise", .accentColor), title: "Auto Refreshed".localized, subTitle: nil)
-    case let .requirePlus(feature):
-      AlertToast(displayMode: displayMode, type: .regular, title: String(format: "\"%@\" is a Plus feature".localized, feature.name.localized), subTitle: "Tap to unlock MNGA Plus to access this feature".localized, style: .style(backgroundColor: .accentColor.opacity(0.4)))
     }
   }
 }

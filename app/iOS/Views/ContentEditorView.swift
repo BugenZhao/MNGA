@@ -119,7 +119,6 @@ struct ContentEditorView<T: TaskProtocol, M: GenericPostModel<T>>: View {
             Toggle(isOn: $context.anonymous ?? false) {
               Label("Anonymous", systemImage: "theatermasks")
             }.tint(.accentColor)
-              .disableWithPlusCheck(.anonymous)
           }
         }
       }

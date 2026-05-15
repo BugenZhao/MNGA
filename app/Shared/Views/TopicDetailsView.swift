@@ -69,7 +69,6 @@ struct TopicFavorMenuView: View {
     let binding = Binding(
       get: { isFavored },
       set: { _ in
-        guard folder.isDefault || checkPlus(.multiFavorite) else { return }
         Task { await setFavor(isFavored ? .delete : .add, folderID: folder.id) }
       },
     )
@@ -396,7 +395,7 @@ struct TopicDetailsView: View {
     if !mock {
       TopicFavorMenuView(
         topic: $topic,
-        showingCreateFolderAlert: $showingCreateFolderAlert.withPlusCheck(.multiFavorite),
+        showingCreateFolderAlert: $showingCreateFolderAlert,
         newFolderName: $newFolderName,
       )
     }
@@ -405,7 +404,7 @@ struct TopicDetailsView: View {
   @ViewBuilder
   var jumpButton: some View {
     if !mock, onlyPost.id == nil {
-      Button(action: { withPlusCheck(.jump) { showJumpSelector = true } }) {
+      Button(action: { showJumpSelector = true }) {
         Label("Jump to...", systemImage: "arrow.up.arrow.down")
       }
     }
@@ -427,10 +426,10 @@ struct TopicDetailsView: View {
     Menu {
       Section(debugID) {
         if enableAuthorOnly {
-          Button(action: { withPlusCheck(.authorOnly) {
+          Button(action: {
             action.navigateToAuthorOnly =
               topic.authorName.isAnonymous ? .anonymous(nil) : .uid(topic.authorID)
-          } }) {
+          }) {
             Label("Author Only", systemImage: "person")
           }
         }

@@ -30,15 +30,6 @@ extension WhatsNew.PrimaryAction {
   }
 }
 
-extension WhatsNew.SecondaryAction {
-  static var checkOutPlus: Self {
-    .init(
-      title: "Check out Plus".localizedWNText,
-      action: .present(PlusSheetView().eraseToAnyView()),
-    )
-  }
-}
-
 extension String {
   var localizedWNText: WhatsNew.Text {
     .init(localized)
@@ -70,14 +61,8 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
           title: "大量修复与改进",
           subtitle: "50 余项 Bug 修复与体验改进，采用 iOS 26 最新 API，使用体验更加稳定丝滑。",
         ),
-        .init(
-          image: .init(systemName: "sparkles"),
-          title: "Plus 计划全新上线",
-          subtitle: "MNGA Plus 不仅为您解锁更完整的体验，更是我们持续改进和长期维护 MNGA 的唯一动力。",
-        ),
       ],
       primaryAction: .continue,
-      secondaryAction: .checkOutPlus,
     )
 
     WhatsNew(
@@ -106,7 +91,6 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
         ),
       ],
       primaryAction: .continue,
-      secondaryAction: .checkOutPlus,
     )
 
     WhatsNew(
@@ -135,7 +119,6 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
         ),
       ],
       primaryAction: .continue,
-      secondaryAction: .checkOutPlus,
     )
 
     WhatsNew(
@@ -164,7 +147,6 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
         ),
       ],
       primaryAction: .continue,
-      secondaryAction: .checkOutPlus,
     )
   }
 

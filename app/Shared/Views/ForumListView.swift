@@ -11,7 +11,6 @@ import SwiftUIX
 
 struct ForumListView: View {
   @EnvironmentObject var schemes: SchemesModel
-  @EnvironmentObject var paywall: PaywallModel
 
   @StateObject var favorites = FavoriteForumsStorage.shared
   @StateObject var searchModel = GlobalSearchModel()
@@ -85,17 +84,13 @@ struct ForumListView: View {
     .animation(.default, value: favorites.favoriteForums)
   }
 
-  var filteredCategories: [Category] {
-    categories.filter { !(prefs.hideMNGAMeta && $0.id == "mnga") }
-  }
-
   var allForumsSection: some View {
     Group {
       if categories.isEmpty {
         LoadingRowView()
           .task { await loadData() }
       } else {
-        ForEach(filteredCategories, id: \.id) { category in
+        ForEach(categories, id: \.id) { category in
           Section(category.name, isExpanded: isCategoryExpanded(category.id)) {
             ForEach(category.forums, id: \.idDescription) { forum in
               buildNormalLink(forum)
@@ -131,7 +126,7 @@ struct ForumListView: View {
         Label("Edit Favorites", systemImage: "list.star")
       }
 
-      Toggle(isOn: $favorites.useRemoteFavoriteForums.animation().withPlusCheck(.syncForums)) {
+      Toggle(isOn: $favorites.useRemoteFavoriteForums.animation()) {
         Label("Sync Favorites", systemImage: favorites.useRemoteFavoriteForums ? "icloud" : "icloud.slash")
       }
 
@@ -184,21 +179,6 @@ struct ForumListView: View {
     .animation(.default, value: collapsedCategories)
   }
 
-  @ViewBuilder
-  var unlockButton: some View {
-    if UserInterfaceIdiom.current == .phone {
-      Button(action: { paywall.isShowingModal = true }) {
-        Text(paywall.status.tryOrUnlock).bold()
-      }
-      .if(paywall.status.shouldUseProminent) { $0.buttonStyle(.borderedProminent) }
-    } else {
-      Button(action: { paywall.isShowingModal = true }) {
-        Image(systemName: "sparkles")
-          .foregroundColor(.accentColor)
-      }
-    }
-  }
-
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
@@ -209,10 +189,6 @@ struct ForumListView: View {
       )
     }
 
-    if !paywall.status.isPaid {
-      ToolbarItem(placement: .navigationBarTrailing) { unlockButton }
-      MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
-    }
     ToolbarItem(placement: .navigationBarTrailing) { filter }
 
     MaybeBottomBarSearchToolbarItem(asSpacer: false)
@@ -232,13 +208,7 @@ struct ForumListView: View {
   }
 
   var title: String {
-    if paywall.status.isPaid, prefs.showPlusInTitle {
-      "MNGA 𝐏𝐥𝐮𝐬"
-    } else if paywall.isUnlocked {
-      "MNGA"
-    } else {
-      "MNGA Lite"
-    }
+    "MNGA"
   }
 
   var body: some View {

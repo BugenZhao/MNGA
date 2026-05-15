@@ -13,21 +13,15 @@ struct MainToastModifier: ViewModifier {
   @StateObject var notis = NotificationModel.shared
   @StateObject var hud = ToastModel.hud
   @StateObject var banner = ToastModel.banner
-  @StateObject var alert = ToastModel.alert
   @StateObject var editorAlert = ToastModel.editorAlert
-
-  @EnvironmentObject var paywall: PaywallModel
 
   let enableHud: Bool
   let enableBanner: Bool
-  let enableAlert: Bool
   let enableEditorAlert: Bool
 
   init(enableHud: Bool, enableBanner: Bool, enableEditorAlert: Bool) {
     self.enableHud = enableHud
     self.enableBanner = enableBanner
-    // Alert is always enabled for paywall.
-    enableAlert = true
     self.enableEditorAlert = enableEditorAlert
   }
 
@@ -50,13 +44,6 @@ struct MainToastModifier: ViewModifier {
     return nil
   }
 
-  var alertOnTap: (() -> Void)? {
-    if case .requirePlus = alert.message {
-      return { paywall.isShowingModal = true }
-    }
-    return nil
-  }
-
   func body(content: Content) -> some View {
     content
 
@@ -69,11 +56,6 @@ struct MainToastModifier: ViewModifier {
         $0.toast(isPresenting: $banner.message.isNotNil(), duration: 4, tapToDismiss: true, alert: {
           (banner.message ?? .success("")).toastView(for: .banner(.pop))
         })
-      }
-      .if(enableAlert) {
-        $0.toast(isPresenting: $alert.message.isNotNil(), duration: 4, tapToDismiss: alertOnTap == nil, alert: {
-          (alert.message ?? .success("")).toastView(for: .alert)
-        }, onTap: alertOnTap)
       }
       .if(enableEditorAlert) {
         $0.toast(isPresenting: $editorAlert.message.isNotNil(), duration: 3, tapToDismiss: false) {

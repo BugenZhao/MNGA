@@ -128,8 +128,6 @@ struct TopicListView: View {
   }
 
   func newTopic() {
-    guard checkPlus(.newTopic) else { return }
-
     postReply?.show(action: .with {
       $0.operation = .new
       $0.forumID = forum.id
@@ -184,9 +182,9 @@ struct TopicListView: View {
             Text(orderOrDefault.description)
           }
 
-          PlusCheckNavigationLink(destination: HotTopicListView.build(forum: forum), feature: .hotTopic, isDetailLink: false) {
+          NavigationLink(destination: HotTopicListView.build(forum: forum)) {
             Label("Hot Topics", systemImage: "flame")
-          }
+          }.isDetailLink(false)
           NavigationLink(destination: RecommendedTopicListView.build(forum: forum)) {
             Label("Recommended Topics", systemImage: "hand.thumbsup")
           }.isDetailLink(false)

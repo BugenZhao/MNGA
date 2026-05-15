@@ -90,8 +90,6 @@ struct ShortMessageDetailsView: View {
   }
 
   func doReply() {
-    guard checkPlus(.shortMessage) else { return }
-
     postModel.show(action: .with {
       $0.operation = .reply
       $0.mid = mid

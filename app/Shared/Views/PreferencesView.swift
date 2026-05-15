@@ -33,7 +33,7 @@ private struct PostRowAppearanceView: View {
           Text("Vote Up").tag(true)
           Text("Quote").tag(false)
         }
-      }.disableWithPlusCheck(.customAppearance)
+      }
 
       Section {
         Picker(selection: $pref.postRowDateTimeStrategy.animation(), label: Label("Date Display", systemImage: "calendar")) {
@@ -61,7 +61,7 @@ private struct PostRowAppearanceView: View {
             Label("Show User Register Date", systemImage: "calendar")
           }
         }
-      }.disableWithPlusCheck(.customAppearance)
+      }
 
       Section {
         Toggle(isOn: $pref.usePaginatedDetails) {
@@ -78,7 +78,6 @@ private struct PostRowAppearanceView: View {
         Toggle(isOn: $pref.postRowDimImagesInDarkMode) {
           Label("Dim Images in Dark Mode", systemImage: "moon.fill")
         }
-        .disableWithPlusCheck(.customAppearance)
       }
 
     }.pickerStyle(.menu)
@@ -136,44 +135,9 @@ private struct TopicListAppearanceView: View {
 
 struct PreferencesInnerView: View {
   @StateObject var pref = PreferencesStorage.shared
-  @EnvironmentObject var paywall: PaywallModel
-
-  @ViewBuilder
-  var paywallSection: some View {
-    let status = paywall.status
-
-    Section(
-      header: Text("Plus"),
-      footer: Text(status.isPaid ? "Plus Thanks" : "Plus Explanation"),
-    ) {
-      if status.isPaid {
-        NavigationLink(destination: PlusView()) {
-          Label("Plus Unlocked", systemImage: "hands.and.sparkles")
-        }
-        Toggle(isOn: $pref.showPlusInTitle) {
-          Label("Show Plus in Title", systemImage: "sparkle")
-        }
-      } else {
-        NavigationLink(destination: PlusView()) {
-          Label(status.tryOrUnlock, systemImage: "sparkles")
-        }
-      }
-
-      if case let .trial(expiration) = status {
-        Group {
-          if status.trialValid ?? false {
-            Label("Trial ends on \(expiration, format: .dateTime.year().month().day())", systemImage: "calendar")
-          } else {
-            Label("Your Plus trial has expired", systemImage: "calendar")
-          }
-        }.foregroundColor(.secondaryLabel)
-      }
-    }
-  }
 
   @ViewBuilder
   var debug: some View {
-    UnlockStatusDebugPickerView()
     Toggle(isOn: $pref.debugAlwaysShowNotificationBadge) {
       Text("Always Show Notification Badge")
     }
@@ -202,12 +166,12 @@ struct PreferencesInnerView: View {
           .tint(color.color)
           .tag(color)
       }
-    }.disableWithPlusCheck(.customAppearance)
+    }
 
     Picker(selection: $pref.useInsetGroupedModern, label: Label("List Style", systemImage: "list.bullet.rectangle.portrait")) {
       Text("Compact").tag(false)
       Text("Modern").tag(true)
-    }.disableWithPlusCheck(.customAppearance)
+    }
 
     if UIScreen.main.maximumFramesPerSecond > 60 {
       Toggle(isOn: $pref.forceProMotionDisplayLink) {
@@ -227,7 +191,7 @@ struct PreferencesInnerView: View {
   var reading: some View {
     NavigationLink(destination: BlockWordListView()) {
       Label("Block Contents", systemImage: "hand.raised")
-    }.disableWithPlusCheck(.blockContents)
+    }
     NavigationLink(destination: TopicListAppearanceView(pref: pref)) {
       Label("Topic List Style", systemImage: "list.dash")
     }
@@ -241,7 +205,7 @@ struct PreferencesInnerView: View {
       Text("Highest Read Floor").tag(TopicResumeFrom.highest)
     } label: {
       Label("Resume Reading Progress", systemImage: "clock.arrow.circlepath")
-    }.disableWithPlusCheck(.resumeProgress)
+    }
 
     Toggle(isOn: $pref.hideNotificationToolbarShortcut) {
       Label("Hide Notification Shortcut", systemImage: "bell.slash")
@@ -289,9 +253,6 @@ struct PreferencesInnerView: View {
     NavigationLink(destination: CacheView()) {
       Label("Cache Management", systemImage: "internaldrive")
     }
-    Toggle(isOn: $pref.hideMNGAMeta) {
-      Label("Hide MNGA Meta", systemImage: "eye.slash")
-    }
     Toggle(isOn: $pref.autoOpenInBrowserWhenBanned) {
       Label("Auto Open in Browser when Banned", systemImage: "safari")
     }
@@ -321,8 +282,6 @@ struct PreferencesInnerView: View {
 
   var body: some View {
     Form {
-      paywallSection
-
       #if DEBUG
         Section(header: Text("Debug")) { debug }
       #endif
@@ -367,7 +326,6 @@ struct PreferencesView: View {
     NavigationStack {
       PreferencesInnerView()
     }
-    .modifier(PaywallSheetModifier())
     .modifier(MainToastModifier.main())
   }
 }

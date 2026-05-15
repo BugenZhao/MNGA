@@ -31,8 +31,6 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto
   @AppStorage("useInsetGroupedModern") var useInsetGroupedModern = true
-  @AppStorage("hideMNGAMeta") var hideMNGAMeta = false
-  @AppStorage("showPlusInTitle") var showPlusInTitle = false
   @AppStorage("forceProMotionDisplayLink") var forceProMotionDisplayLink = false
   @AppStorage(alwaysPortraitOnPhonePreferenceKey) var alwaysPortraitOnPhone = false
 

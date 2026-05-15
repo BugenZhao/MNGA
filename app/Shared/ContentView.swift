@@ -22,7 +22,6 @@ struct ContentView: View {
   @StateObject var currentUser = CurrentUserModel()
   @StateObject var textSelection = TextSelectionModel()
   @StateObject var schemes = SchemesModel()
-  @StateObject var paywall = PaywallModel.shared
   @StateObject var columnVisibility = ColumnVisibility()
 
   @Environment(\.scenePhase) var scenePhase
@@ -78,7 +77,6 @@ struct ContentView: View {
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
       .onOpenURL { schemes.navigateTo(url: $0) }
-      .onChange(of: scenePhase) { paywall.objectWillChange.send() } // trigger trial validity check
       .modifier(MainToastModifier.main())
       .preferredColorScheme(prefs.colorScheme.scheme)
       .apply {
@@ -105,7 +103,6 @@ struct ContentView: View {
       .environmentObject(userSignaturePost)
       .environmentObject(currentUser)
       .environmentObject(textSelection)
-      .environmentObject(paywall)
       .environmentObject(columnVisibility)
   }
 }
@@ -129,17 +126,7 @@ struct GlobalSheetsModifier: ViewModifier {
       .sheet(isPresented: $userSignaturePost.showEditor) { UserSignatureEditorView() }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
       .sheet(isPresented: $prefs.showing) { PreferencesView() }
-      .modifier(PaywallSheetModifier())
       .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
-  }
-}
-
-struct PaywallSheetModifier: ViewModifier {
-  @EnvironmentObject var paywall: PaywallModel
-
-  func body(content: Content) -> some View {
-    content
-      .sheet(isPresented: $paywall.isShowingModal) { PlusSheetView() }
   }
 }
 

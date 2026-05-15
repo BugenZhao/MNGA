@@ -168,7 +168,7 @@ struct FavoriteTopicListView: View {
       Toggle(isOn:
         Binding(
           get: { currentFolder?.id == folder.id },
-          set: { _ in withPlusCheck(.multiFavorite) { currentFolder = folder } },
+          set: { _ in currentFolder = folder },
         )) {
           Text(folder.name)
           if folder.isDefault {

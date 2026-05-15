@@ -78,11 +78,11 @@ struct UserMenuView: View {
           ForEach(authStorage.allAuthInfos.sorted(by: { $0.uid < $1.uid }), id: \.uid) { info in
             Text(info.cachedName.isEmpty ? info.uid : info.cachedName).tag(info)
           }
-        }.disableWithPlusCheck(.multiAccount)
-          .onChange(of: authStorage.authInfo) { FavoriteFolderModel.shared.reset() }
+        }
+        .onChange(of: authStorage.authInfo) { FavoriteFolderModel.shared.reset() }
       }
 
-      Button(action: { withPlusCheck(.multiAccount) { addUser() } }) {
+      Button(action: { addUser() }) {
         Label("Add Account", systemImage: "person.crop.circle.fill.badge.plus")
       }
       Button(role: .destructive, action: { signOut() }) {
@@ -100,7 +100,7 @@ struct UserMenuView: View {
       if let _ = user {
         Section {
           notificationButton
-          PlusCheckNavigationLink(destination: ShortMessageListView.build(), feature: .shortMessage) {
+          NavigationLink(destination: ShortMessageListView.build()) {
             Label("Short Messages", systemImage: "message")
           }
         }
@@ -114,7 +114,7 @@ struct UserMenuView: View {
             Label("Favorite Topics", systemImage: "bookmark")
           }
         }
-        PlusCheckNavigationLink(destination: TopicHistoryListView.build(), feature: .topicHistory) {
+        NavigationLink(destination: TopicHistoryListView.build()) {
           Label("History", systemImage: "clock")
         }
       }
