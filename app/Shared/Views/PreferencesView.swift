@@ -243,6 +243,10 @@ struct PreferencesInnerView: View {
       Label("Resume Reading Progress", systemImage: "clock.arrow.circlepath")
     }.disableWithPlusCheck(.resumeProgress)
 
+    Toggle(isOn: $pref.topicDetailsCacheFirst) {
+      Label("Open Cached Topics Instantly", systemImage: "bolt")
+    }
+
     Toggle(isOn: $pref.hideNotificationToolbarShortcut) {
       Label("Hide Notification Shortcut", systemImage: "bell.slash")
     }
