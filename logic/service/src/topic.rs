@@ -36,6 +36,10 @@ fn topic_preview_images_key(topic_id: &str) -> String {
     format!("{}/{}", TOPIC_PREVIEW_IMAGES_PREFIX, topic_id)
 }
 
+/// Upper bound of preview image URLs extracted and cached per topic. The client
+/// displays a configurable subset (<= this), so changing the count needs no refetch.
+const MAX_PREVIEW_IMAGES: usize = 9;
+
 pub static TOPIC_DETAILS_PREFIX: &str = "/topic_details_response/topic";
 fn topic_details_response_key(request: &TopicDetailsRequest) -> Option<String> {
     if request.get_post_id().is_empty()
@@ -826,7 +830,9 @@ pub async fn get_topic_preview_images(
     request: TopicPreviewImagesRequest,
 ) -> ServiceResult<TopicPreviewImagesResponse> {
     let topic_id = request.get_topic_id();
-    let limit = 4usize;
+    // Extract a fixed upper bound and cache it; the client decides how many of
+    // these to actually display, so changing the count needs no refetch.
+    let limit = MAX_PREVIEW_IMAGES;
 
     let make_response = |urls: Vec<String>| TopicPreviewImagesResponse {
         topic_id: topic_id.to_owned(),
@@ -918,7 +924,10 @@ mod test {
             .into(),
             ..Default::default()
         };
-        CACHE.insert_msg(&format!("{}/{}/page/1", TOPIC_DETAILS_PREFIX, topic_id), &details)?;
+        CACHE.insert_msg(
+            &format!("{}/{}/page/1", TOPIC_DETAILS_PREFIX, topic_id),
+            &details,
+        )?;
 
         // First call should parse from the details cache and populate the preview cache.
         let first = get_topic_preview_images(TopicPreviewImagesRequest {

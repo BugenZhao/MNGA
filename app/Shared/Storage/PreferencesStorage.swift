@@ -28,6 +28,10 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("topicListShowSearchInBottomBar") var topicListShowSearchInBottombar = true
   @AppStorage("topicListSubjectMulticolor") var topicListSubjectMulticolor = true
   @AppStorage("topicListShowImagePreview") var topicListShowImagePreview = false
+  @AppStorage("searchShowImagePreview") var searchShowImagePreview = false
+  @AppStorage("hotTopicShowImagePreview") var hotTopicShowImagePreview = false
+  @AppStorage("topicListPreviewImageCount") var topicListPreviewImageCount = 4
+  @AppStorage("topicListPreviewImageHeight") var topicListPreviewImageHeight = 60.0
   @AppStorage("hideNotificationToolbarShortcut") var hideNotificationToolbarShortcut = false
   @AppStorage("themeColorNew") var themeColor = ThemeColor.mnga
   @AppStorage("colorScheme") var colorScheme = ColorSchemeMode.auto

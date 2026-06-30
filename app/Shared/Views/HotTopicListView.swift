@@ -16,6 +16,7 @@ struct HotTopicListInnerView: View {
   let range: DateRange
 
   @StateObject var dataSource: DataSource
+  @StateObject private var prefs = PreferencesStorage.shared
 
   static func build(forum: Forum, range: DateRange) -> Self {
     let dataSource = DataSource(
@@ -45,10 +46,11 @@ struct HotTopicListInnerView: View {
         List {
           Section(header: Text(range.description)) {
             SafeForEach($dataSource.items, id: \.id) { topic in
-              TopicRowLinkView(topic: topic)
+              TopicRowLinkView(topic: topic, showImagePreview: prefs.hotTopicShowImagePreview)
             }
           }
         }.mayGroupedListStyle()
+          .fetchTopicPreviewImages(for: $dataSource.items, enabled: prefs.hotTopicShowImagePreview)
       }
     }
     .refreshable(dataSource: dataSource)

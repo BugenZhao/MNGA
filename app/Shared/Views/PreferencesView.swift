@@ -126,8 +126,26 @@ private struct TopicListAppearanceView: View {
         Toggle(isOn: $pref.topicListSubjectMulticolor) {
           Label("Multicolor Subject", systemImage: "paintpalette")
         }
+      }
+
+      Section {
         Toggle(isOn: $pref.topicListShowImagePreview.animation()) {
           Label("Image Preview", systemImage: "photo")
+        }
+        if pref.topicListShowImagePreview {
+          Toggle(isOn: $pref.searchShowImagePreview) {
+            Label("Image Preview in Search", systemImage: "magnifyingglass")
+          }
+          Toggle(isOn: $pref.hotTopicShowImagePreview) {
+            Label("Image Preview in Hot Topics", systemImage: "flame")
+          }
+          Stepper(value: $pref.topicListPreviewImageCount.animation(), in: 1 ... 9) {
+            Label("Preview Image Count: \(pref.topicListPreviewImageCount)", systemImage: "number")
+          }
+          VStack(alignment: .leading) {
+            Label("Preview Image Height: \(Int(pref.topicListPreviewImageHeight))", systemImage: "arrow.up.and.down")
+            Slider(value: $pref.topicListPreviewImageHeight, in: 40 ... 120, step: 5)
+          }
         }
       }
     }.pickerStyle(.menu)

@@ -53,10 +53,6 @@ struct TopicListView: View {
   @State var order: TopicListRequest.Order? = nil
   @State var triggerRefresh = false
 
-  // Topics whose preview images we've already requested this session, so we don't
-  // re-issue a request for the same topic (including ones that have no images).
-  @State private var previewImagesRequestedIDs = Set<String>()
-
   var orderOrDefault: TopicListRequest.Order {
     order ?? prefs.defaultTopicListOrder
   }
@@ -299,7 +295,7 @@ struct TopicListView: View {
     if topic.hasShortcutForum {
       ForumRowLinkView(forum: topic.shortcutForum, asTopicShortcut: topic)
     } else {
-      TopicRowLinkView(topic: $topic, useTopicPostDate: orderOrDefault == .postDate)
+      TopicRowLinkView(topic: $topic, useTopicPostDate: orderOrDefault == .postDate, showImagePreview: prefs.topicListShowImagePreview)
     }
   }
 
@@ -337,6 +333,7 @@ struct TopicListView: View {
     }
     .refreshable(dataSource: dataSource, refreshAfterIdle: true, triggerRefresh: triggerRefresh)
     .mayGroupedListStyle()
+    .fetchTopicPreviewImages(for: itemBindings, enabled: prefs.topicListShowImagePreview)
   }
 
   var body: some View {
@@ -357,10 +354,7 @@ struct TopicListView: View {
     .toolbar { toolbar }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
-    .onChange(of: dataSource.latestResponse) {
-      updateForumMeta($1)
-      fetchPreviewImagesIfNeeded($1)
-    }
+    .onChange(of: dataSource.latestResponse) { updateForumMeta($1) }
   }
 
   var navID: NavigationIdentifier {
@@ -385,32 +379,6 @@ struct TopicListView: View {
     }
   }
 
-  func fetchPreviewImagesIfNeeded(_ r: TopicListResponse?) {
-    guard prefs.topicListShowImagePreview else { return }
-    guard let r else { return }
-
-    for topic in r.topics {
-      // Skip if already has preview images, is a shortcut forum, or we've already
-      // requested it this session (avoids re-requesting topics that have no images).
-      guard topic.previewImageUrls.isEmpty,
-            !topic.hasShortcutForum,
-            !previewImagesRequestedIDs.contains(topic.id)
-      else { continue }
-
-      previewImagesRequestedIDs.insert(topic.id)
-      logicCallAsync(.topicPreviewImages(.with {
-        $0.topicID = topic.id
-      }), errorToastModel: nil) { (response: TopicPreviewImagesResponse) in
-        guard !response.imageUrls.isEmpty else { return }
-        // Find and update the topic in the data source items.
-        if let index = dataSource.items.firstIndex(where: { $0.id == response.topicID }) {
-          withAnimation {
-            dataSource.items[index].previewImageUrls = response.imageUrls
-          }
-        }
-      }
-    }
-  }
 }
 
 struct TopicListView_Previews: PreviewProvider {
