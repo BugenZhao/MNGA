@@ -126,6 +126,9 @@ private struct TopicListAppearanceView: View {
         Toggle(isOn: $pref.topicListSubjectMulticolor) {
           Label("Multicolor Subject", systemImage: "paintpalette")
         }
+        Toggle(isOn: $pref.topicListShowImagePreview.animation()) {
+          Label("Image Preview", systemImage: "photo")
+        }
       }
     }.pickerStyle(.menu)
       .tint(pref.themeColor.color)

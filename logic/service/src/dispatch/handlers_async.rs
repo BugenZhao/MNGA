@@ -14,8 +14,8 @@ use crate::{
     },
     topic::{
         create_favorite_folder, get_favorite_folder_list, get_favorite_topic_list,
-        get_hot_topic_list, get_topic_details, get_topic_list, get_user_topic_list,
-        modify_favorite_folder, search_topic, topic_favor,
+        get_hot_topic_list, get_topic_details, get_topic_list, get_topic_preview_images,
+        get_user_topic_list, modify_favorite_folder, search_topic, topic_favor,
     },
     user::{get_remote_user, update_signature},
 };
@@ -61,3 +61,4 @@ handle!(topic_search, search_topic);
 handle!(clock_in, clock_in);
 handle!(cache, manipulate_cache);
 handle!(user_signature_update, update_signature);
+handle!(topic_preview_images, get_topic_preview_images);

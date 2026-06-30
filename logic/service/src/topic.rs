@@ -49,6 +49,52 @@ fn topic_details_response_key(request: &TopicDetailsRequest) -> Option<String> {
     }
 }
 
+/// Extract up to `limit` image URLs from a PostContent's spans.
+/// Only extracts URLs from `[img]` tags, skipping videos (.mp4).
+pub fn extract_image_urls_from_spans(spans: &[Span], limit: usize) -> Vec<String> {
+    let mut urls = Vec::new();
+    collect_image_urls(spans, &mut urls, limit);
+    urls
+}
+
+fn collect_image_urls(spans: &[Span], urls: &mut Vec<String>, limit: usize) {
+    for span in spans {
+        if urls.len() >= limit {
+            return;
+        }
+        if let Some(Span_oneof_value::tagged(tagged)) = &span.value {
+            if tagged.tag == "img" {
+                // The image URL is the plain text content of the img tag's children.
+                let url_text = extract_plain_text_from_spans(&tagged.spans);
+                let url_text = url_text.trim();
+                if !url_text.is_empty()
+                    && !url_text.ends_with(".mp4")
+                    && !url_text.ends_with(".webm")
+                {
+                    urls.push(url_text.to_owned());
+                }
+            } else {
+                // Recurse into children (e.g. [quote], [b], etc.)
+                collect_image_urls(&tagged.spans, urls, limit);
+            }
+        }
+    }
+}
+
+fn extract_plain_text_from_spans(spans: &[Span]) -> String {
+    let mut text = String::new();
+    for span in spans {
+        match &span.value {
+            Some(Span_oneof_value::plain(plain)) => text.push_str(&plain.text),
+            Some(Span_oneof_value::tagged(tagged)) => {
+                text.push_str(&extract_plain_text_from_spans(&tagged.spans));
+            }
+            _ => {}
+        }
+    }
+    text
+}
+
 fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
     use super::macros::get;
     let map = extract_kv(node);
@@ -767,6 +813,54 @@ pub async fn get_user_topic_list(
     Ok(UserTopicListResponse {
         topics: topics.into(),
         pages,
+        ..Default::default()
+    })
+}
+
+pub async fn get_topic_preview_images(
+    request: TopicPreviewImagesRequest,
+) -> ServiceResult<TopicPreviewImagesResponse> {
+    let topic_id = request.get_topic_id();
+    let limit = 4usize;
+
+    // Try to get from cache first.
+    let cache_key = format!("{}/{}/page/1", TOPIC_DETAILS_PREFIX, topic_id);
+    if let Ok(Some(cached)) = CACHE.get_msg::<TopicDetailsResponse>(&cache_key)
+        && let Some(first_post) = cached.replies.first()
+    {
+        let urls = extract_image_urls_from_spans(first_post.get_content().get_spans(), limit);
+        if !urls.is_empty() {
+            return Ok(TopicPreviewImagesResponse {
+                topic_id: topic_id.to_owned(),
+                image_urls: urls.into(),
+                ..Default::default()
+            });
+        }
+    }
+
+    // Fetch page 1 of the topic to get the first post.
+    let package = fetch_package(
+        "read.php",
+        vec![("tid", topic_id), ("page", "1")],
+        vec![],
+    )
+    .await?;
+
+    let context = &get_unique_id();
+    let replies = extract_nodes(&package, "/root/__R/item", |ns| {
+        ns.into_iter()
+            .filter_map(|n| extract_post(n, 1, context))
+            .collect()
+    })?;
+
+    let urls = replies
+        .first()
+        .map(|post| extract_image_urls_from_spans(post.get_content().get_spans(), limit))
+        .unwrap_or_default();
+
+    Ok(TopicPreviewImagesResponse {
+        topic_id: topic_id.to_owned(),
+        image_urls: urls.into(),
         ..Default::default()
     })
 }

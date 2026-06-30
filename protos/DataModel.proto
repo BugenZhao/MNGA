@@ -49,6 +49,7 @@ message Topic {
   string fid = 14; // The id of the topic's parent forum, mainly used for
                    // uploading attachments.
   Forum shortcut_forum = 19; // If set, then this topic is a shortcut to another forum.
+  repeated string preview_image_urls = 20; // Image URLs from the first post for preview in topic list.
 }
 
 message User {

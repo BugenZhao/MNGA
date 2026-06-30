@@ -126,7 +126,17 @@ message AsyncRequest {
     FavoriteForumListRequest favorite_forum_list = 28;
     // Add or remove a favorite forum (forum_favor2).
     FavoriteForumModifyRequest favorite_forum_modify = 29;
+    // Get preview images for a topic from its first post.
+    TopicPreviewImagesRequest topic_preview_images = 30;
   }
+}
+
+message TopicPreviewImagesRequest {
+  string topic_id = 1;
+}
+message TopicPreviewImagesResponse {
+  string topic_id = 1;
+  repeated string image_urls = 2;
 }
 
 message TopicListRequest {

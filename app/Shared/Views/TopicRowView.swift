@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SDWebImageSwiftUI
 import SwiftUI
 
 struct TopicLikeRowInnerView<S: View>: View {
@@ -14,6 +15,18 @@ struct TopicLikeRowInnerView<S: View>: View {
   let lastNum: UInt32?
   let names: [UserName]
   let date: UInt64
+  let previewImageUrls: [String]
+
+  init(subjectView: @escaping () -> S, num: UInt32, lastNum: UInt32?, names: [UserName], date: UInt64, previewImageUrls: [String] = []) {
+    self.subjectView = subjectView
+    self.num = num
+    self.lastNum = lastNum
+    self.names = names
+    self.date = date
+    self.previewImageUrls = previewImageUrls
+  }
+
+  @StateObject private var prefs = PreferencesStorage.shared
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -21,6 +34,24 @@ struct TopicLikeRowInnerView<S: View>: View {
         subjectView()
         Spacer()
         RepliesNumView(num: num, lastNum: lastNum)
+      }
+
+      if prefs.topicListShowImagePreview, !previewImageUrls.isEmpty {
+        ScrollView(.horizontal, showsIndicators: false) {
+          HStack(spacing: 6) {
+            ForEach(Array(previewImageUrls.prefix(4)), id: \.self) { urlStr in
+              WebImage(url: URL(string: urlStr, relativeTo: URLs.attachmentBase))
+                .resizable()
+                .indicator(.activity)
+                .scaledToFill()
+                .frame(width: 60, height: 60)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+            }
+          }
+        }
+        // The preview strip is decorative: let taps fall through to the row's
+        // NavigationLink so tapping the images (or their row) opens the topic.
+        .allowsHitTesting(false)
       }
 
       DateTimeFooterView(timestamp: date, switchable: false) {
@@ -68,7 +99,7 @@ struct TopicRowView: View {
   }
 
   var body: some View {
-    TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, names: [topic.authorNameCompat], date: useTopicPostDate ? topic.postDate : topic.lastPostDate)
+    TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, names: [topic.authorNameCompat], date: useTopicPostDate ? topic.postDate : topic.lastPostDate, previewImageUrls: Array(topic.previewImageUrls))
   }
 }
 

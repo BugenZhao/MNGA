@@ -353,7 +353,10 @@ struct TopicListView: View {
     .toolbar { toolbar }
     .onChange(of: prefs.defaultTopicListOrder) { if $1 != order { order = $1 } }
     .onAppear { if order == nil { order = prefs.defaultTopicListOrder } }
-    .onChange(of: dataSource.latestResponse) { updateForumMeta($1) }
+    .onChange(of: dataSource.latestResponse) {
+      updateForumMeta($1)
+      fetchPreviewImagesIfNeeded($1)
+    }
   }
 
   var navID: NavigationIdentifier {
@@ -375,6 +378,28 @@ struct TopicListView: View {
       // Could happen if we're accessing an ST.
       // Only set it if their names are different to avoid duplicated display.
       parentForumName = r.forum.name
+    }
+  }
+
+  func fetchPreviewImagesIfNeeded(_ r: TopicListResponse?) {
+    guard prefs.topicListShowImagePreview else { return }
+    guard let r else { return }
+
+    for topic in r.topics {
+      // Skip if already has preview images or is a shortcut forum.
+      guard topic.previewImageUrls.isEmpty, !topic.hasShortcutForum else { continue }
+
+      logicCallAsync(.topicPreviewImages(.with {
+        $0.topicID = topic.id
+      }), errorToastModel: nil) { (response: TopicPreviewImagesResponse) in
+        guard !response.imageUrls.isEmpty else { return }
+        // Find and update the topic in the data source items.
+        if let index = dataSource.items.firstIndex(where: { $0.id == response.topicID }) {
+          withAnimation {
+            dataSource.items[index].previewImageUrls = response.imageUrls
+          }
+        }
+      }
     }
   }
 }
