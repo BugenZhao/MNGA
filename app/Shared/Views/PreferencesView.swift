@@ -144,7 +144,7 @@ private struct TopicListAppearanceView: View {
           }
           VStack(alignment: .leading) {
             Label("Preview Image Height: \(Int(pref.topicListPreviewImageHeight))", systemImage: "arrow.up.and.down")
-            Slider(value: $pref.topicListPreviewImageHeight, in: 40 ... 120, step: 5)
+            Slider(value: $pref.topicListPreviewImageHeight, in: 40 ... 240, step: 5)
           }
         }
       }
