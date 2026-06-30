@@ -243,8 +243,31 @@ struct PreferencesInnerView: View {
       Label("Resume Reading Progress", systemImage: "clock.arrow.circlepath")
     }.disableWithPlusCheck(.resumeProgress)
 
-    Toggle(isOn: $pref.topicDetailsCacheFirst) {
+    Toggle(isOn: $pref.topicDetailsCacheFirst.animation()) {
       Label("Open Cached Topics Instantly", systemImage: "bolt")
+    }
+
+    if pref.topicDetailsCacheFirst {
+      Toggle(isOn: $pref.topicDetailsPrefetch.animation()) {
+        Label("Prefetch Topics in List", systemImage: "square.and.arrow.down.on.square")
+      }
+
+      if pref.topicDetailsPrefetch {
+        VStack(alignment: .leading) {
+          Label("Prefetch Scroll Idle: \(pref.prefetchScrollIdleSeconds, specifier: "%.1f")s", systemImage: "timer")
+          Slider(value: $pref.prefetchScrollIdleSeconds, in: 0.3 ... 2.0, step: 0.1)
+        }
+        Stepper(value: $pref.prefetchBatchSize.animation(), in: 1 ... 10) {
+          Label("Prefetch Batch Size: \(pref.prefetchBatchSize)", systemImage: "number")
+        }
+        Stepper(value: $pref.prefetchMaxConcurrency.animation(), in: 1 ... 4) {
+          Label("Prefetch Concurrency: \(pref.prefetchMaxConcurrency)", systemImage: "arrow.triangle.branch")
+        }
+        VStack(alignment: .leading) {
+          Label("Prefetch Interval: \(pref.prefetchIntervalSeconds, specifier: "%.1f")s", systemImage: "hourglass")
+          Slider(value: $pref.prefetchIntervalSeconds, in: 0.2 ... 3.0, step: 0.1)
+        }
+      }
     }
 
     Toggle(isOn: $pref.hideNotificationToolbarShortcut) {
