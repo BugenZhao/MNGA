@@ -53,6 +53,10 @@ struct TopicListView: View {
   @State var order: TopicListRequest.Order? = nil
   @State var triggerRefresh = false
 
+  // Topics whose preview images we've already requested this session, so we don't
+  // re-issue a request for the same topic (including ones that have no images).
+  @State private var previewImagesRequestedIDs = Set<String>()
+
   var orderOrDefault: TopicListRequest.Order {
     order ?? prefs.defaultTopicListOrder
   }
@@ -386,9 +390,14 @@ struct TopicListView: View {
     guard let r else { return }
 
     for topic in r.topics {
-      // Skip if already has preview images or is a shortcut forum.
-      guard topic.previewImageUrls.isEmpty, !topic.hasShortcutForum else { continue }
+      // Skip if already has preview images, is a shortcut forum, or we've already
+      // requested it this session (avoids re-requesting topics that have no images).
+      guard topic.previewImageUrls.isEmpty,
+            !topic.hasShortcutForum,
+            !previewImagesRequestedIDs.contains(topic.id)
+      else { continue }
 
+      previewImagesRequestedIDs.insert(topic.id)
       logicCallAsync(.topicPreviewImages(.with {
         $0.topicID = topic.id
       }), errorToastModel: nil) { (response: TopicPreviewImagesResponse) in
