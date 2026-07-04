@@ -861,6 +861,11 @@ struct TopicDetailsView: View {
       return
     }
 
+    // `onAppear` fires again whenever a pushed view is popped back from; only
+    // the very first one may inject the cache, or we would wipe the pages
+    // loaded since then (like `initialLoad`, which is a no-op once loaded).
+    guard dataSource.notLoaded else { return }
+
     // 1. Read the local cache first (no network on the Rust side, so this is
     //    fast) to show content instantly.
     let cacheRequest = TopicDetailsRequest.with {
