@@ -33,7 +33,6 @@ jobs:
       - name: Install Prereqs
         run: |
           brew install swift-protobuf
-          brew tap tuist/tuist
           brew install --formula tuist@4.131.1
       - name: Build Logic for Deployment
         run: make logic-deploy

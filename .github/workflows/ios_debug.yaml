@@ -32,7 +32,6 @@ jobs:
       - name: Install Prereqs
         run: |
           brew install swift-protobuf
-          brew tap tuist/tuist
           brew install --formula tuist@4.131.1
       - name: Build Logic (Debug, iOS)
         run: make logic ALL_TARGETS="aarch64-apple-ios" MODE=debug
