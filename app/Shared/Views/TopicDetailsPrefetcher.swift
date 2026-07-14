@@ -99,7 +99,7 @@ private struct TopicDetailsPrefetcherModifier: ViewModifier {
     let candidates = visibleIDs
       .filter { id in
         guard let topic = items.first(where: { $0.id == id }) else { return false }
-        return !topic.hasShortcutForum && !requestedIDs.contains(id)
+        return !topic.hasShortcutForum && !id.isMNGAMockID && !requestedIDs.contains(id)
       }
       .prefix(batchSize)
 
@@ -113,14 +113,17 @@ private struct TopicDetailsPrefetcherModifier: ViewModifier {
         await PrefetchGate.shared.acquire(maxConcurrency: maxConcurrency, intervalSeconds: interval)
         defer { Task { await PrefetchGate.shared.release() } }
 
-        // Plain first-page load; the Rust service writes the cache on success.
-        // The response is discarded — the only goal is warming the cache. Low
-        // QoS so foreground taps are never delayed by this. Best-effort: if it
-        // fails, opening the topic simply falls back to a normal network load.
+        // Background first-page load; the Rust service writes the cache on
+        // success while `background` keeps it out of the browsing history and
+        // the unread-replies baseline. The response is discarded — the only
+        // goal is warming the cache. Low QoS so foreground taps are never
+        // delayed by this. Best-effort: if it fails, opening the topic simply
+        // falls back to a normal network load.
         let request = AsyncRequest.OneOf_Value.topicDetails(.with {
           $0.webApiStrategy = strategy
           $0.topicID = id
           $0.localCache = false
+          $0.background = true
           $0.page = 1
         })
         let _: Result<TopicDetailsResponse, LogicError> = await logicCallAsync(
