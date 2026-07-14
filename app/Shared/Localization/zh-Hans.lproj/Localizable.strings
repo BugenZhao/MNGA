@@ -314,6 +314,12 @@
 "Unnamed Folder" = "未命名的收藏夹";
 "Add to New Folder" = "添加到新收藏夹";
 "Resume Reading Progress" = "恢复阅读进度";
+"Open Cached Topics Instantly" = "秒开已缓存的帖子";
+"Prefetch Topics in List" = "预加载列表中的帖子";
+"Prefetch Scroll Idle: %.1fs" = "滚动停顿后预加载：%.1f秒";
+"Prefetch Batch Size: %lld" = "每批预加载数量：%lld";
+"Prefetch Concurrency: %lld" = "预加载并发数：%lld";
+"Prefetch Interval: %.1fs" = "预加载间隔：%.1f秒";
 "Refresh Button" = "刷新按钮";
 "Blocked Topics Style" = "屏蔽话题样式";
 "Redact Subject" = "遮盖标题";

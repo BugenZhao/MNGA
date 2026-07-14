@@ -595,8 +595,14 @@ pub async fn get_topic_details(
         return get_local_cache();
     }
 
-    let save_history = |response: &TopicDetailsResponse| {
-        insert_topic_history(response.get_topic().to_owned()); // save history
+    let save_results = |response: &TopicDetailsResponse| {
+        // Background (prefetch) loads still refresh the cache -- that is their
+        // whole point -- but must stay out of the browsing history: recording
+        // them would flood the history list and overwrite the unread-replies
+        // baseline, making never-opened topics look read.
+        if !request.get_background() {
+            insert_topic_history(response.get_topic().to_owned());
+        }
         if let Some(key) = key.as_ref() {
             let _ = CACHE.insert_msg(key, response);
         }
@@ -604,7 +610,7 @@ pub async fn get_topic_details(
 
     if request.is_mock() {
         let response = fetch_mock(&request).await?;
-        save_history(&response);
+        save_results(&response);
         return Ok(response);
     }
 
@@ -722,7 +728,7 @@ pub async fn get_topic_details(
         ..Default::default()
     };
 
-    save_history(&response);
+    save_results(&response);
     Ok(response)
 }
 
