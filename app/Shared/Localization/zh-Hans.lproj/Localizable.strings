@@ -383,3 +383,10 @@
 "Pink" = "粉色";
 "Brown" = "棕色";
 "Gray" = "灰色";
+
+"Quick Save Image on Long Press" = "长按图片快速保存";
+"Save to Photos" = "保存到相册";
+"View Image" = "查看图片";
+"Saved" = "已保存";
+"Save Failed" = "保存失败";
+"No Photo Library Permission" = "没有相册权限";
