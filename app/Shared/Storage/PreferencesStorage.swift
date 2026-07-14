@@ -11,6 +11,15 @@ import SwiftUI
 import SwiftUIX
 
 let alwaysPortraitOnPhonePreferenceKey = "alwaysPortraitOnPhone"
+private let legacyBackendBaseURLs: Set<String> = ["https://nga.178.com", "https://nga.178.com/"]
+
+private extension RequestOption {
+  mutating func migrateBackendIfNeeded() {
+    if baseURLV2.isEmpty || legacyBackendBaseURLs.contains(baseURLV2) {
+      baseURLV2 = URLs.defaultBase.absoluteString
+    }
+  }
+}
 
 class PreferencesStorage: ObservableObject {
   @Published var showing = false
@@ -67,6 +76,10 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("debugAlwaysShowNotificationBadge") var debugAlwaysShowNotificationBadge = false
 
   init() {
+    var option = requestOptionWrapper.inner
+    option.migrateBackendIfNeeded()
+    requestOptionWrapper.inner = option
+
     syncRequestOptionWithLogic()
   }
 
