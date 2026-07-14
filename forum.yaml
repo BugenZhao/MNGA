@@ -6,6 +6,9 @@ topics:
     subject: "[FAQ] MNGA 常见问题解答"
     posts:
       - content: |
+          [b][*] 频繁出现 API、验证错误或未登录提示怎么办？[/b]
+          请查看 [tid=mnga_api_auth_fix]API 与验证错误解决方案[/tid]，手动更换后端地址或升级到 MNGA v2.3.1。
+
           [b][*] MNGA 浏览帖子时出现 403 Forbidden 错误？[/b]
           此为官方接口变更所致，请更新到 MNGA v2.2.2 或更高版本。
           [url=https://apps.apple.com/cn/app/mnga/id1586461246?l=zh][b]App Store 更新[/b][/url]
@@ -19,6 +22,38 @@ topics:
 
           ===参见===
           [tid=mnga_about_feedback]MNGA 关于 & 反馈[/tid]
+        author: Bugen
+
+  - id: mnga_api_auth_fix
+    subject: "API 与验证错误解决方案"
+    posts:
+      - content: |
+          === API 与验证错误解决方案 ===
+          适用于进入板块提示未登录、打开帖子提示请求错误或验证错误的情况。
+
+          [b][*] 解决方案一：手动更换后端地址[/b]
+          打开 [b]设置/后端[/b]，将后端地址更换为 [b]https://bbs.nga.cn[/b]，然后重新进入板块或帖子。
+
+          [b][*] 解决方案二：升级到 MNGA v2.3.1[/b]
+          MNGA v2.3.1 会将默认后端迁移到当前可用的 NGA 域名，并自动修正旧版保存的默认后端设置。请等待 App Store 新版本上线后升级。
+
+          [b][*] 常见现象[/b]
+          进入板块时提示未登录。
+          打开帖子时提示请求错误、验证错误或权限相关错误。
+          重新登录后短时间可用，随后部分请求再次失败。
+
+          [b][*] 原因说明[/b]
+          旧版 MNGA 的默认后端使用 [b]https://nga.178.com[/b]。该域名会跳转到 [b]https://bbs.nga.cn[/b]，部分带登录凭据的请求在跳转后会变成未登录请求，于是出现 API、验证或未登录错误。
+
+          新版直接使用 [b]https://bbs.nga.cn[/b] 作为默认后端，避免请求经过旧域名跳转。
+
+          [b][*] 仍然失败时[/b]
+          请通过 [url=https://github.com/BugenZhao/MNGA/issues][b]GitHub Issues[/b][/url] 反馈，并附上 MNGA 版本号、iOS 版本、失败页面类型，以及 [b]设置/后端[/b] 中显示的后端地址。
+
+          反馈中请隐藏账号 Cookie、access token 或其他登录凭据。
+
+          ===参见===
+          [tid=mnga_faq]MNGA 常见问题解答[/tid]
         author: Bugen
 
   - id: mnga_about_feedback
