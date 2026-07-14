@@ -650,8 +650,14 @@ pub async fn get_topic_details(
         return get_local_cache();
     }
 
-    let save_history = |response: &TopicDetailsResponse| {
-        insert_topic_history(response.get_topic().to_owned()); // save history
+    let save_results = |response: &TopicDetailsResponse| {
+        // Background (prefetch) loads still refresh the cache -- that is their
+        // whole point -- but must stay out of the browsing history: recording
+        // them would flood the history list and overwrite the unread-replies
+        // baseline, making never-opened topics look read.
+        if !request.get_background() {
+            insert_topic_history(response.get_topic().to_owned());
+        }
         if let Some(key) = key.as_ref() {
             let _ = CACHE.insert_msg(key, response);
         }
@@ -659,7 +665,7 @@ pub async fn get_topic_details(
 
     if request.is_mock() {
         let response = fetch_mock(&request).await?;
-        save_history(&response);
+        save_results(&response);
         return Ok(response);
     }
 
@@ -777,7 +783,7 @@ pub async fn get_topic_details(
         ..Default::default()
     };
 
-    save_history(&response);
+    save_results(&response);
     Ok(response)
 }
 
@@ -826,18 +832,32 @@ pub async fn get_user_topic_list(
     })
 }
 
+/// Caps concurrent network loads for preview-image extraction: list views ask
+/// for a whole page of topics at once, and without a cap that becomes a burst
+/// of `read.php` requests that looks like crawling. Cache hits (the common
+/// case) are never throttled.
+static PREVIEW_FETCH_PERMITS: tokio::sync::Semaphore = tokio::sync::Semaphore::const_new(4);
+
 pub async fn get_topic_preview_images(
     request: TopicPreviewImagesRequest,
 ) -> ServiceResult<TopicPreviewImagesResponse> {
     let topic_id = request.get_topic_id();
-    // Extract a fixed upper bound and cache it; the client decides how many of
-    // these to actually display, so changing the count needs no refetch.
-    let limit = MAX_PREVIEW_IMAGES;
 
-    let make_response = |urls: Vec<String>| TopicPreviewImagesResponse {
-        topic_id: topic_id.to_owned(),
-        image_urls: urls.into(),
-        ..Default::default()
+    let make_response = |details: &TopicDetailsResponse| {
+        // Extract a fixed upper bound and cache it; the client decides how many
+        // of these to actually display, so changing the count needs no refetch.
+        let urls = details
+            .replies
+            .first()
+            .map(|post| {
+                extract_image_urls_from_spans(post.get_content().get_spans(), MAX_PREVIEW_IMAGES)
+            })
+            .unwrap_or_default();
+        TopicPreviewImagesResponse {
+            topic_id: topic_id.to_owned(),
+            image_urls: urls.into(),
+            ..Default::default()
+        }
     };
 
     // 1. Serve from our own preview cache if present. We cache empty results too,
@@ -851,30 +871,31 @@ pub async fn get_topic_preview_images(
     // network round-trip when the user has recently opened the topic.
     let details_key = format!("{}/{}/page/1", TOPIC_DETAILS_PREFIX, topic_id);
     if let Ok(Some(cached)) = CACHE.get_msg::<TopicDetailsResponse>(&details_key)
-        && let Some(first_post) = cached.replies.first()
+        && !cached.replies.is_empty()
     {
-        let urls = extract_image_urls_from_spans(first_post.get_content().get_spans(), limit);
-        let response = make_response(urls);
+        let response = make_response(&cached);
         let _ = CACHE.insert_msg(&preview_key, &response);
         return Ok(response);
     }
 
-    // 3. Fall back to fetching page 1 of the topic to get the first post.
-    let package = fetch_package("read.php", vec![("tid", topic_id), ("page", "1")], vec![]).await?;
+    // 3. Fall back to a background details load of page 1. Going through
+    // `get_topic_details` (rather than a bare fetch) buys us its retry and
+    // web-API fallback chain, and warms the details cache for the cache-first
+    // fast path -- while `background` keeps it out of the browsing history.
+    let _permit = PREVIEW_FETCH_PERMITS
+        .acquire()
+        .await
+        .expect("semaphore is never closed");
+    let details = get_topic_details(TopicDetailsRequest {
+        topic_id: topic_id.to_owned(),
+        page: 1,
+        background: true,
+        web_api_strategy: TopicDetailsRequest_WebApiStrategy::SECONDARY,
+        ..Default::default()
+    })
+    .await?;
 
-    let context = &get_unique_id();
-    let replies = extract_nodes(&package, "/root/__R/item", |ns| {
-        ns.into_iter()
-            .filter_map(|n| extract_post(n, 1, context))
-            .collect()
-    })?;
-
-    let urls = replies
-        .first()
-        .map(|post| extract_image_urls_from_spans(post.get_content().get_spans(), limit))
-        .unwrap_or_default();
-
-    let response = make_response(urls);
+    let response = make_response(&details);
     let _ = CACHE.insert_msg(&preview_key, &response);
     Ok(response)
 }

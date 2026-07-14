@@ -176,6 +176,9 @@ message TopicDetailsRequest {
   uint32 page = 2;
   bool local_cache = 6; // Whether to only request cached version of the topic.
   WebApiStrategy web_api_strategy = 8; // Whether or in what circumstances to use web API.
+  bool background = 9; // Background (prefetch) load: still refreshes the cache,
+                       // but stays out of the browsing history and does not
+                       // touch the unread-replies baseline.
 }
 message TopicDetailsResponse {
   Topic topic = 1;
