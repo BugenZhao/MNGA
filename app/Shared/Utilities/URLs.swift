@@ -10,8 +10,8 @@ import Foundation
 enum URLs {
   static let attachmentBase = URL(string: "https://img.nga.178.com/attachments/")!
 
-  static let defaultHost = "nga.178.com"
-  static let hosts = [defaultHost, "bbs.nga.cn", "ngabbs.com"]
+  static let defaultHost = "bbs.nga.cn"
+  static let hosts = [defaultHost, "ngabbs.com", "bbs.ngacn.cc"]
 
   static func base(for host: String) -> URL? {
     URL(string: "https://\(host)/")

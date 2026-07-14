@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-pub const DEFAULT_BASE_URL: &str = "https://nga.178.com";
+pub const DEFAULT_BASE_URL: &str = "https://bbs.nga.cn";
 pub const DEFAULT_MOCK_BASE_URL: &str = "https://mnga-pages.bugenzhao.com/api/";
 pub const DEFAULT_PROXY_BASE_URL: &str = "https://nga.bugenzhao.com";
 pub const FORUM_ICON_PATH: &str = "http://img4.ngacn.cc/ngabbs/nga_classic/f/app/";
