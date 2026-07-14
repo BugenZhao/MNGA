@@ -31,8 +31,6 @@ jobs:
         with:
           xcode-version: "26"
       - uses: jdx/mise-action@v4
-        with:
-          tool_versions: tuist 4.131.1
       - name: Install Prereqs
         run: |
           brew install swift-protobuf
