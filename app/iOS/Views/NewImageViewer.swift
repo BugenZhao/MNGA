@@ -25,6 +25,9 @@ struct ViewingImageView: View {
         DispatchQueue.global(qos: .userInitiated).async {
           // In case the constructor is heavy, let's do it in a background thread.
           let transferable = TransferableImage(url: url, image: image, forceFile: forceFile)
+          if transferable == nil {
+            logger.warning("Failed to create transferable for \(url)")
+          }
           DispatchQueue.main.async {
             self.transferable = transferable
             updateCurrentTransferable()
