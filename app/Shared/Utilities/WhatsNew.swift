@@ -139,8 +139,8 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
     )
 
     WhatsNew(
-      version: "2.3.1",
-      title: whatsNewTitle(version: "2.3.1"),
+      version: "2.3.2",
+      title: whatsNewTitle(version: "2.3.2"),
       features: [
         .init(
           image: .init(systemName: "photo"),
