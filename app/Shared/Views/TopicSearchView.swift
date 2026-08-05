@@ -38,6 +38,7 @@ class TopicSearchModel: SearchModel<PagingDataSource<TopicSearchResponse, Topic>
 
 struct TopicSearchView: View {
   @ObservedObject var dataSource: TopicSearchModel.DataSource
+  @StateObject private var prefs = PreferencesStorage.shared
 
   var body: some View {
     if dataSource.notLoaded {
@@ -49,12 +50,13 @@ struct TopicSearchView: View {
       List {
         Section(header: Text("Search Results")) {
           SafeForEach($dataSource.items, id: \.id) { topic in
-            TopicRowLinkView(topic: topic)
+            TopicRowLinkView(topic: topic, showImagePreview: prefs.searchShowImagePreview)
               .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
           }
         }
       }
       .mayGroupedListStyle()
+      .fetchTopicPreviewImages(for: $dataSource.items, enabled: prefs.searchShowImagePreview)
     }
   }
 }

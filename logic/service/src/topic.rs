@@ -31,6 +31,15 @@ fn favor_response_key(topic_id: &str) -> String {
     format!("{}/{}", FAVOR_RESPONSE_PREFIX, topic_id)
 }
 
+pub static TOPIC_PREVIEW_IMAGES_PREFIX: &str = "/topic_preview_images/topic";
+fn topic_preview_images_key(topic_id: &str) -> String {
+    format!("{}/{}", TOPIC_PREVIEW_IMAGES_PREFIX, topic_id)
+}
+
+/// Upper bound of preview image URLs extracted and cached per topic. The client
+/// displays a configurable subset (<= this), so changing the count needs no refetch.
+const MAX_PREVIEW_IMAGES: usize = 9;
+
 pub static TOPIC_DETAILS_PREFIX: &str = "/topic_details_response/topic";
 fn topic_details_response_key(request: &TopicDetailsRequest) -> Option<String> {
     if request.get_post_id().is_empty()
@@ -47,6 +56,52 @@ fn topic_details_response_key(request: &TopicDetailsRequest) -> Option<String> {
     } else {
         None
     }
+}
+
+/// Extract up to `limit` image URLs from a PostContent's spans.
+/// Only extracts URLs from `[img]` tags, skipping videos (.mp4).
+pub fn extract_image_urls_from_spans(spans: &[Span], limit: usize) -> Vec<String> {
+    let mut urls = Vec::new();
+    collect_image_urls(spans, &mut urls, limit);
+    urls
+}
+
+fn collect_image_urls(spans: &[Span], urls: &mut Vec<String>, limit: usize) {
+    for span in spans {
+        if urls.len() >= limit {
+            return;
+        }
+        if let Some(Span_oneof_value::tagged(tagged)) = &span.value {
+            if tagged.tag == "img" {
+                // The image URL is the plain text content of the img tag's children.
+                let url_text = extract_plain_text_from_spans(&tagged.spans);
+                let url_text = url_text.trim();
+                if !url_text.is_empty()
+                    && !url_text.ends_with(".mp4")
+                    && !url_text.ends_with(".webm")
+                {
+                    urls.push(url_text.to_owned());
+                }
+            } else {
+                // Recurse into children (e.g. [quote], [b], etc.)
+                collect_image_urls(&tagged.spans, urls, limit);
+            }
+        }
+    }
+}
+
+fn extract_plain_text_from_spans(spans: &[Span]) -> String {
+    let mut text = String::new();
+    for span in spans {
+        match &span.value {
+            Some(Span_oneof_value::plain(plain)) => text.push_str(&plain.text),
+            Some(Span_oneof_value::tagged(tagged)) => {
+                text.push_str(&extract_plain_text_from_spans(&tagged.spans));
+            }
+            _ => {}
+        }
+    }
+    text
 }
 
 fn extract_topic_parent_forum(node: Node) -> Option<Forum> {
@@ -595,8 +650,14 @@ pub async fn get_topic_details(
         return get_local_cache();
     }
 
-    let save_history = |response: &TopicDetailsResponse| {
-        insert_topic_history(response.get_topic().to_owned()); // save history
+    let save_results = |response: &TopicDetailsResponse| {
+        // Background (prefetch) loads still refresh the cache -- that is their
+        // whole point -- but must stay out of the browsing history: recording
+        // them would flood the history list and overwrite the unread-replies
+        // baseline, making never-opened topics look read.
+        if !request.get_background() {
+            insert_topic_history(response.get_topic().to_owned());
+        }
         if let Some(key) = key.as_ref() {
             let _ = CACHE.insert_msg(key, response);
         }
@@ -604,7 +665,7 @@ pub async fn get_topic_details(
 
     if request.is_mock() {
         let response = fetch_mock(&request).await?;
-        save_history(&response);
+        save_results(&response);
         return Ok(response);
     }
 
@@ -722,7 +783,7 @@ pub async fn get_topic_details(
         ..Default::default()
     };
 
-    save_history(&response);
+    save_results(&response);
     Ok(response)
 }
 
@@ -771,10 +832,139 @@ pub async fn get_user_topic_list(
     })
 }
 
+/// Caps concurrent network loads for preview-image extraction: list views ask
+/// for a whole page of topics at once, and without a cap that becomes a burst
+/// of `read.php` requests that looks like crawling. Cache hits (the common
+/// case) are never throttled.
+static PREVIEW_FETCH_PERMITS: tokio::sync::Semaphore = tokio::sync::Semaphore::const_new(4);
+
+pub async fn get_topic_preview_images(
+    request: TopicPreviewImagesRequest,
+) -> ServiceResult<TopicPreviewImagesResponse> {
+    let topic_id = request.get_topic_id();
+
+    let make_response = |details: &TopicDetailsResponse| {
+        // Extract a fixed upper bound and cache it; the client decides how many
+        // of these to actually display, so changing the count needs no refetch.
+        let urls = details
+            .replies
+            .first()
+            .map(|post| {
+                extract_image_urls_from_spans(post.get_content().get_spans(), MAX_PREVIEW_IMAGES)
+            })
+            .unwrap_or_default();
+        TopicPreviewImagesResponse {
+            topic_id: topic_id.to_owned(),
+            image_urls: urls.into(),
+            ..Default::default()
+        }
+    };
+
+    // 1. Serve from our own preview cache if present. We cache empty results too,
+    // so topics without images in the first post are not refetched every time.
+    let preview_key = topic_preview_images_key(topic_id);
+    if let Ok(Some(cached)) = CACHE.get_msg::<TopicPreviewImagesResponse>(&preview_key) {
+        return Ok(cached);
+    }
+
+    // 2. Reuse the topic-details cache (page 1) if it's already there, avoiding a
+    // network round-trip when the user has recently opened the topic.
+    let details_key = format!("{}/{}/page/1", TOPIC_DETAILS_PREFIX, topic_id);
+    if let Ok(Some(cached)) = CACHE.get_msg::<TopicDetailsResponse>(&details_key)
+        && !cached.replies.is_empty()
+    {
+        let response = make_response(&cached);
+        let _ = CACHE.insert_msg(&preview_key, &response);
+        return Ok(response);
+    }
+
+    // 3. Fall back to a background details load of page 1. Going through
+    // `get_topic_details` (rather than a bare fetch) buys us its retry and
+    // web-API fallback chain, and warms the details cache for the cache-first
+    // fast path -- while `background` keeps it out of the browsing history.
+    let _permit = PREVIEW_FETCH_PERMITS
+        .acquire()
+        .await
+        .expect("semaphore is never closed");
+    let details = get_topic_details(TopicDetailsRequest {
+        topic_id: topic_id.to_owned(),
+        page: 1,
+        background: true,
+        web_api_strategy: TopicDetailsRequest_WebApiStrategy::SECONDARY,
+        ..Default::default()
+    })
+    .await?;
+
+    let response = make_response(&details);
+    let _ = CACHE.insert_msg(&preview_key, &response);
+    Ok(response)
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
     use crate::{constants::REVIEW_UID, fetch::with_fetch_check, user::UserController};
+
+    #[test]
+    fn test_extract_image_urls_from_spans() {
+        // Real NGA rich-text: two images, a video, and a nested quote with an image.
+        let content = text::parse_content(
+            "hello [img]./mon_2401/a.jpg[/img] world \
+             [img]./mon_2401/b.png[/img] \
+             [img]./mon_2401/clip.mp4[/img] \
+             [quote][img]./mon_2401/c.jpeg[/img][/quote]",
+        );
+        let urls = extract_image_urls_from_spans(content.get_spans(), 4);
+
+        // The .mp4 must be skipped; the nested-quote image must be collected.
+        assert_eq!(
+            urls,
+            vec![
+                "./mon_2401/a.jpg".to_owned(),
+                "./mon_2401/b.png".to_owned(),
+                "./mon_2401/c.jpeg".to_owned(),
+            ]
+        );
+
+        // The limit must be honored.
+        let limited = extract_image_urls_from_spans(content.get_spans(), 2);
+        assert_eq!(limited.len(), 2);
+    }
+
+    #[ignore = "manual: mutates the shared on-disk cache"]
+    #[tokio::test]
+    async fn test_get_topic_preview_images_cache() -> ServiceResult<()> {
+        let topic_id = "test_preview_cache_12345";
+
+        // Seed the topic-details cache (page 1) with a first post containing images.
+        let details = TopicDetailsResponse {
+            replies: vec![Post {
+                content: Some(text::parse_content("[img]./mon_2401/x.jpg[/img]")).into(),
+                ..Default::default()
+            }]
+            .into(),
+            ..Default::default()
+        };
+        CACHE.insert_msg(
+            &format!("{}/{}/page/1", TOPIC_DETAILS_PREFIX, topic_id),
+            &details,
+        )?;
+
+        // First call should parse from the details cache and populate the preview cache.
+        let first = get_topic_preview_images(TopicPreviewImagesRequest {
+            topic_id: topic_id.to_owned(),
+            ..Default::default()
+        })
+        .await?;
+        assert_eq!(first.get_image_urls(), ["./mon_2401/x.jpg"]);
+
+        // The preview cache must now hold the result directly.
+        let cached: Option<TopicPreviewImagesResponse> =
+            CACHE.get_msg(&topic_preview_images_key(topic_id))?;
+        assert_eq!(cached.unwrap().get_image_urls(), ["./mon_2401/x.jpg"]);
+
+        Ok(())
+    }
 
     #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]

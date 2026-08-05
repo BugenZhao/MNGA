@@ -25,7 +25,11 @@ enum Constants {
   }
 
   enum Key {
-    static let groupStore = "group.com.bugenzhao.MNGA"
+    /// The entitlements grant the app group named after the bundle ID, so
+    /// derive it instead of hardcoding a fixed one: a build with a custom
+    /// bundle ID is not entitled to the hardcoded group and would silently
+    /// fall back to a container-local store.
+    static let groupStore = "group.\(Bundle.main.bundleIdentifier ?? "com.bugenzhao.MNGA")"
     static let favoriteForums = "favoriteForums"
   }
 
