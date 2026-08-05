@@ -79,7 +79,7 @@ struct UserView: View {
   }
 
   private var avatarURL: URL? {
-    URL(string: user?.avatarURL ?? "")
+    URLs.resourceURL(user?.avatarURL ?? "")
   }
 
   @ViewBuilder

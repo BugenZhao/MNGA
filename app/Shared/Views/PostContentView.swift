@@ -157,7 +157,7 @@ struct PostContentView_Previews: PreviewProvider {
     let sticker2 = Span.with { $0.sticker = .with { s in s.name = "a2:doge" } }
     let sticker3 = Span.with { $0.sticker = .with { s in s.name = "pg:战斗力" } }
     let plain = Span.with { $0.plain = .with { p in p.text = "你看看他，再看看你自己。" } }
-    let imageStickerUrl = Span.with { $0.plain = .with { p in p.text = "http://img.nga.178.com/attachments/mon_201209/14/-47218_5052c104b8e27.png" } }
+    let imageStickerUrl = Span.with { $0.plain = .with { p in p.text = "https://img.nga.cn/attachments/mon_201209/14/-47218_5052c104b8e27.png" } }
     let bold = Span.with {
       $0.tagged = .with { t in
         t.tag = "b"

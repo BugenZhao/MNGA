@@ -156,7 +156,7 @@ mod test {
     fn test_img() {
         let text = r#"
 我们这男的还一般不让穿短裤凉鞋呢
-[img]http://img.nga.178.com/attachments/mon_201209/14/-47218_5052bc587c6f9.png[/img]
+[img]https://img.nga.cn/attachments/mon_201209/14/-47218_5052bc587c6f9.png[/img]
 虽说没有明确规定，但是理由是领导觉得影响不好，说到底还是一个形象问题吧
         "#;
         let r = do_parse_content(text).unwrap();

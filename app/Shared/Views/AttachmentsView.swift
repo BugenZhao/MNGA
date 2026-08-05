@@ -42,7 +42,7 @@ struct AttachmentsView: View {
   }
 
   func show(_ attachment: Attachment) {
-    let url = URL(string: attachment.url, relativeTo: URLs.attachmentBase)
+    let url = URLs.attachmentURL(attachment.url)
     guard let url else { return }
 
     if attachment.isImage {

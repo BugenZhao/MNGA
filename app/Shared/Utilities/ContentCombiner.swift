@@ -546,7 +546,7 @@ class ContentCombiner {
     guard case let .plain(plain) = value else { return }
 
     let urlText = plain.text.trimmingWs
-    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
+    guard let url = URLs.attachmentURL(urlText) else { return }
     if url.pathExtension == "mp4" {
       return visitFlash(video: image)
     }
@@ -586,7 +586,7 @@ class ContentCombiner {
 
     // Construct the URL
     let p = String(format: "mon_%04d%02d/%02d/", year, month, day)
-    guard let url = URL(string: p + urlText, relativeTo: URLs.attachmentBase) else { return }
+    guard let url = URLs.attachmentURL(p + urlText) else { return }
     if url.pathExtension == "mp4" {
       return visitFlash(video: noimg)
     }
@@ -847,7 +847,7 @@ class ContentCombiner {
     guard case let .plain(plain) = value else { return }
 
     let urlText = plain.text.trimmingWs
-    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
+    guard let url = URLs.attachmentURL(urlText) else { return }
 
     let link = ContentButtonView(icon: "film", title: Text("View Video"), inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)
@@ -863,7 +863,7 @@ class ContentCombiner {
     let duration = tokens.last { $0.contains("duration") }
 
     guard let urlText = tokens.first else { return }
-    guard let url = URL(string: urlText.trimmingWs, relativeTo: URLs.attachmentBase) else { return }
+    guard let url = URLs.attachmentURL(urlText.trimmingWs) else { return }
 
     let title = if let duration = extractQueryParams(query: duration ?? "", param: "duration") {
       Text(duration)
@@ -882,7 +882,7 @@ class ContentCombiner {
     guard case let .plain(plain) = value else { return }
 
     let urlText = plain.text.trimmingWs
-    guard let url = URL(string: urlText, relativeTo: URLs.attachmentBase) else { return }
+    guard let url = URLs.attachmentURL(urlText) else { return }
 
     let link = ContentButtonView(icon: "paperclip", title: Text("View Attachment"), inQuote: inQuote) {
       OpenURLModel.shared.open(url: url, inApp: true)

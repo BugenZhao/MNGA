@@ -384,7 +384,7 @@ struct TopicListView_Previews: PreviewProvider {
     let genshinForum = Forum.with {
       $0.id = .with { i in i.fid = "650" }
       $0.name = "原神"
-      $0.iconURL = "http://img4.nga.178.com/ngabbs/nga_classic/f/app/650.png"
+      $0.iconURL = "https://img4.nga.cn/ngabbs/nga_classic/f/app/650.png"
     }
 
     AuthedPreview {

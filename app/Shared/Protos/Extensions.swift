@@ -370,7 +370,7 @@ extension User {
       $0.postNum = 2333
       $0.regDate = 1_609_502_400
       $0.signature = signatureRes?.content ?? .init()
-      $0.avatarURL = "https://img.nga.178.com/avatars/2002/03a/000/000/58_0.jpg"
+      $0.avatarURL = "https://img.nga.cn/avatars/2002/03a/000/000/58_0.jpg"
     }
   }
 }

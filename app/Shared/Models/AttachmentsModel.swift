@@ -16,14 +16,14 @@ class AttachmentsModel: ObservableObject {
   }
 
   func attachmentURL(for previewURL: URL) -> URL? {
-    guard let attach = items.first(where: { previewURL.absoluteString.contains($0.url) })
-    else { return nil }
-    return URL(string: attach.url, relativeTo: URLs.attachmentBase)
+    items
+      .compactMap { URLs.attachmentURL($0.url) }
+      .first(where: { $0 == previewURL })
   }
 
   var allImageURLs: [URL] {
     items
       .filter(\.isImage)
-      .compactMap { URL(string: $0.url, relativeTo: URLs.attachmentBase) }
+      .compactMap { URLs.attachmentURL($0.url) }
   }
 }
