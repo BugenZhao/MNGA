@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Photos
 import SDWebImageSwiftUI
 import SwiftUI
 import SwiftUIX
@@ -65,6 +66,7 @@ struct ContentImageView: View {
   }
 
   @State var frameWidth: CGFloat? = nil
+  @State private var quickSaveDialogPresented = false
 
   var options: SDWebImageOptions {
     if inSnapshot {
@@ -104,6 +106,19 @@ struct ContentImageView: View {
         .colorMultiply(shouldDimImage ? Color(white: 0.7) : Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onTapGesture(perform: showImage)
+        // Use a high-priority long press so the image can present its own quick
+        // actions instead of being swallowed by the post-level `.contextMenu`.
+        // The gesture mask disables it when the preference is off, leaving the
+        // post-level context menu intact. Avoid `.if()` here to keep WebImage state.
+        .highPriorityGesture(
+          LongPressGesture(minimumDuration: 0.4)
+            .onEnded { _ in quickSaveDialogPresented = true },
+          including: prefs.quickSaveImage && inRealPost ? .all : .none,
+        )
+        .confirmationDialog("Image", isPresented: $quickSaveDialogPresented, titleVisibility: .hidden) {
+          Button("Save to Photos") { saveImageToPhotos() }
+          Button("View Image") { showImage() }
+        }
       }
     }
   }
@@ -115,6 +130,41 @@ struct ContentImageView: View {
       viewingImage.show(urls: model.allImageURLs, current: attachURL)
     } else {
       viewingImage.show(url: url)
+    }
+  }
+
+  func saveImageToPhotos() {
+    SDWebImageManager.shared.loadImage(with: url, options: [], progress: nil) { image, data, _, _, _, _ in
+      guard let image else {
+        ToastModel.showAuto(.error("Save Failed"))
+        return
+      }
+      PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+        guard status == .authorized || status == .limited else {
+          DispatchQueue.main.async {
+            ToastModel.showAuto(.error("No Photo Library Permission"))
+          }
+          return
+        }
+        PHPhotoLibrary.shared().performChanges {
+          if let data {
+            let options = PHAssetResourceCreationOptions()
+            options.originalFilename = url.lastPathComponent
+            let request = PHAssetCreationRequest.forAsset()
+            request.addResource(with: .photo, data: data, options: options)
+          } else {
+            PHAssetChangeRequest.creationRequestForAsset(from: image)
+          }
+        } completionHandler: { success, _ in
+          DispatchQueue.main.async {
+            if success {
+              ToastModel.showAuto(.success("Saved"))
+            } else {
+              ToastModel.showAuto(.error("Save Failed"))
+            }
+          }
+        }
+      }
     }
   }
 

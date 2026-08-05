@@ -79,6 +79,9 @@ private struct PostRowAppearanceView: View {
           Label("Dim Images in Dark Mode", systemImage: "moon.fill")
         }
         .disableWithPlusCheck(.customAppearance)
+        Toggle(isOn: $pref.quickSaveImage.animation()) {
+          Label("Quick Save Image on Long Press", systemImage: "square.and.arrow.down")
+        }
       }
 
     }.pickerStyle(.menu)
