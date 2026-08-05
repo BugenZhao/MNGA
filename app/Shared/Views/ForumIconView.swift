@@ -17,12 +17,13 @@ struct ForumIconView: View {
   var body: some View {
     let defaultIcon = Image(.defaultForumIcon)
       .renderingMode(.template)
+    let url = URLs.resourceURL(iconURL)
 
-    WebImage(url: URL(string: iconURL)) {
+    WebImage(url: url) {
       ($0.image ?? defaultIcon).resizable()
     }
     .frame(width: size, height: size)
     .foregroundColor(.accentColor)
-    .id("forum-icon-\(iconURL)") // workaround not updating when url changes from nil to valid
+    .id("forum-icon-\(url?.absoluteString ?? "")") // workaround not updating when url changes from nil to valid
   }
 }

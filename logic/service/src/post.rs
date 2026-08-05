@@ -623,7 +623,7 @@ mod test {
         action.set_verbatim(fetch_res.take_verbatim());
 
         let file = reqwest::get(
-            "https://img.nga.178.com/attachments/mon_201904/12/-7Q5-gr04K2iT3cSw0-k0.jpg",
+            "https://img.nga.cn/attachments/mon_201904/12/-7Q5-gr04K2iT3cSw0-k0.jpg",
         )
         .await?
         .bytes()

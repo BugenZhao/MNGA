@@ -31,14 +31,15 @@ struct UserMenuView: View {
   @ViewBuilder
   var icon: some View {
     let icon = Image(systemName: authStorage.signedIn ? "person.crop.circle.fill" : "person.crop.circle")
+    let avatarURL = URLs.resourceURL(user?.avatarURL ?? "")
 
-    WebImage(url: URL(string: user?.avatarURL ?? "")) {
+    WebImage(url: avatarURL) {
       ($0.image ?? icon).resizable()
     }
     .clipShape(Circle())
     .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
     .frame(width: 24, height: 24)
-    .id("user-menu-icon-\(user?.avatarURL ?? "")") // workaround not updating when url changes from nil to valid
+    .id("user-menu-icon-\(avatarURL?.absoluteString ?? "")") // workaround not updating when url changes from nil to valid
   }
 
   @ViewBuilder
