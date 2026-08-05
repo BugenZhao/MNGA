@@ -61,6 +61,7 @@
 "Send" = "发送";
 "Quote" = "引用";
 "Vote Up" = "点赞";
+"Vote Failed" = "操作失败";
 "Edit" = "编辑";
 "Edit Signature" = "修改签名";
 "Share" = "分享";
