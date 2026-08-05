@@ -333,6 +333,7 @@ struct TopicListView: View {
     }
     .refreshable(dataSource: dataSource, refreshAfterIdle: true, triggerRefresh: triggerRefresh)
     .mayGroupedListStyle()
+    .prefetchTopicDetails(for: itemBindings, enabled: prefs.topicDetailsPrefetch && prefs.topicDetailsCacheFirst)
   }
 
   var body: some View {

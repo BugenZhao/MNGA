@@ -68,6 +68,15 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("autoOpenInBrowserWhenBannedNew") var autoOpenInBrowserWhenBanned = false
   @AppStorage("topicDetailsWebApiStrategyNew") var topicDetailsWebApiStrategy = TopicDetailsRequest.WebApiStrategy.secondary
   @AppStorage("alwaysShareImageAsFile") var alwaysShareImageAsFile = false
+  @AppStorage("topicDetailsCacheFirst") var topicDetailsCacheFirst = false
+
+  // Background prefetch of topic details. All tunables are adjustable at
+  // runtime to throttle requests and avoid rate limiting.
+  @AppStorage("topicDetailsPrefetch") var topicDetailsPrefetch = false
+  @AppStorage("prefetchScrollIdleSeconds") var prefetchScrollIdleSeconds = 0.8
+  @AppStorage("prefetchBatchSize") var prefetchBatchSize = 5
+  @AppStorage("prefetchMaxConcurrency") var prefetchMaxConcurrency = 2
+  @AppStorage("prefetchIntervalSeconds") var prefetchIntervalSeconds = 1.0
 
   // MARK: - Debug
 

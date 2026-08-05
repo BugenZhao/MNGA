@@ -38,6 +38,7 @@ class TopicSearchModel: SearchModel<PagingDataSource<TopicSearchResponse, Topic>
 
 struct TopicSearchView: View {
   @ObservedObject var dataSource: TopicSearchModel.DataSource
+  @StateObject private var prefs = PreferencesStorage.shared
 
   var body: some View {
     if dataSource.notLoaded {
@@ -55,6 +56,7 @@ struct TopicSearchView: View {
         }
       }
       .mayGroupedListStyle()
+      .prefetchTopicDetails(for: $dataSource.items, enabled: prefs.topicDetailsPrefetch && prefs.topicDetailsCacheFirst)
     }
   }
 }

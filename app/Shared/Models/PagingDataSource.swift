@@ -202,6 +202,24 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
+  /// Populate the source from an already-fetched response (e.g. a synchronous
+  /// local-cache read) without issuing a network request, so the content shows
+  /// instantly. Marks the page as loaded so a subsequent `initialLoad()` is a
+  /// no-op. Returns whether any item was populated.
+  @discardableResult
+  func injectCachedResponse(_ response: Res, page: Int) -> Bool {
+    let (newItems, newTotalPages) = onResponse(response)
+    guard !newItems.isEmpty else { return false }
+
+    latestResponse = response
+    latestError = nil
+    replaceItems(newItems, page: page)
+    totalPages = newTotalPages ?? totalPages
+    loadedPage = page
+    lastRefreshTime = Date()
+    return true
+  }
+
   func reloadLastPage(
     evenIfNotLoaded: Bool,
     animated: Bool = true,
