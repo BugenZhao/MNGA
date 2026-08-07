@@ -140,6 +140,7 @@ struct TopicDetailsView: View {
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
   @StateObject var alert = ToastModel.editorAlert
+  @StateObject var chatSessionStore = ChatSessionStore()
 
   let onlyPost: (id: PostId?, atPage: Int?)
   let forceLocalMode: Bool
@@ -153,6 +154,8 @@ struct TopicDetailsView: View {
 
   @State var showingCreateFolderAlert = false
   @State var newFolderName: String?
+  @State var showingChat = false
+  @State var chatDetent = PresentationDetent.medium
 
   var isFavored: Bool {
     topic.isFavored
@@ -716,9 +719,36 @@ struct TopicDetailsView: View {
     MaybeToolbarSpacer(placement: .bottomBar)
     ToolbarItemGroup(placement: .bottomBar) {
       // They won't show simultaneously.
+      chatButton
       replyButton
       seeFullTopicButton
     }
+  }
+
+  @ViewBuilder
+  var chatButton: some View {
+    if onlyPost.id == nil {
+      Button {
+        openChat()
+      } label: {
+        Label("AI Chat", systemImage: "bubble.left.and.sparkles")
+      }
+      .disabled(dataSource.items.isEmpty)
+    }
+  }
+
+  @MainActor
+  private func openChat() {
+    let context = TopicChatContextBuilder.build(topic: topic, posts: dataSource.items, users: users)
+    chatSessionStore.prepare(
+      scopeID: topic.id,
+      context: context,
+      toolRegistry: MNGAChatToolRegistry.make(),
+    ) {
+      OpenAICompatibleChatClient(configuration: try ChatConfigurationStore.shared.configuration())
+    }
+    chatDetent = .medium
+    showingChat = true
   }
 
   @ViewBuilder
@@ -804,6 +834,20 @@ struct TopicDetailsView: View {
     // Action Navigation End
     .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
     .sheet(isPresented: $showJumpSelector) { jumpSelector }
+    .sheet(isPresented: $showingChat) {
+      NavigationStack {
+        if let session = chatSessionStore.session {
+          TopicChatView(session: session)
+        }
+      }
+      .presentationDetents([.medium, .large], selection: $chatDetent)
+      .presentationDragIndicator(.visible)
+      .presentationContentInteraction(.scrolls)
+    }
+    .onChange(of: topic.id) { _, topicID in
+      showingChat = false
+      chatSessionStore.clearIfScopeChanged(to: topicID)
+    }
     // Favorite to new folder
     .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
       TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))

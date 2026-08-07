@@ -24,6 +24,7 @@ let project = Project(
         .remote(url: "https://github.com/joshbirnholz/WhatsNewKit", requirement: .revision("f509ee14716567e2155eae2f0910184a19f08428")),
         .remote(url: "https://github.com/apple/swift-collections", requirement: .exact("1.3.0")),
         .remote(url: "https://github.com/Chronos2500/CustomNavigationTitle", requirement: .revision("37269a4478a9f7596ea8382ce3bf006530b1ad12")),
+        .remote(url: "https://github.com/gonzalezreal/textual", requirement: .exact("0.5.0")),
     ],
     targets: [
         // iOS App Target
@@ -63,6 +64,7 @@ let project = Project(
                 .package(product: "WhatsNewKit"),
                 .package(product: "Collections"),
                 .package(product: "CustomNavigationTitle"),
+                .package(product: "Textual"),
                 .xcframework(path: "../out/logic-ios.xcframework"),
             ],
             settings: .settings(
