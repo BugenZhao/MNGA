@@ -366,6 +366,8 @@
 "AI Chat Settings" = "AI 聊天设置";
 "Configured" = "已配置";
 "Not Configured" = "未配置";
+"Verified" = "已验证";
+"Not Verified" = "未验证";
 "OpenAI-Compatible API" = "OpenAI 兼容 API";
 "Base API URL" = "Base API 地址";
 "API Key" = "API Key";
@@ -381,7 +383,7 @@
 "Testing..." = "正在测试…";
 "Connection Succeeded" = "连接成功";
 "Connection Failed" = "连接失败";
-"Sends a small request using the unsaved values above. The API key is never included in the log." = "使用上方尚未保存的配置发送一个小请求。日志中绝不会包含 API Key。";
+"A successful test for the current values is required before saving and enabling AI features. The API key is never included in the log." = "当前配置必须通过连接测试后才能保存并启用 AI 功能。日志中绝不会包含 API Key。";
 "Copy Log" = "复制日志";
 "Clear Log" = "清空日志";
 "Validating configuration..." = "正在校验配置…";
@@ -397,6 +399,8 @@
 "Connection failed: %@" = "连接失败：%@";
 "AI Chat Is Not Configured" = "尚未配置 AI 聊天";
 "Add an OpenAI-compatible Base API URL and API key to start chatting." = "添加 OpenAI 兼容的 Base API 地址和 API Key 后即可开始聊天。";
+"AI Chat Is Not Verified" = "AI 聊天尚未验证";
+"Configure the API and pass the connection test to start chatting." = "请配置 API 并通过连接测试后再开始聊天。";
 "Open AI Chat Settings" = "打开 AI 聊天设置";
 "New Chat" = "新聊天";
 "Start a new chat?" = "开始新聊天？";

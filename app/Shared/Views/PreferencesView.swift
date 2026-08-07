@@ -307,7 +307,7 @@ struct PreferencesInnerView: View {
       HStack {
         Label("AI Chat", systemImage: "bubble.left.and.sparkles")
         Spacer()
-        Text(chatConfiguration.isConfigured ? "Configured" : "Not Configured")
+        Text(chatConfiguration.isAIEnabled ? "Verified" : "Not Verified")
           .foregroundStyle(.secondary)
       }
     }

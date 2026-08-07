@@ -140,6 +140,7 @@ struct TopicDetailsView: View {
   @StateObject var prefs = PreferencesStorage.shared
   @StateObject var users = UsersModel.shared
   @StateObject var alert = ToastModel.editorAlert
+  @StateObject var chatConfiguration = ChatConfigurationStore.shared
   @StateObject var chatSessionStore = ChatSessionStore()
 
   let onlyPost: (id: PostId?, atPage: Int?)
@@ -727,7 +728,7 @@ struct TopicDetailsView: View {
 
   @ViewBuilder
   var chatButton: some View {
-    if onlyPost.id == nil {
+    if onlyPost.id == nil, chatConfiguration.isAIEnabled {
       Button {
         openChat()
       } label: {

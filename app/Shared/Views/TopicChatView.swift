@@ -12,14 +12,14 @@ struct TopicChatView: View {
 
   var body: some View {
     Group {
-      if configurationStore.isConfigured {
+      if configurationStore.isAIEnabled {
         ChatConversationView(session: session)
       } else {
         VStack(spacing: 16) {
           ContentUnavailableView(
-            "AI Chat Is Not Configured",
+            "AI Chat Is Not Verified",
             systemImage: "key.slash",
-            description: Text("Add an OpenAI-compatible Base API URL and API key to start chatting."),
+            description: Text("Configure the API and pass the connection test to start chatting."),
           )
           NavigationLink("Open AI Chat Settings") {
             AISettingsView()

@@ -17,6 +17,7 @@ struct AISettingsView: View {
   @State private var connectionStatus = ConnectionTestStatus.idle
   @State private var connectionLogs = [ConnectionTestLogEntry]()
   @State private var connectionTestTask: Task<Void, Never>?
+  @State private var successfullyTestedConfiguration: ChatAPIConfiguration?
 
   init(store: ChatConfigurationStore = .shared) {
     _store = ObservedObject(wrappedValue: store)
@@ -27,16 +28,31 @@ struct AISettingsView: View {
 
   private func save() {
     do {
+      let configuration = try ChatAPIConfiguration(baseURL: baseURL, apiKey: apiKey, model: model)
+      guard successfullyTestedConfiguration == configuration || store.isConnectionVerified(for: configuration) else {
+        return
+      }
       try store.save(baseURL: baseURL, apiKey: apiKey, model: model)
+      store.recordSuccessfulConnectionTest(for: configuration)
       dismiss()
     } catch {
       errorMessage = error.localizedDescription
     }
   }
 
+  private var isCurrentConfigurationVerified: Bool {
+    guard let configuration = try? ChatAPIConfiguration(
+      baseURL: baseURL,
+      apiKey: apiKey,
+      model: model,
+    ) else { return false }
+    return successfullyTestedConfiguration == configuration || store.isConnectionVerified(for: configuration)
+  }
+
   private func testConnection() {
     connectionTestTask?.cancel()
     connectionLogs.removeAll()
+    successfullyTestedConfiguration = nil
     connectionStatus = .testing
     appendConnectionLog("Validating configuration...".localized)
 
@@ -76,11 +92,13 @@ struct AISettingsView: View {
         }
         appendConnectionLog(String(format: "Response: %@".localized, report.responsePreview))
         appendConnectionLog("Connection succeeded.".localized)
+        successfullyTestedConfiguration = configuration
         connectionStatus = .succeeded
       } catch is CancellationError {
         appendConnectionLog("Connection test cancelled.".localized)
         connectionStatus = .idle
       } catch {
+        store.recordFailedConnectionTest(for: configuration)
         let duration = Date().timeIntervalSince(startedAt)
         if case let ChatClientError.httpStatus(code, _, _) = error {
           appendConnectionLog(String(
@@ -189,15 +207,16 @@ struct AISettingsView: View {
       } header: {
         Text("Connection Test")
       } footer: {
-        Text("Sends a small request using the unsaved values above. The API key is never included in the log.")
+        Text("A successful test for the current values is required before saving and enabling AI features. The API key is never included in the log.")
       }
     }
+    .disabled(connectionStatus == .testing)
     .navigationTitle("AI Chat Settings")
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .confirmationAction) {
         Button("Save", action: save)
-          .disabled(connectionStatus == .testing)
+          .disabled(connectionStatus == .testing || !isCurrentConfigurationVerified)
       }
     }
     .alert("Error", isPresented: Binding(
@@ -207,6 +226,11 @@ struct AISettingsView: View {
       Button("OK", role: .cancel) {}
     } message: {
       Text(errorMessage ?? "")
+    }
+    .onChange(of: [baseURL, apiKey, model]) { _, _ in
+      if connectionStatus != .testing {
+        connectionStatus = .idle
+      }
     }
     .onDisappear { connectionTestTask?.cancel() }
   }
