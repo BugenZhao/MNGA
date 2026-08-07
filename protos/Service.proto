@@ -126,6 +126,12 @@ message AsyncRequest {
     FavoriteForumListRequest favorite_forum_list = 28;
     // Add or remove a favorite forum (forum_favor2).
     FavoriteForumModifyRequest favorite_forum_modify = 29;
+    // Add or remove a followed user.
+    FollowUserModifyRequest follow_user_modify = 30;
+    // Get users followed by the current user.
+    FollowUserListRequest follow_user_list = 31;
+    // Get topics and replies published by followed users.
+    FollowActivityListRequest follow_activity_list = 32;
   }
 }
 
@@ -197,6 +203,28 @@ message RemoteUserRequest {
   string user_name = 2; // Request by name.
 }
 message RemoteUserResponse { optional User user = 1; }
+
+message FollowUserModifyRequest {
+  enum Operation {
+    ADD = 0;
+    DELETE = 1;
+  }
+  string user_id = 1;
+  Operation operation = 2;
+}
+message FollowUserModifyResponse { bool followed = 1; }
+
+message FollowUserListRequest { uint32 page = 1; }
+message FollowUserListResponse {
+  repeated User users = 1;
+  uint32 pages = 2;
+}
+
+message FollowActivityListRequest { uint32 page = 1; }
+message FollowActivityListResponse {
+  repeated FollowActivity activities = 1;
+  uint32 pages = 2;
+}
 
 message PostVoteRequest {
   enum Operation {

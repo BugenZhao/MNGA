@@ -17,7 +17,10 @@ use crate::{
         get_hot_topic_list, get_topic_details, get_topic_list, get_user_topic_list,
         modify_favorite_folder, search_topic, topic_favor,
     },
-    user::{get_remote_user, update_signature},
+    user::{
+        get_follow_activity_list, get_follow_user_list, get_remote_user, modify_follow_user,
+        update_signature,
+    },
 };
 use paste::paste;
 use protos::Service::*;
@@ -61,3 +64,6 @@ handle!(topic_search, search_topic);
 handle!(clock_in, clock_in);
 handle!(cache, manipulate_cache);
 handle!(user_signature_update, update_signature);
+handle!(follow_user_modify, modify_follow_user);
+handle!(follow_user_list, get_follow_user_list);
+handle!(follow_activity_list, get_follow_activity_list);

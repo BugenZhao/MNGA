@@ -51,6 +51,9 @@ mod dispatch_async {
             clock_in(r) => r!(handle_clock_in(r)),
             cache(r) => r!(handle_cache(r)),
             user_signature_update(r) => r!(handle_user_signature_update(r)),
+            follow_user_modify(r) => r!(handle_follow_user_modify(r)),
+            follow_user_list(r) => r!(handle_follow_user_list(r)),
+            follow_activity_list(r) => r!(handle_follow_activity_list(r)),
         }
     }
 }

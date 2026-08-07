@@ -9,10 +9,15 @@ use crate::{
 use dashmap::DashMap;
 use lazy_static::lazy_static;
 use protos::{
-    DataModel::{User, UserName},
+    DataModel::{
+        FollowActivity, FollowActivity_Type, FollowActivity_oneof__post, LightPost, PostId, Topic,
+        User, UserName,
+    },
     Service::{
-        RemoteUserRequest, RemoteUserResponse, RemoteUserResponse_oneof__user,
-        UserSignatureUpdateRequest, UserSignatureUpdateResponse,
+        FollowActivityListRequest, FollowActivityListResponse, FollowUserListRequest,
+        FollowUserListResponse, FollowUserModifyRequest, FollowUserModifyRequest_Operation,
+        FollowUserModifyResponse, RemoteUserRequest, RemoteUserResponse,
+        RemoteUserResponse_oneof__user, UserSignatureUpdateRequest, UserSignatureUpdateResponse,
     },
 };
 use serde_json::Value;
@@ -177,6 +182,211 @@ pub(crate) fn extract_user_json(value: &Value, remote: bool) -> Option<User> {
         mute,
         ip_location: json_string(value, "ipLoc").unwrap_or_default(),
         remote,
+        followed: json_i64(value, "follow").unwrap_or_default() == 1,
+        following_count: json_u32(value, "follow_num").unwrap_or_default(),
+        follower_count: json_u32(value, "follow_by_num").unwrap_or_default(),
+        ..Default::default()
+    })
+}
+
+fn scalar_string(value: &Value) -> Option<String> {
+    match value {
+        Value::String(value) => Some(value.to_owned()),
+        Value::Number(value) => Some(value.to_string()),
+        _ => None,
+    }
+}
+
+fn scalar_u32(value: &Value) -> Option<u32> {
+    value
+        .as_u64()
+        .and_then(|value| value.try_into().ok())
+        .or_else(|| value.as_str()?.parse().ok())
+}
+
+fn indexed(value: &Value, index: usize) -> Option<&Value> {
+    value
+        .as_array()
+        .and_then(|values| values.get(index))
+        .or_else(|| value.get(index.to_string()))
+}
+
+fn records(value: &Value) -> Vec<&Value> {
+    match value {
+        Value::Array(values) => values.iter().collect(),
+        Value::Object(values) => {
+            let mut values = values.iter().collect::<Vec<_>>();
+            values.sort_by_key(|(key, _)| key.parse::<u64>().unwrap_or(u64::MAX));
+            values.into_iter().map(|(_, value)| value).collect()
+        }
+        _ => Vec::new(),
+    }
+}
+
+fn extract_follow_user(value: &Value) -> Option<User> {
+    let id = json_string(value, "uid")?;
+    Some(User {
+        id,
+        name: Some(extract_user_name(
+            json_string(value, "username").unwrap_or_default(),
+        ))
+        .into(),
+        avatar_url: json_string(value, "avatar").unwrap_or_default(),
+        remote: false,
+        followed: true,
+        ..Default::default()
+    })
+}
+
+fn extract_follow_users(value: &Value) -> Vec<User> {
+    indexed(value, 0)
+        .map(records)
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(extract_follow_user)
+        .collect()
+}
+
+fn extract_follow_topic(value: &Value, user: &User) -> Topic {
+    let fid = json_string(value, "fid").unwrap_or_default();
+    Topic {
+        id: json_string(value, "tid").unwrap_or_default(),
+        subject: Some(text::parse_subject(
+            &json_string(value, "subject").unwrap_or_default(),
+        ))
+        .into(),
+        author_id: user.id.to_owned(),
+        author_name: Some(user.name.clone().unwrap_or_default()).into(),
+        post_date: json_u64(value, "postdate").unwrap_or_default(),
+        last_post_date: json_u64(value, "lastpost").unwrap_or_default(),
+        replies_num: json_u32(value, "replies").unwrap_or_default(),
+        fid,
+        ..Default::default()
+    }
+}
+
+pub async fn modify_follow_user(
+    request: FollowUserModifyRequest,
+) -> ServiceResult<FollowUserModifyResponse> {
+    let followed = request.get_operation() == FollowUserModifyRequest_Operation::ADD;
+    let follow_type = if followed { "1" } else { "8" };
+
+    let _value = fetch_json_value(
+        "nuke.php",
+        vec![("__lib", "follow_v2"), ("__act", "follow")],
+        vec![("id", request.get_user_id()), ("type", follow_type)],
+    )
+    .await?;
+
+    UserController::get().invalidate_user(request.get_user_id());
+    Ok(FollowUserModifyResponse {
+        followed,
+        ..Default::default()
+    })
+}
+
+pub async fn get_follow_user_list(
+    request: FollowUserListRequest,
+) -> ServiceResult<FollowUserListResponse> {
+    let page = request.page.max(1);
+    let value = fetch_json_value(
+        "nuke.php",
+        vec![("__lib", "follow_v2"), ("__act", "get_follow")],
+        vec![("page", &page.to_string())],
+    )
+    .await?;
+
+    let users = extract_follow_users(&value)
+        .into_iter()
+        .inspect(|user| UserController::get().update_user(user.to_owned()))
+        .collect::<Vec<_>>();
+    let pages = if users.is_empty() { page } else { page + 1 };
+
+    Ok(FollowUserListResponse {
+        users: users.into(),
+        pages,
+        ..Default::default()
+    })
+}
+
+pub async fn get_follow_activity_list(
+    request: FollowActivityListRequest,
+) -> ServiceResult<FollowActivityListResponse> {
+    let page = request.page.max(1);
+    let value = fetch_json_value(
+        "nuke.php",
+        vec![("__lib", "follow_v2"), ("__act", "get_push_list")],
+        vec![("page", &page.to_string())],
+    )
+    .await?;
+
+    let events = indexed(&value, 0).map(records).unwrap_or_default();
+    let users = indexed(&value, 1).unwrap_or(&Value::Null);
+    let topics = indexed(&value, 4).unwrap_or(&Value::Null);
+    let pages = indexed(&value, 2)
+        .and_then(scalar_u32)
+        .unwrap_or_else(|| if events.is_empty() { page } else { page + 1 });
+
+    let activities = events
+        .into_iter()
+        .filter_map(|event| {
+            let id = indexed(event, 0).and_then(scalar_string)?;
+            let activity_type = indexed(event, 1).and_then(scalar_u32).unwrap_or_default();
+            let user_id = indexed(event, 2).and_then(scalar_string)?;
+            let topic_id = indexed(event, 3).and_then(scalar_string)?;
+            let post_id = indexed(event, 4)
+                .and_then(scalar_string)
+                .unwrap_or_default();
+
+            let user_value = users.get(&user_id)?;
+            let user =
+                extract_follow_user(user_value).or_else(|| extract_user_json(user_value, false))?;
+            UserController::get().update_user(user.to_owned());
+
+            let topic_value = topics.get(&topic_id)?;
+            let mut topic = extract_follow_topic(topic_value, &user);
+            if topic.id.is_empty() {
+                topic.id.clone_from(&topic_id);
+            }
+
+            let mut activity = FollowActivity {
+                id,
+                field_type: if activity_type == 2 {
+                    FollowActivity_Type::REPLY
+                } else {
+                    FollowActivity_Type::TOPIC
+                },
+                user: Some(user.clone()).into(),
+                topic: Some(topic).into(),
+                ..Default::default()
+            };
+
+            if activity.field_type == FollowActivity_Type::REPLY {
+                let reply_key = format!("{topic_id}_{post_id}");
+                let reply_value = topics.get(&reply_key).unwrap_or(topic_value);
+                activity._post = Some(FollowActivity_oneof__post::post(LightPost {
+                    id: Some(PostId {
+                        pid: post_id,
+                        tid: topic_id,
+                        ..Default::default()
+                    })
+                    .into(),
+                    author_id: user.id,
+                    content: Some(text::parse_content(
+                        &json_string(reply_value, "content").unwrap_or_default(),
+                    ))
+                    .into(),
+                    post_date: json_u64(reply_value, "postdate").unwrap_or_default(),
+                    ..Default::default()
+                }));
+            }
+            Some(activity)
+        })
+        .collect::<Vec<_>>();
+
+    Ok(FollowActivityListResponse {
+        activities: activities.into(),
+        pages,
         ..Default::default()
     })
 }
@@ -361,6 +571,25 @@ mod test {
         assert_eq!(user.get_id(), anony_name);
         assert_eq!(user.get_name().get_normal(), anony_name);
         assert_eq!(user.get_name().get_anonymous(), "壬宫窦丁钱甄");
+    }
+
+    #[test]
+    fn test_extract_follow_users_from_wrapped_list() {
+        let value = serde_json::json!([
+            {
+                "0": { "uid": "100", "username": "Alice", "avatar": "alice.png" },
+                "1": { "uid": 200, "username": "Bob" }
+            }
+        ]);
+
+        let users = extract_follow_users(&value);
+
+        assert_eq!(users.len(), 2);
+        assert_eq!(users[0].get_id(), "100");
+        assert_eq!(users[0].get_name().get_normal(), "Alice");
+        assert_eq!(users[1].get_id(), "200");
+        assert_eq!(users[1].get_name().get_normal(), "Bob");
+        assert!(users.iter().all(User::get_followed));
     }
 
     #[ignore = "manual: requires network or mutable external state"]
