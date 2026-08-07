@@ -136,6 +136,7 @@ private struct TopicListAppearanceView: View {
 
 struct PreferencesInnerView: View {
   @StateObject var pref = PreferencesStorage.shared
+  @StateObject var chatConfiguration = ChatConfigurationStore.shared
   @EnvironmentObject var paywall: PaywallModel
 
   @ViewBuilder
@@ -301,6 +302,18 @@ struct PreferencesInnerView: View {
   }
 
   @ViewBuilder
+  var ai: some View {
+    NavigationLink(destination: AISettingsView()) {
+      HStack {
+        Label("AI Chat", systemImage: "bubble.left.and.sparkles")
+        Spacer()
+        Text(chatConfiguration.isAIEnabled ? "Verified" : "Not Verified")
+          .foregroundStyle(.secondary)
+      }
+    }
+  }
+
+  @ViewBuilder
   var about: some View {
     NavigationLink(destination: AboutView()) {
       Label("About & Feedback", systemImage: "hands.sparkles")
@@ -337,6 +350,10 @@ struct PreferencesInnerView: View {
 
       Section(header: Text("Connection"), footer: Text("Web API Explained")) {
         connection
+      }
+
+      Section(header: Text("AI")) {
+        ai
       }
 
       Section(header: Text("Advanced")) {

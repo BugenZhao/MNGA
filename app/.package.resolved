@@ -1,5 +1,5 @@
 {
-  "originHash" : "b249855f804deae42e940172e4709aa3266c4019f646e9063d8be08e0746ce8c",
+  "originHash" : "f02263b61f37b5e295a5032b43f64716c46db240ad8d18119a9acfb3d8a45d95",
   "pins" : [
     {
       "identity" : "alerttoast",
@@ -116,6 +116,15 @@
       }
     },
     {
+      "identity" : "swift-concurrency-extras",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
+      "state" : {
+        "revision" : "5fa253428866f2360c3754e88537f700ed2656b5",
+        "version" : "1.4.1"
+      }
+    },
+    {
       "identity" : "swift-log",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log",
@@ -152,6 +161,15 @@
       }
     },
     {
+      "identity" : "swiftui-math",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/swiftui-math",
+      "state" : {
+        "revision" : "0b5c2cfaaec8d6193db206f675048eeb5ce95f71",
+        "version" : "0.1.0"
+      }
+    },
+    {
       "identity" : "swiftui-webview",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kylehickinson/SwiftUI-WebView",
@@ -167,6 +185,15 @@
       "state" : {
         "revision" : "d9f903b214b9d56e3c1e4533b03359aee94acd5d",
         "version" : "0.2.4"
+      }
+    },
+    {
+      "identity" : "textual",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gonzalezreal/textual",
+      "state" : {
+        "revision" : "01b51875a5406eefc95f52a058cb059e7bc94dc4",
+        "version" : "0.5.0"
       }
     },
     {
