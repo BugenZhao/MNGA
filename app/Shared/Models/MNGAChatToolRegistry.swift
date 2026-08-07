@@ -497,9 +497,6 @@ private struct UserToolSummary: Encodable {
   let postCount: Int
   let reputation: Double
   let ipLocation: String
-  let followedByCurrentUser: Bool
-  let followingCount: Int
-  let followerCount: Int
 
   init(_ user: User) {
     userID = user.id
@@ -508,9 +505,6 @@ private struct UserToolSummary: Encodable {
     postCount = Int(user.postNum)
     reputation = Double(user.fame) / 10
     ipLocation = user.ipLocation
-    followedByCurrentUser = user.followed
-    followingCount = Int(user.followingCount)
-    followerCount = Int(user.followerCount)
   }
 }
 
