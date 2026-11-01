@@ -832,12 +832,82 @@ struct TopicDetailsView: View {
       }
     }
     .mayGroupedListStyle()
-    .onAppear { dataSource.initialLoad() }
+    .onAppear { onInitialAppear() }
     .onChange(of: dataSource.latestResponse) { updateTopicOnNewResponse(response: $1) }
   }
 
   var maxFloor: Int {
     Int((dataSource.latestResponse?.topic ?? topic).repliesNum)
+  }
+
+  /// Whether the cache-first fast path applies: only for a plain first-page
+  /// browse (the case that has a cache key on the Rust side), and only when the
+  /// user opted in. Jump-to-floor / only-post / author-only / local mode are
+  /// excluded because they don't share that cache.
+  var cacheFirstApplicable: Bool {
+    prefs.topicDetailsCacheFirst
+      && !previewMode
+      && !forceLocalMode
+      && !mock
+      && onlyPost.id == nil
+      && postIdToJump == nil
+      && floorToJump == nil
+      && !topic.id.isEmpty
+  }
+
+  func onInitialAppear() {
+    guard cacheFirstApplicable else {
+      dataSource.initialLoad()
+      return
+    }
+
+    // `onAppear` fires again whenever a pushed view is popped back from; only
+    // the very first one may inject the cache, or we would wipe the pages
+    // loaded since then (like `initialLoad`, which is a no-op once loaded).
+    guard dataSource.notLoaded else { return }
+
+    // 1. Read the local cache first (no network on the Rust side, so this is
+    //    fast) to show content instantly.
+    let cacheRequest = TopicDetailsRequest.with {
+      $0.topicID = topic.id
+      if topic.hasFav { $0.fav = topic.fav }
+      $0.localCache = true
+      $0.page = 1
+    }
+    logicCallAsync(.topicDetails(cacheRequest), errorToastModel: nil) { (cached: TopicDetailsResponse) in
+      // `injectCachedResponse` sets `latestResponse`, which drives
+      // `updateTopicOnNewResponse` via the existing `.onChange` in `body`.
+      let shown = dataSource.injectCachedResponse(cached, page: 1)
+      if shown {
+        // 2. Silently refresh the cache in the background for next time. The
+        //    response is discarded on purpose so the current view isn't replaced.
+        refreshCacheInBackground()
+      } else {
+        dataSource.initialLoad()
+      }
+    } onError: { _ in
+      // Cache miss (no local cache): fall back to the normal network load,
+      // which also writes the cache for next time.
+      dataSource.initialLoad()
+    }
+  }
+
+  /// Fire a network request whose only effect is updating the on-disk cache
+  /// (the Rust service writes the cache on every successful load). The response
+  /// is intentionally ignored so the visible content stays stable.
+  func refreshCacheInBackground() {
+    let request = TopicDetailsRequest.with {
+      $0.webApiStrategy = prefs.topicDetailsWebApiStrategy
+      $0.topicID = topic.id
+      if topic.hasFav { $0.fav = topic.fav }
+      $0.localCache = false
+      $0.page = 1
+    }
+    logicCallAsync(.topicDetails(request), errorToastModel: nil) { (_: TopicDetailsResponse) in
+      // Discard: the cache has been refreshed on the Rust side for next time.
+    } onError: { _ in
+      // Silent: stale cache remains usable until a later refresh succeeds.
+    }
   }
 
   func mayScrollToJumpFloor() {
