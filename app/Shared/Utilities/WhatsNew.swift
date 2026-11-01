@@ -166,6 +166,20 @@ struct MNGAWhatsNew: WhatsNewCollectionProvider {
       primaryAction: .continue,
       secondaryAction: .checkOutPlus,
     )
+
+    WhatsNew(
+      version: "2.4",
+      title: whatsNewTitle(version: "2.4"),
+      features: [
+        .init(
+          image: .init(systemName: "rectangle.split.2x1"),
+          title: "适配 iPhone Duo",
+          subtitle: "展开后版块和帖子并排显示，折叠后接着看。",
+        ),
+      ],
+      primaryAction: .continue,
+      secondaryAction: .checkOutPlus,
+    )
   }
 
   static let environment = WhatsNewEnvironment(
