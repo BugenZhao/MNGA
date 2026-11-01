@@ -7,10 +7,15 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
 struct TopicListPlaceholderView: View {
+  @EnvironmentObject.Optional var columnVisibility: ColumnVisibility?
+
   var body: some View {
     ContentUnavailableView("Select a Forum in Sidebar", systemImage: "list.bullet.rectangle")
+      .onAppear { columnVisibility?.isContentColumnEmpty = true }
+      .onDisappear { columnVisibility?.isContentColumnEmpty = false }
   }
 }
 

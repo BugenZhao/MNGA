@@ -62,6 +62,9 @@ struct ScreenshotHeaderView: View {
 }
 
 struct ScreenshotContainerView<Content: View>: View {
+  // Fixed, so that the shared image does not depend on the current window size.
+  private static var width: CGFloat { 430 }
+
   let colorScheme: ColorScheme
   let mngaURL: URL?
   @StateObject var prefs = PreferencesStorage.shared
@@ -81,7 +84,7 @@ struct ScreenshotContainerView<Content: View>: View {
       content
     }
     .padding()
-    .frame(width: Screen.main.bounds.size.width)
+    .frame(width: Self.width)
     .background(.secondarySystemGroupedBackground)
     .environment(\.colorScheme, colorScheme)
     .accentColor(prefs.themeColor.color)

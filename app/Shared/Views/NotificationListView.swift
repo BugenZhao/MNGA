@@ -56,6 +56,9 @@ struct NotificationListView: View {
         n.read = read
       })
       let _: MarkNotificationReadResponse? = try? logicCall(request)
+      #if DEBUG
+        NotificationMock.mark(ids, read: read)
+      #endif
       DispatchQueue.main.async {
         for id in ids {
           if let index = notis.items.firstIndex(where: { $0.id == id }) {
@@ -99,15 +102,20 @@ extension EnvironmentValues {
 }
 
 struct NotificationListNavigationView: View {
-  @State var detents: Set<PresentationDetent> = Set(Self.defaultDetents)
-  @State var detent: PresentationDetent = Self.defaultDetents[0]
+  let defaultDetents: [PresentationDetent]
 
-  static let defaultDetents: [PresentationDetent] =
-    UserInterfaceIdiom.current == .pad ?
-    [.large] : [.medium, .large]
+  @State var detents: Set<PresentationDetent>
+  @State var detent: PresentationDetent
+
+  init(usesColumnLayout: Bool) {
+    let defaultDetents: [PresentationDetent] = usesColumnLayout ? [.large] : [.medium, .large]
+    self.defaultDetents = defaultDetents
+    detents = Set(defaultDetents)
+    detent = defaultDetents[0]
+  }
 
   func enableMediumDetent() {
-    detents = Set(Self.defaultDetents)
+    detents = Set(defaultDetents)
   }
 
   func disableMediumDetent() {

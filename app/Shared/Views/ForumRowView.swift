@@ -35,6 +35,7 @@ struct ForumRowLinkView: View {
   var navigationDestination: some View {
     TopicListView.build(forum: forum)
       .onAppearOnce { hack += 1 }
+      .hidesOverlaidSidebar()
   }
 
   @ViewBuilder

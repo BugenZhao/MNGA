@@ -30,6 +30,8 @@ struct ForumListView: View {
     )
   }
 
+  @Environment(\.usesColumnLayout) var usesColumnLayout
+
   // HACK: do not use @Environment, which causes some sheets (like PostReplyView) popped unexpectedly
   @State var editMode = EditMode.inactive
 
@@ -186,7 +188,7 @@ struct ForumListView: View {
 
   @ViewBuilder
   var unlockButton: some View {
-    if UserInterfaceIdiom.current == .phone {
+    if !usesColumnLayout {
       Button(action: { paywall.isShowingModal = true }) {
         Text(paywall.status.tryOrUnlock).bold()
       }
@@ -202,7 +204,7 @@ struct ForumListView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     ToolbarItem(placement: .navigationBarLeading) { UserMenuView() }
-    if UserInterfaceIdiom.current != .pad {
+    if !usesColumnLayout {
       NotificationToolbarItem(
         placement: .navigationBarLeading,
         show: .fromUserMenu,

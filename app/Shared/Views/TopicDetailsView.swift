@@ -129,6 +129,7 @@ struct TopicDetailsView: View {
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.displayScale) private var displayScale
   @EnvironmentObject var viewingImage: ViewingImageModel
   @EnvironmentObject.Optional var postReply: PostReplyModel?
 
@@ -146,6 +147,9 @@ struct TopicDetailsView: View {
   let previewMode: Bool
   let locateFloorInTopic: ((Post) -> Void)?
 
+  @Environment(\.usesColumnLayout) private var usesColumnLayout
+  @State private var isRefreshingBottomBar = false
+  @State private var contentMaxX: CGFloat = 0
   @State var showJumpSelector = false
   @State var floorToJump: Int?
   @State var postIdToJump: PostId?
@@ -692,6 +696,21 @@ struct TopicDetailsView: View {
   var title: String? { titles.0 }
   var subtitle: String? { titles.1 }
 
+  // On iOS 27, the system drops the bottom bar items of a topic in the detail column, unless
+  // the bar is requested explicitly. It's fine on one stack, which all other iPhones are.
+  private var bottomBarVisibility: Visibility {
+    if isRefreshingBottomBar { return .hidden }
+    if #available(iOS 27.0, *), usesColumnLayout { return .visible }
+    return .automatic
+  }
+
+  // The items do not come back by themselves when the layout changes with this view on top.
+  private func refreshBottomBar() {
+    guard #available(iOS 27.0, *) else { return }
+    isRefreshingBottomBar = true
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { isRefreshingBottomBar = false }
+  }
+
   @ViewBuilder
   var loadFirstPageButton: some View {
     if let page = dataSource.firstLoadedPage, page >= 2 {
@@ -703,7 +722,7 @@ struct TopicDetailsView: View {
 
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
-    FullScreenButtonToolbarItem()
+    FullScreenButtonToolbarItem(contentMaxX: contentMaxX)
     ToolbarItem(placement: .navigationBarTrailing) { progress }
       .maybeSharedBackgroundVisibility(.hidden)
     MaybeToolbarSpacer(.fixed, placement: .navigationBarTrailing)
@@ -816,6 +835,9 @@ struct TopicDetailsView: View {
     .toolbar { toolbar }
     .refreshable(dataSource: dataSource)
     .toolbarRole(.editor) // make title left aligned
+    .toolbar(bottomBarVisibility, for: .bottomBar)
+    .onGeometryChange(for: CGFloat.self, of: { $0.frame(in: .global).maxX }) { contentMaxX = $0 }
+    .onChange(of: usesColumnLayout) { refreshBottomBar() }
     .onChange(of: postReply?.sent) { reloadPageAfter(sent: $1) }
     .onChange(of: dataSource.latestError) { onError(e: $1) }
     .onDisappearOrInactive { syncTopicProgress() }
@@ -971,7 +993,7 @@ struct TopicDetailsView: View {
 
   @MainActor
   func viewScreenshot() {
-    if let url = screenshotView.snapshot() {
+    if let url = screenshotView.snapshot(scale: displayScale) {
       viewingImage.show(url: url)
     } else {
       ToastModel.showAuto(.error("Failed to render screenshot."))
