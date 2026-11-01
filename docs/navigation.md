@@ -74,6 +74,8 @@ The notification shortcut differs by screen. The toolbar button appears only wit
 | Column 3 placeholder toolbar | Sheet | Not applicable | `TopicDetailsPlaceholderView` |
 | Notification toast | Sheet | Sheet | `MainToastModifier` |
 
+All but the toast and the topic toolbar were run. The `Always Show Notification Badge` debug setting shows the toolbar button without unread notifications.
+
 ## Lists in column 2 or 3
 
 Next-column rows replace column 3 from column 2, clearing its stack, and push from column 3. Same-column rows push where they are.
@@ -96,7 +98,7 @@ Next-column rows replace column 3 from column 2, clearing its stack, and push fr
 | Profile | Link in signature | Current stack, see Post content | Code | `UserSignatureView` |
 | Short messages | Conversation | Next column | Code | `ShortMessageListView` |
 | Short messages | New message | Sheet | Code | `ShortMessageListView` |
-| Notifications | Notification row, opening a post or conversation | Next column | Code | `NotificationListView` |
+| Notifications | Notification row, opening a post or conversation | Next column | Run | `NotificationListView` |
 
 Selecting a subforum closes the sheet first, then pushes the forum on the stack behind it. Notifications appear only in a sheet on iPad, so their rows push in that sheet there.
 
@@ -177,7 +179,7 @@ The sheet is attached to `ForumListView` by `SchemesNavigationModifier`. A deep 
 
 | Sheet | Inside it | Evidence | Code |
 |---|---|---|---|
-| Notifications | Rows push in the sheet | Code | `NotificationListNavigationView` |
+| Notifications | Rows push in the sheet | Run | `NotificationListNavigationView` |
 | Deep link | All navigation pushes in the sheet | Run | `SchemesNavigationModifier` |
 | About & Feedback | A topic view, so its navigation pushes in the sheet | Run | `AboutNavigationView` |
 | Settings | Plus, block words, list and post appearance, cache, About, What's New all push | Code | `PreferencesView` |
@@ -193,7 +195,7 @@ Alerts and confirmation dialogs, such as renaming a favorite folder or discardin
 
 The full screen button in a topic hides columns 1 and 2, and column 3 keeps its stack. It shows only in the three-column layout. (Run)
 
-Known issue: the button also shows on topics inside sheets, such as a deep link, where it can only affect the columns behind the sheet.
+Known issues: the button also shows on topics inside sheets, such as a deep link, where it can only affect the columns behind the sheet. It also shows on a topic in column 2, reachable after unfolding, where it hides that topic and leaves the placeholder. The column button brings it back. (Run)
 
 ## Folding on iPhone Duo
 
@@ -204,6 +206,7 @@ Folding and unfolding change the layout while the app runs. Moving between layou
 - Unfolding moves a topic opened while folded into column 3. (Run)
 - A presented sheet stays presented across a fold. (Run)
 - The rotation lock applies only when folded, and the setting says so. On the inner display the system ignores it. (Run)
+- The notification list pushed from the forum index while folded stays in the sidebar, and a row opened from it lands in column 2 after unfolding. While the list is on that stack, the sheet shortcut stays hidden. (Run)
 
 ## Rules for new navigation
 
@@ -243,3 +246,5 @@ On iPhone Duo, use the `duo-hinge` skill:
 5. Rotate while folded. The bars stay usable beside the camera.
 
 On a large iPhone, rotate to landscape. It stays on one stack.
+
+To test notifications without real ones, temporarily append `Notification` values to `response.notis` in `NotificationModel`'s `onResponse`, and do not commit that. Seeding the sled cache does not work, because a simulator launch clears it.
