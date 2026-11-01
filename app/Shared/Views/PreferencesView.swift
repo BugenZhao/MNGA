@@ -137,6 +137,7 @@ private struct TopicListAppearanceView: View {
 
 struct PreferencesInnerView: View {
   @Environment(\.usesColumnLayout) var usesColumnLayout
+  @Environment(\.verticalSizeClass) var verticalSizeClass
   @StateObject var pref = PreferencesStorage.shared
   @EnvironmentObject var paywall: PaywallModel
 
@@ -225,7 +226,8 @@ struct PreferencesInnerView: View {
     if UserInterfaceIdiom.current == .phone {
       Toggle(isOn: $pref.alwaysPortraitOnPhone) {
         Label("Lock Screen Rotation", systemImage: "iphone")
-        if usesColumnLayout {
+        // Regular in both directions on an iPhone means the inner display of a foldable.
+        if usesColumnLayout, verticalSizeClass == .regular {
           // The system ignores the supported orientations on a resizable display.
           Text("Only applies when folded")
         }

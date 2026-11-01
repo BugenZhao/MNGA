@@ -11,12 +11,14 @@ Evidence for each row:
 
 | Layout | Root | Used when |
 |---|---|---|
-| Three columns | `NavigationSplitView`, with a `NavigationStack` in each column | `usesColumnLayout` is true: both size classes are regular (iPad, unfolded iPhone Duo) |
-| Single stack | The same split view, collapsed to one stack | `usesColumnLayout` is false: every iPhone, folded iPhone Duo, and a large iPhone in landscape |
+| Three columns | `NavigationSplitView`, with a `NavigationStack` in each column | `usesColumnLayout` is true: the horizontal size class is regular (iPad, unfolded iPhone Duo, a large iPhone in landscape) |
+| Single stack | The same split view, collapsed to one stack | `usesColumnLayout` is false: the horizontal size class is compact (any other iPhone, folded iPhone Duo) |
 
 The root is the same view in both layouts, so a change between them keeps the navigation state. Read `usesColumnLayout` from the environment below the root. Do not use the device idiom, or `horizontalSizeClass` below the root.
 
 When the columns do not all fit, which in testing meant a window under about 1100 points wide, the system overlays the sidebar on the content column and no column width or split view style changes that. `hidesOverlaidSidebar()` closes the overlay after navigating from the sidebar to column 2, so apply it to those destinations.
+
+With nothing open in column 2, the sidebar opens over it when the app launches or expands at that width, because columns 2 and 3 would otherwise both be empty. This covers unfolding iPhone Duo from the forum index and rotating a large iPhone to landscape. An iPad launched in portrait normally does the same, and it can show only column 2 if the system is still settling, which is acceptable because the sidebar button still works. Rotating an iPad does not expand the layout, so the system decides which columns show. (Run)
 
 | Column | Root content | Typically shows |
 |---|---|---|
@@ -240,12 +242,18 @@ On iPhone, walk the same path. Every step pushes on one stack, except that step 
 
 On iPhone Duo, use the `duo-hinge` skill:
 
-1. Unfold, open a forum from the sidebar, and check that the sidebar closes.
+1. Unfold from the forum index, and check that the sidebar opens. Open a forum from it, and check that it closes.
 2. Open a topic and a link inside it, then fold. The same topic stays on screen, and back walks through the first topic to the forum.
 3. Open a topic while folded, then unfold. It is in column 3.
 4. Fold with a deep link sheet open. The sheet stays.
 5. Rotate while folded. The bars stay usable beside the camera.
 
-On a large iPhone, rotate to landscape. It stays on one stack.
+On a large iPhone, such as iPhone 18 Pro Max:
+
+1. Open a forum and a topic in portrait, then rotate to landscape. The forum is in column 2 and the topic in column 3.
+2. Rotate back to portrait. The topic stays on screen, and back returns to the forum.
+3. From the forum index, rotate to landscape. The sidebar opens over the empty column 2. Opening a forum closes it.
+
+On a smaller iPhone, rotate to landscape. It stays on one stack.
 
 To test notifications without real ones, turn on `Mock Notifications` in the Debug section of Settings, available in Debug builds. It adds one notification of each type, and keeps their read state. The short message rows open the details page with an error, because there is no well-known short message.

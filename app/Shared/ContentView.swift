@@ -27,16 +27,13 @@ struct ContentView: View {
 
   @Environment(\.scenePhase) var scenePhase
   @Environment(\.horizontalSizeClass) var horizontalSizeClass
-  @Environment(\.verticalSizeClass) var verticalSizeClass
 
   // For preview usage. If set, the content will be replaced by this.
   // In this case, `ContentView` mainly serves as a container for global states.
   var testBody: AnyView?
 
-  // A large iPhone in landscape is regular only horizontally. Keep it on one stack, so that
-  // rotating does not replace the list being read with empty columns.
   var usesColumnLayout: Bool {
-    horizontalSizeClass == .regular && verticalSizeClass == .regular
+    horizontalSizeClass == .regular
   }
 
   var main: some View {
@@ -71,7 +68,6 @@ struct ContentView: View {
         TopicDetailsPlaceholderView()
       }
     }
-    .environment(\.horizontalSizeClass, usesColumnLayout ? .regular : .compact)
   }
 
   var body: some View {
@@ -79,7 +75,12 @@ struct ContentView: View {
       .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .global) }) { columnVisibility.rootFrame = $0 }
       .onChange(of: usesColumnLayout) {
         if $1 {
-          columnVisibility.restoreContentColumnAfterExpanding()
+          columnVisibility.settleAfterExpanding()
+        }
+      }
+      .onAppear {
+        if usesColumnLayout {
+          columnVisibility.settleAfterExpanding()
         }
       }
       .onOpenURL { schemes.navigateTo(url: $0) }
