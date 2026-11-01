@@ -1,0 +1,27 @@
+[project]
+name = "icon-composer"
+version = "2.0.0"
+description = "CLI tools for creating and validating Apple Icon Composer .icon packages."
+license = "Apache-2.0"
+requires-python = ">=3.9"
+dependencies = [
+    "jsonschema>=4.21",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "ty",
+]
+
+[tool.uv]
+package = false
+exclude-newer = "1 week"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ty.environment]
+extra-paths = ["."]

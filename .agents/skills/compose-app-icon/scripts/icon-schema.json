@@ -1,0 +1,687 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.apple.com/icon-composer/icon.json",
+  "title": "Apple Icon Composer Icon",
+  "description": "Schema for Apple Icon Composer .icon package icon.json files. Covers Icon Composer 1.x documents and the Icon Composer 2.0 additions (document 'features', group 'blur-material' / 'refractivity' / 'specular-highlight-placement', whole-object '-specializations' for shadow and translucency, asset mirroring, and idiom / localization specialization slots).",
+  "type": "object",
+  "properties": {
+    "features": {
+      "$ref": "#/$defs/features",
+      "description": "Document capabilities that a reader must understand to open this icon (Icon Composer 2.0+). Icon Composer refuses to open a document declaring a feature it does not know, so this is the forward-compatibility gate: Icon Composer 2 writes it when the icon uses the matching keys."
+    },
+    "fill": {
+      "$ref": "#/$defs/fill-value",
+      "description": "Background fill for the icon (used when fill-specializations is not present)"
+    },
+    "fill-specializations": {
+      "$ref": "#/$defs/specializations-of-fill",
+      "description": "Slot-specific background fill overrides"
+    },
+    "color-space-for-untagged-svg-colors": {
+      "type": "string",
+      "description": "Color space to use for SVG colors that don't specify one",
+      "enum": ["srgb", "display-p3"]
+    },
+    "implicit-asset-mirroring": {
+      "type": "boolean",
+      "description": "Icon Composer 2.0+. UI 'Mirror Assets in Right to Left' — automatically mirror assets for right-to-left languages unless a layer or group opts out via 'asset-mirroring'."
+    },
+    "languages": {
+      "type": "array",
+      "description": "Icon Composer 2.0+. Locale IDs this document carries localized assets for (Icon Composer shows this as an internal-only setting).",
+      "items": { "type": "string" }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Ordered list of layer groups composing the icon",
+      "items": {
+        "$ref": "#/$defs/group"
+      }
+    },
+    "supported-platforms": {
+      "$ref": "#/$defs/supported-platforms"
+    }
+  },
+  "required": ["groups", "supported-platforms"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "$comment": "Icon Composer 2 declares 'refractivity' in 'features' whenever a group carries any refractivity key, so that Icon Composer 1.x refuses the document instead of silently dropping the effect.",
+      "if": {
+        "required": ["groups"],
+        "properties": {
+          "groups": {
+            "contains": {
+              "anyOf": [
+                { "required": ["refractivity"] },
+                { "required": ["refractivity-specializations"] },
+                { "required": ["refractivity-strength"] },
+                { "required": ["refractivity-strength-specializations"] },
+                { "required": ["refractivity-depth"] },
+                { "required": ["refractivity-depth-specializations"] }
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["features"],
+        "properties": {
+          "features": { "contains": { "const": "refractivity" } }
+        }
+      }
+    },
+    {
+      "$comment": "Same gate for the specular highlight placement introduced with Icon Composer 2.",
+      "if": {
+        "required": ["groups"],
+        "properties": {
+          "groups": {
+            "contains": {
+              "anyOf": [
+                { "required": ["specular-highlight-placement"] },
+                { "required": ["specular-highlight-placement-specializations"] }
+              ]
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["features"],
+        "properties": {
+          "features": { "contains": { "const": "specular-location" } }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "features": {
+      "type": "array",
+      "description": "Feature names understood by Icon Composer 2.0. Any other value makes Icon Composer refuse the document with 'This document uses features from a newer version of Icon Composer'.",
+      "items": {
+        "type": "string",
+        "enum": ["refractivity", "specular-location"]
+      },
+      "uniqueItems": true
+    },
+    "color": {
+      "type": "string",
+      "description": "A color string. Either 'colorspace:component,...' — 'extended-srgb', 'srgb' and 'display-p3' take exactly 4 components (r,g,b,a), 'gray' and 'extended-gray' exactly 2 (white,alpha) — or 'named:<system color>'. Examples: 'extended-srgb:0.00000,0.53333,1.00000,1.00000', 'display-p3:1.00000,0.18845,0.18108,1.00000', 'extended-gray:1.00000,1.00000', 'named:system-blue'.",
+      "oneOf": [
+        {
+          "$comment": "RGB color spaces: exactly four components.",
+          "pattern": "^(extended-srgb|srgb|display-p3):-?[0-9]*\\.?[0-9]+(,-?[0-9]*\\.?[0-9]+){3}$"
+        },
+        {
+          "$comment": "Gray color spaces: exactly two components.",
+          "pattern": "^(gray|extended-gray):-?[0-9]*\\.?[0-9]+,-?[0-9]*\\.?[0-9]+$"
+        },
+        {
+          "$comment": "System colors, which adapt to the appearance.",
+          "pattern": "^named:system-(red|green|blue|orange|yellow|brown|pink|purple|gray|teal|indigo|mint|cyan)$"
+        }
+      ]
+    },
+    "appearance": {
+      "type": "string",
+      "description": "The appearance this specialization applies to. Omitting the 'appearance' key targets every appearance; 'base' is the value all appearances inherit from, and 'light' may also be specified explicitly.",
+      "enum": ["base", "light", "dark", "tinted"]
+    },
+    "idiom": {
+      "type": "string",
+      "description": "Icon Composer 2.0+. The idiom (platform shape) this specialization applies to. Omit to apply to every idiom.",
+      "enum": ["square", "iOS", "macOS", "watchOS"]
+    },
+    "specialization-entry": {
+      "type": "object",
+      "description": "One entry of a '-specializations' array: a required 'value' plus the slot it applies to. A slot is any combination of 'appearance', 'idiom' and 'localization'; every key omitted means 'applies to all'.",
+      "properties": {
+        "appearance": { "$ref": "#/$defs/appearance" },
+        "idiom": { "$ref": "#/$defs/idiom" },
+        "localization": {
+          "type": "string",
+          "description": "Icon Composer 2.0+. Locale ID (e.g. 'ja', 'ar') this specialization applies to."
+        },
+        "value": true
+      },
+      "required": ["value"],
+      "additionalProperties": false
+    },
+    "gradient-point": {
+      "type": "object",
+      "description": "A normalized point (0 to 1 on each axis) on the icon canvas, used for gradient endpoints",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      },
+      "required": ["x", "y"],
+      "additionalProperties": false
+    },
+    "gradient-orientation": {
+      "type": "object",
+      "description": "Start and stop points defining a linear gradient's direction. Icon Composer emits this alongside 'linear-gradient' when the gradient is rotated.",
+      "properties": {
+        "start": { "$ref": "#/$defs/gradient-point" },
+        "stop": { "$ref": "#/$defs/gradient-point" }
+      },
+      "required": ["start", "stop"],
+      "additionalProperties": false
+    },
+    "fill-keyword": {
+      "type": "string",
+      "description": "A fill expressed as a keyword rather than an object: 'automatic' inherits the value it specializes, 'none' paints nothing, and 'system-light' / 'system-dark' use Apple's standard backgrounds.",
+      "enum": ["automatic", "none", "system-light", "system-dark"]
+    },
+    "fill-object": {
+      "type": "object",
+      "description": "A fill definition. Exactly one of the fill type properties should be present.",
+      "properties": {
+        "automatic-gradient": {
+          "$ref": "#/$defs/color",
+          "description": "An automatic gradient derived from a single base color"
+        },
+        "solid": {
+          "$ref": "#/$defs/color",
+          "description": "A solid color fill"
+        },
+        "linear-gradient": {
+          "type": "array",
+          "description": "A linear gradient defined by two color stops",
+          "items": { "$ref": "#/$defs/color" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "orientation": {
+          "$ref": "#/$defs/gradient-orientation",
+          "description": "Direction of a 'linear-gradient' fill, as start/stop points. Only valid alongside 'linear-gradient'."
+        }
+      },
+      "oneOf": [
+        { "required": ["automatic-gradient"] },
+        { "required": ["solid"] },
+        { "required": ["linear-gradient"] }
+      ],
+      "allOf": [
+        {
+          "if": { "not": { "required": ["linear-gradient"] } },
+          "then": { "not": { "required": ["orientation"] } }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "fill-value": {
+      "description": "A fill: either a fill object or one of the fill keywords.",
+      "oneOf": [
+        { "$ref": "#/$defs/fill-object" },
+        { "$ref": "#/$defs/fill-keyword" }
+      ]
+    },
+    "specializations-of-fill": {
+      "type": "array",
+      "description": "Slot-specific fill overrides. Each entry's 'value' may be a fill object or a fill keyword such as 'automatic'.",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/fill-value" } }
+      }
+    },
+    "specializations-of-string": {
+      "type": "array",
+      "description": "Slot-specific string overrides (e.g. image file name)",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "type": "string" } }
+      }
+    },
+    "specializations-of-boolean": {
+      "type": "array",
+      "description": "Slot-specific boolean overrides",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "type": "boolean" } }
+      }
+    },
+    "specializations-of-unit-number": {
+      "type": "array",
+      "description": "Slot-specific overrides for a 0.0–1.0 number",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "type": "number", "minimum": 0, "maximum": 1 } }
+      }
+    },
+    "specializations-of-position": {
+      "type": "array",
+      "description": "Slot-specific position overrides",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/position" } }
+      }
+    },
+    "specializations-of-blend-mode": {
+      "type": "array",
+      "description": "Slot-specific blend-mode overrides",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/blend-mode" } }
+      }
+    },
+    "specializations-of-lighting": {
+      "type": "array",
+      "description": "Slot-specific LiquidGlass.Mode overrides",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/lighting" } }
+      }
+    },
+    "specializations-of-shadow": {
+      "type": "array",
+      "description": "Slot-specific shadow overrides. Each 'value' is a complete shadow object — Icon Composer has no nested 'shadow.kind-specializations'.",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/shadow" } }
+      }
+    },
+    "specializations-of-translucency": {
+      "type": "array",
+      "description": "Slot-specific translucency overrides. Each 'value' is a complete translucency object.",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/translucency" } }
+      }
+    },
+    "specializations-of-refractivity": {
+      "type": "array",
+      "description": "Slot-specific refractivity overrides. Each 'value' is a complete refractivity object.",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/refractivity" } }
+      }
+    },
+    "specializations-of-specular-highlight-placement": {
+      "type": "array",
+      "description": "Slot-specific specular highlight placement overrides",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": {
+          "value": { "$ref": "#/$defs/specular-highlight-placement" }
+        }
+      }
+    },
+    "specializations-of-asset-mirroring": {
+      "type": "array",
+      "description": "Slot-specific asset-mirroring overrides",
+      "items": {
+        "$ref": "#/$defs/specialization-entry",
+        "properties": { "value": { "$ref": "#/$defs/asset-mirroring" } }
+      }
+    },
+    "position": {
+      "type": "object",
+      "description": "Position and scale adjustments for a layer or group. When present, both 'scale' and 'translation-in-points' are required: Icon Composer refuses to open a package whose position omits 'translation-in-points'. Omit the whole 'position' object for the identity transform (scale 1, no translation).",
+      "properties": {
+        "scale": {
+          "type": "number",
+          "description": "Scale factor for the layer (1.0 = original size)",
+          "exclusiveMinimum": 0
+        },
+        "translation-in-points": {
+          "type": "array",
+          "description": "Translation offset as [x, y] in points",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["scale", "translation-in-points"],
+      "additionalProperties": false
+    },
+    "blend-mode": {
+      "type": "string",
+      "description": "Blend mode for compositing a layer or group (Color.BlendMode in Icon Composer)",
+      "enum": [
+        "normal",
+        "darken",
+        "multiply",
+        "plus-darker",
+        "lighten",
+        "screen",
+        "plus-lighter",
+        "overlay",
+        "soft-light",
+        "hard-light"
+      ]
+    },
+    "lighting": {
+      "type": "string",
+      "description": "LiquidGlass.Mode — how lighting is applied across a group",
+      "enum": ["individual", "combined"]
+    },
+    "specular-highlight-placement": {
+      "type": "string",
+      "description": "Icon Composer 2.0+. Where the specular highlight sits relative to the glass (UI 'Specular Outside'). Requires 'specular-location' in the document's 'features'.",
+      "enum": ["automatic", "inside", "outside"]
+    },
+    "asset-mirroring": {
+      "type": "object",
+      "description": "Icon Composer 2.0+. Right-to-left mirroring behaviour for this layer or group's assets.",
+      "properties": {
+        "mirrorable": {
+          "type": "boolean",
+          "description": "Whether the assets may be mirrored for right-to-left languages"
+        }
+      },
+      "additionalProperties": false
+    },
+    "layer": {
+      "type": "object",
+      "description": "A single image layer within a group. Most scalar properties — Color (fill, blend-mode, opacity), LiquidGlass (glass), Composition.Visible (hidden), Composition.Layout (image-name, position) — may be overridden per slot via a corresponding '-specializations' array.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the layer"
+        },
+        "image-name": {
+          "type": "string",
+          "description": "Filename of the image asset in the Assets directory (Composition.Layout)"
+        },
+        "image-name-specializations": {
+          "$ref": "#/$defs/specializations-of-string",
+          "description": "Per-slot image-name overrides (Composition.Layout)"
+        },
+        "fill": {
+          "$ref": "#/$defs/fill-value",
+          "description": "Color fill applied to the layer (Color.Fill)"
+        },
+        "fill-specializations": {
+          "$ref": "#/$defs/specializations-of-fill",
+          "description": "Per-slot fill overrides (Color.Fill)"
+        },
+        "blend-mode": {
+          "$ref": "#/$defs/blend-mode",
+          "description": "Blend mode for compositing (Color.BlendMode)"
+        },
+        "blend-mode-specializations": {
+          "$ref": "#/$defs/specializations-of-blend-mode",
+          "description": "Per-slot blend-mode overrides (Color.BlendMode)"
+        },
+        "opacity": {
+          "type": "number",
+          "description": "Layer opacity 0.0–1.0 (Color.Opacity)",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "opacity-specializations": {
+          "$ref": "#/$defs/specializations-of-unit-number",
+          "description": "Per-slot opacity overrides (Color.Opacity)"
+        },
+        "glass": {
+          "type": "boolean",
+          "description": "Whether a glass effect is applied (LiquidGlass.Mode)"
+        },
+        "glass-specializations": {
+          "$ref": "#/$defs/specializations-of-boolean",
+          "description": "Per-slot glass overrides (LiquidGlass.Mode)"
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Whether the layer is hidden (Composition.Visible)"
+        },
+        "hidden-specializations": {
+          "$ref": "#/$defs/specializations-of-boolean",
+          "description": "Per-slot hidden overrides (Composition.Visible)"
+        },
+        "position": {
+          "$ref": "#/$defs/position",
+          "description": "Position and scale adjustments (Composition.Layout)"
+        },
+        "position-specializations": {
+          "$ref": "#/$defs/specializations-of-position",
+          "description": "Per-slot position overrides (Composition.Layout)"
+        },
+        "asset-mirroring": {
+          "$ref": "#/$defs/asset-mirroring",
+          "description": "Icon Composer 2.0+. Right-to-left mirroring behaviour for this layer's assets"
+        },
+        "asset-mirroring-specializations": {
+          "$ref": "#/$defs/specializations-of-asset-mirroring",
+          "description": "Icon Composer 2.0+. Per-slot asset-mirroring overrides"
+        }
+      },
+      "required": ["name"],
+      "anyOf": [
+        { "required": ["image-name"] },
+        { "required": ["image-name-specializations"] }
+      ],
+      "additionalProperties": false
+    },
+    "shadow": {
+      "type": "object",
+      "description": "Shadow settings for a layer group. Both keys are required; specialize the whole object through the group's 'shadow-specializations'.",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "description": "Shadow kind (JSON value; the Icon Composer UI shows different labels): 'neutral' (UI 'Natural'), 'layer-color' (UI 'Chromatic'), 'none' (UI 'Off'), 'automatic' (inherit).",
+          "enum": ["automatic", "neutral", "layer-color", "none"]
+        },
+        "opacity": {
+          "type": "number",
+          "description": "Shadow opacity (0.0 to 1.0)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["kind", "opacity"],
+      "additionalProperties": false
+    },
+    "translucency": {
+      "type": "object",
+      "description": "Translucency settings for a layer group. Both keys are required; specialize the whole object through the group's 'translucency-specializations'.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether translucency is enabled"
+        },
+        "value": {
+          "type": "number",
+          "description": "Translucency amount (0.0 to 1.0)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["enabled", "value"],
+      "additionalProperties": false
+    },
+    "refractivity": {
+      "type": "object",
+      "description": "Icon Composer 2.0+. Refractivity settings for a layer group — how strongly the glass bends what is behind it. All three keys are required; Icon Composer refuses the document if any is missing. Requires 'refractivity' in the document's 'features'.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the refractivity effect is enabled"
+        },
+        "strength": {
+          "type": "number",
+          "description": "Refraction strength (0.0 to 1.0)",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "depth": {
+          "type": "number",
+          "description": "Refraction depth (0.0 to 1.0)",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["enabled", "strength", "depth"],
+      "additionalProperties": false
+    },
+    "group": {
+      "type": "object",
+      "description": "A layer group. Carries the LiquidGlass properties — Mode (lighting), Specular, Blur Material, Refractivity, Translucency, Shadow — each with an optional '-specializations' sibling for per-slot overrides.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the group"
+        },
+        "layers": {
+          "type": "array",
+          "description": "Ordered list of layers in this group",
+          "items": { "$ref": "#/$defs/layer" },
+          "minItems": 1
+        },
+        "lighting": {
+          "$ref": "#/$defs/lighting",
+          "description": "LiquidGlass.Mode — how lighting is applied to the group"
+        },
+        "lighting-specializations": {
+          "$ref": "#/$defs/specializations-of-lighting",
+          "description": "Per-slot LiquidGlass.Mode overrides"
+        },
+        "specular": {
+          "type": "boolean",
+          "description": "LiquidGlass.Specular — highlight on/off"
+        },
+        "specular-specializations": {
+          "$ref": "#/$defs/specializations-of-boolean",
+          "description": "Per-slot specular overrides (LiquidGlass.Specular)"
+        },
+        "specular-highlight-placement": {
+          "$ref": "#/$defs/specular-highlight-placement",
+          "description": "Icon Composer 2.0+. Where the specular highlight sits (UI 'Specular Outside')"
+        },
+        "specular-highlight-placement-specializations": {
+          "$ref": "#/$defs/specializations-of-specular-highlight-placement",
+          "description": "Icon Composer 2.0+. Per-slot specular highlight placement overrides"
+        },
+        "blur-material": {
+          "type": "number",
+          "description": "Icon Composer 2.0+. LiquidGlass blur material amount (0.0–1.0, default 0.5). This is the key Icon Composer 2 writes; it replaces the Icon Composer 1.x 'blur'.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "blur-material-specializations": {
+          "$ref": "#/$defs/specializations-of-unit-number",
+          "description": "Icon Composer 2.0+. Per-slot blur-material overrides"
+        },
+        "blur": {
+          "type": "number",
+          "description": "Legacy Icon Composer 1.x LiquidGlass.Blur amount (0.0–1.0). Icon Composer 2 ignores this key — write 'blur-material' instead.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "blur-specializations": {
+          "$ref": "#/$defs/specializations-of-unit-number",
+          "description": "Legacy Icon Composer 1.x per-slot blur overrides. Icon Composer 2 ignores them."
+        },
+        "refractivity": {
+          "$ref": "#/$defs/refractivity",
+          "description": "Icon Composer 2.0+. Refractivity settings for the group"
+        },
+        "refractivity-specializations": {
+          "$ref": "#/$defs/specializations-of-refractivity",
+          "description": "Icon Composer 2.0+. Per-slot refractivity overrides"
+        },
+        "refractivity-strength": {
+          "type": "number",
+          "description": "Legacy flat form of 'refractivity.strength'. Icon Composer 2 still reads it, but writes the nested 'refractivity' object.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "refractivity-strength-specializations": {
+          "$ref": "#/$defs/specializations-of-unit-number",
+          "description": "Legacy flat per-slot overrides for 'refractivity.strength'"
+        },
+        "refractivity-depth": {
+          "type": "number",
+          "description": "Legacy flat form of 'refractivity.depth'. Icon Composer 2 still reads it, but writes the nested 'refractivity' object.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "refractivity-depth-specializations": {
+          "$ref": "#/$defs/specializations-of-unit-number",
+          "description": "Legacy flat per-slot overrides for 'refractivity.depth'"
+        },
+        "shadow": {
+          "$ref": "#/$defs/shadow",
+          "description": "Shadow settings for the group"
+        },
+        "shadow-specializations": {
+          "$ref": "#/$defs/specializations-of-shadow",
+          "description": "Per-slot shadow overrides. Icon Composer 2 writes this instead of 'shadow' when the shadow differs per appearance."
+        },
+        "translucency": {
+          "$ref": "#/$defs/translucency",
+          "description": "Translucency settings for the group"
+        },
+        "translucency-specializations": {
+          "$ref": "#/$defs/specializations-of-translucency",
+          "description": "Per-slot translucency overrides"
+        },
+        "blend-mode": {
+          "$ref": "#/$defs/blend-mode",
+          "description": "Blend mode for compositing the whole group"
+        },
+        "blend-mode-specializations": {
+          "$ref": "#/$defs/specializations-of-blend-mode",
+          "description": "Per-slot group blend-mode overrides"
+        },
+        "opacity": {
+          "type": "number",
+          "description": "Group opacity 0.0–1.0",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "opacity-specializations": {
+          "$ref": "#/$defs/specializations-of-unit-number",
+          "description": "Per-slot group opacity overrides"
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Whether the whole group is hidden"
+        },
+        "hidden-specializations": {
+          "$ref": "#/$defs/specializations-of-boolean",
+          "description": "Per-slot group visibility overrides"
+        },
+        "asset-mirroring": {
+          "$ref": "#/$defs/asset-mirroring",
+          "description": "Icon Composer 2.0+. Right-to-left mirroring behaviour for this group's assets"
+        },
+        "asset-mirroring-specializations": {
+          "$ref": "#/$defs/specializations-of-asset-mirroring",
+          "description": "Icon Composer 2.0+. Per-slot asset-mirroring overrides"
+        },
+        "position": {
+          "$ref": "#/$defs/position",
+          "description": "Group-level position and scale adjustments (Composition.Layout)"
+        },
+        "position-specializations": {
+          "$ref": "#/$defs/specializations-of-position",
+          "description": "Per-slot group-level position overrides (Composition.Layout)"
+        }
+      },
+      "required": ["layers"],
+      "additionalProperties": false
+    },
+    "supported-platforms": {
+      "type": "object",
+      "description": "Platform configurations for the icon",
+      "properties": {
+        "squares": {
+          "type": "string",
+          "description": "Square icon platform configuration",
+          "enum": ["shared"]
+        },
+        "circles": {
+          "type": "array",
+          "description": "List of platforms using circular icons",
+          "items": {
+            "type": "string",
+            "enum": ["watchOS"]
+          }
+        }
+      },
+      "required": ["squares"],
+      "additionalProperties": false
+    }
+  }
+}

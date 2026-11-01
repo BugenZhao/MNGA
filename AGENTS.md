@@ -18,17 +18,18 @@ This section covers the design and implementation of the Rust-based business mod
 - `logic/service`: Tokio-based crate that implements business services and exposes `dispatch_async`/`dispatch_sync` for the Swift bridge.
 - `logic/protos`: Protobuf wrapper crate; `build.rs` regenerates Rust types in `logic/protos/src/generated` from shared `.proto` files.
 - Supporting crates: `logic/text` (rich-text parsing), `logic/cache` (sled-backed cache), and `logic/config` (runtime configuration) are all consumed by `logic/service`.
+- `logic/logic`: the `logic` crate that is compiled into the framework Swift links against; it owns the FFI surface and `bindings.h`.
 
 ### Proto Sources
 
 - `protos/DataModel.proto` defines shared models such as `Topic`, `User`, `Post`, and enums used on both sides of the bridge.
 - `protos/Service.proto` defines the `SyncRequest` and `AsyncRequest` oneofs plus every request/response pair that `logic/service` dispatches.
-- Building `logic/protos` (e.g., via `cargo check -p logic-service`, `make logic-sim`, or the iOS builds) reruns `logic/protos/build.rs` to update the generated Rust bindings; remember to run `make swift-pb` after proto edits so Swift stays in sync.
+- Building `logic/protos` (e.g., via `cargo check -p service`, `make logic-sim`, or the iOS builds) reruns `logic/protos/build.rs` to update the generated Rust bindings; remember to run `make swift-pb` after proto edits so Swift stays in sync.
 
 ### Adding a Service
 
 1. Extend `protos/Service.proto` (and `DataModel.proto` if new types are needed) with the request/response messages and place the new entry in either `SyncRequest.value` or `AsyncRequest.value`.
-2. Regenerate protobuf bindings by rebuilding the Rust crate (`cargo check -p logic-service` is enough) and re-run `make swift-pb` for Swift stubs.
+2. Regenerate protobuf bindings by rebuilding the Rust crate (`cargo check -p service` is enough) and re-run `make swift-pb` for Swift stubs.
 3. Implement the business logic in `logic/service/src`, creating a new module if the functionality does not fit an existing one.
 4. Register the handler:
    - Async services: add a `handle!(service_name, function_name);` line in `logic/service/src/dispatch/handlers_async.rs`.
@@ -65,12 +66,13 @@ Services under `logic/service/src`:
 ### After updating Rust code
 
 ```bash
-cargo clippy
+cargo fmt --all
+cargo clippy --workspace --all-targets --all-features -- -D warnings
 make logic-ios
 ```
 
-Run `cargo clippy` to check for potential issues.
-Compiles a new logic framework for Swift to link against, if you're going to build the app.
+The `cargo` commands match what CI enforces.
+`make logic-ios` compiles a new logic framework for Swift to link against, if you're going to build the app.
 
 ### After updating .proto files
 
@@ -97,29 +99,34 @@ Remember to update localization file at `app/Shared/Localization/zh-Hans.lproj/L
 - `make swift-pb` - Generate Swift protobuf code
 - `make logic-sim` - Build simulator-only version (faster for development)
 - `make logic-deploy` - Build release version
+- `make launch-sim` - Build the logic for the simulator only, then launch the app there
 
 ## Important Notes
 
 - Avoid any Chinese in source code, including comments and string literals, unless it's a user-generated content in test data.
-- The project is targeting iOS 26. Note that this is NOT a typo. Apple released iOS 26 in 2025.
-- APIs of SwiftUI is evolving very fast. Always refer to the latest documentation via `sosumi` MCP server.
+- The UI is designed for iOS 26. Note that this is NOT a typo. Apple released iOS 26 in 2025. The minimum deployment target is iOS 18.4 (see `app/Project.swift`), so gate newer APIs with `if #available(iOS 26.0, *)`.
+- APIs of SwiftUI is evolving very fast. Consult the `swiftui-specialist` and `swiftui-whats-new-27` skills, and always refer to the latest documentation.
 - If you need real NGA data for testing, study the existing Rust API implementations under `logic/service/src` first (`topic.rs`, `post.rs`, `forum.rs`, etc.) to understand the NGA request/response shape, then send real requests following those implementations instead of inventing new endpoints or payloads. You may have to pass some auth info when making requests, see `logic/.env`; use them locally and do not expose or commit them.
 
+## Agent Configuration
+
+- Skills live in `.agents/skills/`. `.claude/skills` is a symlink to it because Claude Code only discovers skills from that path, so add new skills under `.agents/skills/`.
+- Apple's skills come from Xcode. After an Xcode update, run `xcrun agent skills export --output-dir <tmp>` and refresh the ones kept here; the export may include skills this project deliberately omits.
+- Keep this file to durable instructions that apply across tasks. Do not record individual decisions, fixes, or dated notes here; move reusable workflows into a skill and leave the rest to the code and git history.
+
 ## Pull Request
+
+`main` is protected and rejects direct pushes, so always work on a branch and land changes through a PR. PRs are squash-merged, need the `Fastlane Build` and `Lint` checks to pass, and need all review threads resolved.
 
 When you are asked to submit a PR, please make sure to:
 
 - Follow the PR title convention by checking the history of commit messages in `main` branch.
 - Provide a clear and concise description of the changes you made and the reason behind them.
 
-## Simulator Automation
+## Running in the Simulator
 
-You can use the `AXe` CLI for iOS Simulator automation to conduct end-to-end testing and development of the app.
+Use your own iOS Simulator tooling for end-to-end testing and development of the app.
 
-- `make launch-sim` is the fastest way to get a simulator build running before using AXe.
-- Always verify the current screen with `axe describe-ui` or a screenshot after taps; AXe confirms input dispatch, not successful navigation.
-- Prefer selector-based taps, but bottom bars, overlays, and duplicate labels can make coordinate taps necessary.
-- AXe can be unreliable when toggling SwiftUI switches. After tapping a `Toggle`, re-check its `AXValue`; if it does not change, fall back to tapping the actual switch control, or verify behavior through the same persisted setting in the simulator container.
+- `make launch-sim` is the fastest way to get a simulator build running.
 - In MNGA, the accessibility tree is good enough for navigation and screen-state confirmation.
-- Prefer deep links like `mnga://topic/<tid>` when a known topic must be opened quickly.For testing purposes, you can use the well-known topic ID `45150945` to evaluate general functionality.
-- If you need to rotate the simulator from the terminal, `osascript` can click Simulator menu items such as `Device > Rotate Left/Right`, but this requires macOS Accessibility permission for the terminal process first.
+- Prefer deep links like `mnga://topic/<tid>` when a known topic must be opened quickly (see `Constants.MNGA` for the other routes). For testing purposes, you can use the well-known topic ID `45150945` to evaluate general functionality.
