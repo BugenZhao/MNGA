@@ -143,16 +143,20 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
       self.latestError = nil
     }
     let (newItems, newTotalPages) = onResponse(response)
-    logger.debug("page \(loadedPage + 1), newItems \(newItems.count)")
+    logger.debug("page \(fromPage), newItems \(newItems.count)")
+
+    // The server may respond to a page out of range with the last page. Pages before it can only
+    // be loaded if the items are labeled with where they really are.
+    let page = newTotalPages.map { min(fromPage, max($0, 1)) } ?? fromPage
 
     withAnimation(when: animated) {
-      self.replaceItems(newItems, page: fromPage)
+      self.replaceItems(newItems, page: page)
       self.isRefreshing = false
       self.isLoading = false
     }
 
     totalPages = newTotalPages ?? totalPages
-    loadedPage += 1
+    loadedPage = page
     lastRefreshTime = Date()
   }
 

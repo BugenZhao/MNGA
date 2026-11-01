@@ -1,8 +1,9 @@
 use crate::{
     attachment::extract_attachment,
-    error::ServiceResult,
+    error::{ServiceError, ServiceResult},
     fetch::fetch_json_value,
     fetch::fetch_package_multipart,
+    fetch::fetch_redirect_target,
     fetch_package,
     topic::extract_topic,
     user,
@@ -13,7 +14,7 @@ use crate::{
 };
 use cache::CACHE;
 use protos::{DataModel::*, Service::*, ToValue};
-use reqwest::multipart;
+use reqwest::{Url, multipart};
 use sxd_xpath::nodeset::Node;
 
 fn vote_response_key(id: &PostId) -> String {
@@ -138,6 +139,35 @@ fn extract_topic_with_light_post(node: Node) -> Option<TopicWithLightPost> {
     Some(TopicWithLightPost {
         topic: Some(topic).into(),
         post: Some(post).into(),
+        ..Default::default()
+    })
+}
+
+fn is_topic_url(url: &Url) -> bool {
+    url.query_pairs().any(|(key, _)| key == "tid")
+}
+
+fn page_in_topic_url(url: &Url) -> u32 {
+    url.query_pairs()
+        .find(|(key, _)| key == "page")
+        .and_then(|(_, page)| page.parse().ok())
+        .unwrap_or(1)
+}
+
+/// With `to=1`, NGA redirects to the page of the full topic that holds the post, which spares us
+/// from scanning the topic. No response gives this directly: `lou` only counts the author's posts
+/// in author-only mode, and is always 0 when requesting a post by `pid`.
+pub async fn locate_post(request: PostLocateRequest) -> ServiceResult<PostLocateResponse> {
+    let target = fetch_redirect_target(
+        "read.php",
+        vec![("pid", request.get_pid()), ("to", "1")],
+        is_topic_url,
+    )
+    .await?
+    .ok_or_else(|| ServiceError::MngaInternal("Post not found in topic".to_owned()))?;
+
+    Ok(PostLocateResponse {
+        page: page_in_topic_url(&target),
         ..Default::default()
     })
 }
@@ -639,6 +669,46 @@ mod test {
 
         println!("{:?}", attachment);
         assert!(!attachment.get_url().is_empty());
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_topic_url_page() {
+        let base = Url::parse("https://bbs.nga.cn/read.php?pid=877008079&to=1").unwrap();
+
+        let target = base
+            .join("/read.php?tid=47288722&page=17#pid877008079Anchor")
+            .unwrap();
+        assert!(is_topic_url(&target));
+        assert_eq!(page_in_topic_url(&target), 17);
+
+        let first_page = base.join("/read.php?tid=47288722").unwrap();
+        assert!(is_topic_url(&first_page));
+        assert_eq!(page_in_topic_url(&first_page), 1);
+
+        // Another host redirects to the same request first, with no page in it yet.
+        let other_host = Url::parse("https://bbs.nga.cn/read.php?pid=877008079&to=1").unwrap();
+        assert!(!is_topic_url(&other_host));
+    }
+
+    #[ignore = "manual: requires network or mutable external state"]
+    #[tokio::test]
+    async fn test_locate_post() -> ServiceResult<()> {
+        // https://bbs.nga.cn/read.php?tid=45150945
+        let response = locate_post(PostLocateRequest {
+            pid: "841045175".to_owned(),
+            ..Default::default()
+        })
+        .await?;
+        assert_eq!(response.get_page(), 1);
+
+        let not_found = locate_post(PostLocateRequest {
+            pid: "999999999999".to_owned(),
+            ..Default::default()
+        })
+        .await;
+        assert!(not_found.is_err());
 
         Ok(())
     }
