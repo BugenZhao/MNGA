@@ -16,7 +16,7 @@ let project = Project(
     //  .local(path: "../../AlertToast"),
         .remote(url: "https://github.com/BugenZhao/AlertToast", requirement: .revision("57a6e66fa04899f38a1a99a6dbab0c84f37b22b6")),
         .remote(url: "https://github.com/giginet/Crossroad", requirement: .exact("3.2.0")),
-        .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("26.0.0-rc.1")),
+        .remote(url: "https://github.com/siteline/SwiftUI-Introspect", requirement: .exact("27.1.0")),
         .remote(url: "https://github.com/krzysztofzablocki/Inject.git", requirement: .exact("1.5.2")),
         .remote(url: "https://github.com/gh123man/LazyPager", requirement: .exact("1.1.13")),
         .remote(url: "https://github.com/tevelee/SwiftUI-Flow", requirement: .exact("3.1.0")),
