@@ -77,6 +77,12 @@ struct ContentView: View {
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
       .onGeometryChange(for: CGFloat.self, of: \.size.width) { columnVisibility.rootWidth = $0 }
+      // Collapsing leaves the visibility at detail only. Bring the content column back on expanding.
+      .onChange(of: usesColumnLayout) {
+        if $1, columnVisibility.value == .detailOnly {
+          columnVisibility.value = .doubleColumn
+        }
+      }
       .onOpenURL { schemes.navigateTo(url: $0) }
       .onChange(of: scenePhase) { paywall.objectWillChange.send() } // trigger trial validity check
       .modifier(MainToastModifier.main())

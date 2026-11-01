@@ -147,6 +147,8 @@ struct TopicDetailsView: View {
   let previewMode: Bool
   let locateFloorInTopic: ((Post) -> Void)?
 
+  @Environment(\.usesColumnLayout) private var usesColumnLayout
+  @State private var bottomBarVisibility = Visibility.visible
   @State var showJumpSelector = false
   @State var floorToJump: Int?
   @State var postIdToJump: PostId?
@@ -817,6 +819,13 @@ struct TopicDetailsView: View {
     .toolbar { toolbar }
     .refreshable(dataSource: dataSource)
     .toolbarRole(.editor) // make title left aligned
+    // Without this, the system drops the bottom bar items in the detail column on iPhone Duo.
+    .toolbar(bottomBarVisibility, for: .bottomBar)
+    // The bar does not come back by itself when the layout changes with this view on top.
+    .onChange(of: usesColumnLayout) {
+      bottomBarVisibility = .hidden
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { bottomBarVisibility = .visible }
+    }
     .onChange(of: postReply?.sent) { reloadPageAfter(sent: $1) }
     .onChange(of: dataSource.latestError) { onError(e: $1) }
     .onDisappearOrInactive { syncTopicProgress() }
