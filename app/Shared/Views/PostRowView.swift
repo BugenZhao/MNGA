@@ -367,23 +367,38 @@ struct PostRowView: View {
       return
     }
 
+    // Optimistically update the UI immediately, then send the request in the
+    // background and reconcile with the server's authoritative result. On
+    // failure, roll back to the previous state.
+    let previous = vote
+    let predicted = VotesModel.predictVote(from: previous, operation: operation)
+
+    withAnimation {
+      vote = predicted
+      #if os(iOS)
+        if vote.state != .none {
+          HapticUtils.play(style: .light)
+        }
+      #endif
+    }
+
     logicCallAsync(.postVote(.with {
       $0.postID = post.id
       $0.operation = operation
-    })) { (response: PostVoteResponse) in
+    }), errorToastModel: nil) { (response: PostVoteResponse) in
       if !response.hasError {
+        // Reconcile delta against the pre-vote baseline so the server value wins
+        // regardless of our prediction.
         withAnimation {
           vote.state = response.state
-          vote.delta += response.delta
-          #if os(iOS)
-            if vote.state != .none {
-              HapticUtils.play(style: .light)
-            }
-          #endif
+          vote.delta = previous.delta + response.delta
         }
       } else {
-        // not used
+        withAnimation { vote = previous }
       }
+    } onError: { _ in
+      withAnimation { vote = previous }
+      ToastModel.showAuto(.error("Vote Failed"))
     }
   }
 
