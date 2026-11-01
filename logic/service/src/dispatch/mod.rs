@@ -51,6 +51,7 @@ mod dispatch_async {
             clock_in(r) => r!(handle_clock_in(r)),
             cache(r) => r!(handle_cache(r)),
             user_signature_update(r) => r!(handle_user_signature_update(r)),
+            post_locate(r) => r!(handle_post_locate(r)),
         }
     }
 }

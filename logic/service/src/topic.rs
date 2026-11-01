@@ -696,9 +696,16 @@ pub async fn get_topic_details(
             .collect()
     })?;
 
+    let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
+    let rows = extract_string(&package, "/root/__ROWS")?
+        .parse()
+        .unwrap_or_default();
+
+    // NGA responds to a page out of range with the last page.
+    let at_page = request.get_page().min(pages).max(1);
     let replies = extract_nodes(&package, "/root/__R/item", |ns| {
         ns.into_iter()
-            .filter_map(|n| extract_post(n, request.get_page(), &user_context))
+            .filter_map(|n| extract_post(n, at_page, &user_context))
             .collect()
     })?;
 
@@ -711,13 +718,12 @@ pub async fn get_topic_details(
         .or_else(|_| extract_string(&package, "/root/__F"))
         .unwrap_or_default();
 
-    let pages = extract_pages(&package, "/root/__ROWS", "/root/__R__ROWS_PAGE", 20)?;
-
     let response = TopicDetailsResponse {
         topic: Some(topic).into(),
         replies: replies.into(),
         forum_name,
         pages,
+        rows,
         api_used: api_used.to_owned(),
         ..Default::default()
     };
@@ -990,6 +996,26 @@ mod test {
                 .get_replies()
                 .iter()
                 .all(|p| p.author_id == author_id)
+        );
+
+        // Pages are numbered among the posts of the author.
+        let rows = response.get_rows();
+        assert!(rows > 0);
+        assert_eq!(response.get_pages(), rows.div_ceil(20));
+
+        // A page out of range is answered with the last page.
+        let overflown = get_topic_details(TopicDetailsRequest {
+            topic_id: "28454798".to_owned(),
+            author_id: author_id.to_owned(),
+            page: 9999,
+            ..Default::default()
+        })
+        .await?;
+        assert!(
+            overflown
+                .get_replies()
+                .iter()
+                .all(|p| p.at_page == response.get_pages())
         );
 
         Ok(())
