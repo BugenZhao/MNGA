@@ -131,6 +131,14 @@
 "%@'s Posts" = "%@ 的回复";
 "Posts" = "回复";
 "My Profile" = "我的档案";
+"Following" = "关注用户";
+"Following Activity" = "关注动态";
+"No Followed Users" = "还没有关注用户";
+"No Following Activity" = "还没有关注动态";
+"Follow" = "关注";
+"Unfollow" = "取消关注";
+"Posted a Reply" = "发表了回复";
+"Published a Topic" = "发布了主题";
 "Edit Favorites" = "编辑收藏";
 "Posting" = "发表";
 "Device Identity" = "设备身份";
