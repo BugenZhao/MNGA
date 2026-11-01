@@ -31,7 +31,7 @@ struct SubjectTextFieldView: View {
   }
 
   var body: some View {
-    TextField("", text: $subject, selection: $selection)
+    TextField("", text: $subject, selection: $selection.fitting($subject))
       .toolbar {
         // Show toolbar only when focused, otherwise it will also be shown in other text fields.
         if focused {

@@ -11,16 +11,37 @@ import SwiftUIX
 
 private struct NumberField: View {
   let title: LocalizedStringKey
-  @Binding var text: String
-  @State var selection: TextSelection?
-  @FocusState var isFocused: Bool
+  @Binding var value: Int
+  let range: ClosedRange<Int>
+
+  // Owned here so that clamping always changes state, and the field then shows the clamped text.
+  @State private var text: String
+  @State private var selection: TextSelection?
+  @FocusState private var isFocused: Bool
+
+  init(title: LocalizedStringKey, value: Binding<Int>, range: ClosedRange<Int>) {
+    self.title = title
+    _value = value
+    self.range = range
+    _text = .init(initialValue: String(value.wrappedValue))
+  }
 
   var body: some View {
-    TextField(title, text: $text, selection: $selection)
+    TextField(title, text: $text, selection: $selection.fitting($text))
       .focused($isFocused)
       .onChange(of: isFocused) { if $1 { selection = TextSelection(range: text.startIndex ..< text.endIndex) } }
+      .onChange(of: text) { commit($1) }
+      .onChange(of: value) { if Int(text) != $1 { text = String($1) } }
       .keyboardType(.numberPad)
       .multilineTextAlignment(.trailing)
+  }
+
+  private func commit(_ newText: String) {
+    // Leave the value alone while the field is empty, so that it can be cleared before typing.
+    guard let number = Int(newText) else { return }
+    let clamped = min(max(number, range.lowerBound), range.upperBound)
+    value = clamped
+    if newText != String(clamped) { text = String(clamped) }
   }
 }
 
@@ -49,30 +70,10 @@ struct TopicJumpSelectorView: View {
 
   var maxPage: Int { (maxFloor + Constants.postPerPage) / Constants.postPerPage }
 
-  var selectedFloorText: Binding<String> {
-    .init(
-      get: { String(selectedFloor) },
-      set: { newValue in
-        guard let number = Int(newValue) else { return }
-        selectedFloor = min(max(number, 0), maxFloor)
-      },
-    )
-  }
-
   var selectedPage: Binding<Int> {
     .init(
       get: { (selectedFloor + Constants.postPerPage) / Constants.postPerPage },
       set: { selectedFloor = ($0 - 1) * Constants.postPerPage },
-    )
-  }
-
-  var selectedPageText: Binding<String> {
-    .init(
-      get: { String(selectedPage.wrappedValue) },
-      set: { newValue in
-        guard let number = Int(newValue) else { return }
-        selectedPage.wrappedValue = min(max(number, 1), maxPage)
-      },
     )
   }
 
@@ -93,12 +94,12 @@ struct TopicJumpSelectorView: View {
 
   @ViewBuilder
   var floorInputField: some View {
-    NumberField(title: "Floor number", text: selectedFloorText)
+    NumberField(title: "Floor number", value: $selectedFloor, range: 0 ... maxFloor)
   }
 
   @ViewBuilder
   var pageInputField: some View {
-    NumberField(title: "Page number", text: selectedPageText)
+    NumberField(title: "Page number", value: selectedPage, range: 1 ... maxPage)
   }
 
   @ViewBuilder
