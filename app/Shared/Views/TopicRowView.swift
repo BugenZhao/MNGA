@@ -48,6 +48,8 @@ struct TopicRowView: View {
   let dimmedSubject: Bool
   let showIndicators: Bool
 
+  @Environment(\.reportTopicVisible) private var reportTopicVisible
+
   init(topic: Topic, useTopicPostDate: Bool = false, dimmedSubject: Bool = true, showIndicators: Bool = true) {
     self.topic = topic
     self.useTopicPostDate = useTopicPostDate
@@ -69,6 +71,7 @@ struct TopicRowView: View {
 
   var body: some View {
     TopicLikeRowInnerView(subjectView: { subject }, num: topic.repliesNum, lastNum: topic.hasRepliesNumLastVisit ? topic.repliesNumLastVisit : nil, names: [topic.authorNameCompat], date: useTopicPostDate ? topic.postDate : topic.lastPostDate)
+      .onAppear { reportTopicVisible(topic.id) }
   }
 }
 
