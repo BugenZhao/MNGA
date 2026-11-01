@@ -180,10 +180,12 @@ struct PreferencesInnerView: View {
     Toggle(isOn: $pref.debugAlwaysShowNotificationBadge) {
       Text("Always Show Notification Badge")
     }
-    Toggle(isOn: $pref.debugMockNotifications) {
-      Text("Mock Notifications")
-    }
-    .onChange(of: pref.debugMockNotifications) { NotificationMock.didToggle() }
+    #if DEBUG
+      Toggle(isOn: $pref.debugMockNotifications) {
+        Text("Mock Notifications")
+      }
+      .onChange(of: pref.debugMockNotifications) { NotificationMock.didToggle() }
+    #endif
     Toggle(isOn: $pref.debugResetTips) {
       Text("Reset Tips on Next Launch")
     }
