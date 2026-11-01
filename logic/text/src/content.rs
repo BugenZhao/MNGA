@@ -1,5 +1,97 @@
 use crate::error::{ParseError, ParseResult};
 use protos::DataModel::*;
+use std::{
+    cell::RefCell,
+    collections::{HashMap, HashSet},
+};
+
+/// Tags that keep their meaning even if the close tag is missing, which is common for truncated
+/// quotes like `[img]./mon_202107/03/-7Q2o-eeg[/quote]`. Any other tag without a close tag is just
+/// a pair of brackets in the text, like the skill hotkey in `[color=blue]Shadow Mark[Q][/color]`.
+///
+/// Keep this in sync with the tags handled by `ContentCombiner.visit(tagged:)` in the app.
+const KNOWN_TAGS: &[&str] = &[
+    "_divider", "_mnga", "album", "align", "attach", "b", "code", "collapse", "color", "del",
+    "dice", "flash", "font", "h", "i", "img", "list", "noimg", "pid", "quote", "size", "table",
+    "td", "tid", "tr", "u", "uid", "url",
+];
+
+/// Real posts nest about 7 levels deep. Each level costs two message levels in the protobuf
+/// response, whose decoder gives up at 100, and more stack for everything recursing over the spans.
+/// Tags nested deeper than this are left as plain text.
+const MAX_TAG_DEPTH: usize = 32;
+
+/// Normalize a tag name for comparison, as `[td1]` is closed by `[/td]`.
+fn canonical_tag(tag: &str) -> String {
+    let tag = tag.to_ascii_lowercase();
+    match tag.strip_prefix("td") {
+        Some(rest) if rest.chars().all(|c| c.is_ascii_digit()) => "td".to_owned(),
+        _ => tag,
+    }
+}
+
+#[derive(Default)]
+struct TagTracker {
+    /// Byte offsets of the start tags to be treated as plain text.
+    literal_start_tags: HashSet<usize>,
+    /// Canonical names of the tags currently open, innermost last.
+    open_tags: RefCell<Vec<String>>,
+}
+
+impl TagTracker {
+    /// Pair up the tags in the text to find the unknown start tags that are never closed.
+    fn scan(text: &str) -> ParseResult<Self> {
+        let events = content_parser::tag_events(text, &Self::default()).map_err(content_error)?;
+
+        let mut unclosed: HashMap<String, Vec<usize>> = HashMap::new();
+        for (position, tag, is_close) in events {
+            let positions = unclosed.entry(canonical_tag(tag)).or_default();
+            if is_close {
+                positions.pop();
+            } else {
+                positions.push(position);
+            }
+        }
+
+        let literal_start_tags = unclosed
+            .into_iter()
+            .filter(|(tag, _)| !KNOWN_TAGS.contains(&tag.as_str()))
+            .flat_map(|(_, positions)| positions)
+            .collect();
+
+        Ok(Self {
+            literal_start_tags,
+            ..Default::default()
+        })
+    }
+
+    fn accepts_start_tag(&self, position: usize) -> bool {
+        !self.literal_start_tags.contains(&position)
+            && self.open_tags.borrow().len() < MAX_TAG_DEPTH
+    }
+
+    fn enter(&self, tag: &str) {
+        self.open_tags.borrow_mut().push(canonical_tag(tag));
+    }
+
+    fn leave(&self) {
+        self.open_tags.borrow_mut().pop();
+    }
+
+    /// Whether the close tag belongs to the innermost open tag.
+    fn closes_innermost(&self, tag: &str) -> bool {
+        self.open_tags.borrow().last() == Some(&canonical_tag(tag))
+    }
+
+    /// Whether the close tag belongs to any open tag.
+    fn closes_any(&self, tag: &str) -> bool {
+        self.open_tags.borrow().contains(&canonical_tag(tag))
+    }
+}
+
+fn content_error(e: peg::error::ParseError<peg::str::LineCol>) -> ParseError {
+    ParseError::Content(e.to_string())
+}
 
 macro_rules! span_of {
     ($e:expr) => {{
@@ -12,7 +104,7 @@ macro_rules! span_of {
 }
 
 peg::parser! {
-    grammar content_parser() for str {
+    grammar content_parser(state: &TagTracker) for str {
         rule any_char() = [_]
         rule digit() = ['0'..='9']
         rule alpha() = ['a'..='z' | 'A'..='Z' | '_']
@@ -43,19 +135,40 @@ peg::parser! {
             = " " ts:( attribute() ** " " ) { ts }
 
         rule start_tag() -> (&'input str, Vec<&'input str>, Vec<&'input str>)
-            = left_bracket() t:token() a:attributes()? c:complex_attrs()? right_bracket() {
-                (t, a.unwrap_or_default(), c.unwrap_or_default())
+            = p:position!() left_bracket() t:token() a:attributes()? c:complex_attrs()? right_bracket() {?
+                if state.accepts_start_tag(p) {
+                    Ok((t, a.unwrap_or_default(), c.unwrap_or_default()))
+                } else {
+                    Err("literal brackets")
+                }
             }
         rule close_tag() -> &'input str
             = left_close_bracket() t:token() right_bracket() { t }
 
+        rule tag_event() -> Option<(usize, &'input str, bool)>
+            = p:position!() st:start_tag() { Some((p, st.0, false)) }
+            / p:position!() t:close_tag() { Some((p, t, true)) }
+            / any_char() { None }
+        pub rule tag_events() -> Vec<(usize, &'input str, bool)>
+            = es:(tag_event()*) { es.into_iter().flatten().collect() }
+
         rule plain_text() -> &'input str
             = $( (!(start_tag() / close_tag() / br_tag() / left_sticker_bracket() / divider_tag()) any_char())+ )
 
+        rule enter_tag(tag: &'input str) = "" { state.enter(tag) }
+
+        // A close tag only ends the innermost tag if the names match. If it belongs to an outer tag,
+        // leave it for that tag. Otherwise an unclosed tag would take the close tag of its parent,
+        // which pushes everything after it one level deeper.
+        rule matching_close_tag()
+            = t:close_tag() {?
+                if state.closes_innermost(t) { Ok(()) } else { Err("close tag of an outer tag") }
+            }
+
         rule tagged() -> Span
-            = st:start_tag() s:(span()*) ct:close_tag()? {?
+            = st:start_tag() enter_tag(st.0) s:spans() matching_close_tag()? {?
+                state.leave();
                 let (start_tag, attributes, complex_attributes) = st;
-                // if !start_tag.contains(ct) { return Err("matched close tag"); } // todo: add a flag for this check
                 let attributes = attributes.into_iter().map(|s| s.to_owned()).collect();
                 let complex_attributes = complex_attributes.into_iter().map(|s| s.to_owned()).collect();
 
@@ -66,6 +179,22 @@ peg::parser! {
                     spans: s.into(),
                     ..Default::default()
                 })))
+            }
+
+        // A close tag that closes nothing. An unknown one is likely part of the text so it stays
+        // literal, while a known one is the remains of mismatched tags so it is dropped.
+        rule stray_close_tag() -> Option<Span>
+            = t:close_tag() {?
+                if state.closes_any(t) {
+                    Err("close tag of an open tag")
+                } else if KNOWN_TAGS.contains(&canonical_tag(t).as_str()) {
+                    Ok(None)
+                } else {
+                    Ok(Some(span_of!(plain(Span_Plain {
+                        text: format!("[/{t}]"),
+                        ..Default::default()
+                    }))))
+                }
             }
 
         rule sticker() -> Span
@@ -87,7 +216,7 @@ peg::parser! {
             = divider_tag() s:(non_divider_span()*) divider_tag() {
                 span_of!(tagged(Span_Tagged {
                     tag: "_divider".to_owned(),
-                    spans: s.into(),
+                    spans: s.into_iter().flatten().collect(),
                     ..Default::default()
                 }))
             }
@@ -117,19 +246,21 @@ peg::parser! {
 
         rule rich() -> Span
             = br() / tagged() / sticker() / at_user()
-        rule non_divider_span() -> Span
-            = rich() / plain()  // todo: any better way?
-        rule span() -> Span
-            = rich() / divider() / plain()
+        rule non_divider_span() -> Option<Span>
+            = stray_close_tag() / s:(rich() / plain()) { Some(s) } // todo: any better way?
+        rule span() -> Option<Span>
+            = stray_close_tag() / s:(rich() / divider() / plain()) { Some(s) }
+        rule spans() -> Vec<Span>
+            = s:(span()*) { s.into_iter().flatten().collect() }
 
         pub rule content() -> Vec<Span>
-            = (span())*
+            = spans()
     }
 }
 
 pub fn do_parse_content(text: &str) -> ParseResult<Vec<Span>> {
-    content_parser::content(text)
-        .map_err(|e: peg::error::ParseError<_>| ParseError::Content(e.to_string()))
+    let state = TagTracker::scan(text)?;
+    content_parser::content(text, &state).map_err(content_error)
 }
 
 #[cfg(test)]
@@ -434,5 +565,116 @@ size=百分比]
 
         let contains_numeric_tag = format!("{r:#?}").contains("tag: \"1003\"");
         assert!(!contains_numeric_tag);
+    }
+
+    fn max_depth(text: &str) -> usize {
+        let r = do_parse_content(text).unwrap();
+        r.iter().map(span_tag_depth).max().unwrap_or(0)
+    }
+
+    fn plain_text_of(spans: &[Span]) -> String {
+        spans
+            .iter()
+            .map(|span| match span.value.as_ref() {
+                Some(Span_oneof_value::plain(plain)) => plain.text.clone(),
+                Some(Span_oneof_value::tagged(tagged)) => plain_text_of(&tagged.spans),
+                _ => String::new(),
+            })
+            .collect()
+    }
+
+    // tid 47641280: skill hotkeys in patch notes used to open a tag, which took the close tag of its
+    // parent. Each one pushed the rest of the post one level deeper, resulting in a depth of 41, a
+    // row taller than 40000pt with its content pushed off-screen, and a hang when opening the topic.
+    #[test]
+    fn test_unclosed_unknown_tags_are_plain_text() {
+        let list =
+            "[list][*][color=blue]Shadow Mark [Q][/color]<br/>[list][*]text[/list][/list]<br/>";
+        let text = list.repeat(50);
+        assert_eq!(max_depth(&text), 2);
+
+        let r = do_parse_content(&text).unwrap();
+        let tags = format!("{r:#?}");
+        assert!(!tags.contains("tag: \"q\""));
+        assert!(plain_text_of(&r).contains("Shadow Mark [Q]"));
+
+        for (text, literal) in [
+            ("[b]a[R1]b[/b]", "a[R1]b"),
+            ("[b]a[Q=1]b[/b]", "a[Q=1]b"),
+            ("[Q]", "[Q]"),
+        ] {
+            let r = do_parse_content(text).unwrap();
+            assert_eq!(plain_text_of(&r), literal);
+        }
+    }
+
+    #[test]
+    fn test_closed_unknown_tags_are_kept() {
+        let r = do_parse_content("[randomblock]a[/randomblock][Q]b[/q]").unwrap();
+        let tags: Vec<&str> = r
+            .iter()
+            .filter_map(|span| match span.value.as_ref() {
+                Some(Span_oneof_value::tagged(tagged)) => Some(tagged.tag.as_str()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(tags, vec!["randomblock", "q"]);
+
+        // Only the last start tag is closed.
+        let r = do_parse_content("[Q]a[Q]b[/Q]").unwrap();
+        assert_eq!(r.len(), 2);
+        assert!(r[0].has_plain());
+        assert_eq!(r[1].get_tagged().get_tag(), "q");
+    }
+
+    #[test]
+    fn test_unclosed_known_tags_are_kept() {
+        let r = do_parse_content("[quote][img]./a.png[/quote]after").unwrap();
+        assert_eq!(r.len(), 2);
+        let quote = r[0].get_tagged();
+        assert_eq!(quote.get_tag(), "quote");
+        assert_eq!(quote.get_spans()[0].get_tagged().get_tag(), "img");
+        assert_eq!(r[1].get_plain().get_text(), "after");
+    }
+
+    #[test]
+    fn test_close_tag_ends_matching_tag() {
+        // An unclosed tag does not take the close tag of its parent.
+        let text = "[list][*][b]unclosed[/list]<br/>".repeat(50);
+        assert_eq!(max_depth(&text), 2);
+
+        // `[td1]` is closed by `[/td]`, and the unclosed `[align]` inside does not leak to the next.
+        let text = "[table][tr][td1][align=center]a[/td][td2][align=center]b[/td][/tr][/table]";
+        assert_eq!(max_depth(text), 4);
+
+        // Misnested tags keep their depth and leave nothing behind in the text.
+        let r = do_parse_content("[b][color=red]a[/b]b[/color]c").unwrap();
+        assert_eq!(r.iter().map(span_tag_depth).max(), Some(2));
+        assert_eq!(plain_text_of(&r), "abc");
+    }
+
+    #[test]
+    fn test_stray_close_tags() {
+        // These used to fail the parsing of the whole post.
+        let r = do_parse_content("a[/b]b").unwrap();
+        assert_eq!(plain_text_of(&r), "ab");
+
+        let r = do_parse_content("a[/foo]b").unwrap();
+        assert_eq!(plain_text_of(&r), "a[/foo]b");
+
+        let r = do_parse_content("[b]a[/foo]b[/b]c").unwrap();
+        assert_eq!(r.iter().map(span_tag_depth).max(), Some(1));
+        assert_eq!(plain_text_of(&r), "a[/foo]bc");
+    }
+
+    #[test]
+    fn test_max_tag_depth() {
+        let n = 10000;
+        let text = format!("{}a{}", "[b]".repeat(n), "[/b]".repeat(n));
+        let r = do_parse_content(&text).unwrap();
+        assert_eq!(r.iter().map(span_tag_depth).max(), Some(MAX_TAG_DEPTH));
+
+        // Sibling tags do not count.
+        assert_eq!(max_depth(&"[b]a[/b]".repeat(n)), 1);
     }
 }
