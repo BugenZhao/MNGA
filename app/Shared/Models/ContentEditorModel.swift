@@ -37,9 +37,14 @@ class ContentEditorModel: ObservableObject {
     selection = TextSelection(insertionPoint: text.endIndex)
   }
 
+  /// The current selection, or the end of the text if there is none or it no longer fits the text.
+  private var editingSelection: TextSelection {
+    if let selection, selection.fits(in: text) { return selection }
+    return TextSelection(insertionPoint: text.endIndex)
+  }
+
   func insert(_ string: String) {
-    let selection = selection ?? TextSelection(insertionPoint: text.endIndex)
-    guard case let .selection(range) = selection.indices else { return }
+    guard case let .selection(range) = editingSelection.indices else { return }
     let prefixLength = text.distance(from: text.startIndex, to: range.lowerBound)
 
     text.replaceSubrange(range, with: string)
@@ -68,8 +73,7 @@ class ContentEditorModel: ObservableObject {
   }
 
   private func appendTag(open: String, close: String) {
-    let selection = selection ?? TextSelection(insertionPoint: text.endIndex)
-    guard case let .selection(range) = selection.indices else { return }
+    guard case let .selection(range) = editingSelection.indices else { return }
     let prefixLength = text.distance(from: text.startIndex, to: range.lowerBound)
     let distance = text.distance(from: range.lowerBound, to: range.upperBound)
 
