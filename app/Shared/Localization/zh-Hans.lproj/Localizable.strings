@@ -383,3 +383,9 @@
 "Pink" = "粉色";
 "Brown" = "棕色";
 "Gray" = "灰色";
+
+"Image Preview" = "图片预览";
+"Image Preview in Search" = "搜索页图片预览";
+"Image Preview in Hot Topics" = "热榜图片预览";
+"Preview Image Count: %lld" = "预览图数量：%lld";
+"Preview Image Height: %lld" = "预览图高度：%lld";

@@ -8,14 +8,18 @@ use crate::{
     error::ServiceResult,
     history::TOPIC_SNAPSHOT_PREFIX,
     noti::NOTI_PREFIX,
-    topic::{FAVOR_RESPONSE_PREFIX, TOPIC_DETAILS_PREFIX},
+    topic::{FAVOR_RESPONSE_PREFIX, TOPIC_DETAILS_PREFIX, TOPIC_PREVIEW_IMAGES_PREFIX},
 };
 
 fn type_to_prefix(t: CacheType) -> Vec<&'static str> {
     match t {
         CacheType::ALL => vec!["/"],
         CacheType::TOPIC_HISTORY => vec![TOPIC_SNAPSHOT_PREFIX],
-        CacheType::TOPIC_DETAILS => vec![TOPIC_DETAILS_PREFIX, FAVOR_RESPONSE_PREFIX],
+        CacheType::TOPIC_DETAILS => vec![
+            TOPIC_DETAILS_PREFIX,
+            FAVOR_RESPONSE_PREFIX,
+            TOPIC_PREVIEW_IMAGES_PREFIX,
+        ],
         CacheType::NOTIFICATION => vec![NOTI_PREFIX],
     }
 }
