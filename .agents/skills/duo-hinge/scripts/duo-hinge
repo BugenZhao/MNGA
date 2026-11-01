@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Folds and unfolds a booted iPhone Duo simulator without Device Hub.
+#
+#   duo-hinge open | close | half | set <degrees> | get | status
+#
+# Set DUO_HINGE_DEVICE to a UDID when several iPhone Duo simulators are booted.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE="$SCRIPT_DIR/duo_hinge.m"
+# Seconds SpringBoard needs to move the UI to the other display after the angle changes.
+SETTLE_SECONDS=2
+
+die() { echo "duo-hinge: $*" >&2; exit 1; }
+
+resolve_device() {
+  if [[ -n "${DUO_HINGE_DEVICE:-}" ]]; then
+    echo "$DUO_HINGE_DEVICE"
+    return
+  fi
+  local matches
+  matches="$(xcrun simctl list devices booted | grep 'iPhone Duo' | grep -oE '[0-9A-F]{8}-[0-9A-F-]{27}' || true)"
+  [[ -n "$matches" ]] || die "no booted iPhone Duo (boot one: xcrun simctl boot 'iPhone Duo')"
+  [[ "$(wc -l <<<"$matches")" -eq 1 ]] || die "several iPhone Duo simulators are booted; set DUO_HINGE_DEVICE"
+  echo "$matches"
+}
+
+# Builds the helper once per source and Xcode version.
+helper_path() {
+  local key bin
+  key="$( (cat "$SOURCE"; xcode-select -p) | shasum | cut -c1-12)"
+  bin="${TMPDIR:-/tmp}/duo-hinge/duo_hinge-$key"
+  if [[ ! -x "$bin" ]]; then
+    mkdir -p "$(dirname "$bin")"
+    xcrun -sdk iphonesimulator clang -arch arm64 -mios-simulator-version-min=17.0 -O2 -fobjc-arc \
+      -o "$bin.tmp" "$SOURCE" -framework IOKit -framework CoreFoundation -framework Foundation -framework CoreMotion
+    codesign -f -s - "$bin.tmp" >/dev/null 2>&1
+    mv "$bin.tmp" "$bin"
+  fi
+  echo "$bin"
+}
+
+set_angle() {
+  xcrun simctl spawn "$DEVICE" "$(helper_path)" set "$1"
+  sleep "$SETTLE_SECONDS"
+}
+
+DEVICE="$(resolve_device)"
+
+case "${1:-}" in
+  open) set_angle 180 ;;
+  close) set_angle 0 ;;
+  half) set_angle 90 ;;
+  set)
+    [[ "${2:-}" =~ ^[0-9]+([.][0-9]+)?$ ]] || die "set needs an angle from 0 to 180"
+    set_angle "$2"
+    ;;
+  get) xcrun simctl spawn "$DEVICE" "$(helper_path)" get ;;
+  status)
+    echo "angle: $(xcrun simctl spawn "$DEVICE" "$(helper_path)" get)"
+    xcrun devicectl device info displays --device "$DEVICE" 2>/dev/null | grep -E ' name: | active: | nativeSize: |Main display orientation'
+    ;;
+  *) die "usage: duo-hinge open | close | half | set <degrees> | get | status" ;;
+esac

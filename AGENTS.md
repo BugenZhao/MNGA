@@ -104,6 +104,7 @@ Remember to update localization file at `app/Shared/Localization/zh-Hans.lproj/L
 ## Important Notes
 
 - Avoid any Chinese in source code, including comments and string literals, unless it's a user-generated content in test data.
+- Before changing navigation or the root layout, read `docs/navigation.md`, which records where every navigation lands and how to check for regressions. Keep it up to date.
 - The UI is designed for iOS 26. Note that this is NOT a typo. Apple released iOS 26 in 2025. The minimum deployment target is iOS 18.4 (see `app/Project.swift`), so gate newer APIs with `if #available(iOS 26.0, *)`.
 - APIs of SwiftUI is evolving very fast. Consult the `swiftui-specialist` and `swiftui-whats-new-27` skills, and always refer to the latest documentation.
 - If you need real NGA data for testing, study the existing Rust API implementations under `logic/service/src` first (`topic.rs`, `post.rs`, `forum.rs`, etc.) to understand the NGA request/response shape, then send real requests following those implementations instead of inventing new endpoints or payloads. You may have to pass some auth info when making requests, see `logic/.env`; use them locally and do not expose or commit them.
