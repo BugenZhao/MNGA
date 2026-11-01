@@ -75,7 +75,9 @@ platform :ios do
 
     build_app(scheme: "MNGA")
 
+    # Public testers read this, so list only the commit subjects.
     changelog = changelog_from_git_commits(
+      pretty: "- %s",
       date_format: "short",
     )
 
