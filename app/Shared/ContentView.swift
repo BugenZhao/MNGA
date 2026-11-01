@@ -76,11 +76,10 @@ struct ContentView: View {
 
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
-      .onGeometryChange(for: CGFloat.self, of: \.size.width) { columnVisibility.rootWidth = $0 }
-      // Collapsing leaves the visibility at detail only. Bring the content column back on expanding.
+      .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .global) }) { columnVisibility.rootFrame = $0 }
       .onChange(of: usesColumnLayout) {
-        if $1, columnVisibility.value == .detailOnly {
-          columnVisibility.value = .doubleColumn
+        if $1 {
+          columnVisibility.restoreContentColumnAfterExpanding()
         }
       }
       .onOpenURL { schemes.navigateTo(url: $0) }

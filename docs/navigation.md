@@ -195,7 +195,7 @@ Alerts and confirmation dialogs, such as renaming a favorite folder or discardin
 
 The full screen button in a topic hides columns 1 and 2, and column 3 keeps its stack. It shows only in the three-column layout. (Run)
 
-Known issues: the button also shows on topics inside sheets, such as a deep link, where it can only affect the columns behind the sheet. It also shows on a topic in column 2, reachable after unfolding, where it hides that topic and leaves the placeholder. The column button brings it back. (Run)
+It shows only for content at the trailing edge of the root, which is column 3. A topic in column 2 or in a sheet does not show it. An environment value set on column 3 cannot tell this, because a destination inherits the environment of the link's column. (Run)
 
 ## Folding on iPhone Duo
 
@@ -203,6 +203,7 @@ Folding and unfolding change the layout while the app runs. Moving between layou
 
 - Unfolded, the inner display shows columns 2 and 3 with the sidebar overlaid. The three-column behavior in this document applies, except that the sidebar closes after navigating.
 - Folding merges the columns into one back stack: the content column first, then the detail column. (Run)
+- Unfolding restores column 2 even though the system leaves the visibility at detail only. It slides in as the display lights up. (Run)
 - Unfolding moves a topic opened while folded into column 3. (Run)
 - A presented sheet stays presented across a fold. (Run)
 - The rotation lock applies only when folded, and the setting says so. On the inner display the system ignores it. (Run)
@@ -247,4 +248,4 @@ On iPhone Duo, use the `duo-hinge` skill:
 
 On a large iPhone, rotate to landscape. It stays on one stack.
 
-To test notifications without real ones, temporarily append `Notification` values to `response.notis` in `NotificationModel`'s `onResponse`, and do not commit that. Seeding the sled cache does not work, because a simulator launch clears it.
+To test notifications without real ones, turn on `Mock Notifications` in the Debug section of Settings, available in Debug builds. It adds one notification of each type, and keeps their read state. The short message rows open the details page with an error, because there is no well-known short message.

@@ -56,6 +56,9 @@ struct NotificationListView: View {
         n.read = read
       })
       let _: MarkNotificationReadResponse? = try? logicCall(request)
+      #if DEBUG
+        NotificationMock.mark(ids, read: read)
+      #endif
       DispatchQueue.main.async {
         for id in ids {
           if let index = notis.items.firstIndex(where: { $0.id == id }) {

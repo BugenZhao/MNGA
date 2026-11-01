@@ -15,11 +15,21 @@ class ColumnVisibility: ObservableObject {
 
   @Published var value: NavigationSplitViewVisibility = .all
 
-  var rootWidth: CGFloat = .infinity
+  @Published var rootFrame: CGRect = .infinite
+
+  /// Collapsing leaves the visibility at detail only, and the system writes it again for a moment
+  /// after expanding, so bring the content column back once that has settled.
+  func restoreContentColumnAfterExpanding() {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+      if self.value == .detailOnly {
+        self.value = .doubleColumn
+      }
+    }
+  }
 
   /// An overlaid sidebar covers the content column it navigates, so hide it after navigating.
   func hideOverlaidSidebar() {
-    if value == .all, rootWidth < Self.tiledSidebarMinWidth {
+    if value == .all, rootFrame.width < Self.tiledSidebarMinWidth {
       value = .doubleColumn
     }
   }
@@ -44,9 +54,15 @@ extension View {
 struct FullScreenButtonView: View {
   @EnvironmentObject.Optional var columnVisibility: ColumnVisibility?
 
+  // The trailing edge of the content this button belongs to, in the global coordinates.
+  let contentMaxX: CGFloat
+
   var body: some View {
     if let columnVisibility,
-       columnVisibility.value != .detailOnly
+       columnVisibility.value != .detailOnly,
+       // It keeps only the detail column, which is the one at the trailing edge. Anywhere else,
+       // such as column 2 or a sheet, it would hide the content or change what's behind it.
+       contentMaxX >= columnVisibility.rootFrame.maxX - 1
     {
       Button(action: { columnVisibility.value = .detailOnly }) {
         Image(systemName: "arrow.up.left.and.arrow.down.right")
@@ -58,11 +74,13 @@ struct FullScreenButtonView: View {
 struct FullScreenButtonToolbarItem: ToolbarContent {
   @Environment(\.usesColumnLayout) var usesColumnLayout
 
+  let contentMaxX: CGFloat
+
   var body: some ToolbarContent {
     if usesColumnLayout {
       // TODO: `topBarLeading` places it after the back button if there is one,
       // while the built-in sidebar button is before the back button.
-      ToolbarItem(placement: .topBarLeading) { FullScreenButtonView() }
+      ToolbarItem(placement: .topBarLeading) { FullScreenButtonView(contentMaxX: contentMaxX) }
     }
   }
 }

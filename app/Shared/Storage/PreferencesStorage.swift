@@ -74,6 +74,7 @@ class PreferencesStorage: ObservableObject {
   @AppStorage("debugResetTips") var debugResetTips = false
   @AppStorage("debugResetWhatsNew") var debugResetWhatsNew = false
   @AppStorage("debugAlwaysShowNotificationBadge") var debugAlwaysShowNotificationBadge = false
+  @AppStorage("debugMockNotifications") var debugMockNotifications = false
 
   init() {
     var option = requestOptionWrapper.inner
