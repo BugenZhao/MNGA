@@ -18,6 +18,7 @@ struct UserMenuView: View {
 
   @EnvironmentObject var model: CurrentUserModel
 
+  @Environment(\.usesColumnLayout) var usesColumnLayout
   @State var showAboutViewAsModal: Bool = false
 
   var user: User? {
@@ -45,8 +46,8 @@ struct UserMenuView: View {
   @ViewBuilder
   var notificationButton: some View {
     Button(action: {
-      if UserInterfaceIdiom.current == .pad {
-        // Always show as sheet on iPad.
+      if usesColumnLayout {
+        // Always show as sheet when showing columns.
         notification.showingSheet = true
       } else {
         notification.showingFromUserMenu = true
@@ -60,7 +61,7 @@ struct UserMenuView: View {
   var aboutButton: some View {
     let label = Label("About & Feedback", systemImage: "hands.sparkles")
 
-    if UserInterfaceIdiom.current == .pad {
+    if usesColumnLayout {
       Button(action: { showAboutViewAsModal = true }) {
         label
       }
@@ -101,21 +102,21 @@ struct UserMenuView: View {
       if let _ = user {
         Section {
           notificationButton
-          PlusCheckNavigationLink(destination: ShortMessageListView.build(), feature: .shortMessage) {
+          PlusCheckNavigationLink(destination: ShortMessageListView.build().hidesOverlaidSidebar(), feature: .shortMessage) {
             Label("Short Messages", systemImage: "message")
           }
         }
       }
       Section {
         if let user {
-          NavigationLink(destination: UserProfileView.build(user: user)) {
+          NavigationLink(destination: UserProfileView.build(user: user).hidesOverlaidSidebar()) {
             Label("My Profile", systemImage: "person.text.rectangle")
           }
-          NavigationLink(destination: FavoriteTopicListView()) {
+          NavigationLink(destination: FavoriteTopicListView().hidesOverlaidSidebar()) {
             Label("Favorite Topics", systemImage: "bookmark")
           }
         }
-        PlusCheckNavigationLink(destination: TopicHistoryListView.build(), feature: .topicHistory) {
+        PlusCheckNavigationLink(destination: TopicHistoryListView.build().hidesOverlaidSidebar(), feature: .topicHistory) {
           Label("History", systemImage: "clock")
         }
       }

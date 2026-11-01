@@ -26,13 +26,17 @@ struct ContentView: View {
   @StateObject var columnVisibility = ColumnVisibility()
 
   @Environment(\.scenePhase) var scenePhase
+  @Environment(\.horizontalSizeClass) var horizontalSizeClass
+  @Environment(\.verticalSizeClass) var verticalSizeClass
 
   // For preview usage. If set, the content will be replaced by this.
   // In this case, `ContentView` mainly serves as a container for global states.
   var testBody: AnyView?
 
-  var useColumnStyle: Bool {
-    UserInterfaceIdiom.current == .pad
+  // A large iPhone in landscape is regular only horizontally. Keep it on one stack, so that
+  // rotating does not replace the list being read with empty columns.
+  var usesColumnLayout: Bool {
+    horizontalSizeClass == .regular && verticalSizeClass == .regular
   }
 
   var main: some View {
@@ -40,43 +44,39 @@ struct ContentView: View {
       .modifier(SchemesNavigationModifier(model: schemes))
   }
 
-  @ViewBuilder
+  // The root must stay the same across size class changes, so that folding an iPhone Duo
+  // or resizing a window keeps the navigation state. It collapses to one stack when compact.
+  //
+  // - Each column has its own navigation stack. Purposes are explained below.
+  // - `NavigationLink` will by default push to the stack of the next column.
+  //   Specify `isDetailLink(false)` to push to the current column.
+  // - `.navigationDestination` will always push to the current column. Haven't
+  //   found a way to override this behavior.
   var realBody: some View {
-    // Use `NavigationSplitView` on iPad.
-    //
-    // - Each column has its own navigation stack. Purposes are explained below.
-    // - `NavigationLink` will by default push to the stack of the next column.
-    //   Specify `isDetailLink(false)` to push to the current column.
-    // - `.navigationDestination` will always push to the current column. Haven't
-    //   found a way to override this behavior.
-    if useColumnStyle {
-      NavigationSplitView(columnVisibility: $columnVisibility.value) {
-        // Forum search may be pushed to this stack.
-        NavigationStack {
-          main
-        }
-      } content: {
-        // Subforum, hot/recommended topics may replace this with a stack.
-        // XXX: must wrap with `NavigationStack`, otherwise navigation will be broken on iPad!
-        NavigationStack {
-          TopicListPlaceholderView()
-        }
-      } detail: {
-        // User profile, detailed reading may replace this with a stack.
-        // XXX: must wrap with `NavigationStack`, otherwise navigation will be broken on iPad!
-        NavigationStack {
-          TopicDetailsPlaceholderView()
-        }
-      }
-    } else {
+    NavigationSplitView(columnVisibility: $columnVisibility.value) {
+      // Forum search may be pushed to this stack.
       NavigationStack {
         main
       }
+    } content: {
+      // Subforum, hot/recommended topics may replace this with a stack.
+      // XXX: must wrap with `NavigationStack`, otherwise navigation will be broken on iPad!
+      NavigationStack {
+        TopicListPlaceholderView()
+      }
+    } detail: {
+      // User profile, detailed reading may replace this with a stack.
+      // XXX: must wrap with `NavigationStack`, otherwise navigation will be broken on iPad!
+      NavigationStack {
+        TopicDetailsPlaceholderView()
+      }
     }
+    .environment(\.horizontalSizeClass, usesColumnLayout ? .regular : .compact)
   }
 
   var body: some View {
     testBody ?? realBody.eraseToAnyView()
+      .onGeometryChange(for: CGFloat.self, of: \.size.width) { columnVisibility.rootWidth = $0 }
       .onOpenURL { schemes.navigateTo(url: $0) }
       .onChange(of: scenePhase) { paywall.objectWillChange.send() } // trigger trial validity check
       .modifier(MainToastModifier.main())
@@ -95,7 +95,7 @@ struct ContentView: View {
       .sheet(isPresented: $activity.activityItems.isNotNil(), content: {
         AppActivityView(activityItems: activity.activityItems ?? [])
       })
-      .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView() }
+      .sheet(isPresented: $notis.showingSheet) { NotificationListNavigationView(usesColumnLayout: usesColumnLayout) }
       .modifier(GlobalSheetsModifier())
       // Global states
       .environmentObject(viewingImage)
@@ -107,6 +107,7 @@ struct ContentView: View {
       .environmentObject(textSelection)
       .environmentObject(paywall)
       .environmentObject(columnVisibility)
+      .environment(\.usesColumnLayout, usesColumnLayout)
   }
 }
 

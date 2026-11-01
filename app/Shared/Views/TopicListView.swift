@@ -48,6 +48,7 @@ struct TopicListView: View {
   @StateObject var searchModel: TopicSearchModel
   @StateObject var prefs = PreferencesStorage.shared
 
+  @Environment(\.usesColumnLayout) var usesColumnLayout
   @State var currentShowingSubforum: Forum? = nil
   @State var showingSubforumsModal = false
   @State var order: TopicListRequest.Order? = nil
@@ -271,7 +272,7 @@ struct TopicListView: View {
   @ToolbarContentBuilder
   var toolbar: some ToolbarContent {
     // -- Navigation Bar
-    if UserInterfaceIdiom.current != .pad {
+    if !usesColumnLayout {
       NotificationToolbarItem(placement: .navigationBarTrailing)
     }
     ToolbarItem(placement: .navigationBarTrailing) { moreMenu }

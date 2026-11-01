@@ -89,6 +89,7 @@ private struct PostRowAppearanceView: View {
 }
 
 private struct TopicListAppearanceView: View {
+  @Environment(\.usesColumnLayout) var usesColumnLayout
   @ObservedObject var pref: PreferencesStorage
 
   var body: some View {
@@ -99,7 +100,7 @@ private struct TopicListAppearanceView: View {
             Label(order.description, systemImage: order.icon).tag(order)
           }
         }
-        if #available(iOS 26.0, *), UserInterfaceIdiom.current == .phone {
+        if #available(iOS 26.0, *), !usesColumnLayout {
           Picker(selection: $pref.topicListShowSearchInBottombar, label: Label("Search Bar Position", systemImage: "magnifyingglass")) {
             Text("Top").tag(false)
             Text("Bottom").tag(true)
@@ -135,6 +136,7 @@ private struct TopicListAppearanceView: View {
 }
 
 struct PreferencesInnerView: View {
+  @Environment(\.usesColumnLayout) var usesColumnLayout
   @StateObject var pref = PreferencesStorage.shared
   @EnvironmentObject var paywall: PaywallModel
 
@@ -209,7 +211,7 @@ struct PreferencesInnerView: View {
       Text("Modern").tag(true)
     }.disableWithPlusCheck(.customAppearance)
 
-    if UIScreen.main.maximumFramesPerSecond > 60 {
+    if (UIApplication.myKeyWindow?.screen.maximumFramesPerSecond ?? 0) > 60 {
       Toggle(isOn: $pref.forceProMotionDisplayLink) {
         Label("Prefer High Refresh Rate", systemImage: "bolt.fill")
       }
@@ -219,6 +221,10 @@ struct PreferencesInnerView: View {
     if UserInterfaceIdiom.current == .phone {
       Toggle(isOn: $pref.alwaysPortraitOnPhone) {
         Label("Lock Screen Rotation", systemImage: "iphone")
+        if usesColumnLayout {
+          // The system ignores the supported orientations on a resizable display.
+          Text("Only applies when folded")
+        }
       }
     }
   }

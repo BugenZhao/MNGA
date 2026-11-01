@@ -7,7 +7,7 @@ let project = Project(
         .remote(url: "https://github.com/apple/swift-protobuf", requirement: .exact("1.31.0")),
         .remote(url: "https://github.com/BugenZhao/SDWebImageSwiftUI", requirement: .revision("64018b6024b6a25fbdacc8d3e3c34b925d16e09f")),
         .remote(url: "https://github.com/SDWebImage/SDWebImageWebPCoder.git", requirement: .exact("0.15.0")),
-        .remote(url: "https://github.com/SwiftUIX/SwiftUIX", requirement: .exact("0.2.4")),
+        .remote(url: "https://github.com/SwiftUIX/SwiftUIX", requirement: .exact("0.3.2")),
         .remote(url: "https://github.com/kylehickinson/SwiftUI-WebView", requirement: .exact("0.3.0")),
         .remote(url: "https://github.com/apple/swift-log", requirement: .exact("1.5.3")),
         .remote(url: "https://github.com/stleamist/BetterSafariView", requirement: .exact("2.4.2")),

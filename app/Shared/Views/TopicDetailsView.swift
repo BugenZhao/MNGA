@@ -129,6 +129,7 @@ struct TopicDetailsView: View {
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.displayScale) private var displayScale
   @EnvironmentObject var viewingImage: ViewingImageModel
   @EnvironmentObject.Optional var postReply: PostReplyModel?
 
@@ -971,7 +972,7 @@ struct TopicDetailsView: View {
 
   @MainActor
   func viewScreenshot() {
-    if let url = screenshotView.snapshot() {
+    if let url = screenshotView.snapshot(scale: displayScale) {
       viewingImage.show(url: url)
     } else {
       ToastModel.showAuto(.error("Failed to render screenshot."))

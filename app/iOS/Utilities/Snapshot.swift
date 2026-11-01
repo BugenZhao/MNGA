@@ -19,11 +19,11 @@ extension View {
   /// This uses SwiftUI's `ImageRenderer` so it can render SwiftUI primitives (text, shapes, images, etc.).
   /// Note that some UIKit-backed views (like web views and media players) may be rendered as placeholders.
   @MainActor
-  func snapshot() -> URL? {
+  func snapshot(scale: CGFloat) -> URL? {
     let renderer = ImageRenderer(content:
       `self`
         .environment(\.inSnapshot, true))
-    renderer.scale = Screen.main.scale
+    renderer.scale = scale
     renderer.isOpaque = true
 
     guard let image = renderer.uiImage else { return nil }

@@ -4,15 +4,19 @@ This document records where every navigation in MNGA lands, so layout work can b
 
 Evidence for each row:
 
-- **Run**: observed on iPad mini (A20 Pro) or iPhone 18 Pro, iOS 27.2, with a build of 2.3.1. Navigation code has not changed since that build.
+- **Run**: observed on iPad mini (A20 Pro) or iPhone 18 Pro, iOS 27.2. Rows were first run on a 2.3.1 build, and the regression pass below was repeated after the root moved to one `NavigationSplitView`.
 - **Code**: read from the code, not exercised yet.
 
 ## Structure
 
 | Layout | Root | Used when |
 |---|---|---|
-| Single stack | One `NavigationStack` | `ContentView.useColumnStyle` is false (iPhone) |
-| Three columns | `NavigationSplitView`, with a `NavigationStack` in each column | `ContentView.useColumnStyle` is true (iPad) |
+| Three columns | `NavigationSplitView`, with a `NavigationStack` in each column | `usesColumnLayout` is true: both size classes are regular (iPad, unfolded iPhone Duo) |
+| Single stack | The same split view, collapsed to one stack | `usesColumnLayout` is false: every iPhone, folded iPhone Duo, and a large iPhone in landscape |
+
+The root is the same view in both layouts, so a change between them keeps the navigation state. Read `usesColumnLayout` from the environment below the root. Do not use the device idiom, or `horizontalSizeClass` below the root.
+
+When the columns do not all fit, which in testing meant a window under about 1100 points wide, the system overlays the sidebar on the content column and no column width or split view style changes that. `hidesOverlaidSidebar()` closes the overlay after navigating from the sidebar to column 2, so apply it to those destinations.
 
 | Column | Root content | Typically shows |
 |---|---|---|
@@ -32,6 +36,7 @@ No column is restricted to one kind of screen. A topic list can sit in column 3,
 | **Sheet** | `.sheet` | Sheet | Sheet |
 | **Cover** | `.fullScreenCover` | Cover | Cover |
 | **External** | `OpenURLModel` | In-app Safari or system browser | Same |
+| **Layout split** | Branches on `usesColumnLayout` | Push | Sheet |
 
 Inside a sheet with its own stack, the three push kinds all push in that sheet's stack.
 
@@ -50,8 +55,8 @@ Plus-gated entries (`PlusCheckNavigationLink`, `withPlusCheck`, `checkPlus`) sho
 | User menu | Favorite Topics | Next column | Replaces column 2 | Push | Code | `UserMenuView` |
 | User menu | History (Plus) | Next column | Replaces column 2 | Push | Run (iPad) | `UserMenuView` |
 | User menu | Short Messages (Plus) | Next column | Replaces column 2. Column 3 keeps its content | Push | Run (iPad) | `UserMenuView` |
-| User menu | Notifications | Idiom split | Sheet | Push | Code | `UserMenuView` |
-| User menu | About & Feedback | Idiom split | Sheet | Push | Run (iPad) | `UserMenuView` |
+| User menu | Notifications | Layout split | Sheet | Push | Code | `UserMenuView` |
+| User menu | About & Feedback | Layout split | Sheet | Push | Run (iPad) | `UserMenuView` |
 | User menu | Settings | Sheet | Sheet | Sheet | Code | `UserMenuView` |
 | User menu | Sign In | Sheet | Sheet | Sheet | Code | `UserMenuView` |
 | Global search | All Forums | Same column | Pushes in column 1 | Push | Run | `GlobalSearchView` |
@@ -186,9 +191,19 @@ Alerts and confirmation dialogs, such as renaming a favorite folder or discardin
 
 ## Column visibility
 
-The full screen button in a topic hides columns 1 and 2, and column 3 keeps its stack. It shows only on iPad. (Run)
+The full screen button in a topic hides columns 1 and 2, and column 3 keeps its stack. It shows only in the three-column layout. (Run)
 
 Known issue: the button also shows on topics inside sheets, such as a deep link, where it can only affect the columns behind the sheet.
+
+## Folding on iPhone Duo
+
+Folding and unfolding change the layout while the app runs. Moving between layouts is best effort, because the columns and the single stack cannot represent each other exactly.
+
+- Unfolded, the inner display shows columns 2 and 3 with the sidebar overlaid. The three-column behavior in this document applies, except that the sidebar closes after navigating.
+- Folding merges the columns into one back stack: the content column first, then the detail column. (Run)
+- Unfolding moves a topic opened while folded into column 3. (Run)
+- A presented sheet stays presented across a fold. (Run)
+- The rotation lock applies only when folded, and the setting says so. On the inner display the system ignores it. (Run)
 
 ## Rules for new navigation
 
@@ -218,3 +233,13 @@ On iPad, in landscape:
 12. In `MNGA Meta`, open the FAQ topic and tap its first link. The linked topic pushes in the same column.
 
 On iPhone, walk the same path. Every step pushes on one stack, except that step 10 is a sheet and step 11 does not exist.
+
+On iPhone Duo, use the `duo-hinge` skill:
+
+1. Unfold, open a forum from the sidebar, and check that the sidebar closes.
+2. Open a topic and a link inside it, then fold. The same topic stays on screen, and back walks through the first topic to the forum.
+3. Open a topic while folded, then unfold. It is in column 3.
+4. Fold with a deep link sheet open. The sheet stays.
+5. Rotate while folded. The bars stay usable beside the camera.
+
+On a large iPhone, rotate to landscape. It stays on one stack.

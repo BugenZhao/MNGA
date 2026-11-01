@@ -78,6 +78,7 @@ struct PostRowView: View {
   @EnvironmentObject<ViewingImageModel>.Optional var viewingImage
 
   @Environment(\.enableAuthorOnly) var enableAuthorOnly
+  @Environment(\.displayScale) private var displayScale
   @Environment(\.colorScheme) private var colorScheme
 
   @StateObject var authStorage = AuthStorage.shared
@@ -352,7 +353,7 @@ struct PostRowView: View {
 
   @MainActor
   func viewScreenshot() {
-    if let url = screenshotView.snapshot() {
+    if let url = screenshotView.snapshot(scale: displayScale) {
       viewingImage?.show(url: url)
     } else {
       ToastModel.showAuto(.error("Failed to render screenshot."))

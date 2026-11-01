@@ -138,7 +138,18 @@ extension View {
   }
 }
 
+extension EnvironmentValues {
+  /// Whether the root navigation shows its columns, rather than collapsing to one stack.
+  ///
+  /// Use this instead of `horizontalSizeClass` below the root, where a column or a sheet may
+  /// report compact even when the window is regular, and instead of the device idiom, which
+  /// says nothing about the available space.
+  @Entry var usesColumnLayout: Bool = false
+}
+
 struct MaybeBottomBarSearchToolbarItem: ToolbarContent {
+  @Environment(\.usesColumnLayout) var usesColumnLayout
+
   let asSpacer: Bool
   let condition: Bool
 
@@ -148,7 +159,7 @@ struct MaybeBottomBarSearchToolbarItem: ToolbarContent {
   }
 
   var body: some ToolbarContent {
-    if #available(iOS 26.0, *), UserInterfaceIdiom.current == .phone, condition {
+    if #available(iOS 26.0, *), !usesColumnLayout, condition {
       DefaultToolbarItem(kind: .search, placement: .bottomBar)
     } else if asSpacer {
       MaybeToolbarSpacer(.flexible, placement: .bottomBar)

@@ -133,10 +133,10 @@ struct GlobalSearchView: View {
           NavigationLink(destination: ForumSearchView(dataSource: ds.forum)) {
             Label("All Forums", systemImage: "square.stack.3d.down.right")
           }.isDetailLink(false) // show in the same stack
-          NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search")) {
+          NavigationLink(destination: TopicSearchView(dataSource: ds.topic).navigationTitle("Topic Search").hidesOverlaidSidebar()) {
             Label("All Topics", systemImage: "doc.richtext")
           }
-          NavigationLink(destination: UserSearchView(dataSource: ds.user)) {
+          NavigationLink(destination: UserSearchView(dataSource: ds.user).hidesOverlaidSidebar()) {
             Label("All Users", systemImage: "person.2")
           }
         }

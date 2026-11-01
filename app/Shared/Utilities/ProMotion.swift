@@ -25,7 +25,8 @@ final class ProMotionDisplayLink: NSObject {
   func start() {
     guard displayLink == nil else { return }
 
-    let targetFPS = Float(min(UIScreen.main.maximumFramesPerSecond, 120))
+    // There may be no window yet at launch. The system clamps the rate to what the screen supports.
+    let targetFPS = Float(min(UIApplication.myKeyWindow?.screen.maximumFramesPerSecond ?? 120, 120))
     let link = CADisplayLink(target: self, selector: #selector(tick))
     link.preferredFrameRateRange = CAFrameRateRange(
       minimum: targetFPS,
