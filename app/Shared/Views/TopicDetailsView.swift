@@ -761,6 +761,7 @@ struct TopicDetailsView: View {
   var jumpSelector: some View {
     TopicJumpSelectorView(
       maxFloor: maxFloor,
+      isLoading: dataSource.isLoading,
       mode: $jumpSelectorMode,
       initialFloor: currentViewingFloor.currentLowest ?? 0,
       floorToJump: $floorToJump,
@@ -822,7 +823,6 @@ struct TopicDetailsView: View {
     }
     // Action Navigation End
     .onReceive(dataSource.$lastRefreshTime) { _ in mayScrollToJumpFloor() }
-    .sheet(isPresented: $showJumpSelector) { jumpSelector }
     // Favorite to new folder
     .alert("Add to New Folder", isPresented: $showingCreateFolderAlert) {
       TextField("Unnamed Folder", text: $newFolderName.withDefaultValue(""))
@@ -834,6 +834,8 @@ struct TopicDetailsView: View {
     .navigationBarTitleDisplayMode(.inline)
     .toolbar { toolbar }
     .refreshable(dataSource: dataSource)
+    // Outside of `refreshable`, or pulling down the list in the sheet would refresh the topic.
+    .sheet(isPresented: $showJumpSelector) { jumpSelector }
     .toolbarRole(.editor) // make title left aligned
     .toolbar(bottomBarVisibility, for: .bottomBar)
     .onGeometryChange(for: CGFloat.self, of: { $0.frame(in: .global).maxX }) { contentMaxX = $0 }
