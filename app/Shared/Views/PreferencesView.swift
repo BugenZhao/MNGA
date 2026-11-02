@@ -303,6 +303,9 @@ struct PreferencesInnerView: View {
     NavigationLink(destination: CacheView()) {
       Label("Cache Management", systemImage: "internaldrive")
     }
+    Toggle(isOn: $pref.autoClockIn) {
+      Label("Auto Clock In", systemImage: "calendar.badge.checkmark")
+    }
     Toggle(isOn: $pref.hideMNGAMeta) {
       Label("Hide MNGA Meta", systemImage: "eye.slash")
     }
@@ -353,7 +356,7 @@ struct PreferencesInnerView: View {
         connection
       }
 
-      Section(header: Text("Advanced")) {
+      Section(header: Text("Advanced"), footer: Text("Auto Clock In Explained")) {
         advanced
       }
 

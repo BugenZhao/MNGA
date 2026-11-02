@@ -51,7 +51,7 @@ Services under `logic/service/src`:
 - `request.rs`: stores and mutates the global `RequestOption`, including base URL overrides and custom user agents.
 - `auth.rs`: keeps the current `AuthInfo` in memory and exposes `set_auth`/`current_uid`.
 - `cache.rs`: implements `CacheRequest` handling with prefix-based cache scans and clears.
-- `clock_in.rs`: `clock_in` endpoint that memoizes daily sign-ins per user via the shared cache.
+- `clock_in.rs`: `clock_in` endpoint that signs in, claims the daily reward missions, and memoizes the result per user via the shared cache.
 - `forum.rs`: forum discovery (`get_forum_list`), subforum subscription management (`set_subforum_filter`), and forum search.
 - `topic.rs`: core topic workflows—forum topic lists, topic details, hot topics, favorites/folders, topic search, per-user topic feeds, and related extraction helpers.
 - `post.rs`: post-level operations including vote tracking, reply flows (`post_reply`, `post_reply_fetch_content`), attachment uploads, hot replies/comments parsing, and per-user post history.
