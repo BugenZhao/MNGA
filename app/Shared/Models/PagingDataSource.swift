@@ -19,6 +19,8 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private let neverRemove: Bool
   private let initialPage: Int
 
+  private static var settleDuration: TimeInterval { 0.1 }
+
   @Published var items = [Item]()
   @Published var itemToIndexAndPage = [String: (index: Int, page: Int)]()
   @Published var isLoading = false
@@ -31,6 +33,10 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   private var loadedPage = 0
   private var totalPages = 1
   private var dataFlowId = UUID()
+  private var itemsSettleAt = Date.distantPast
+  private var scrollSettleAt = Date.distantPast
+  private var isListOnScreen = false
+  private var deferredScroll: (() -> Void)?
 
   private var cancellables = Set<AnyCancellable>()
   fileprivate let logger = Logger.withDefaultLevel(label: "PagingDataSource<\(Res.protoMessageName)>")
@@ -83,7 +89,44 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     return pagedItems.sorted { $0.key < $1.key }.map { (page: $0.key, items: $0.value) }
   }
 
+  /// Runs `ScrollViewProxy.scrollTo` apart from any change of the items.
+  ///
+  /// On iOS 18, `List` turns a scroll target into an index path right away and applies it in a later
+  /// update. If the items change around that time, the path may be out of bounds for the collection
+  /// view, and UIKit raises an exception that the app cannot catch. So a scroll waits for a recent
+  /// change to settle, and replacing the items, which is how a list that scrolls shrinks, waits for a
+  /// recent scroll to settle. A list covered by a pushed view applies updates much later, so a scroll
+  /// requested there waits until the list is back, and only the latest one is kept.
+  ///
+  /// The scroll should look up its target when it runs. This needs `refreshable(dataSource:)` on the
+  /// list, which tells when it's on screen.
+  func scrollWhenSettled(_ scroll: @escaping () -> Void) {
+    guard isListOnScreen else {
+      deferredScroll = scroll
+      return
+    }
+    let wait = itemsSettleAt.timeIntervalSinceNow
+    if wait > 0 {
+      DispatchQueue.main.asyncAfter(deadline: .now() + wait) { self.scrollWhenSettled(scroll) }
+      return
+    }
+    scrollSettleAt = Date().addingTimeInterval(Self.settleDuration)
+    scroll()
+  }
+
+  fileprivate func listDidAppear() {
+    isListOnScreen = true
+    guard let scroll = deferredScroll else { return }
+    deferredScroll = nil
+    DispatchQueue.main.asyncAfter(deadline: .now() + Self.settleDuration) { self.scrollWhenSettled(scroll) }
+  }
+
+  fileprivate func listDidDisappear() {
+    isListOnScreen = false
+  }
+
   private func upsertItems(_ items: some Sequence<Item>, page: Int) {
+    itemsSettleAt = Date().addingTimeInterval(Self.settleDuration)
     for item in items {
       let id = item[keyPath: id]
 
@@ -138,6 +181,14 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
   }
 
   private func onRefreshSuccess(response: Res, animated: Bool, fromPage: Int) {
+    let wait = scrollSettleAt.timeIntervalSinceNow
+    if wait > 0 {
+      DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+        self.onRefreshSuccess(response: response, animated: animated, fromPage: fromPage)
+      }
+      return
+    }
+
     withAnimation(when: animated) {
       self.latestResponse = response
       self.latestError = nil
@@ -314,7 +365,9 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
   func body(content: Content) -> some View {
     ScrollViewReader { proxy in
       let scrollThenRefresh = {
-        withAnimation { proxy.scrollTo("top-placeholder") }
+        dataSource.scrollWhenSettled {
+          withAnimation { proxy.scrollTo("top-placeholder") }
+        }
         await doRefresh()
       }
 
@@ -355,6 +408,12 @@ struct PagingDataSourceRefreshable<Res: SwiftProtobuf.Message, Item>: ViewModifi
             HapticUtils.play(type: .success)
           }
         }
+    }
+    .background {
+      // One stable view to observe, even when the content switches between views.
+      Color.clear
+        .onAppear { dataSource.listDidAppear() }
+        .onDisappear { dataSource.listDidDisappear() }
     }
   }
 }
