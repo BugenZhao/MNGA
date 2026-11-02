@@ -112,16 +112,20 @@ struct FavoriteTopicListInnerView: View {
     .mayGroupedListStyle()
   }
 
+  // `onDelete` takes the row away as soon as this returns, and its offsets assume that every earlier
+  // delete has already been applied. So update the list here and only roll back if the request fails.
   func deleteFavorites(at indexSet: IndexSet) {
-    guard let firstIndex = indexSet.first else { return }
-    let topic = dataSource.items[firstIndex] // FIXME: only first
+    for index in indexSet.sorted(by: >) {
+      guard let removed = dataSource.removeItem(at: index) else { continue }
 
-    logicCallAsync(.topicFavor(.with {
-      $0.folderID = folderID
-      $0.topicID = topic.id
-      $0.operation = .delete
-    })) { (response: TopicFavorResponse) in
-      if !response.isFavored { dataSource.items.remove(at: firstIndex) }
+      logicCallAsync(.topicFavor(.with {
+        $0.folderID = folderID
+        $0.topicID = removed.itemID
+        $0.operation = .delete
+      })) { (_: TopicFavorResponse) in
+      } onError: { _ in
+        withAnimation { dataSource.restoreItem(removed) }
+      }
     }
   }
 }
