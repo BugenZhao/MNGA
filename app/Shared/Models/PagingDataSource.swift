@@ -96,6 +96,47 @@ class PagingDataSource<Res: SwiftProtobuf.Message, Item>: ObservableObject {
     }
   }
 
+  /// An item taken out of the list by `removeItem(at:)`, with what is needed to put it back.
+  struct RemovedItem {
+    let itemID: String
+    fileprivate let item: Item
+    fileprivate let index: Int
+    fileprivate let page: Int
+  }
+
+  /// Removes an item right away and keeps the index map in sync.
+  ///
+  /// Use this from `onDelete`: SwiftUI drops the row as soon as the action returns, so the
+  /// list must already be updated by then, rather than when a network response arrives.
+  func removeItem(at index: Int) -> RemovedItem? {
+    guard items.indices.contains(index) else { return nil }
+    let itemID = items[index][keyPath: id]
+    guard let page = itemToIndexAndPage[itemID]?.page else { return nil }
+
+    let item = items.remove(at: index)
+    itemToIndexAndPage[itemID] = nil
+    reindexItems(from: index)
+    return RemovedItem(itemID: itemID, item: item, index: index, page: page)
+  }
+
+  /// Puts back an item taken out by `removeItem(at:)`, unless a refresh has brought it back already.
+  func restoreItem(_ removed: RemovedItem) {
+    guard itemToIndexAndPage[removed.itemID] == nil else { return }
+
+    let index = min(removed.index, items.endIndex)
+    items.insert(removed.item, at: index)
+    itemToIndexAndPage[removed.itemID] = (index: index, page: removed.page)
+    reindexItems(from: index)
+  }
+
+  private func reindexItems(from start: Int) {
+    var map = itemToIndexAndPage
+    for index in start ..< items.endIndex {
+      map[items[index][keyPath: id]]?.index = index
+    }
+    itemToIndexAndPage = map
+  }
+
   private func replaceItems(_ items: some Sequence<Item>, page: Int) {
     if neverRemove == false {
       self.items.removeAll()
