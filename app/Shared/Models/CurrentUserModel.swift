@@ -67,6 +67,8 @@ class CurrentUserModel: ObservableObject {
   }
 
   func clockIn() {
+    guard PreferencesStorage.shared.autoClockIn else { return }
+
     let uid = authStorage.authInfo.uid
     if uid.isEmpty { return }
 
