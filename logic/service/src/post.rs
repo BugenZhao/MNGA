@@ -20,18 +20,71 @@ fn vote_response_key(id: &PostId) -> String {
     format!("/vote_response/topic/{}/post/{}", id.tid, id.pid)
 }
 
+/// Prepend the subject of a reply to its content as a bold line, the way NGA web shows it.
+///
+/// The reply form has a title field. Some users type the whole reply there, leaving only the
+/// quote header in the content, so dropping the subject hides what they actually wrote.
+fn prepend_subject(content: &mut PostContent, subject: &str) {
+    let subject = subject.trim();
+    if subject.is_empty() {
+        return;
+    }
+
+    let title = Span {
+        value: Some(Span_oneof_value::tagged(Span_Tagged {
+            tag: "b".to_owned(),
+            spans: vec![Span {
+                value: Some(Span_oneof_value::plain(Span_Plain {
+                    text: subject.to_owned(),
+                    ..Default::default()
+                })),
+                ..Default::default()
+            }]
+            .into(),
+            ..Default::default()
+        })),
+        ..Default::default()
+    };
+    let mut spans = vec![title];
+    if !content.spans.is_empty() {
+        spans.push(Span {
+            value: Some(Span_oneof_value::break_line(Default::default())),
+            ..Default::default()
+        });
+    }
+    spans.extend(content.take_spans());
+    content.set_spans(spans.into());
+
+    // Keep `raw` in sync so that text selection and blocked words also see the subject.
+    content.raw = if content.raw.is_empty() {
+        subject.to_owned()
+    } else {
+        format!("{subject}<br/>{}", content.raw)
+    };
+}
+
 pub fn extract_post(node: Node, at_page: u32, context: &str) -> Option<Post> {
     use super::macros::get;
     let map = extract_kv(node);
 
-    let raw_content = get!(map, "content")?;
-    let content = text::parse_content(&raw_content);
+    // A reply may have nothing but a subject, so do not require the content.
+    let raw_content = get!(map, "content").unwrap_or_default();
+    let mut content = text::parse_content(&raw_content);
 
     let post_id = PostId {
         pid: get!(map, "pid")?,
         tid: get!(map, "tid")?,
         ..Default::default()
     };
+
+    let floor = get!(map, "lou", u32)?;
+
+    // The subject of the main floor is the topic title, which is already shown above it.
+    let is_main_floor = post_id.pid == "0" || floor == 0;
+    if !is_main_floor {
+        let subject = get!(map, "subject").map(|s| text::unescape(&s));
+        prepend_subject(&mut content, subject.as_deref().unwrap_or_default());
+    }
 
     let vote_state = CACHE
         .get_msg::<PostVoteResponse>(&vote_response_key(&post_id))
@@ -86,7 +139,7 @@ pub fn extract_post(node: Node, at_page: u32, context: &str) -> Option<Post> {
 
     let post = Post {
         id: Some(post_id).into(),
-        floor: get!(map, "lou", u32)?,
+        floor,
         author_id,
         content: Some(content).into(),
         post_date: get!(map, "postdatetimestamp", _)?,
@@ -409,11 +462,79 @@ mod test {
     use crate::{
         fetch::with_fetch_check,
         forum::{make_fid, make_stid},
-        utils::get_unique_id,
+        utils::{extract_node, get_unique_id},
     };
 
     use super::*;
     use protos::DataModel::PostId;
+
+    fn extract_test_post(xml: &str) -> Post {
+        let package = sxd_document::parser::parse(xml).unwrap();
+        extract_node(&package, "/item", |n| extract_post(n, 1, "ctx"))
+            .unwrap()
+            .flatten()
+            .unwrap()
+    }
+
+    fn bold_text(span: &Span) -> Option<&str> {
+        match &span.value {
+            Some(Span_oneof_value::tagged(t)) if t.tag == "b" => match &t.spans[0].value {
+                Some(Span_oneof_value::plain(p)) => Some(p.text.as_str()),
+                _ => None,
+            },
+            _ => None,
+        }
+    }
+
+    // Floor 3 of topic 47353351 from issue #408: the reply is written in the subject.
+    #[test]
+    fn test_extract_post_subject_only_reply() {
+        let post = extract_test_post(
+            r#"<item><pid>878253630</pid><fid>-202020</fid><tid>47353351</tid><authorid>66847477</authorid><type>0</type><score>0</score><subject>因为喜欢呢，热爱算不上 &amp; 工资高也是原因之一呢</subject><content>[b]Reply to [pid=878152996,47353351,1]Reply[/pid] Post by [uid=3363460]et2008[/uid] (2026-08-12 09:46)[/b]</content><lou>3</lou><postdatetimestamp>1786496383</postdatetimestamp></item>"#,
+        );
+        let spans = post.get_content().get_spans();
+
+        assert_eq!(
+            bold_text(&spans[0]),
+            Some("因为喜欢呢，热爱算不上 & 工资高也是原因之一呢")
+        );
+        assert!(matches!(
+            spans[1].value,
+            Some(Span_oneof_value::break_line(_))
+        ));
+        // The reply header is kept after the subject.
+        assert_eq!(
+            post.get_content().get_raw(),
+            "因为喜欢呢，热爱算不上 & 工资高也是原因之一呢<br/>[b]Reply to [pid=878152996,47353351,1]Reply[/pid] Post by [uid=3363460]et2008[/uid] (2026-08-12 09:46)[/b]"
+        );
+        assert_eq!(spans.len(), 3);
+    }
+
+    #[test]
+    fn test_extract_post_subject_without_content() {
+        let post = extract_test_post(
+            r#"<item><pid>1</pid><fid>-7</fid><tid>2</tid><authorid>3</authorid><score>0</score><subject>only a subject</subject><lou>5</lou><postdatetimestamp>1</postdatetimestamp></item>"#,
+        );
+        let spans = post.get_content().get_spans();
+
+        assert_eq!(spans.len(), 1);
+        assert_eq!(bold_text(&spans[0]), Some("only a subject"));
+        assert_eq!(post.get_content().get_raw(), "only a subject");
+    }
+
+    #[test]
+    fn test_extract_post_main_floor_subject_is_not_prepended() {
+        let post = extract_test_post(
+            r#"<item><pid>0</pid><fid>-7</fid><tid>2</tid><authorid>3</authorid><score>0</score><subject>topic title</subject><content>hello</content><lou>0</lou><postdatetimestamp>1</postdatetimestamp></item>"#,
+        );
+        assert_eq!(post.get_content().get_raw(), "hello");
+
+        let post = extract_test_post(
+            r#"<item><pid>9</pid><fid>-7</fid><tid>2</tid><authorid>3</authorid><score>0</score><subject>   </subject><content>hello</content><lou>4</lou><postdatetimestamp>1</postdatetimestamp></item>"#,
+        );
+        assert_eq!(post.get_content().get_raw(), "hello");
+        assert_eq!(post.get_content().get_spans().len(), 1);
+    }
 
     #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
