@@ -279,7 +279,7 @@ struct FavoriteTopicListView: View {
         } description: {
           Text(error.error)
         } actions: {
-          Button("Retry") { Task { await retryLoadingFolders() } }
+          Button(action: { Task { await retryLoadingFolders() } }) { Text("Retry") }
         }
       } else {
         ProgressView()
