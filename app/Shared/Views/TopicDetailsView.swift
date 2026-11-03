@@ -780,6 +780,13 @@ struct TopicDetailsView: View {
     )
   }
 
+  private func scrollToItem(proxy: ScrollViewProxy, where matches: @escaping (Post) -> Bool) {
+    dataSource.scrollWhenSettled {
+      guard let item = dataSource.items.first(where: matches) else { return }
+      withAnimation { proxy.scrollTo(item, anchor: .top) }
+    }
+  }
+
   @ViewBuilder
   var main: some View {
     ScrollViewReader { proxy in
@@ -793,12 +800,10 @@ struct TopicDetailsView: View {
         }
       }.onReceive(action.$scrollToFloor) { floor in
         guard let floor else { return }
-        let item = dataSource.items.first { $0.floor == UInt32(floor) }
-        withAnimation { proxy.scrollTo(item, anchor: .top) }
+        scrollToItem(proxy: proxy) { $0.floor == UInt32(floor) }
       }.onReceive(action.$scrollToPid) { pid in
         guard let pid else { return }
-        let item = dataSource.items.first { $0.id.pid == pid }
-        withAnimation { proxy.scrollTo(item, anchor: .top) }
+        scrollToItem(proxy: proxy) { $0.id.pid == pid }
       }
     }
     // Action Navigation
