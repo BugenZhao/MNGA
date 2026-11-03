@@ -1,6 +1,6 @@
 use crate::{
     attachment::extract_attachment,
-    error::ServiceResult,
+    error::{ServiceError, ServiceResult},
     fetch::fetch_json_value,
     fetch::fetch_package_multipart,
     fetch_package,
@@ -328,12 +328,48 @@ fn decode_editor_text(text: String) -> String {
     text::unescape(&text)
 }
 
+/// NGA rejects an attachment over 4 MB unless `attachment_file1_auto_size` is `1`, which asks the
+/// server to compress it. A full-resolution photo from a recent iPhone can exceed that.
+const ATTACHMENT_AUTO_SIZE_THRESHOLD: usize = 4 * 1000 * 1000;
+
+fn attachment_auto_size(file_len: usize) -> &'static str {
+    if file_len > ATTACHMENT_AUTO_SIZE_THRESHOLD {
+        "1"
+    } else {
+        ""
+    }
+}
+
+/// The attachment server replies with a bare code like `<error>3</error>` and no message, so give
+/// the known codes a readable message. The code is kept for diagnosis.
+fn describe_attachment_error(error: ServiceError) -> ServiceError {
+    let ServiceError::Nga(mut e) = error else {
+        return error;
+    };
+    if !e.info.chars().all(|c| c.is_ascii_digit()) {
+        return ServiceError::Nga(e); // Already has a message.
+    }
+    if e.code.is_empty() || e.code == "?" {
+        e.code = e.info.clone();
+    }
+    e.info = match e.code.as_str() {
+        // "Account verification timed out, please refresh and try again."
+        "3" => "Upload authorization expired. Close the editor and open it again",
+        // Seen by the Android client, which retries with a smaller image.
+        "9" => "The image is too large to upload",
+        _ => "Failed to upload the image",
+    }
+    .to_owned();
+    ServiceError::Nga(e)
+}
+
 pub async fn upload_attachment(
     mut request: UploadAttachmentRequest,
 ) -> ServiceResult<UploadAttachmentResponse> {
     let action = request.take_action();
     let file = request.take_file();
     let name = format!("{}.jpeg", get_unique_id());
+    let auto_size = attachment_auto_size(file.len());
 
     let query = vec![];
 
@@ -348,7 +384,7 @@ pub async fn upload_attachment(
             .text("attachment_file1_dscp", name.clone())
             .text("attachment_file1_url_utf8_name", name.clone())
             .text("attachment_file1_watermark", "")
-            .text("attachment_file1_auto_size", "")
+            .text("attachment_file1_auto_size", auto_size)
             .part(
                 "attachment_file1",
                 multipart::Part::bytes(file.clone())
@@ -358,8 +394,9 @@ pub async fn upload_attachment(
             )
     };
 
-    let package =
-        fetch_package_multipart(action.get_verbatim().get_attach_url(), query, make_form).await?;
+    let package = fetch_package_multipart(action.get_verbatim().get_attach_url(), query, make_form)
+        .await
+        .map_err(describe_attachment_error)?;
 
     let name = extract_string(&package, "/root/attachments")?;
     let url = extract_string(&package, "/root/url")?;
@@ -414,6 +451,60 @@ mod test {
 
     use super::*;
     use protos::DataModel::PostId;
+
+    #[test]
+    fn test_attachment_auto_size() {
+        assert_eq!(attachment_auto_size(0), "");
+        assert_eq!(attachment_auto_size(ATTACHMENT_AUTO_SIZE_THRESHOLD), "");
+        assert_eq!(
+            attachment_auto_size(ATTACHMENT_AUTO_SIZE_THRESHOLD + 1),
+            "1"
+        );
+        assert_eq!(attachment_auto_size(12 * 1024 * 1024), "1");
+    }
+
+    #[test]
+    fn test_describe_attachment_error() {
+        let nga = |code: &str, info: &str| {
+            ServiceError::Nga(ErrorMessage {
+                code: code.to_owned(),
+                info: info.to_owned(),
+                ..Default::default()
+            })
+        };
+        let describe = |e| match describe_attachment_error(e) {
+            ServiceError::Nga(e) => (e.code, e.info),
+            other => panic!("unexpected error: {other:?}"),
+        };
+
+        assert_eq!(
+            describe(nga("3", "3")),
+            (
+                "3".to_owned(),
+                "Upload authorization expired. Close the editor and open it again".to_owned()
+            )
+        );
+        assert_eq!(
+            describe(nga("?", "9")),
+            (
+                "9".to_owned(),
+                "The image is too large to upload".to_owned()
+            )
+        );
+        assert_eq!(
+            describe(nga("42", "")),
+            ("42".to_owned(), "Failed to upload the image".to_owned())
+        );
+        // A message from NGA is kept as is.
+        assert_eq!(
+            describe(nga("17", "message")),
+            ("17".to_owned(), "message".to_owned())
+        );
+        assert!(matches!(
+            describe_attachment_error(ServiceError::MissingField("x".to_owned())),
+            ServiceError::MissingField(_)
+        ));
+    }
 
     #[ignore = "manual: requires network or mutable external state"]
     #[tokio::test]
