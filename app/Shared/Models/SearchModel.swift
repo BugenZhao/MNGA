@@ -77,7 +77,55 @@ struct SearchableModifier: ViewModifier {
   }
 }
 
+/// Loads a search result data source once its view is on screen.
+///
+/// A new data source is built for every committed keyword, and the results view may stay on
+/// screen while that happens: global search commits on every keystroke and its results live in
+/// another column, and a search inside a forum swaps its results in place. Keying the load on the
+/// data source identity makes the new one load too, instead of showing its spinner forever.
+/// Replacements wait for a short pause, so the intermediate keywords of a word being typed don't
+/// each send a request.
+private struct SearchResultsLoader<Res: SwiftProtobuf.Message, Item>: ViewModifier {
+  let dataSource: PagingDataSource<Res, Item>
+
+  @State private var hasLoaded = false
+
+  func body(content: Content) -> some View {
+    // The new data source is built while the old one is still referenced, so the two never
+    // share an object identifier.
+    content.task(id: ObjectIdentifier(dataSource)) {
+      if hasLoaded {
+        do { try await Task.sleep(for: .seconds(0.4)) } catch { return }
+      }
+      hasLoaded = true
+      dataSource.initialLoad()
+    }
+  }
+}
+
+/// Placeholder shown when a search has nothing to list, telling a failed request apart from an
+/// empty result.
+struct SearchResultsUnavailableView: View {
+  let error: LogicError?
+
+  var body: some View {
+    if let error {
+      ContentUnavailableView {
+        Label("Search Failed", systemImage: "exclamationmark.magnifyingglass")
+      } description: {
+        Text(error.error.errorLocalized)
+      }
+    } else {
+      ContentUnavailableView("No Results", systemImage: "magnifyingglass")
+    }
+  }
+}
+
 extension View {
+  func loadsSearchResults(_ dataSource: PagingDataSource<some SwiftProtobuf.Message, some Any>) -> some View {
+    modifier(SearchResultsLoader(dataSource: dataSource))
+  }
+
   func searchable(model: BasicSearchModel, prompt: String, if: Bool = true) -> some View {
     Group {
       if `if` {

@@ -40,21 +40,23 @@ struct TopicSearchView: View {
   @ObservedObject var dataSource: TopicSearchModel.DataSource
 
   var body: some View {
-    if dataSource.notLoaded {
-      ProgressView()
-        .onAppear { dataSource.initialLoad() }
-    } else if dataSource.items.isEmpty {
-      ContentUnavailableView("No Results", systemImage: "magnifyingglass")
-    } else {
-      List {
-        Section(header: Text("Search Results")) {
-          SafeForEach($dataSource.items, id: \.id) { topic in
-            TopicRowLinkView(topic: topic)
-              .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+    Group {
+      if dataSource.notLoaded {
+        ProgressView()
+      } else if dataSource.items.isEmpty {
+        SearchResultsUnavailableView(error: dataSource.latestError)
+      } else {
+        List {
+          Section(header: Text("Search Results")) {
+            SafeForEach($dataSource.items, id: \.id) { topic in
+              TopicRowLinkView(topic: topic)
+                .onAppear { dataSource.loadMoreIfNeeded(currentItem: topic.w) }
+            }
           }
         }
+        .mayGroupedListStyle()
       }
-      .mayGroupedListStyle()
     }
+    .loadsSearchResults(dataSource)
   }
 }
