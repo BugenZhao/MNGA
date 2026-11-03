@@ -82,9 +82,8 @@ struct ForumSearchView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
       } else if dataSource.items.isEmpty {
-        ContentUnavailableView("No Results", systemImage: "magnifyingglass")
+        SearchResultsUnavailableView(error: dataSource.latestError)
       } else {
         List {
           Section(header: Text("Search Results")) {
@@ -94,7 +93,9 @@ struct ForumSearchView: View {
           }
         }
       }
-    }.navigationTitle("Forum Search")
+    }
+    .loadsSearchResults(dataSource)
+    .navigationTitle("Forum Search")
   }
 }
 
@@ -105,9 +106,8 @@ struct UserSearchView: View {
     Group {
       if dataSource.notLoaded {
         ProgressView()
-          .onAppear { dataSource.initialLoad() }
       } else if dataSource.items.isEmpty {
-        ContentUnavailableView("No Results", systemImage: "magnifyingglass")
+        SearchResultsUnavailableView(error: dataSource.latestError)
       } else {
         List {
           Section(header: Text("Search Results")) {
@@ -119,7 +119,9 @@ struct UserSearchView: View {
           }
         }
       }
-    }.navigationTitle("User Search")
+    }
+    .loadsSearchResults(dataSource)
+    .navigationTitle("User Search")
   }
 }
 
