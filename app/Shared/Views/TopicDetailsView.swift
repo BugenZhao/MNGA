@@ -88,14 +88,36 @@ struct TopicFavorMenuView: View {
     await setFavor(.add, folderID: folderID)
   }
 
+  // Without a folder, NGA adds the topic to the default folder and creates that folder first if
+  // the account has none, which is the case for every new account.
+  func favorToDefaultFolder() async {
+    await setFavor(.add, folderID: "")
+    await folders.reload()
+  }
+
   var body: some View {
     Menu {
-      if folders.allFolders.isEmpty {
-        Text("Loading...").task { await folders.load() }
+      if !folders.loaded {
+        if folders.loadError != nil {
+          // Clearing the error brings back the loading row below, which loads again.
+          Button(action: { folders.loadError = nil }) {
+            Label("Retry", systemImage: "arrow.clockwise")
+          }
+          .menuActionDismissBehavior(.disabled)
+        } else {
+          Text("Loading...").task { await folders.load() }
+        }
+      } else if folders.allFolders.isEmpty {
+        Button(action: { Task { await favorToDefaultFolder() } }) {
+          Text("Add to Default Folder")
+          Text("A default folder will be created")
+        }
       } else {
         ForEach(folders.sortedFolders, id: \.id) { folder in
           folderToggle(for: folder)
         }
+      }
+      if folders.loaded {
         Divider()
         Button(action: { newFolderName = ""; showingCreateFolderAlert = true }) {
           Label("New Folder...", systemImage: "folder.badge.plus")

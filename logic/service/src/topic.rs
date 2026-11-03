@@ -740,9 +740,34 @@ pub async fn topic_favor(request: TopicFavorRequest) -> ServiceResult<TopicFavor
     )
     .await?;
 
+    // Without a folder, NGA adds the topic to the default folder, and creates one first if the
+    // account has no folder at all. Look it up so that the cache records a real folder ID.
+    if folder_id.is_empty() {
+        let folders = get_favorite_folder_list(FavoriteFolderListRequest::new())
+            .await?
+            .folders;
+        let Some(folder) = default_favorite_folder(&folders) else {
+            return Ok(TopicFavorResponse {
+                is_favored: matches!(op, FavorOp::Add),
+                ..Default::default()
+            });
+        };
+        let response = update_topic_cached_favor_response(request.get_topic_id(), &folder.id, op)?;
+        return Ok(response);
+    }
+
     let response = update_topic_cached_favor_response(request.get_topic_id(), folder_id, op)?;
 
     Ok(response)
+}
+
+/// The folder NGA uses when no folder is given: the default one, or the first one if somehow
+/// none is marked as default.
+fn default_favorite_folder(folders: &[FavoriteTopicFolder]) -> Option<&FavoriteTopicFolder> {
+    folders
+        .iter()
+        .find(|f| f.is_default)
+        .or_else(|| folders.first())
 }
 
 pub async fn get_user_topic_list(
@@ -898,6 +923,23 @@ mod test {
         post(DELETE).await?;
 
         Ok(())
+    }
+
+    #[test]
+    fn test_default_favorite_folder() {
+        let folder = |id: &str, is_default| FavoriteTopicFolder {
+            id: id.to_owned(),
+            is_default,
+            ..Default::default()
+        };
+
+        assert!(default_favorite_folder(&[]).is_none());
+
+        let folders = [folder("1", false), folder("2", true)];
+        assert_eq!(default_favorite_folder(&folders).unwrap().id, "2");
+
+        let folders = [folder("1", false), folder("2", false)];
+        assert_eq!(default_favorite_folder(&folders).unwrap().id, "1");
     }
 
     #[ignore = "manual: requires network or mutable external state"]
