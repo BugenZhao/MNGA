@@ -370,6 +370,9 @@
 "Text Parse" = "文本解析";
 "URL Parse" = "URL 解析";
 "Backend Panic" = "后端错误";
+"Upload authorization expired. Close the editor and open it again" = "上传授权已过期，请关闭编辑器后重新打开";
+"The image is too large to upload" = "图片过大，无法上传";
+"Failed to upload the image" = "图片上传失败";
 
 "Red" = "红色";
 "Orange" = "橙色";
