@@ -314,6 +314,12 @@
 "New Folder..." = "新建收藏夹...";
 "Unnamed Folder" = "未命名的收藏夹";
 "Add to New Folder" = "添加到新收藏夹";
+"Add to Default Folder" = "添加到默认收藏夹";
+"A default folder will be created" = "将自动创建默认收藏夹";
+"Topics you add to favorites will appear here." = "收藏的话题会显示在这里。";
+"Failed to Load Folders" = "无法加载收藏夹";
+"Retry" = "重试";
+"Loading..." = "加载中...";
 "Resume Reading Progress" = "恢复阅读进度";
 "Refresh Button" = "刷新按钮";
 "Blocked Topics Style" = "屏蔽话题样式";
