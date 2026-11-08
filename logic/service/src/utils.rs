@@ -24,11 +24,13 @@ pub fn extract_kv(node: Node<'_>) -> HashMap<&str, String> {
         .collect::<HashMap<_, _>>()
 }
 
+/// Collects the element children of `node` as `(tag, text)` pairs. Text children, such as the
+/// `3` in `<error>3</error>`, have no name and are skipped.
 pub fn extract_kv_pairs(node: Node<'_>) -> Vec<(&str, String)> {
     node.children()
         .into_iter()
-        // fixme: filter element?
-        .map(|n| (n.expanded_name().unwrap().local_part(), n.string_value()))
+        .filter(|n| matches!(n, Node::Element(_)))
+        .filter_map(|n| Some((n.expanded_name()?.local_part(), n.string_value())))
         .collect::<Vec<_>>()
 }
 
@@ -264,28 +266,29 @@ pub fn extract_error(package: &Package) -> ServiceResult<()> {
         }
     })?;
 
+    let error_code = extract_string(package, "/root/error_code")?;
+
     let backend = extract_node(package, "/root/error", |n| {
         let pairs = extract_kv_pairs(n);
-        let info = pget!(pairs, 0);
+        // Usually `<error><item>message</item></error>`, but the attachment server replies with a
+        // bare code like `<error>3</error>`.
+        let info = pget!(pairs, 0).or_else(|| {
+            let text = n.string_value();
+            (!text.trim().is_empty()).then(|| text.trim().to_owned())
+        });
 
         info.map(|info| ErrorMessage {
+            code: error_code.clone(),
             info,
             ..Default::default()
         })
     })?
     .flatten();
 
-    let backend_code = {
-        let code = extract_string(package, "/root/error_code")?;
-        if code.is_empty() {
-            None
-        } else {
-            Some(ErrorMessage {
-                code,
-                ..Default::default()
-            })
-        }
-    };
+    let backend_code = (!error_code.is_empty()).then(|| ErrorMessage {
+        code: error_code.clone(),
+        ..Default::default()
+    });
 
     frontend.or(backend).or(backend_code).map_or_else(
         || Ok(()),
@@ -330,6 +333,85 @@ mod test {
         assert_eq!(
             sanitized,
             "{\"data\":{\"message\":\"a\\tb\\nc\\r\\nd\",\"escaped\":\"x\\\\ty\",\"n\":1}}"
+        );
+    }
+
+    fn parse_error(xml: &str) -> ServiceResult<()> {
+        extract_error(&sxd_document::parser::parse(xml).unwrap())
+    }
+
+    #[test]
+    fn test_extract_error_with_bare_code() {
+        // Returned by the attachment server, for example when `auth` has expired.
+        let err = parse_error(
+            r#"<?xml version="1.0" encoding="GBK"?><root><error>3</error><error_code>3</error_code></root>"#,
+        )
+        .unwrap_err();
+
+        match err {
+            ServiceError::Nga(e) => {
+                assert_eq!(e.code, "3");
+                assert_eq!(e.info, "3");
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn test_extract_error_with_items() {
+        let err =
+            parse_error("<root><error><item>message</item><item>detail</item></error></root>")
+                .unwrap_err();
+
+        match err {
+            ServiceError::Nga(e) => {
+                assert_eq!(e.code, "?");
+                assert_eq!(e.info, "message");
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn test_extract_error_frontend_message() {
+        let err = parse_error(
+            "<root><__MESSAGE><item>17</item><item>message</item><item>detail</item></__MESSAGE></root>",
+        )
+        .unwrap_err();
+
+        match err {
+            ServiceError::Nga(e) => {
+                assert_eq!(e.code, "17");
+                assert_eq!(e.info, "message");
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn test_extract_error_none() {
+        parse_error("<root><attachments>a</attachments><url>u</url></root>").unwrap();
+    }
+
+    #[test]
+    fn test_extract_kv_pairs_skips_text() {
+        let package =
+            sxd_document::parser::parse("<root><e>text<i>a</i>more<i>b</i></e></root>").unwrap();
+        let pairs = extract_node(&package, "/root/e", |n| {
+            extract_kv_pairs(n)
+                .into_iter()
+                .map(|(k, v)| (k.to_owned(), v))
+                .collect::<Vec<_>>()
+        })
+        .unwrap()
+        .unwrap();
+
+        assert_eq!(
+            pairs,
+            vec![
+                ("i".to_owned(), "a".to_owned()),
+                ("i".to_owned(), "b".to_owned())
+            ]
         );
     }
 }

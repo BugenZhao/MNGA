@@ -938,6 +938,11 @@ struct TopicDetailsView: View {
     if topic.id.isEmpty { // for onlyPost, we may not have the topic id initially
       topic.id = newTopic.id
     }
+    // A topic opened from a link or a notification has no forum yet. Replying needs it, since NGA
+    // rejects image uploads without the right `fid`.
+    if !newTopic.fid.isEmpty {
+      topic.fid = newTopic.fid
+    }
     if newTopic.hasParentForum {
       topic.parentForum = newTopic.parentForum
     }

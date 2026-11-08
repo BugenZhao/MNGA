@@ -3,9 +3,16 @@ use reqwest::StatusCode;
 use std::any;
 use thiserror::Error;
 
+/// Turns a panic payload into a message. `panic!` and `unwrap` produce a `&'static str` or a
+/// `String`.
 pub fn any_err_to_string(e: Box<dyn any::Any + Send>) -> String {
-    e.downcast_ref::<Box<dyn ToString>>()
-        .map_or("<unknown>".into(), |e| e.to_string())
+    if let Some(s) = e.downcast_ref::<&'static str>() {
+        (*s).to_owned()
+    } else if let Some(s) = e.downcast_ref::<String>() {
+        s.clone()
+    } else {
+        "<unknown>".into()
+    }
 }
 
 #[allow(dead_code)]
@@ -83,3 +90,23 @@ impl ServiceError {
 }
 
 pub type ServiceResult<T> = Result<T, ServiceError>;
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_any_err_to_string() {
+        let message = |f: fn()| any_err_to_string(std::panic::catch_unwind(f).unwrap_err());
+
+        assert_eq!(message(|| panic!("static")), "static");
+        assert_eq!(message(|| panic!("formatted {}", 1)), "formatted 1");
+        assert_eq!(
+            message(|| {
+                "x".parse::<u8>().unwrap();
+            }),
+            "called `Result::unwrap()` on an `Err` value: ParseIntError { kind: InvalidDigit }"
+        );
+        assert_eq!(message(|| std::panic::panic_any(42)), "<unknown>");
+    }
+}
