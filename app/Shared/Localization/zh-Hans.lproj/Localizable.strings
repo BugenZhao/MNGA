@@ -332,7 +332,7 @@
 "Web API Explained" = "使用实验性的 Web API 加载话题内容。这可以彻底避免 XML 解析错误，但返回的内容可能不完全准确。在大多数情况下，请选择“禁用”或“备选”。";
 "Always Share Image as File" = "始终以文件共享原图";
 "Auto Clock In" = "自动签到";
-"Auto Clock In Explained" = "打开 MNGA 时，每天自动签到一次并领取签到奖励（N 币和铜币）。如果想在官方客户端中自行签到，请关闭此选项。";
+"Auto Clock In Explained" = "打开 MNGA 时，每天自动签到一次并领取签到奖励（N 币和铜币）。";
 "Show Forum Shortcuts" = "显示版块镜像";
 "Search Bar Position" = "搜索栏位置";
 "Top" = "顶部";

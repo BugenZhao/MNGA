@@ -6,8 +6,9 @@ use serde_json::Value;
 
 use crate::{
     auth::current_uid,
+    constants::APPLE_UA,
     error::{ServiceError, ServiceResult},
-    fetch::fetch_json_value,
+    fetch::{fetch_json_value, with_user_agent},
     utils::server_today_string,
 };
 
@@ -97,7 +98,13 @@ async fn claim_reward(mission_id: &str) -> ServiceResult<bool> {
     Ok(mission_counted_now(&value, mission_id))
 }
 
+/// NGA counts the missions only for its own apps, and refuses them for the Desktop and custom
+/// identities. So signing in always uses the default identity, whatever the user picked.
 pub async fn clock_in(_request: ClockInRequest) -> ServiceResult<ClockInResponse> {
+    with_user_agent(APPLE_UA, do_clock_in()).await
+}
+
+async fn do_clock_in() -> ServiceResult<ClockInResponse> {
     let mut response = ClockInResponse {
         date: server_today_string(),
         ..Default::default()
@@ -133,8 +140,8 @@ pub async fn clock_in(_request: ClockInRequest) -> ServiceResult<ClockInResponse
 
     if let Some(rejection) = rejection {
         // A rejection may be transient, so try again on the next call. Once the rounds run out,
-        // stop for the day only if NGA accepted another mission. Otherwise the account or the
-        // client identity is at fault, which can be fixed before the next launch.
+        // stop for the day only if NGA accepted another mission. Otherwise the account itself
+        // may be at fault, which can be fixed before the next launch.
         let exhausted = record_rejected_round(&scope) >= MAX_REJECTED_ROUNDS;
         if !(exhausted && accepted) {
             return Err(rejection);
