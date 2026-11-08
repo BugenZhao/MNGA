@@ -63,6 +63,24 @@ message User {
   bool mute = 9; // Whether the user is temporarily banned by NGA.
   string ip_location = 10;
   bool remote = 11; // Whether this user info is fetched with a separate `remoteUser` call.
+  bool followed = 12; // Whether the current user follows this user on NGA.
+  uint32 following_count = 13;
+  uint32 follower_count = 14;
+}
+
+// A topic or reply published by a followed user.
+message FollowActivity {
+  enum Type {
+    UNKNOWN = 0;
+    TOPIC = 1;
+    REPLY = 2;
+  }
+
+  string id = 1; // The server-side activity ID.
+  Type type = 2;
+  User user = 3;
+  Topic topic = 4;
+  optional LightPost post = 5; // Present for reply activities.
 }
 
 message PostId {

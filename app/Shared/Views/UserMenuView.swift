@@ -115,6 +115,12 @@ struct UserMenuView: View {
           NavigationLink(destination: FavoriteTopicListView().hidesOverlaidSidebar()) {
             Label("Favorite Topics", systemImage: "bookmark")
           }
+          NavigationLink(destination: FollowActivityListView()) {
+            Label("Following Activity", systemImage: "person.line.dotted.person.fill")
+          }
+          NavigationLink(destination: FollowUserListView()) {
+            Label("Following", systemImage: "person.2")
+          }
         }
         PlusCheckNavigationLink(destination: TopicHistoryListView.build().hidesOverlaidSidebar(), feature: .topicHistory) {
           Label("History", systemImage: "clock")

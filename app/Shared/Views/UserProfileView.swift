@@ -32,6 +32,7 @@ struct UserProfileView: View {
   @StateObject var users = UsersModel.shared
 
   @State var tab = Tab.topics
+  @State var isModifyingFollow = false
 
   var isMyself: Bool {
     user.id == currentUser.user?.id
@@ -135,6 +136,15 @@ struct UserProfileView: View {
       }
     }
 
+    if !isMyself, !user.isAnonymous {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Button(action: { modifyFollow() }) {
+          Label(user.followed ? "Unfollow" : "Follow", systemImage: user.followed ? "person.fill.checkmark" : "person.badge.plus")
+        }
+        .disabled(isModifyingFollow)
+      }
+    }
+
     ToolbarItem(placement: .navigationBarTrailing) {
       Menu {
         if isMyself {
@@ -219,6 +229,24 @@ struct UserProfileView: View {
     guard isMyself else { return }
     let initial = user.signature.rawReplacingBr
     signaturePostModel.show(action: .init(userID: user.id, initialSignature: initial))
+  }
+
+  func modifyFollow() {
+    guard !isMyself, !user.isAnonymous, !isModifyingFollow else { return }
+    isModifyingFollow = true
+    Task {
+      let response: Result<FollowUserModifyResponse, LogicError> = await logicCallAsync(.followUserModify(.with {
+        $0.userID = user.id
+        $0.operation = user.followed ? .delete : .add
+      }))
+      switch response {
+      case let .success(response):
+        withAnimation { user.followed = response.followed }
+      case let .failure(error):
+        ToastModel.showAuto(.error(error.error))
+      }
+      isModifyingFollow = false
+    }
   }
 
   func reloadUser() async {
