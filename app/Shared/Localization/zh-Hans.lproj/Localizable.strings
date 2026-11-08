@@ -21,6 +21,7 @@
 "Favorites" = "收藏";
 "No Favorites" = "没有收藏";
 "No Results" = "没有结果";
+"Search Failed" = "搜索失败";
 "Remove from Favorites" = "取消收藏";
 "Mark as Favorite" = "添加收藏";
 "Favorite in..." = "收藏到…";
