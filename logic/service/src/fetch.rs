@@ -20,7 +20,7 @@ use dashmap::DashMap;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use protos::DataModel::Device;
-use reqwest::{Client, Method, RequestBuilder, Response, Url, multipart};
+use reqwest::{Client, ClientBuilder, Method, RequestBuilder, Response, Url, multipart, redirect};
 
 fn device_ua(api: &str) -> Cow<'static, str> {
     let option = request::REQUEST_OPTION.read().unwrap();
@@ -58,13 +58,17 @@ fn resolve_url(api: &str, kind: FetchKind) -> ServiceResult<Url> {
     Ok(url)
 }
 
-fn build_client() -> Client {
-    log::info!("build reqwest client");
+fn client_builder() -> ClientBuilder {
     Client::builder()
         .https_only(true)
         .connect_timeout(Duration::from_secs(5))
         .read_timeout(Duration::from_secs(20))
         .gzip(true)
+}
+
+fn build_client() -> Client {
+    log::info!("build reqwest client");
+    client_builder()
         .build()
         .expect("failed to build reqwest client")
 }
@@ -189,10 +193,34 @@ impl RetryMode {
 async fn do_fetch<AF>(
     api: &str,
     kind: FetchKind,
-    mut query: Vec<(&str, &str)>,
+    query: Vec<(&str, &str)>,
     method: Method,
     // NGA may return detailed error message in the response body when the status code is not OK.
     // So we should not directly return a `ServiceError::Status`.
+    check_status: bool,
+    add_form: AF,
+) -> ServiceResult<Response>
+where
+    AF: FnOnce(RequestBuilder) -> RequestBuilder,
+{
+    // `tokio::test` make a new runtime for every test,
+    // so we should use a thread-local client built in current runtime instead of a global one,
+    // which may cause client being dropped early and `hyper` panicking at 'dispatch dropped without returning error'
+    let client = if cfg!(test) {
+        build_client()
+    } else {
+        get_global_client()
+    };
+
+    do_fetch_with_client(client, api, kind, query, method, check_status, add_form).await
+}
+
+async fn do_fetch_with_client<AF>(
+    client: Client,
+    api: &str,
+    kind: FetchKind,
+    mut query: Vec<(&str, &str)>,
+    method: Method,
     check_status: bool,
     add_form: AF,
 ) -> ServiceResult<Response>
@@ -208,15 +236,6 @@ where
             .into_iter()
             .filter(|(_k, v)| !v.is_empty())
             .collect::<Vec<_>>()
-    };
-
-    // `tokio::test` make a new runtime for every test,
-    // so we should use a thread-local client built in current runtime instead of a global one,
-    // which may cause client being dropped early and `hyper` panicking at 'dispatch dropped without returning error'
-    let client = if cfg!(test) {
-        build_client()
-    } else {
-        get_global_client()
     };
 
     let ua = &*device_ua(api);
@@ -235,19 +254,59 @@ where
 
     let response = client.execute(request).await?;
 
-    if response.status().is_success() {
-        Ok(response)
-    } else {
-        log::error!(
-            "request failed: {}",
-            response.error_for_status_ref().unwrap_err()
-        );
+    if let Err(error) = response.error_for_status_ref() {
+        log::error!("request failed: {error}");
         if check_status {
-            Err(ServiceError::from_status(response.status()))
-        } else {
-            Ok(response)
+            return Err(ServiceError::from_status(response.status()));
         }
     }
+
+    Ok(response)
+}
+
+/// Sends the request and returns where it redirects to, without loading that target.
+///
+/// Redirects are followed until `is_target` accepts a URL, since a host may first redirect to
+/// another host. Returns `None` if the response does not end with an accepted redirect.
+pub async fn fetch_redirect_target(
+    api: &str,
+    query: Vec<(&str, &str)>,
+    is_target: fn(&Url) -> bool,
+) -> ServiceResult<Option<Url>> {
+    let policy = redirect::Policy::custom(move |attempt| {
+        if is_target(attempt.url()) || attempt.previous().len() >= 3 {
+            attempt.stop()
+        } else {
+            attempt.follow()
+        }
+    });
+    // Other requests should keep following redirects, so this can't be the global client.
+    let client = client_builder().redirect(policy).build()?;
+
+    let auth_info = auth::AUTH_INFO.read().unwrap().clone();
+    let form = [
+        ("access_token", auth_info.get_token()),
+        ("access_uid", auth_info.get_uid()),
+    ];
+    let response = do_fetch_with_client(
+        client,
+        api,
+        FetchKind::Normal,
+        query,
+        Method::POST,
+        false,
+        |b| b.form(&form),
+    )
+    .await?;
+
+    let target = response
+        .headers()
+        .get(reqwest::header::LOCATION)
+        .and_then(|location| location.to_str().ok())
+        .and_then(|location| response.url().join(location).ok())
+        .filter(is_target);
+
+    Ok(target)
 }
 
 trait ResponseFormat: Sized {

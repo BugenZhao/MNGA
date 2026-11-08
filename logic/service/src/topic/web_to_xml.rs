@@ -901,7 +901,8 @@ fn assemble_xml(
     write_topic(&mut writer, topic)?;
     write_forum(&mut writer, forum_name)?;
     write_posts(&mut writer, posts)?;
-    write_text_element(&mut writer, "__ROWS", &topic.replies.to_string())?;
+    // The topic itself counts as a row, as in `lite=xml`.
+    write_text_element(&mut writer, "__ROWS", &(topic.replies + 1).to_string())?;
     write_text_element(&mut writer, "__R__ROWS_PAGE", &rows_per_page.to_string())?;
     writer
         .write_event(Event::End(BytesEnd::new("root")))

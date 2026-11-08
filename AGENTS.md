@@ -54,7 +54,7 @@ Services under `logic/service/src`:
 - `clock_in.rs`: `clock_in` endpoint that memoizes daily sign-ins per user via the shared cache.
 - `forum.rs`: forum discovery (`get_forum_list`), subforum subscription management (`set_subforum_filter`), and forum search.
 - `topic.rs`: core topic workflows—forum topic lists, topic details, hot topics, favorites/folders, topic search, per-user topic feeds, and related extraction helpers.
-- `post.rs`: post-level operations including vote tracking, reply flows (`post_reply`, `post_reply_fetch_content`), attachment uploads, hot replies/comments parsing, and per-user post history.
+- `post.rs`: post-level operations including vote tracking, reply flows (`post_reply`, `post_reply_fetch_content`), attachment uploads, hot replies/comments parsing, locating a post in its topic, and per-user post history.
 - `history.rs`: stores topic snapshots in cache and serves `get_topic_history`.
 - `msg.rs`: handles short message conversations (`get_short_msg_list`, `get_short_msg_details`, `post_short_msg`) and participant parsing.
 - `noti.rs`: notification fetch (`fetch_notis`), normalization, caching, and synchronous `mark_noti_read`.

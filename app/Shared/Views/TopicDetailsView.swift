@@ -170,6 +170,11 @@ struct TopicDetailsView: View {
     topic.id.isMNGAMockID
   }
 
+  // Floors and pages in this mode are only numbered among the posts of the author.
+  private var isAuthorOnly: Bool {
+    !enableAuthorOnly && !localMode
+  }
+
   init(
     topic: Binding<Topic>,
     dataSource: DataSource,
@@ -675,7 +680,7 @@ struct TopicDetailsView: View {
 
     let subTitle: String? = if localMode {
       "Cached Topic".localized
-    } else if !enableAuthorOnly {
+    } else if isAuthorOnly {
       "Author Only".localized
     } else if onlyPost.id != nil {
       "Reply".localized
@@ -859,7 +864,10 @@ struct TopicDetailsView: View {
   }
 
   var maxFloor: Int {
-    Int((dataSource.latestResponse?.topic ?? topic).repliesNum)
+    if isAuthorOnly {
+      return max(Int(dataSource.latestResponse?.rows ?? 0) - 1, 0)
+    }
+    return Int((dataSource.latestResponse?.topic ?? topic).repliesNum)
   }
 
   func mayScrollToJumpFloor() {
@@ -877,7 +885,7 @@ struct TopicDetailsView: View {
   }
 
   func syncTopicProgress() {
-    guard !topic.id.isEmpty, !mock else { return }
+    guard !topic.id.isEmpty, !mock, !isAuthorOnly else { return }
     let seen = currentViewingFloor.highestSeen.map { UInt32($0) } ?? 0
     let highest = max(topic.highestViewedFloor, seen)
     let current = currentViewingFloor.currentLowest.map { UInt32($0) } ?? 0
@@ -1021,8 +1029,8 @@ struct TopicDetailsView: View {
       let result = await postLocator.locate(post.id)
 
       switch result {
-      case let .success(location):
-        jumpToLocatedPost(post, location: location)
+      case let .success(page):
+        jumpToLocatedPost(post, page: page)
       case let .failure(error):
         ToastModel.showAuto(.error(error.error))
       }
@@ -1030,7 +1038,7 @@ struct TopicDetailsView: View {
   }
 
   @MainActor
-  private func jumpToLocatedPost(_ post: Post, location: TopicPostLocator.Location) {
+  private func jumpToLocatedPost(_ post: Post, page: Int) {
     action.scrollToFloor = nil
     action.scrollToPid = nil
     floorToJump = nil
@@ -1041,7 +1049,7 @@ struct TopicDetailsView: View {
     }
 
     postIdToJump = post.id
-    dataSource.loadFromPage = location.page
+    dataSource.loadFromPage = page
   }
 }
 

@@ -126,6 +126,8 @@ message AsyncRequest {
     FavoriteForumListRequest favorite_forum_list = 28;
     // Add or remove a favorite forum (forum_favor2).
     FavoriteForumModifyRequest favorite_forum_modify = 29;
+    // Find which page of its topic a post is on.
+    PostLocateRequest post_locate = 30;
   }
 }
 
@@ -176,6 +178,7 @@ message TopicDetailsResponse {
   optional string local_reason = 7; // Reason why online load is failed.
   repeated User in_place_users = 6;
   string api_used = 8;
+  uint32 rows = 9; // Number of posts across all pages. In author-only mode, only those of the author.
 }
 
 message SubforumFilterRequest {
@@ -211,6 +214,9 @@ message PostVoteResponse {
   optional string error = 2; // not used
   VoteState state = 3;       // Vote state after voting.
 }
+
+message PostLocateRequest { string pid = 1; }
+message PostLocateResponse { uint32 page = 1; } // The page in the full topic, not in author-only mode.
 
 message TopicHistoryRequest { uint64 limit = 1; }
 message TopicHistoryResponse { repeated TopicSnapshot topics = 1; }

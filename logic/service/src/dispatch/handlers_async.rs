@@ -10,7 +10,8 @@ use crate::{
     msg::{get_short_msg_details, get_short_msg_list, post_short_msg},
     noti::fetch_notis,
     post::{
-        get_user_post_list, post_reply, post_reply_fetch_content, post_vote, upload_attachment,
+        get_user_post_list, locate_post, post_reply, post_reply_fetch_content, post_vote,
+        upload_attachment,
     },
     topic::{
         create_favorite_folder, get_favorite_folder_list, get_favorite_topic_list,
@@ -38,6 +39,7 @@ handle!(subforum_filter, set_subforum_filter);
 handle!(forum_list, get_forum_list);
 handle!(remote_user, get_remote_user);
 handle!(post_vote, post_vote);
+handle!(post_locate, locate_post);
 handle!(topic_history, get_topic_history);
 handle!(hot_topic_list, get_hot_topic_list);
 handle!(forum_search, search_forum);
