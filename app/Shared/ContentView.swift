@@ -127,6 +127,7 @@ struct GlobalSheetsModifier: ViewModifier {
   @EnvironmentObject var userSignaturePost: UserSignaturePostModel
   @EnvironmentObject var textSelection: TextSelectionModel
   @EnvironmentObject var viewingImage: ViewingImageModel
+  @EnvironmentObject var paywall: PaywallModel
   @StateObject var prefs = PreferencesStorage.shared
 
   func body(content: Content) -> some View {
@@ -135,7 +136,12 @@ struct GlobalSheetsModifier: ViewModifier {
       .sheet(isPresented: $shortMessagePost.showEditor) { ShortMessageEditorView() }
       .sheet(isPresented: $userSignaturePost.showEditor) { UserSignatureEditorView() }
       .sheet(isPresented: $textSelection.text.isNotNil()) { TextSelectionView().presentationDetents([.medium, .large]) }
-      .sheet(isPresented: $prefs.showing) { PreferencesView() }
+      .sheet(isPresented: $prefs.showing) {
+        PreferencesView()
+          .environmentObject(paywall)
+          .environmentObject(textSelection)
+          .environmentObject(viewingImage)
+      }
       .modifier(PaywallSheetModifier())
       .fullScreenCover(isPresented: $viewingImage.showing) { NewImageViewer() }
   }
