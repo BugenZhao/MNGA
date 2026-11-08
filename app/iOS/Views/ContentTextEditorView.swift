@@ -49,7 +49,7 @@ struct ContentTextEditorView: View {
   }
 
   var body: some View {
-    TextEditor(text: $model.text, selection: $model.selection)
+    TextEditor(text: $model.text, selection: $model.selection.fitting($model.text))
       .toolbar {
         // Show toolbar only when focused, otherwise it will also be shown in other text fields.
         if focused {
