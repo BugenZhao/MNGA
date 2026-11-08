@@ -296,7 +296,7 @@ struct TopicListView: View {
     if topic.hasShortcutForum {
       ForumRowLinkView(forum: topic.shortcutForum, asTopicShortcut: topic)
     } else {
-      TopicRowLinkView(topic: $topic, useTopicPostDate: orderOrDefault == .postDate)
+      TopicRowLinkView(topic: $topic, useTopicPostDate: orderOrDefault == .postDate, showImagePreview: prefs.topicListShowImagePreview)
     }
   }
 
@@ -334,6 +334,7 @@ struct TopicListView: View {
     }
     .refreshable(dataSource: dataSource, refreshAfterIdle: true, triggerRefresh: triggerRefresh)
     .mayGroupedListStyle()
+    .fetchTopicPreviewImages(for: itemBindings, enabled: prefs.topicListShowImagePreview)
   }
 
   var body: some View {
@@ -378,6 +379,7 @@ struct TopicListView: View {
       parentForumName = r.forum.name
     }
   }
+
 }
 
 struct TopicListView_Previews: PreviewProvider {
