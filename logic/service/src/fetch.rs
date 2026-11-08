@@ -22,7 +22,20 @@ use lazy_static::lazy_static;
 use protos::DataModel::Device;
 use reqwest::{Client, ClientBuilder, Method, RequestBuilder, Response, Url, multipart, redirect};
 
+tokio::task_local! {
+    static UA_OVERRIDE: &'static str;
+}
+
+/// Send every request made within `f` with `ua`, whatever the Device Identity setting is.
+pub async fn with_user_agent<F: std::future::Future>(ua: &'static str, f: F) -> F::Output {
+    UA_OVERRIDE.scope(ua, f).await
+}
+
 fn device_ua(api: &str) -> Cow<'static, str> {
+    if let Ok(ua) = UA_OVERRIDE.try_with(|ua| *ua) {
+        return ua.into();
+    }
+
     let option = request::REQUEST_OPTION.read().unwrap();
 
     // If not customized, always use windows phone for read.php since it seems to be more robust.
@@ -673,3 +686,17 @@ pub use self::json::*;
 pub use self::mock::*;
 pub use self::web::*;
 pub use self::xml::*;
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_with_user_agent() {
+        // Not customized, so read.php uses the Windows Phone identity, unless overridden.
+        assert_eq!(device_ua("read.php"), WINDOWS_PHONE_UA);
+        let ua = with_user_agent(APPLE_UA, async { device_ua("read.php") }).await;
+        assert_eq!(ua, APPLE_UA);
+        assert_eq!(device_ua("read.php"), WINDOWS_PHONE_UA);
+    }
+}
