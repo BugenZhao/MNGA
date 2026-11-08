@@ -12,19 +12,36 @@ class FavoriteFolderModel: ObservableObject {
   static let shared = FavoriteFolderModel()
 
   @Published var allFolders: [FavoriteTopicFolder] = []
+  // Whether `allFolders` came from the server. A new account has no folder at all, so an empty list
+  // does not mean the folders are still loading.
+  @Published var loaded = false
+  // Set when the folders failed to load and nothing has been loaded since.
+  @Published var loadError: LogicError? = nil
 
   // Default folder should be the first one.
   var sortedFolders: [FavoriteTopicFolder] {
     allFolders.sorted { $0.isDefault && !$1.isDefault }
   }
 
+  var defaultFolder: FavoriteTopicFolder? {
+    allFolders.first { $0.isDefault } ?? allFolders.first
+  }
+
   @MainActor
   func load(force: Bool = false) async {
-    if allFolders.isEmpty || force {
+    if !loaded || force {
+      loadError = nil
       let response: Result<FavoriteFolderListResponse, LogicError> = await logicCallAsync(.favoriteFolderList(.init()))
-      if case let .success(r) = response {
+      switch response {
+      case let .success(r):
         logger.debug("loaded \(r.folders.count) favorite folders")
-        withAnimation { allFolders = r.folders }
+        withAnimation {
+          allFolders = r.folders
+          loaded = true
+        }
+      case let .failure(e):
+        // Keep showing the folders loaded before, if any.
+        if !loaded { withAnimation { loadError = e } }
       }
     }
   }
@@ -38,6 +55,8 @@ class FavoriteFolderModel: ObservableObject {
   func reset() {
     logger.debug("resetting favorite folders")
     allFolders = []
+    loaded = false
+    loadError = nil
   }
 
   @MainActor
@@ -127,22 +146,41 @@ struct FavoriteTopicListInnerView: View {
 }
 
 struct FavoriteTopicListView: View {
-  @State var currentFolder: FavoriteTopicFolder? = nil
+  @State var selectedFolderID: String? = nil
+  // Whether the folders have been refreshed since this view appeared.
+  @State var refreshed = false
   @StateObject var folders = FavoriteFolderModel.shared
 
-  func refreshCurrent() {
-    withAnimation {
-      currentFolder = folders.allFolders.first { $0.id == currentFolder?.id }
-        ?? folders.allFolders.first(where: { $0.isDefault })
-    }
+  // Derived from the shared model rather than copied, so that a folder created elsewhere, such as
+  // the first favorite of a new account while this view is still in the navigation stack, shows up.
+  var currentFolder: FavoriteTopicFolder? {
+    guard refreshed else { return nil }
+    return folders.allFolders.first { $0.id == selectedFolderID } ?? folders.defaultFolder
+  }
+
+  // A new account has no folder until it adds its first favorite.
+  var hasNoFolder: Bool {
+    refreshed && folders.loaded && folders.allFolders.isEmpty
+  }
+
+  var loadError: LogicError? {
+    refreshed ? folders.loadError : nil
+  }
+
+  var isLoadingFolders: Bool {
+    currentFolder == nil && !hasNoFolder && loadError == nil
   }
 
   // Every time we navigate into this view, refresh the folders.
   func loadFolders() async {
-    if currentFolder == nil {
-      await folders.reload()
-      refreshCurrent()
-    }
+    guard !refreshed else { return }
+    await folders.reload()
+    withAnimation { refreshed = true }
+  }
+
+  func retryLoadingFolders() async {
+    refreshed = false
+    await loadFolders()
   }
 
   func modifyCurrentFolder(_ request: FavoriteFolderModifyRequest) {
@@ -151,10 +189,7 @@ struct FavoriteTopicListView: View {
     var request = request
     request.folderID = currentFolder.id
 
-    Task {
-      await folders.modify(request)
-      refreshCurrent()
-    }
+    Task { await folders.modify(request) }
   }
 
   @State var showingRenameAlert = false
@@ -168,7 +203,7 @@ struct FavoriteTopicListView: View {
       Toggle(isOn:
         Binding(
           get: { currentFolder?.id == folder.id },
-          set: { _ in withPlusCheck(.multiFavorite) { currentFolder = folder } },
+          set: { _ in withPlusCheck(.multiFavorite) { selectedFolderID = folder.id } },
         )) {
           Text(folder.name)
           if folder.isDefault {
@@ -222,7 +257,7 @@ struct FavoriteTopicListView: View {
           modifyCurrentFolder(.with { $0.delete = true })
         }
       }
-    } else {
+    } else if isLoadingFolders {
       ProgressView()
     }
   }
@@ -232,13 +267,27 @@ struct FavoriteTopicListView: View {
       if let currentFolder {
         FavoriteTopicListInnerView.build(folderID: currentFolder.id)
           .id(currentFolder.id)
+      } else if hasNoFolder {
+        ContentUnavailableView(
+          "No Favorites",
+          systemImage: "bookmark",
+          description: Text("Topics you add to favorites will appear here."),
+        )
+      } else if let error = loadError {
+        ContentUnavailableView {
+          Label("Failed to Load Folders", systemImage: "exclamationmark.triangle")
+        } description: {
+          Text(error.error)
+        } actions: {
+          Button(action: { Task { await retryLoadingFolders() } }) { Text("Retry") }
+        }
       } else {
         ProgressView()
-          .task { await loadFolders() }
       }
     }
+    .task { await loadFolders() }
     .navigationTitle("Favorite Topics")
-    .maybeNavigationSubtitle(currentFolder?.name ?? "Default Folder".localized)
+    .maybeNavigationSubtitle(currentFolder?.name ?? "")
     .toolbar { ToolbarItem(placement: .navigationBarTrailing) { folderMenu } }
   }
 }
