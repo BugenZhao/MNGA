@@ -180,8 +180,10 @@
 "Jump" = "跳转";
 "Jump to..." = "跳转至…";
 "Type here..." = "输入…";
-"First" = "最前";
-"Last" = "最后";
+"First" = "首页";
+"Previous" = "上一页";
+"Next" = "下一页";
+"Last" = "末页";
 "Load Page %lld" = "加载第 %lld 页";
 "Accounts" = "账号";
 "Add Account" = "添加账号";

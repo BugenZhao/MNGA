@@ -54,18 +54,33 @@ struct TopicJumpSelectorView: View {
   }
 
   let maxFloor: Int
+  // A page load started now would be dropped by the data source.
+  let isLoading: Bool
   @Binding var mode: Mode
   @Binding var floorToJump: Int?
   @Binding var pageToJump: Int?
 
   @State var selectedFloor: Int // the only source of truth
 
-  init(maxFloor: Int, mode: Binding<Mode>, initialFloor: Int, floorToJump: Binding<Int?>, pageToJump: Binding<Int?>) {
+  // The page being read when the sheet opened. The page buttons go relative to it, not to the slider.
+  private let currentPage: Int
+
+  init(
+    maxFloor: Int,
+    isLoading: Bool,
+    mode: Binding<Mode>,
+    initialFloor: Int,
+    floorToJump: Binding<Int?>,
+    pageToJump: Binding<Int?>,
+  ) {
     self.maxFloor = maxFloor
+    self.isLoading = isLoading
     _mode = mode
     _floorToJump = floorToJump
     _pageToJump = pageToJump
-    _selectedFloor = .init(initialValue: min(initialFloor, maxFloor))
+    let floor = min(initialFloor, maxFloor)
+    _selectedFloor = .init(initialValue: floor)
+    currentPage = (floor + Constants.postPerPage) / Constants.postPerPage
   }
 
   var maxPage: Int { (maxFloor + Constants.postPerPage) / Constants.postPerPage }
@@ -80,6 +95,41 @@ struct TopicJumpSelectorView: View {
   @ViewBuilder
   var jumpButton: some View {
     Button(role: .maybeConfirm, action: { commit() }) { Image(systemName: "arrowshape.bounce.right") }
+      .disabled(isLoading)
+  }
+
+  private func pageButton(_ title: LocalizedStringKey, to page: Int) -> some View {
+    Button(action: {
+      selectedPage.wrappedValue = page
+      commit()
+    }) {
+      Text(title)
+        .font(.subheadline)
+        .fixedSize()
+        .frame(maxWidth: .infinity)
+    }
+    .disabled(page == currentPage || !(1 ... maxPage).contains(page))
+  }
+
+  @ViewBuilder
+  private var pageButtonList: some View {
+    pageButton("First", to: 1)
+    pageButton("Previous", to: currentPage - 1)
+    pageButton("Next", to: currentPage + 1)
+    pageButton("Last", to: maxPage)
+  }
+
+  @ViewBuilder
+  var pageButtons: some View {
+    if maxPage > 1 {
+      // Stack them when the labels no longer fit in a row, as with accessibility text sizes.
+      ViewThatFits(in: .horizontal) {
+        HStack { pageButtonList }
+        VStack { pageButtonList }
+      }
+      .buttonStyle(.bordered)
+      .disabled(isLoading)
+    }
   }
 
   @ViewBuilder
@@ -165,6 +215,7 @@ struct TopicJumpSelectorView: View {
               floorInputField
             }
             floorSlider
+            pageButtons
           }
 
         case .page:
@@ -174,6 +225,7 @@ struct TopicJumpSelectorView: View {
               pageInputField
             }
             pageSlider
+            pageButtons
           }
         }
       }
@@ -191,7 +243,14 @@ struct TopicJumpSelectorView: View {
     NavigationView {
       main
         .listStyle(.insetGrouped)
-        .toolbar { ToolbarItem(placement: .primaryAction) { jumpButton } }
+        .toolbar {
+          ToolbarItem(placement: .cancellationAction) {
+            Button(role: .cancel, action: { presentation.dismiss() }) { Image(systemName: "xmark") }
+          }
+          ToolbarItem(placement: .primaryAction) { jumpButton }
+        }
     }
+    // A drag that just misses the slider thumb, which is hard to hit at the leading edge, would close the sheet.
+    .interactiveDismissDisabled()
   }
 }

@@ -126,7 +126,7 @@ These do not push:
 | Action | Result | Code |
 |---|---|---|
 | Post menu, Locate This Floor | Pops one level, then scrolls the view beneath to that floor. Offered in filtered and reply-chain views. The pop was run, from a filtered view opened in a reply chain | `TopicDetailsView`, `PostReplyChainView` |
-| Jump to floor or page (Plus) | Sheet, then scrolls in place | `TopicJumpSelectorView` |
+| Jump to floor or page (Plus) | Sheet, then scrolls in place. The first, previous, next and last page buttons jump as soon as they are tapped, relative to the page being read | `TopicJumpSelectorView` |
 | Reply, quote, comment, edit, report | Editor sheet. Its image picker is a further sheet | `PostRowView`, `GlobalSheetsModifier`, `ContentEditorView` |
 | Select Text | Sheet | `TextSelectionView` |
 | Attachments | Sheet. An image closes it and opens the viewer, and any other file opens in-app Safari | `AttachmentsView` |
