@@ -130,7 +130,8 @@ extension PostContentView where S == [Span] {
 
   init(post: Post) {
     self.init(
-      content: post.content,
+      spans: post.contentSpansWithAttachments,
+      error: post.content.error,
       id: post.id,
       postDate: post.postDate,
       authorId: post.authorID,

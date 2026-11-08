@@ -454,4 +454,32 @@ extension Attachment {
   var isImage: Bool {
     type == "img"
   }
+
+  var fileName: String {
+    url.split(separator: "/").last.map(String.init) ?? url
+  }
+}
+
+extension Post {
+  /// Image attachments that the content never shows, for example ones uploaded but not inserted.
+  /// NGA web lists them below the post, so they must be shown somewhere other than the menu.
+  var unreferencedImageAttachments: [Attachment] {
+    // `[img]` references the path, while `[noimg]` references only the file name.
+    attachments.filter { $0.isImage && !$0.fileName.isEmpty && !content.raw.contains($0.fileName) }
+  }
+
+  /// Content spans with the unreferenced image attachments appended as an album.
+  var contentSpansWithAttachments: [Span] {
+    let attachments = unreferencedImageAttachments
+    guard !attachments.isEmpty else { return content.spans }
+
+    let album = Span.with {
+      $0.tagged = .with {
+        $0.tag = "album"
+        $0.attributes = ["Attachments".localized]
+        $0.spans = attachments.map { .plainText($0.url) }
+      }
+    }
+    return content.spans + [album]
+  }
 }

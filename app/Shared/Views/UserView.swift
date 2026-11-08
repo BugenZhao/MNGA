@@ -114,11 +114,21 @@ struct UserView: View {
   var name: String {
     if let name = user?.name, !name.display.isEmpty {
       name.display
+    } else if let ownName = ownCachedName {
+      ownName
     } else if !id.isEmpty {
       id
     } else {
       "????????"
     }
+  }
+
+  /// The name saved when signing in, used when the current user's own name is missing from the
+  /// response, so that their posts do not show a bare UID.
+  private var ownCachedName: String? {
+    let info = AuthStorage.shared.authInfo
+    guard !id.isEmpty, id == info.uid, !info.cachedName.isEmpty else { return nil }
+    return info.cachedName
   }
 
   var idDisplay: String {
